@@ -1,0 +1,120 @@
+@import url('https://fonts.googleapis.com/css2?family=Gelasio&family=Titillium+Web:wght@200&display=swap');
+
+:root {
+    --header-height: 3rem;
+    --nav-width: 76px;
+    --first-color: #144a85;
+    --first-color-light: #6c8aaf;
+    --green-color: #25CC88;
+    --red-color: #e51e25;
+    --sand-tan: #e1b382;
+    --dark-color: #444a4a;
+    --olive: #A3BCB6;
+    --white-color: #F7F6FB;
+    --normal-font-size: 1rem;
+    --z-fixed: 100;
+    --primary-font: 'Gelasio', serif;
+    --normal-font: 'Titillium Web', sans-serif;
+}
+
+/* Alerts */
+.alert-warn {
+    background: var(--red-color);
+    border-color: var(--red-color);
+    color: white;
+}
+
+.alert-success {
+    background: var(--green-color);
+    border-color: var(--green-color);
+    color: white;
+}
+
+
+.a-icon {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.a-icon i {
+    font-size: 2rem;
+}
+
+/* details */
+#regForm {
+    background-color: #ffffff;
+    width: 100%;
+    padding: 10px;
+}
+
+h1 {
+    text-align: left;
+    font-family: var(--primary-font);
+    font-size: 1rem;
+}
+
+.w-name {
+    font-family: var(--primary-font);
+    color: var(--green-color);
+}
+
+input {
+    padding: 10px;
+    width: 100%;
+    font-size: 17px;
+    font-family: var(--normal-font);
+    border: 1px solid var(--dark-color);
+}
+
+/* Mark input boxes that gets an error on validation: */
+input.invalid {
+    background-color: #ffdddd;
+}
+
+/* Hide all steps by default: */
+.tab {
+    display: none;
+}
+
+button {
+    background-color: var(--first-color);
+    color: #ffffff;
+    font-family: var(--normal-font);
+    border: 1px solid var(--first-color);
+    padding: 10px 20px;
+    font-size: 17px;
+    border-radius: 40px;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
+#prevBtn {
+    background-color: var(--sand-tan);
+    font-family: var(--normal-font);
+    color: #000;
+}
+
+/* Make circles that indicate the steps of the form: */
+.step {
+    height: 15px;
+    width: 15px;
+    margin: 0 2px;
+    background-color: var(--red-color);
+    border: none;
+    border-radius: 50%;
+    display: inline-block;
+    opacity: 0.5;
+}
+
+.step.active {
+    opacity: 1;
+}
+
+/* Mark the steps that are finished and valid: */
+.step.finish {
+    background-color: var(--green-color);
+}

@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+{% load bootstrap5 %}
+{% load static %}
+{% block content %}
+<div class="container-scroller">
+    <!-- partial:partials/_navbar.html -->
+    <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+        <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+            <a class="navbar-brand brand-logo" href="{% url 'dashboard' %}"><i class='las la-industry'
+                    style="font-size:22px"></i>KMPDC</a>
+            <a class="navbar-brand brand-logo-mini" href="{% url 'dashboard' %}"><i class='las la-industry'
+                    style="font-size:22px"></i></a>
+        </div>
+        <div class="navbar-menu-wrapper d-flex align-items-stretch">
+            <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize"
+                style="outline: none; border: none">
+                <i class="mdi mdi-apps" style="color: #25CC88; font-size: 1.6rem"></i>
+            </button>
+            <ul class="navbar-nav navbar-nav-right">
+                <li class="nav-item nav-profile dropdown">
+                    <a class="nav-link dropdown-toggle" id="profileDropdown" href="#" data-toggle="dropdown"
+                        aria-expanded="false">
+                        <div class="nav-profile-img">
+                            <img src="../../static/img/logo/pp.jpeg" alt="image">
+                        </div>
+                        <div class="nav-profile-text">
+                            <p class="mb-1 text-black">Enock Abere</p>
+                        </div>
+                    </a>
+                    <div class="dropdown-menu navbar-dropdown dropdown-menu-right p-0 border-0 font-size-sm"
+                        aria-labelledby="profileDropdown" data-x-placement="bottom-end">
+                        <div class="p-3 text-center bg-primary">
+                            <img class="img-avatar img-avatar48 img-avatar-thumb" src="../../static/img/logo/pp.jpeg"
+                                alt="">
+                        </div>
+                        <div class="p-2">
+                            <h5 class="dropdown-header text-uppercase pl-2 text-dark">User Options</h5>
+                            <a class="dropdown-item py-1 d-flex align-items-center justify-content-between"
+                                href="{% url 'profile' %}">
+                                <span>Profile</span>
+                                <span class="p-0">
+                                    <i class="mdi mdi-account-outline ml-1"></i>
+                                </span>
+                            </a>
+                            <div role="separator" class="dropdown-divider"></div>
+                            <h5 class="dropdown-header text-uppercase  pl-2 text-dark mt-2">Actions</h5>
+                            <a class="dropdown-item py-1 d-flex align-items-center justify-content-between"
+                                href="{% url 'auth' %}">
+                                <span>Log Out</span>
+                                <i class="mdi mdi-logout ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#"
+                        data-toggle="dropdown">
+                        <i class="mdi mdi-bell-outline"></i>
+                        <span class="count-symbol bg-danger"></span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list"
+                        aria-labelledby="notificationDropdown">
+                        <h6 class="p-3 mb-0 bg-primary text-white py-4">Notifications</h6>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item preview-item">
+                            <div class="preview-thumbnail">
+                                <div class="preview-icon bg-success">
+                                    <i class="mdi mdi-calendar"></i>
+                                </div>
+                            </div>
+                            <div
+                                class="preview-item-content d-flex align-items-start flex-column justify-content-center">
+                                <h6 class="preview-subject font-weight-normal mb-1">Event today</h6>
+                                <p class="text-gray ellipsis mb-0"> Just a reminder that you have an event today </p>
+                            </div>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <h6 class="p-3 mb-0 text-center">See all notifications</h6>
+                    </div>
+                </li>
+            </ul>
+            <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
+                data-toggle="offcanvas">
+                <i class="mdi mdi-apps" style="color: #25CC88; font-size: 1.6rem"></i>
+            </button>
+        </div>
+    </nav>
+    <div class="container-fluid page-body-wrapper">
+        <!-- sidebar -->
+        <nav class="sidebar sidebar-offcanvas" id="sidebar">
+            <ul class="nav">
+                <li class="nav-item nav-category">E-PROCUREMENT PORTAL</li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'dashboard' %}">
+                        <span class="icon-bg"><i class="las la-grip-horizontal nav_icon"></i></span>
+                        <span class="menu-title">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false"
+                        aria-controls="ui-basic">
+                        <span class="icon-bg"><i class="las la-briefcase"></i></span>
+                        <span class="menu-title">Tenders</span>
+                        <i class="las la-angle-down" id="drops"></i>
+                    </a>
+                    <div class="collapse" id="ui-basic">
+                        <ul class="nav flex-column sub-menu">
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'open' %}"><i
+                                        class="las la-arrow-right mr-2"></i> Open
+                                    Tenders</a>
+                            </li>
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'restricted' %}"><i
+                                        class="las la-arrow-right mr-2"></i> Restricted
+                                    Tenders</a></li>
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'closed' %}"><i
+                                        class="las la-arrow-right mr-2"></i> Closed
+                                    Tenders</a></li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'quote' %}">
+                        <span class="icon-bg"><i class="mdi mdi-contacts menu-icon"></i></span>
+                        <span class="menu-title">Request For Quotation</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'interest' %}">
+                        <span class="icon-bg"><i class="las la-check-circle"></i></span>
+                        <span class="menu-title">Expression of Interest</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="collapse" href="#submit" aria-expanded="false"
+                        aria-controls="ui-basic">
+                        <span class="icon-bg"><i class="las la-briefcase"></i></span>
+                        <span class="menu-title">Submitted Applications</span>
+                        <i class="las la-angle-down" id="drops"></i>
+                    </a>
+                    <div class="collapse" id="submit">
+                        <ul class="nav flex-column sub-menu">
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'sub_open' %}"><i
+                                        class="las la-arrow-right mr-2"></i> Open
+                                    Tenders</a>
+                            </li>
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'sub_res' %}"><i
+                                        class="las la-arrow-right mr-2"></i> Restricted
+                                    Tenders</a></li>
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'sub_rfq' %}"><i
+                                        class="las la-arrow-right mr-2"></i> Request For Quotation</a></li>
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'sub_int' %}"><i
+                                        class="las la-arrow-right mr-2"></i> Expression of Interest</a></li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'profile' %}">
+                        <span class="icon-bg"><i class="las la-user-circle"></i></span>
+                        <span class="menu-title">Profile</span>
+                    </a>
+                </li>
+                <li class="nav-item documentation-link">
+                    <a class="nav-link" href="#" target="_blank">
+                        <span class="icon-bg">
+                            <i class="las la-external-link-alt"></i>
+                        </span>
+                        <span class="menu-title">Open Tenders</span>
+                    </a>
+                </li>
+                <li class="nav-item sidebar-user-actions">
+                    <div class="sidebar-user-menu">
+                        <a href="{% url 'auth' %}" class="nav-link"><i class="las la-sign-out-alt"></i>
+                            <span class="menu-title">Log Out</span></a>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+        <div class="main-panel">
+            <!-- Weka content -->
+            {% block main %}
+            {% endblock %}
+            <footer class="footer">
+                <div class="footer-inner-wraper">
+                    <div class="d-sm-flex justify-content-center justify-content-sm-between">
+                        <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright ©
+                            Kenya Medical Practitioners and Dentists Council
+                            2021</span>
+                        <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center"> Made By <a href="#"
+                                target="_blank" style="color: black">Kobby Technologies Ltd</a></span>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+</div>
+{% endblock %}

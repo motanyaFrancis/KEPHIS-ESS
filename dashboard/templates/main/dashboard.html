@@ -1,0 +1,203 @@
+{% extends 'offcanvas.html' %}
+{% load bootstrap5 %}
+{% load static %}
+{% block main %}
+<section>
+    <div class="content-wrapper pb-2">
+        <div class="row" id="proBanner">
+            <div class="col-12">
+                <span class="d-flex align-items-center purchase-popup">
+                    <img src="../../../static/img/logo/fav.png" width="70px" class="img-fluid" alt="" srcset="">
+                    <a href="#" target="_blank" class="btn ml-auto download-button">Open Tenders</a>
+                    <a href="#" target="_blank" class="btn purchase-button">Expression of Interest</a>
+                </span>
+            </div>
+        </div>
+        <div class="d-xl-flex justify-content-between align-items-start">
+            <h2 class="text-dark font-weight-bold mb-2"> Overview dashboard </h2>
+            <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
+                <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
+                    <button class="btn bg-white dropdown-toggle p-3 d-flex align-items-center" type="button"
+                        id="dropdownMenuButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i
+                            class="mdi mdi-calendar mr-1"></i>{{today}}
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-sm-12 col-md-12 col-lg-12">
+                <div class="c-inner">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-3 col-lg-3" id="dash_card">
+                            <div class="card dash_card h-100" id="d-card">
+                                <div class="card-title">
+                                    <h6>Revenue</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="money">
+                                        <h4>
+                                            36,000
+                                        </h4>
+                                        <small><i class="las la-arrow-up"></i> 100%</small>
+                                        <p>since last year</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-3 col-lg-3" id="dash_card">
+                            <div class="card h-100" id="d-card">
+                                <div class="card-title">
+                                    <h6>Restricted Tenders</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="money">
+                                        <h4>
+                                            36,000
+                                        </h4>
+                                        <small><i class="las la-arrow-up"></i> 100%</small>
+                                        <p>since last year</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-3 col-lg-3" id="dash_card">
+                            <div class="card h-100" id="d-card">
+                                <div class="card-title">
+                                    <h6>Open Tenders</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="money">
+                                        <h4>
+                                            36,000
+                                        </h4>
+                                        <small><i class="las la-arrow-up"></i> 100%</small>
+                                        <p>since last year</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-3 col-lg-3" id="dash_card">
+                            <div class="card  h-100" id="d-card">
+                                <div class="card-title">
+                                    <h6>Revenue</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="money">
+                                        <h4>
+                                            36,000
+                                        </h4>
+                                        <small><i class="las la-arrow-up"></i> 100%</small>
+                                        <p>since last year</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="col-sm-12 col-md-12 col-lg-7">
+                <div class="card" id="d-card">
+                    <div class="card-title">
+                        <h6>General Instructions</h6>
+                    </div>
+                    <div class="card-body" id="recents">
+                        <div class="my_activity mb-2">
+                            <div class="activity">
+                                <i class="las la-clipboard-list"></i>
+                            </div>
+                            <div class="a-head"> Instruction 1 Here</div>
+                            <div class="a-texts">
+                                <p>
+                                    This app has been built using Bootstrap, css, django, javascript and material
+                                    design.
+                                </p>
+                                <small style="color: #D1D1D1 ; font-size:small">30 minutes ago</small>
+                            </div>
+                        </div>
+                        <div class="my_activity mb-2">
+                            <div class="activity">
+                                <i class="las la-check-circle"></i>
+                            </div>
+                            <div class="a-head"> Instruction 2 Here</div>
+                            <div class="a-texts">
+                                <p>
+                                    This app has been built using Bootstrap, css, django, javascript and material
+                                    design.
+                                </p>
+                                <small style="color: #D1D1D1 ; font-size:small">30 minutes ago</small>
+                            </div>
+                        </div>
+                        <div class="my_activity mb-2">
+                            <div class="activity">
+                                <i class="las la-list-alt"></i>
+                            </div>
+                            <div class="a-head"> Instruction 3 Here</div>
+                            <div class="a-texts">
+                                <p>
+                                    This app has been built using Bootstrap, css, django, javascript and material
+                                    design.
+                                </p>
+                                <small style="color: #D1D1D1 ; font-size:small">30 minutes ago</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+        <div class="row my-2">
+            <div class="col-md-12">
+                <div class="card" id="d-card">
+                    <div class="card-title">
+                        <h6>
+                            Supplier's General Information
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <table id="example" class="table table-striped table-bordered dt-responsive table-responsive-lg"
+                            style="width:100%">
+                            <thead>
+                                <tr id="tops">
+                                    <th id="long">Event No</th>
+                                    <th>Event Name</th>
+                                    <th>Event Description</th>
+                                    <th>Status</th>
+                                    <th>Archived</th>
+                                    <th>Entry No</th>
+                                    <th>Invoicing Method</th>
+                                    <th>Chargeable</th>
+                                    <th>Amount</th>
+                                    <th>Type</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for res in res %}
+                                <tr>
+                                    <td>{{res.Event_No}}</td>
+                                    <td>{{res.Event_Name}}</td>
+                                    <td>{{res.Event_Description}}</td>
+                                    <td>{{res.Status}}</td>
+                                    <td>{{res.Archived}}</td>
+                                    <td>{{res.Entry_No}}</td>
+                                    <td>{{res.Invoicing_Method}}</td>
+                                    <td>{{res.Chargeable}}</td>
+                                    <td>{{res.Amount}}</td>
+                                    <td>{{res.Event_Type}}</td>
+                                    <td>
+                                        <a type="button" href="{% url 'details' res.Event_No %}"
+                                            class="btn btn-success btn-icon-text" style="background: #25CC88;">
+                                            <i class="las la-external-link-alt" style="font-size: 1rem"></i> Apply
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

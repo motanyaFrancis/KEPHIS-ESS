@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- icons -->
+    <!-- line -->
+    <link rel="stylesheet"
+        href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+    <!-- end -->
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+        integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+    <script src="https://code.jquery.com/jquery-3.6.0.js"
+        integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="../../static/css/auth.css">
+    <link rel="stylesheet" href="../../static/css/base.css">
+    <link rel="shortcut icon" type="image/png" href="../../static/img/logo/fav.png" />
+</head>
+
+<body>
+    <section class="n-login">
+        <div class="container-fluid px-0">
+            <div class="row">
+                <div id='n-left' class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="n-icon mx-auto text-center">
+                                <p>
+                                    <i class="fas fa-align-left" style="color:white;font-size:25px"></i>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mx-auto text-center">
+                            <div class="brand">
+                                <h2 class="n-brand">E-PROCUREMENT PORTAL</br> <span class="br-brand">KMPDC</span></h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="l-text mx-auto text-center">
+                                <p>
+                                    Coordinating and Execute priority regional and continental
+                                </p>
+                                <p>
+                                    projects to promote regional integration towards the
+                                </p>
+                                <p>
+                                    accelerated realisation of Agenda 2063.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class=" mx-auto text-center mt-2">
+                                <button class="btn btn-md " id="auth1" type=" button">Open Tenders</button>
+                                <button class="btn btn-md " id="auth2" type="button">Expression of Interest</button>
+                            </div>
+                            <div class="l-image mx-auto text-center">
+                                <img src='../../static/img/2.png' class="img-fluid" alt="brand image" srcset="">
+                            </div>
+                            <div class="f-text">
+                                <p>
+                                    © 2021 Kenya Medical Practitioners and Dentists Council
+                                </p>
+                                <p id="kobby">
+                                    Powered by <a href="#" style="text-decoration:none;color:#e1b382">Kobby
+                                        Technologies
+                                        Ltd</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="n-right1" class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="logo mx-auto text-center">
+                                <img src="../../static/img/logo/fav.png" alt="" srcset="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-text">
+                                <h3>Sign In</h3>
+                                <p>
+                                    Don't have an account? <a href="" id="reg"
+                                        style="text-decoration: none;">Register</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="l-form">
+                                <div class="login-form">
+                                    <form action="" method="post">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
+                                                <input type="email" class="form-control" name="email"
+                                                    placeholder="Email Address" required="required">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                                <input type="text" class="form-control" name="password"
+                                                    placeholder="Password" required="required">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <a href="{% url 'dashboard' %}" type="button" id="sub"
+                                                class="btn btn-primary btn-block btn-lg"
+                                                style="text-decoration:none;color:white">Login</a>
+                                        </div>
+                                    </form>
+                                    <div class="alert alert-warning alert-dismissible fade show alert-warn"
+                                        role="alert">
+                                        <div class="row">
+                                            <div class="col-md-2 a-icon">
+                                                <div class="mx-auto text-center">
+                                                    <i class="las la-exclamation-triangle"></i>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-8 a-icon">
+                                                <p>{{note}}</p>
+                                            </div>
+                                            <div class="col-md-2 a-icon">
+                                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6" id="n-right2">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-text">
+                                <h3>REGISTER</h3>
+                                <p id="login">
+                                    Already have an account? <a href="" id="log"
+                                        style="text-decoration: none;">Login</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="reg-line mx-auto text-center">
+                                <hr id="re-div">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="l-form">
+                                <div class="login-form">
+                                    <form method="post">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><i
+                                                                class="fa fa-user"></i></span>
+                                                        <input type="text" class="form-control" placeholder="First name"
+                                                            required="required">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon"><i
+                                                                class="fa fa-user"></i></span>
+                                                        <input type="text" class="form-control" placeholder="Last name"
+                                                            required="required">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
+                                                <input type="email" class="form-control" name="email"
+                                                    placeholder="Email Address" required="required">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                                <input type="text" class="form-control" name="password"
+                                                    placeholder="Password" required="required">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">
+                                                    <i class="fa fa-lock"></i>
+                                                    <i class="fa fa-check"></i>
+                                                </span>
+                                                <input type="text" class="form-control" name="confirm_password"
+                                                    placeholder="Confirm Password" required="required">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-primary btn-block btn-lg">Sign
+                                                Up</button>
+                                        </div>
+                                        <p class="small">By clicking the Sign Up button, you agree to our <br><a
+                                                href="#">Terms &amp; Conditions</a>, and <a href="#">Privacy Policy</a>.
+                                        </p>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+    </section>
+    <script>
+        $(document).ready(function () {
+            $("#reg").click(function (e) {
+                e.preventDefault();
+                $("#n-right1").hide();
+                $("#n-right2").show();
+            })
+            $("#log").click(function (e) {
+                e.preventDefault();
+                $("#n-right2").hide();
+                $("#n-right1").show();
+            })
+        })
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+        integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+    </script>
+</body>
+
+</html>
