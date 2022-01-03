@@ -89,7 +89,7 @@
         <!-- sidebar -->
         <nav class="sidebar sidebar-offcanvas" id="sidebar">
             <ul class="nav">
-                <li class="nav-item nav-category">E-PROCUREMENT PORTAL</li>
+                <li class="nav-item nav-category">ESS PORTAL</li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'dashboard' %}">
                         <span class="icon-bg"><i class="las la-grip-horizontal nav_icon"></i></span>
@@ -100,56 +100,94 @@
                     <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false"
                         aria-controls="ui-basic">
                         <span class="icon-bg"><i class="las la-briefcase"></i></span>
-                        <span class="menu-title">Tenders</span>
+                        <span class="menu-title">Human Resource</span>
                         <i class="las la-angle-down" id="drops"></i>
                     </a>
                     <div class="collapse" id="ui-basic">
                         <ul class="nav flex-column sub-menu">
                             <li class="nav-item"> <a class="nav-link" href="{% url 'open' %}"><i
-                                        class="las la-arrow-right mr-2"></i> Open
-                                    Tenders</a>
+                                        class="las la-arrow-right mr-2"></i> Leave Requests</a>
                             </li>
                             <li class="nav-item"> <a class="nav-link" href="{% url 'restricted' %}"><i
-                                        class="las la-arrow-right mr-2"></i> Restricted
-                                    Tenders</a></li>
+                                        class="las la-arrow-right mr-2"></i>Training Requests</a></li>
                             <li class="nav-item"> <a class="nav-link" href="{% url 'closed' %}"><i
-                                        class="las la-arrow-right mr-2"></i> Closed
-                                    Tenders</a></li>
+                                        class="las la-arrow-right mr-2"></i>Loans</a></li>
                         </ul>
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'quote' %}">
-                        <span class="icon-bg"><i class="mdi mdi-contacts menu-icon"></i></span>
-                        <span class="menu-title">Request For Quotation</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'interest' %}">
-                        <span class="icon-bg"><i class="las la-check-circle"></i></span>
-                        <span class="menu-title">Expression of Interest</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-toggle="collapse" href="#submit" aria-expanded="false"
+                    <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false"
                         aria-controls="ui-basic">
                         <span class="icon-bg"><i class="las la-briefcase"></i></span>
-                        <span class="menu-title">Submitted Applications</span>
+                        <span class="menu-title">Finance</span>
                         <i class="las la-angle-down" id="drops"></i>
                     </a>
-                    <div class="collapse" id="submit">
+                    <div class="collapse" id="ui-basic">
                         <ul class="nav flex-column sub-menu">
-                            <li class="nav-item"> <a class="nav-link" href="{% url 'sub_open' %}"><i
-                                        class="las la-arrow-right mr-2"></i> Open
-                                    Tenders</a>
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'open' %}"><i
+                                        class="las la-arrow-right mr-2"></i> Imprest Requisition</a>
                             </li>
-                            <li class="nav-item"> <a class="nav-link" href="{% url 'sub_res' %}"><i
-                                        class="las la-arrow-right mr-2"></i> Restricted
-                                    Tenders</a></li>
-                            <li class="nav-item"> <a class="nav-link" href="{% url 'sub_rfq' %}"><i
-                                        class="las la-arrow-right mr-2"></i> Request For Quotation</a></li>
-                            <li class="nav-item"> <a class="nav-link" href="{% url 'sub_int' %}"><i
-                                        class="las la-arrow-right mr-2"></i> Expression of Interest</a></li>
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'restricted' %}"><i
+                                        class="las la-arrow-right mr-2"></i>Imprest Surrender</a></li>
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'closed' %}"><i
+                                        class="las la-arrow-right mr-2"></i>Staff Claim</a></li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false"
+                        aria-controls="ui-basic">
+                        <span class="icon-bg"><i class="las la-briefcase"></i></span>
+                        <span class="menu-title">Procurement</span>
+                        <i class="las la-angle-down" id="drops"></i>
+                    </a>
+                    <div class="collapse" id="ui-basic">
+                        <ul class="nav flex-column sub-menu">
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'open' %}"><i
+                                        class="las la-arrow-right mr-2"></i>Purchase Requisition</a>
+                            </li>
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'restricted' %}"><i
+                                        class="las la-arrow-right mr-2"></i>Repair Requests</a></li>
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'closed' %}"><i
+                                        class="las la-arrow-right mr-2"></i>Store Request</a></li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false"
+                        aria-controls="ui-basic">
+                        <span class="icon-bg"><i class="las la-briefcase"></i></span>
+                        <span class="menu-title">Approvals</span>
+                        <i class="las la-angle-down" id="drops"></i>
+                    </a>
+                    <div class="collapse" id="ui-basic">
+                        <ul class="nav flex-column sub-menu">
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'open' %}"><i
+                                        class="las la-arrow-right mr-2"></i> Leave Requests</a>
+                            </li>
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'restricted' %}"><i
+                                        class="las la-arrow-right mr-2"></i>Training Requests</a></li>
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'closed' %}"><i
+                                        class="las la-arrow-right mr-2"></i>Loans</a></li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false"
+                        aria-controls="ui-basic">
+                        <span class="icon-bg"><i class="las la-briefcase"></i></span>
+                        <span class="menu-title">Reports</span>
+                        <i class="las la-angle-down" id="drops"></i>
+                    </a>
+                    <div class="collapse" id="ui-basic">
+                        <ul class="nav flex-column sub-menu">
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'open' %}"><i
+                                        class="las la-arrow-right mr-2"></i> Leave Requests</a>
+                            </li>
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'restricted' %}"><i
+                                        class="las la-arrow-right mr-2"></i>Training Requests</a></li>
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'closed' %}"><i
+                                        class="las la-arrow-right mr-2"></i>Loans</a></li>
                         </ul>
                     </div>
                 </li>
@@ -157,14 +195,6 @@
                     <a class="nav-link" href="{% url 'profile' %}">
                         <span class="icon-bg"><i class="las la-user-circle"></i></span>
                         <span class="menu-title">Profile</span>
-                    </a>
-                </li>
-                <li class="nav-item documentation-link">
-                    <a class="nav-link" href="#" target="_blank">
-                        <span class="icon-bg">
-                            <i class="las la-external-link-alt"></i>
-                        </span>
-                        <span class="menu-title">Open Tenders</span>
                     </a>
                 </li>
                 <li class="nav-item sidebar-user-actions">
