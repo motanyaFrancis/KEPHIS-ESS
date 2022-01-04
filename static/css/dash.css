@@ -37,6 +37,33 @@
     font-size: 15px;
 }
 
+#summ-cards {
+    padding: 1rem;
+    border-bottom: 3px solid var(--red-color)
+}
+
+#summ-cards .card-title {
+    color: #000;
+    padding-left: 1rem;
+    font-family: var(--primary-font);
+}
+
+.c1,
+.c2 {
+    border-right: 2px solid green;
+}
+
+.c-content h6 {
+    font-family: var(--third-font);
+    font-size: .8rem;
+}
+
+.c-content small {
+    font-family: var(--primary-font);
+    font-size: 1rem;
+    color: #000;
+}
+
 #care:hover {
     color: #fff;
 }
