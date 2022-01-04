@@ -37,12 +37,34 @@
     font-size: 15px;
 }
 
-#summ-cards {
+.summ-cards {
     padding: 1rem;
     border-bottom: 3px solid var(--red-color)
 }
 
-#summ-cards .card-title {
+.summ-cards .card-title {
+    color: #000;
+    padding-left: 1rem;
+    font-family: var(--primary-font);
+}
+
+.summ-cards2 {
+    padding: 1rem;
+    border-bottom: 3px solid var(--first-color)
+}
+
+.summ-cards2 .card-title {
+    color: #000;
+    padding-left: 1rem;
+    font-family: var(--primary-font);
+}
+
+.summ-cards3 {
+    padding: 1rem;
+    border-bottom: 3px solid var(--green-color)
+}
+
+.summ-cards3 .card-title {
     color: #000;
     padding-left: 1rem;
     font-family: var(--primary-font);
