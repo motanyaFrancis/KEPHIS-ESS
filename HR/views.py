@@ -25,7 +25,7 @@ def Leave_Request(request):
     return render(request, 'leave.html', ctx)
 
 
-def closed_tenders(request):
+def Training_Request(request):
     session = requests.Session()
     session.auth = config.AUTHS
 
@@ -37,7 +37,7 @@ def closed_tenders(request):
     # creating date object
     todays_date = datetime.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": res}
-    return render(request, 'closedTenders.html', ctx)
+    return render(request, 'training.html', ctx)
 
 
 def Restricted_tenders(request):
@@ -52,4 +52,4 @@ def Restricted_tenders(request):
     # creating date object
     todays_date = datetime.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": res}
-    return render(request, 'restrictedTenders.html', ctx)
+    return render(request, 'training.html', ctx)
