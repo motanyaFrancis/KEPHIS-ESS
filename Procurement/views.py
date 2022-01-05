@@ -52,4 +52,4 @@ def StoreRequest(request):
     # creating date object
     todays_date = datetime.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": res}
-    return render(request, 'StoreReq.html', ctx)
+    return render(request, 'storeReq.html', ctx)
