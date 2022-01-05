@@ -5,7 +5,10 @@
 <section class="dash2">
     <div class="content-wrapper" style="background: #6c8aaf;padding-bottom: 5rem;">
         <div class="d-xl-flex justify-content-between align-items-start">
-            <h2 class="text-dark font-weight-bold mb-2"> Leave Requests</h2>
+            <h2 class="text-dark font-weight-bold mb-2"> Leave Requests <button class="btn btn-primary"
+                    data-bs-toggle="modal" data-bs-target="#staticBackdrop"> <i class="las la-plus"></i> Create
+                    Request</button></h2>
+
             <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
                 <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
                     <button class="btn bg-white dropdown-toggle p-3 d-flex align-items-center" type="button"
@@ -161,6 +164,53 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Leave Request
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <!-- One "tab" for each step in the form: -->
+                        <div class="mb-2"> <span class="w-name">
+                                Mandatory Requirements:
+                            </span>
+                            <div class="row">
+                                <div>
+                                    <label for="recipient-name" class="col-form-label">Select Department:</label>
+                                    <select class="form-select" aria-label="Default select example">
+                                        <option selected>Open this select menu</option>
+                                        <option value="1">Microsoft</option>
+                                        <option value="2">Finance</option>
+                                        <option value="3">HR</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="" class="col-form-label">Date From:</label>
+                                    <input type="date" id="from" name="from">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="" class="col-form-label">Date To:</label>
+                                    <input type="date" id="to" name="to">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
+                    <button type="button" class="btn btn-primary">Submit</button>
                 </div>
             </div>
         </div>
