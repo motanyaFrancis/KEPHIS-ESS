@@ -22,7 +22,7 @@ def Leave_Request(request):
     # creating date object
     todays_date = datetime.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": res}
-    return render(request, 'Leave.html', ctx)
+    return render(request, 'leave.html', ctx)
 
 
 def closed_tenders(request):

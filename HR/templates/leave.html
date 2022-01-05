@@ -1,0 +1,170 @@
+{% extends 'offcanvas.html' %}
+{% load bootstrap5 %}
+{% load static %}
+{% block main %}
+<section class="dash2">
+    <div class="content-wrapper" style="background: #6c8aaf;padding-bottom: 5rem;">
+        <div class="d-xl-flex justify-content-between align-items-start">
+            <h2 class="text-dark font-weight-bold mb-2"> Leave Requests</h2>
+            <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
+                <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
+                    <button class="btn bg-white dropdown-toggle p-3 d-flex align-items-center" type="button"
+                        id="dropdownMenuButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i
+                            class="mdi mdi-calendar mr-1"></i>{{today}}
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="row my-2">
+            <div class="col-md-12">
+                <div class="card" id="d-card">
+                    <div class="m-4">
+                        <ul class="nav nav-tabs" id="myTab">
+                            <li class="nav-item">
+                                <a href="#home" class="nav-link active" data-bs-toggle="tab">New Requests (5)</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#profile" class="nav-link" data-bs-toggle="tab">Approved Requests (4)</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#messages" class="nav-link" data-bs-toggle="tab">Rejected Requests (3)</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="home">
+                                <h4 class="mt-2">New Requests</h4>
+                                <div class="card-body">
+                                    <table id="example"
+                                        class="table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
+                                        <thead>
+                                            <tr id="tops">
+                                                <th id="long">Request No</th>
+                                                <th>Name</th>
+                                                <th>Request Date</th>
+                                                <th>From</th>
+                                                <th>To</th>
+                                                <th>Department</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>#GS-2234</td>
+                                                <td id="rap">Enock Abere</td>
+                                                <td id="rap">Sunday, Oct 24th, 2021</td>
+                                                <td>Oct 29th, 2021</td>
+                                                <td>Oct 31th, 2021</td>
+                                                <td>Microsoft</td>
+                                                <td>
+                                                    <a type="button" href=""
+                                                        class="btn btn-warning btn-icon-text">Pending <i
+                                                            class="las la-meh"></i>
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <a type="button" href="" class="btn btn-success  btn-icon-text"
+                                                        style="background: #25CC88;">View <i
+                                                            class="las la-external-link-alt"
+                                                            style="font-size: 1rem"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="profile">
+                                <h4 class="mt-2">Approved Requests</h4>
+                                <div class="card-body">
+                                    <table id="example"
+                                        class="table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
+                                        <thead>
+                                            <tr id="tops">
+                                                <th id="long">Request No</th>
+                                                <th>Name</th>
+                                                <th>Request Date</th>
+                                                <th>From</th>
+                                                <th>To</th>
+                                                <th>Department</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>#GS-2234</td>
+                                                <td id="rap">Enock Abere</td>
+                                                <td id="rap">Sunday, Oct 24th, 2021</td>
+                                                <td>Oct 29th, 2021</td>
+                                                <td>Oct 31th, 2021</td>
+                                                <td>Microsoft</td>
+                                                <td>
+                                                    <a type="button" href=""
+                                                        class="btn btn-success btn-icon-text">Approved <i
+                                                            class="las la-smile"></i>
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <a type="button" href="" class="btn btn-success  btn-icon-text">View
+                                                        <i class="las la-external-link-alt" style="font-size: 1rem"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="messages">
+                                <h4 class="mt-2">Rejected Requests</h4>
+                                <div class="card-body">
+                                    <table id="example"
+                                        class="table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
+                                        <thead>
+                                            <tr id="tops">
+                                                <th id="long">Request No</th>
+                                                <th>Name</th>
+                                                <th>Request Date</th>
+                                                <th>From</th>
+                                                <th>To</th>
+                                                <th>Department</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>#GS-2234</td>
+                                                <td id="rap">Enock Abere</td>
+                                                <td id="rap">Sunday, Oct 24th, 2021</td>
+                                                <td>Oct 29th, 2021</td>
+                                                <td>Oct 31th, 2021</td>
+                                                <td>Microsoft</td>
+                                                <td>
+                                                    <a type="button" href=""
+                                                        class="btn btn-danger btn-icon-text">Rejected <i
+                                                            class="las la-frown"></i>
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <a type="button" href="" class="btn btn-success btn-icon-text">View
+                                                        <i class="las la-external-link-alt" style="font-size: 1rem"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
