@@ -40,7 +40,7 @@ def Training_Request(request):
     return render(request, 'training.html', ctx)
 
 
-def Restricted_tenders(request):
+def Loan_Request(request):
     session = requests.Session()
     session.auth = config.AUTHS
 
@@ -52,4 +52,4 @@ def Restricted_tenders(request):
     # creating date object
     todays_date = datetime.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": res}
-    return render(request, 'training.html', ctx)
+    return render(request, 'loan.html', ctx)
