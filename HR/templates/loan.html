@@ -5,8 +5,8 @@
 <section class="dash2">
     <div class="content-wrapper" style="background: #6c8aaf;padding-bottom: 5rem;">
         <div class="d-xl-flex justify-content-between align-items-start">
-            <h2 class="text-dark font-weight-bold mb-2"> Training Requests <button class="btn btn-primary"
-                    data-bs-toggle="modal" data-bs-target="#staticBackdrop"> <i class="las la-plus"></i> Create Training
+            <h2 class="text-dark font-weight-bold mb-2"> Loans <button class="btn btn-primary" data-bs-toggle="modal"
+                    data-bs-target="#staticBackdrop"> <i class="las la-plus"></i> Create Loan
                     Request</button></h2>
 
             <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
@@ -24,21 +24,19 @@
                     <div class="m-4">
                         <ul class="nav nav-tabs" id="myTab">
                             <li class="nav-item">
-                                <a href="#home" class="nav-link active" data-bs-toggle="tab">New Training Requests
-                                    (5)</a>
+                                <a href="#home" class="nav-link active" data-bs-toggle="tab">New Loan Requests (3)
+                                </a>
                             </li>
                             <li class="nav-item">
-                                <a href="#profile" class="nav-link" data-bs-toggle="tab">Approved Training Requests
-                                    (4)</a>
+                                <a href="#profile" class="nav-link" data-bs-toggle="tab">Unpaid Loans (458)</a>
                             </li>
                             <li class="nav-item">
-                                <a href="#messages" class="nav-link" data-bs-toggle="tab">Rejected Training Requests
-                                    (3)</a>
+                                <a href="#messages" class="nav-link" data-bs-toggle="tab">Cleared Loans (323)</a>
                             </li>
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane fade show active" id="home">
-                                <h4 class="mt-2">New Training Requests</h4>
+                                <h4 class="mt-2">New Loan Requests</h4>
                                 <div class="card-body">
                                     <table id="example"
                                         class="table table-striped table-bordered dt-responsive table-responsive-lg"
@@ -47,9 +45,9 @@
                                             <tr id="tops">
                                                 <th id="long">Request No</th>
                                                 <th>Name</th>
-                                                <th>Training Date</th>
-                                                <th>From</th>
+                                                <th>Loan Date</th>
                                                 <th>To</th>
+                                                <th>Amount</th>
                                                 <th>Department</th>
                                                 <th>Status</th>
                                                 <th>Action</th>
@@ -61,7 +59,7 @@
                                                 <td id="rap">Enock Abere</td>
                                                 <td id="rap">Sunday, Oct 24th, 2021</td>
                                                 <td>Oct 29th, 2021</td>
-                                                <td>Oct 31th, 2021</td>
+                                                <td>Ksh. 5,700.00</td>
                                                 <td>Microsoft</td>
                                                 <td>
                                                     <a type="button" href=""
@@ -91,9 +89,9 @@
                                             <tr id="tops">
                                                 <th id="long">Request No</th>
                                                 <th>Name</th>
-                                                <th>Training Date</th>
-                                                <th>From</th>
+                                                <th>Loan Date</th>
                                                 <th>To</th>
+                                                <th>Amount</th>
                                                 <th>Department</th>
                                                 <th>Status</th>
                                                 <th>Action</th>
@@ -105,7 +103,7 @@
                                                 <td id="rap">Enock Abere</td>
                                                 <td id="rap">Sunday, Oct 24th, 2021</td>
                                                 <td>Oct 29th, 2021</td>
-                                                <td>Oct 31th, 2021</td>
+                                                <td>Ksh. 5,700.00</td>
                                                 <td>Microsoft</td>
                                                 <td>
                                                     <a type="button" href=""
@@ -133,9 +131,9 @@
                                             <tr id="tops">
                                                 <th id="long">Request No</th>
                                                 <th>Name</th>
-                                                <th>Training Date</th>
-                                                <th>From</th>
+                                                <th>Loan Date</th>
                                                 <th>To</th>
+                                                <th>Amount</th>
                                                 <th>Department</th>
                                                 <th>Status</th>
                                                 <th>Action</th>
@@ -147,7 +145,7 @@
                                                 <td id="rap">Enock Abere</td>
                                                 <td id="rap">Sunday, Oct 24th, 2021</td>
                                                 <td>Oct 29th, 2021</td>
-                                                <td>Oct 31th, 2021</td>
+                                                <td>Ksh. 5,700.00</td>
                                                 <td>Microsoft</td>
                                                 <td>
                                                     <a type="button" href=""
@@ -177,7 +175,7 @@
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Training Request
+                    <h5 class="modal-title" id="staticBackdropLabel">Loan Request
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -200,12 +198,21 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
-                                    <label for="" class="col-form-label">Date From:</label>
+                                    <label for="" class="col-form-label">Loan Date:</label>
                                     <input type="date" id="from" name="from">
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="" class="col-form-label">Date To:</label>
+                                    <label for="" class="col-form-label">To:</label>
                                     <input type="date" id="to" name="to">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label for="recipient-name" class="col-form-label">Amount:</label>
+                                    <input type="text" class="form-control" id="recipient-name" placeholder="Ksh">
+                                    <small class="form-text text-muted">We'll never
+                                        share
+                                        your email with anyone else.</small>
                                 </div>
                             </div>
                         </div>
