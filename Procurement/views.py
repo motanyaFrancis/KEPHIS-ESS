@@ -10,7 +10,7 @@ import datetime
 # Create your views here.
 
 
-def interest_request(request):
+def PurchaseRequisition(request):
     session = requests.Session()
     session.auth = config.AUTHS
 
@@ -22,4 +22,4 @@ def interest_request(request):
     # creating date object
     todays_date = datetime.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": res}
-    return render(request, 'interest.html', ctx)
+    return render(request, 'purchaseReq.html', ctx)

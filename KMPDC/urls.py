@@ -21,7 +21,7 @@ urlpatterns = [
     path('', include('dashboard.urls')),
     path('', include('HR.urls')),
     path('', include('Finance.urls')),
-    path('', include('interest.urls')),
+    path('', include('Procurement.urls')),
     path('', include('applications.urls')),
     path('', include('accounts.urls')),
 ]
