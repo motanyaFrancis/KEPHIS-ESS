@@ -10,7 +10,7 @@ import datetime
 # Create your views here.
 
 
-def Leave_Requests(request):
+def LeaveApproval(request):
     session = requests.Session()
     session.auth = config.AUTHS
 
@@ -22,10 +22,10 @@ def Leave_Requests(request):
     # creating date object
     todays_date = datetime.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": res}
-    return render(request, 'leaveRequest.html', ctx)
+    return render(request, 'leaveApproval.html', ctx)
 
 
-def submittedResTenders(request):
+def TrainingApproval(request):
     session = requests.Session()
     session.auth = config.AUTHS
 
@@ -37,7 +37,7 @@ def submittedResTenders(request):
     # creating date object
     todays_date = datetime.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": res}
-    return render(request, 'SubResTender.html', ctx)
+    return render(request, 'trainingApproval.html', ctx)
 
 
 def submittedRFQ(request):
