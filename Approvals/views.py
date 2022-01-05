@@ -10,7 +10,7 @@ import datetime
 # Create your views here.
 
 
-def submittedOpenTenders(request):
+def Leave_Requests(request):
     session = requests.Session()
     session.auth = config.AUTHS
 
@@ -22,7 +22,7 @@ def submittedOpenTenders(request):
     # creating date object
     todays_date = datetime.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": res}
-    return render(request, 'Open/SubOpenTender.html', ctx)
+    return render(request, 'leaveRequest.html', ctx)
 
 
 def submittedResTenders(request):
