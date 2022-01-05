@@ -20,7 +20,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('dashboard.urls')),
     path('', include('HR.urls')),
-    path('', include('quotation.urls')),
+    path('', include('Finance.urls')),
     path('', include('interest.urls')),
     path('', include('applications.urls')),
     path('', include('accounts.urls')),
