@@ -78,7 +78,7 @@ INSTALLED_APPS = [
     'HR',
     'Finance',
     'Procurement',
-    'applications',
+    'Approvals',
     'accounts',
 ]
 
