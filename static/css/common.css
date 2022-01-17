@@ -235,7 +235,7 @@ div.dataTables_filter input {
 }
 
 .f-card .card-title i {
-    color: #ff5e6c;
+    color: white;
     font-size: 3rem;
 }
 
@@ -245,6 +245,27 @@ div.dataTables_filter input {
 }
 
 .f-card .card-title p {
-    color: #000;
-    font-family: var(--normal-font);
+    color: rgb(255, 255, 255);
+    font-family: var(--primary-font);
+}
+
+.f-card hr {
+    color: white;
+    height: .2rem;
+    opacity: 1;
+}
+
+.imps {
+    border-left: 4px solid #FFBF00;
+    padding: .5rem;
+}
+
+.imps h4 {
+    color: black;
+    padding-left: 2rem;
+}
+
+.imps p {
+    color: white;
+    font-family: var(--primary-font);
 }
