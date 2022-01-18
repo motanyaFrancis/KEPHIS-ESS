@@ -17,6 +17,12 @@
     --normal-font: 'Titillium Web', sans-serif;
 }
 
+body {
+    background: #181824;
+    scroll-behavior: smooth;
+    height: auto;
+}
+
 /* Alerts */
 .alert-warn {
     background: var(--red-color);
