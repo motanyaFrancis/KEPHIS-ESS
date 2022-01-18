@@ -209,22 +209,25 @@
                 </li>
             </ul>
         </nav>
-        <div class="main-panel">
+        <div id="loader" class="p-3">
+            <p>Loading...</p>
+        </div>
+        <div class="main-panel" style="display:none;" id="loads" class="animate-bottom">
             <!-- Weka content -->
             {% block main %}
             {% endblock %}
-            <footer class="footer">
-                <div class="footer-inner-wraper">
-                    <div class="d-sm-flex justify-content-center justify-content-sm-between">
-                        <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright ©
-                            Kenya Medical Practitioners and Dentists Council
-                            2021</span>
-                        <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center"> Made By <a href="#"
-                                target="_blank" style="color: black">Kobby Technologies Ltd</a></span>
-                    </div>
-                </div>
-            </footer>
         </div>
     </div>
+    <footer class="footer">
+        <div class="footer-inner-wraper">
+            <div class="d-sm-flex justify-content-center justify-content-sm-between">
+                <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright ©
+                    Kenya Medical Practitioners and Dentists Council
+                    2021</span>
+                <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center"> Made By <a href="#"
+                        target="_blank" style="color: black">Kobby Technologies Ltd</a></span>
+            </div>
+        </div>
+    </footer>
 </div>
 {% endblock %}
