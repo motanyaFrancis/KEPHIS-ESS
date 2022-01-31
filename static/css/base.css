@@ -128,8 +128,5 @@ button:hover {
 .content-wrapper {
     min-height: 100vh;
     background: url(../img/bg/1.jpg);
-    background-size: cover;
-    background-repeat: no-repeat;
-    padding-bottom: 2rem;
     background-attachment: fixed;
 }
