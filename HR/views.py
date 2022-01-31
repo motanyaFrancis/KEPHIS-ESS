@@ -11,45 +11,21 @@ import datetime
 
 
 def Leave_Request(request):
-    session = requests.Session()
-    session.auth = config.AUTHS
 
-    Access_Point = config.O_DATA.format("/UpcomingEvents")
-    response = session.get(Access_Point).json()
-
-    res = response['value']
-    # Get Timezone
-    # creating date object
     todays_date = datetime.datetime.now().strftime("%b. %d, %Y %A")
-    ctx = {"today": todays_date, "res": res}
+    ctx = {"today": todays_date}
     return render(request, 'leave.html', ctx)
 
 
 def Training_Request(request):
-    session = requests.Session()
-    session.auth = config.AUTHS
 
-    Access_Point = config.O_DATA.format("/UpcomingEvents")
-    response = session.get(Access_Point).json()
-
-    res = response['value']
-    # Get Timezone
-    # creating date object
     todays_date = datetime.datetime.now().strftime("%b. %d, %Y %A")
-    ctx = {"today": todays_date, "res": res}
+    ctx = {"today": todays_date}
     return render(request, 'training.html', ctx)
 
 
 def Loan_Request(request):
-    session = requests.Session()
-    session.auth = config.AUTHS
 
-    Access_Point = config.O_DATA.format("/UpcomingEvents")
-    response = session.get(Access_Point).json()
-
-    res = response['value']
-    # Get Timezone
-    # creating date object
     todays_date = datetime.datetime.now().strftime("%b. %d, %Y %A")
-    ctx = {"today": todays_date, "res": res}
+    ctx = {"today": todays_date}
     return render(request, 'loan.html', ctx)

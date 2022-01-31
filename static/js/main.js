@@ -6,10 +6,7 @@ var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
 })
 
 $(document).ready(function () {
-    var table = $('#example').DataTable({
-        responsive: true
-    });
-    // new $.fn.dataTable.FixedHeader(table);
+    $('#example').DataTable();
 });
 
 const nxtBtn = document.querySelector('#submitBtn');
@@ -148,6 +145,7 @@ function displayForms() {
         form5.style.display = 'block';
 
     }
+
 }
 
 // for slider
@@ -232,15 +230,4 @@ function fixStepIndicator(n) {
     }
     //... and adds the "active" class on the current step:
     x[n].className += " active";
-}
-// loader
-var myVar;
-
-function myFunction() {
-    myVar = setTimeout(showPage, 3000);
-}
-
-function showPage() {
-    document.getElementById("loader").style.display = "none";
-    document.getElementById("loads").style.display = "block";
 }

@@ -83,23 +83,6 @@
     box-shadow: var(--shadow);
 }
 
-.table {
-    background: whitesmoke;
-    border: 1px solid white;
-    width: 100%;
-    border-collapse: collapse;
-}
-
-thead,
-tr {
-    width: 100%;
-    font-family: var(--normal-font);
-}
-
-#tops {
-    background: var(--green-color)
-}
-
 .page-item.active .page-link {
     background-color: var(--green-color) !important;
     border: 1px solid var(--green-color);
@@ -114,18 +97,32 @@ tr {
     color: white;
 }
 
-.tables tr {
-    color: black;
-    padding: 15px;
-}
-
-#rap {
+/* #rap {
     word-wrap: break-word;
     word-break: break-all;
+} */
+.table {
+    border-collapse: collapse;
 }
 
-td {
-    font-family: var(--third-font);
+.table thead {
+    height: 3rem;
+}
+
+.table thead tr th {
+    color: white;
+    font-family: var(--normal-font);
+    text-align: inherit;
+    font-size: .9rem;
+    font-weight: bold;
+    background: var(--green-color);
+    text-align: -webkit-match-parent;
+}
+
+.table tbody tr td {
+    font-size: .8rem;
+    color: #222;
+    text-align: inherit;
 }
 
 .brs {
@@ -134,8 +131,8 @@ td {
 
 div.dataTables_filter input {
     border-color: var(--green-color);
-    display: none;
 }
+
 
 @media screen and (max-width:375px) {
     div.dataTables_filter input {
@@ -186,6 +183,7 @@ div.dataTables_filter input {
     color: #000;
 }
 
+/* longer td in tables */
 @media screen and (max-width:768px) {
     #long {
         min-width: 310px;
