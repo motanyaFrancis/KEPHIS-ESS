@@ -27,6 +27,10 @@ def ImprestSurrender(request):
     return render(request, 'imprestSurr.html', ctx)
 
 
+def SurrenderDetails(request, pk):
+    return redirect('imprestSurr')
+
+
 def StaffClaim(request):
 
     todays_date = datetime.datetime.now().strftime("%b. %d, %Y %A")
