@@ -353,3 +353,27 @@ div.dataTables_filter input {
         width: 15px;
     }
 }
+
+.transport {
+    background: var(--white-color);
+    padding: 1rem;
+    border-radius: 6px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+}
+
+#transport,
+#Roads,
+#boda {
+    display: none;
+}
+
+#acco,
+#airs,
+#fuels {
+    display: none;
+}
+
+#diem,
+#taxi {
+    display: none;
+}

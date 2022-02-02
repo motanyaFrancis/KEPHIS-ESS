@@ -2,6 +2,8 @@
 {% load bootstrap5 %}
 {% load static %}
 {% block main %}
+<script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+    crossorigin="anonymous"></script>
 <section class="dash2">
     <div class="content-wrapper" style="padding-bottom: 5rem;">
         <div class="d-xl-flex justify-content-between align-items-start">
@@ -193,50 +195,388 @@
     <!-- Modal -->
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Training Request
+                    <h5 class="modal-title" id="staticBackdropLabel">New Imprest Requisition
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form>
+                    <form id="myForm">
                         <!-- One "tab" for each step in the form: -->
                         <div class="mb-2"> <span class="w-name">
-                                Mandatory Requirements:
+                                General Information:
                             </span>
                             <div class="row">
-                                <div>
-                                    <label for="recipient-name" class="col-form-label">Select Department:</label>
-                                    <select class="form-select" aria-label="Default select example">
-                                        <option selected>Open this select menu</option>
-                                        <option value="1">Microsoft</option>
-                                        <option value="2">Finance</option>
-                                        <option value="3">HR</option>
-                                    </select>
+                                <div class="col-md-4">
+                                    <div>
+                                        <label for="recipient-name" class="col-form-label">Department
+                                            Code:</label>
+                                        <select class="form-select" aria-label="Default select example">
+                                            <option selected>Select Department
+                                                Code</option>
+                                            <option value="1">Microsoft</option>
+                                            <option value="2">Finance</option>
+                                            <option value="3">HR</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div>
+                                        <label for="recipient-name" class="col-form-label">Travel Type:</label>
+                                        <select class="form-select" aria-label="Default select example">
+                                            <option selected>Select Travel Type</option>
+                                            <option value="1">Local</option>
+                                            <option value="2">Foreign</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div>
+                                        <label for="recipient-name" class="col-form-label">Destination:</label>
+                                        <select class="form-select" aria-label="Default select example">
+                                            <option selected>Select Destination</option>
+                                            <option value="1">Kisii</option>
+                                            <option value="2">Nairobi</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <label for="" class="col-form-label">Date From:</label>
+                            <div class="row my-2">
+                                <div class="col-md-4">
+                                    <label for="" class="col-form-label">Travel Date:</label>
                                     <input type="date" id="from" name="from">
                                 </div>
-                                <div class="col-md-6">
-                                    <label for="" class="col-form-label">Date To:</label>
+                                <div class="col-md-4">
+                                    <label for="" class="col-form-label">Return Date:</label>
                                     <input type="date" id="to" name="to">
                                 </div>
+                                <div class="col-md-4">
+                                    <label for="" class="col-form-label">Select Allowance:</label>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" id="trans"
+                                                    value="option1">
+                                                <label class="form-check-label">Transport
+                                                    Allowance</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" id="accom"
+                                                    value="option1">
+                                                <label class="form-check-label">Accomodation
+                                                    Allowance</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" id="diems"
+                                                    value="option1">
+                                                <label class="form-check-label">Per Diem</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                            <div class="row" id="transport">
+                                <div class="transport">
+                                    <span class="w-name">
+                                        Transport Allowance:
+                                    </span>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div>
+                                                <label for="recipient-name" class="col-form-label">Imprest
+                                                    Type</label>
+                                                <input type="number" class="form-control" value="Transport Allowance"
+                                                    placeholder="Transport Allowance" disabled readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+
+                                            <div class="row">
+                                                <div class="col-md-2">
+
+                                                </div>
+                                                <label for="" class="col-form-label">Select Mode of
+                                                    Transport:</label>
+                                                <div class="col-md-2">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="checkbox" id="Road"
+                                                            value="option1">
+                                                        <label class="form-check-label">Road</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="checkbox" id="Air"
+                                                            value="option1">
+                                                        <label class="form-check-label">Air</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row my-2">
+                                        <div class="col-md-12">
+                                            <div class="airs" id="airs">
+                                                <label for="recipient-name" class="col-form-label">Enter
+                                                    Amount</label>
+                                                <input type="text" class="form-control" placeholder="Kshs">
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6" id="Roads">
+                                                    <label for="" class="col-form-label">Select Means of
+                                                        Transport:</label>
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="checkbox"
+                                                                    id="Taxi" value="option1">
+                                                                <label class="form-check-label">Taxi</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="checkbox"
+                                                                    id="Boda" value="option1">
+                                                                <label class="form-check-label">Boda Boda</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="checkbox"
+                                                                    id="Fuel" value="option1">
+                                                                <label class="form-check-label">Fuel</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="taxi" id="taxi">
+                                                        <label for="recipient-name" class="col-form-label">Enter
+                                                            Amount</label>
+                                                        <input type="text" class="form-control" placeholder="Kshs">
+                                                    </div>
+                                                    <div class="boda" id="boda">
+                                                        <label for="recipient-name" class="col-form-label">Enter
+                                                            Amount</label>
+                                                        <input type="text" class="form-control" placeholder="Kshs">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="sasa" id="fuels">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <label for="recipient-name" class="col-form-label">Enter
+                                                            Distance to
+                                                            Destination (KM)</label>
+                                                        <input type="text" id="qty1" class="form-control"
+                                                            placeholder="0.00">
+                                                    </div>
+                                                    <script>
+                                                        $(document).ready(function () {
+                                                            $("#qty1").keyup(function () {
+                                                                if (!isNaN(this.value) && this.value
+                                                                    .length != 0) {
+                                                                    total = parseFloat(this.value) * 45;
+                                                                    document.getElementById('total')
+                                                                        .value = total;
+                                                                }
+                                                            })
+                                                        })
+                                                    </script>
+                                                    <div class="col-md-4">
+                                                        <label for="recipient-name" class="col-form-label">Cost Per
+                                                            (KM)</label>
+                                                        <input type="number" class="form-control" placeholder="45.00"
+                                                            disabled readonly>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label for="recipient-name" class="col-form-label">Total
+                                                            Amount</label>
+                                                        <input type="number" name="total" id="total"
+                                                            class="form-control" placeholder="0.00" disabled readonly>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row my-3" id="acco">
+                                    <div class="transport">
+                                        <span class="w-name">
+                                            Accomodation Allowance:
+                                        </span>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div>
+                                                    <label for="recipient-name" class="col-form-label">Select Imprest
+                                                        Type:</label>
+                                                    <select class="form-select" aria-label="Default select example">
+                                                        <option selected>Open to Select Imprest Type</option>
+                                                        <option value="1">Accomodation Allowance</option>
+                                                        <option value="2">Other</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div>
+                                                    <label for="recipient-name" class="col-form-label">Enter
+                                                        Amount</label>
+                                                    <input type="text" class="form-control" placeholder="Kshs">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row my-3" id="diem">
+                                    <div class="transport">
+                                        <span class="w-name">
+                                            Per Diem Allowance:
+                                        </span>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div>
+                                                    <label for="recipient-name" class="col-form-label">Select Imprest
+                                                        Type:</label>
+                                                    <select class="form-select" aria-label="Default select example">
+                                                        <option selected>Open to Select Imprest Type</option>
+                                                        <option value="1">Per Diem Allowance</option>
+                                                        <option value="2">Other</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div>
+                                                    <label for="recipient-name" class="col-form-label">Enter
+                                                        Amount</label>
+                                                    <input type="text" class="form-control" placeholder="Kshs">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row my-3">
+                                    <div>
+                                        <span class="w-name">
+                                            Attachments:
+                                        </span>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="mb-3">
+                                                    <label for="formFile" class="form-label">Default file input
+                                                        example</label>
+                                                    <input class="form-control" type="file" id="formFile">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
-                    <button type="button" class="btn btn-primary">Submit</button>
+                    <button type="button" id="sasa" class="btn btn-primary">Submit</button>
                 </div>
             </div>
         </div>
     </div>
+    <script>
+        var form = $('#myForm'),
+            checkbox1 = $('#trans'),
+            checkbox2 = $('#accom'),
+            checkbox3 = $('#diems'),
+            checkbox4 = $('#Road'),
+            checkbox5 = $('#Air'),
+            checkbox6 = $('#Taxi'),
+            checkbox7 = $('#Boda'),
+            checkbox8 = $('#Fuel'),
+            transport = $('#transport');
+        accomodation = $('#acco');
+        diem = $('#diem');
+        Road = $('#Roads'),
+            Air = $('#airs'),
+            Taxi = $('#taxi'),
+            Boda = $('#boda'),
+            Fuel = $('#fuels'),
+            checkbox1.on('click', function () {
+                if ($(this).is(':checked')) {
+                    transport.show();
+                    transport.find('input').attr('required', true);
+                } else {
+                    transport.hide();
+                    transport.find('input').attr('required', false);
+                }
+            })
+        checkbox2.on('click', function () {
+            if ($(this).is(':checked')) {
+                accomodation.show();
+                accomodation.find('input').attr('required', true);
+            } else {
+                accomodation.hide();
+                accomodation.find('input').attr('required', false);
+            }
+        })
+        checkbox3.on('click', function () {
+            if ($(this).is(':checked')) {
+                diem.show();
+                diem.find('input').attr('required', true);
+            } else {
+                diem.hide();
+                diem.find('input').attr('required', false);
+            }
+        })
+        checkbox4.on('click', function () {
+            if ($(this).is(':checked')) {
+                Road.show();
+                Road.find('input').attr('required', true);
+            } else {
+                Road.hide();
+                Road.find('input').attr('required', false);
+            }
+        })
+        checkbox5.on('click', function () {
+            if ($(this).is(':checked')) {
+                Air.show();
+                Air.find('input').attr('required', true);
+            } else {
+                Air.hide();
+                Air.find('input').attr('required', false);
+            }
+        })
+        checkbox6.on('click', function () {
+            if ($(this).is(':checked')) {
+                Taxi.show();
+                Taxi.find('input').attr('required', true);
+            } else {
+                Taxi.hide();
+                Taxi.find('input').attr('required', false);
+            }
+        })
+        checkbox7.on('click', function () {
+            if ($(this).is(':checked')) {
+                Boda.show();
+                Boda.find('input').attr('required', true);
+            } else {
+                Boda.hide();
+                Boda.find('input').attr('required', false);
+            }
+        })
+        checkbox8.on('click', function () {
+            if ($(this).is(':checked')) {
+                Fuel.show();
+                Fuel.find('input').attr('required', true);
+            } else {
+                Fuel.hide();
+                Fuel.find('input').attr('required', false);
+            }
+        })
+    </script>
 </section>
 
 {% endblock %}
