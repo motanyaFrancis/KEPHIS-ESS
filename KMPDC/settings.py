@@ -166,3 +166,12 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 django_heroku.settings(locals())
+
+AUTHS = Session()
+
+WEB_SERVICE_PWD = 'W3C0d3@llD@y'
+
+O_DATA = "http://20.121.189.145:7048/BC140/ODataV4/Company('KMPDC'){}"
+AUTHS.auth = HttpNtlmAuth('domain\\NAVADMIN', WEB_SERVICE_PWD)
+
+AUTHS = HttpNtlmAuth('domain\\NAVADMIN', WEB_SERVICE_PWD)

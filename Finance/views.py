@@ -12,9 +12,23 @@ import datetime
 
 
 def ImprestRequisition(request):
+    session = requests.Session()
+    session.auth = config.AUTHS
+
+    Access_Point = config.O_DATA.format("/Imprests")
+    try:
+        response = session.get(Access_Point, timeout=10).json()
+        open = []
+        for tender in response['value']:
+            if tender['Status'] == 'Open':
+                output_json = json.dumps(tender)
+                open.append(json.loads(output_json))
+
+    except requests.exceptions.ConnectionError as e:
+        print(e)
 
     todays_date = datetime.datetime.now().strftime("%b. %d, %Y %A")
-    ctx = {"today": todays_date}
+    ctx = {"today": todays_date, "res": open}
     return render(request, 'imprestReq.html', ctx)
 
 
