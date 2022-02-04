@@ -68,13 +68,13 @@ def ImprestSurrender(request):
                 New.append(json.loads(output_json))
         counts = len(open)
         counter = len(Approved)
-        counts = len(New)
+        counted = len(New)
     except requests.exceptions.ConnectionError as e:
         print(e)
 
     todays_date = datetime.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": open, "count": counts,
-           "response": Approved, "counter": counter, 'new': New, "counts": counts}
+           "response": Approved, "counter": counter, 'new': New, "counted": counted}
     return render(request, 'imprestSurr.html', ctx)
 
 
@@ -84,6 +84,31 @@ def SurrenderDetails(request, pk):
 
 def StaffClaim(request):
 
+    session = requests.Session()
+    session.auth = config.AUTHS
+
+    Access_Point = config.O_DATA.format("/QyStaffClaims")
+    try:
+        response = session.get(Access_Point, timeout=10).json()
+        open = []
+        Approved = []
+        Rejected = []
+        for tender in response['value']:
+            if tender['Status'] == 'Open':
+                output_json = json.dumps(tender)
+                open.append(json.loads(output_json))
+            if tender['Status'] == 'Released':
+                output_json = json.dumps(tender)
+                Approved.append(json.loads(output_json))
+            if tender['Status'] == 'Rejected':
+                output_json = json.dumps(tender)
+                Rejected.append(json.loads(output_json))
+        counts = len(open)
+        counter = len(Approved)
+    except requests.exceptions.ConnectionError as e:
+        print(e)
+
     todays_date = datetime.datetime.now().strftime("%b. %d, %Y %A")
-    ctx = {"today": todays_date}
+    ctx = {"today": todays_date, "res": open, "count": counts,
+           "response": Approved, "counter": counter}
     return render(request, 'staffClaim.html', ctx)
