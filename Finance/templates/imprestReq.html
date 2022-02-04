@@ -27,23 +27,23 @@
                         <ul class="nav nav-tabs" id="myTab">
                             <li class="nav-item">
                                 <a href="#home" class="nav-link active" data-bs-toggle="tab">New Imprest Requisitions
-                                    (5)</a>
+                                    ({{count}})</a>
                             </li>
                             <li class="nav-item">
                                 <a href="#profile" class="nav-link" data-bs-toggle="tab">Approved Imprest Requisitions
-                                    (4)</a>
+                                    ({{counter}})</a>
                             </li>
                             <li class="nav-item">
-                                <a href="#messages" class="nav-link" data-bs-toggle="tab">Rejected Imprest Requisitions
-                                    (3)</a>
+                                <a href="#profile" class="nav-link" data-bs-toggle="tab">Rejected Imprest Requisitions
+                                    (0)</a>
                             </li>
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane fade show active" id="home">
-                                <h4 class="mt-2 text-dark">New Imprest Requisitions</h4>
+                                <h4 class="mt-2 text-dark">Open Imprest Requisitions</h4>
                                 <div class="card-body">
                                     <table id="example"
-                                        class="table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
                                         style="width:100%">
                                         <thead>
                                             <tr id="tops">
@@ -54,7 +54,6 @@
                                                 <th>Travel Type</th>
                                                 <th>Created By</th>
                                                 <th>Status</th>
-                                                <th>Cashier</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -68,7 +67,6 @@
                                                 <td>{{res.Travel_Type}}</td>
                                                 <td>{{res.User_Id}}</td>
                                                 <td>{{res.Status}}</td>
-                                                <td> {{res.Cashier}} </td>
                                                 <td>
                                                     <a type="button" href="" class="btn btn-success btn-icon-text"
                                                         style="background: #25CC88;">View
@@ -85,7 +83,7 @@
                                 <h4 class="mt-2">Approved Imprest Requisitions</h4>
                                 <div class="card-body">
                                     <table id="example"
-                                        class="table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
                                         style="width:100%">
                                         <thead>
                                             <tr id="tops">
@@ -93,76 +91,22 @@
                                                 <th>Date</th>
                                                 <th>Staff No</th>
                                                 <th>Imprest Payee</th>
-                                                <th>User Remarks</th>
+                                                <th>Travel Type</th>
                                                 <th>Created By</th>
                                                 <th>Status</th>
-                                                <th>Currency</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {% for res in res %}
                                             <tr>
-                                                <td>{{res.No}}</td>
-                                                <td id="rap">{{res.Title}}</td>
-                                                <td>{{res.TenderOpeningDate}}</td>
-                                                <td>{{res.TenderClosingDate}}</td>
-                                                <td>{{res.TenderOpeningDate}}</td>
-                                                <td>{{res.TenderClosingDate}}</td>
-                                                <td>{{res.Type}}</td>
-                                                <td>
-                                                    <a type="button" href="" class="btn btn-success btn-icon-text"
-                                                        style="background: #25CC88;">View
-                                                        <i class="las la-external-link-alt" style="font-size: 1rem"></i>
-                                                    </a>
-                                                </td>
-                                                <td>
-                                                    <a type="button" href="" class="btn btn-success btn-icon-text"
-                                                        style="background: #25CC88;">View
-                                                        <i class="las la-external-link-alt" style="font-size: 1rem"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="tab-pane fade" id="messages">
-                                <h4 class="mt-2">Rejected Imprest Requisitions</h4>
-                                <div class="card-body">
-                                    <table id="example"
-                                        class="table table-striped table-bordered dt-responsive table-responsive-lg"
-                                        style="width:100%">
-                                        <thead>
-                                            <tr id="tops">
-                                                <th id="long">Imprest No</th>
-                                                <th>Date</th>
-                                                <th>Staff No</th>
-                                                <th>Imprest Payee</th>
-                                                <th>User Remarks</th>
-                                                <th>Created By</th>
-                                                <th>Status</th>
-                                                <th>Currency</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for res in res %}
-                                            <tr>
-                                                <td>{{res.No}}</td>
-                                                <td id="rap">{{res.Title}}</td>
-                                                <td>{{res.TenderOpeningDate}}</td>
-                                                <td>{{res.TenderClosingDate}}</td>
-                                                <td>{{res.TenderOpeningDate}}</td>
-                                                <td>{{res.TenderClosingDate}}</td>
-                                                <td>{{res.Type}}</td>
-                                                <td>
-                                                    <a type="button" href="" class="btn btn-success btn-icon-text"
-                                                        style="background: #25CC88;">View
-                                                        <i class="las la-external-link-alt" style="font-size: 1rem"></i>
-                                                    </a>
-                                                </td>
+                                                <td>{{res.No_}}</td>
+                                                <td id="rap">{{res.Date}}</td>
+                                                <td>{{res.Staff_No_}}</td>
+                                                <td>{{res.Payee}}</td>
+                                                <td>{{res.Travel_Type}}</td>
+                                                <td>{{res.User_Id}}</td>
+                                                <td>{{res.Status}}</td>
                                                 <td>
                                                     <a type="button" href="" class="btn btn-success btn-icon-text"
                                                         style="background: #25CC88;">View
@@ -371,7 +315,8 @@
                                                             $("#qty1").keyup(function () {
                                                                 if (!isNaN(this.value) && this.value
                                                                     .length != 0) {
-                                                                    total = parseFloat(this.value) * 45;
+                                                                    total = parseFloat(this.value) *
+                                                                        45;
                                                                     document.getElementById('total')
                                                                         .value = total;
                                                                 }
@@ -395,6 +340,7 @@
                                         </div>
                                     </div>
                                 </div>
+
                                 <div class="row my-3" id="acco">
                                     <div class="transport">
                                         <span class="w-name">

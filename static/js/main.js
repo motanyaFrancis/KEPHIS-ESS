@@ -6,7 +6,7 @@ var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
 })
 
 $(document).ready(function () {
-    $('#example').DataTable();
+    $('table.display').DataTable();
 });
 
 const nxtBtn = document.querySelector('#submitBtn');

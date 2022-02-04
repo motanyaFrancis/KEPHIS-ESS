@@ -247,32 +247,27 @@
                                     <th>Date</th>
                                     <th>Staff No</th>
                                     <th>Imprest Payee</th>
-                                    <th>User Remarks</th>
+                                    <th>Travel Type</th>
                                     <th>Created By</th>
                                     <th>Status</th>
-                                    <th>Currency</th>
+                                    <th>Cashier</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for res in res %}
+                                {% for res in response %}
                                 <tr>
-                                    <td>{{res.No}}</td>
-                                    <td id="rap">{{res.Title}}</td>
-                                    <td>{{res.TenderOpeningDate}}</td>
-                                    <td>{{res.TenderClosingDate}}</td>
-                                    <td>{{res.TenderOpeningDate}}</td>
-                                    <td>{{res.TenderClosingDate}}</td>
-                                    <td>{{res.Type}}</td>
+                                    <td>{{res.No_}}</td>
+                                    <td id="rap">{{res.Date}}</td>
+                                    <td>{{res.Staff_No_}}</td>
+                                    <td>{{res.Payee}}</td>
+                                    <td>{{res.Travel_Type}}</td>
+                                    <td>{{res.User_Id}}</td>
+                                    <td>{{res.Status}}</td>
+                                    <td> {{res.Cashier}} </td>
                                     <td>
-                                        <a type="button" href="{% url 'Odetails' res.No %}"
-                                            class="btn btn-success btn-icon-text" style="background: #25CC88;">View
-                                            <i class="las la-external-link-alt" style="font-size: 1rem"></i>
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <a type="button" href="{% url 'Odetails' res.No %}"
-                                            class="btn btn-success btn-icon-text" style="background: #25CC88;">View
+                                        <a type="button" href="" class="btn btn-success btn-icon-text"
+                                            style="background: #25CC88;">View
                                             <i class="las la-external-link-alt" style="font-size: 1rem"></i>
                                         </a>
                                     </td>
