@@ -26,11 +26,24 @@ def login_request(request):
         password = request.POST.get('password')
         user = Session()
         user.auth = HttpNtlmAuth(f'domain\\{username}', password)
+        Access_Point = config.O_DATA.format("/QyEmployees")
         try:
             CLIENT = Client(config.BASE_URL, transport=Transport(session=user))
-            request.session['username'] = username
-            logged_in = request.session['username']
-            print(logged_in)
+            response = user.get(Access_Point, timeout=10).json()
+            Employees = []
+            for staff in response['value']:
+                if staff['User_ID'] == username:
+                    output_json = json.dumps(staff)
+                    Employees.append(json.loads(output_json))
+                    fullname = Employees[0]['First_Name'] + \
+                        " " + Employees[0]['Last_Name']
+                    request.session['fullname'] = fullname
+                    request.session['User_ID'] = Employees[0]['User_ID']
+                    user_id = request.session['User_ID']
+                else:
+                    messages.error(request, "Invalid username!!")
+                    return redirect('auth')
+            # print(logged_in)
             return redirect('dashboard')
         except:
             messages.error(request, "Invalid username or password!!")

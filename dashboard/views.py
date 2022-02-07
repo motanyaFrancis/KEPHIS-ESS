@@ -5,12 +5,11 @@ from requests_ntlm import HttpNtlmAuth
 import json
 from django.conf import settings as config
 import datetime
-
+from django.contrib.sessions.models import Session
 # Create your views here.
 
 
 def dashboard(request):
-
     session = requests.Session()
     session.auth = config.AUTHS
 
