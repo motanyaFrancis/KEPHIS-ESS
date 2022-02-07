@@ -172,6 +172,8 @@ AUTHS = Session()
 WEB_SERVICE_PWD = 'W3C0d3@llD@y'
 
 O_DATA = "http://20.121.189.145:7048/BC140/ODataV4/Company('KMPDC'){}"
+BASE_URL = 'http://20.121.189.145:7047/BC140/WS/KMPDC/Codeunit/WebPortal'
 AUTHS.auth = HttpNtlmAuth('domain\\NAVADMIN', WEB_SERVICE_PWD)
 
+CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
 AUTHS = HttpNtlmAuth('domain\\NAVADMIN', WEB_SERVICE_PWD)

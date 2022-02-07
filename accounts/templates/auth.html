@@ -93,10 +93,6 @@
                         <div class="col-md-12">
                             <div class="form-text">
                                 <h3>Sign In</h3>
-                                <p>
-                                    Don't have an account? <a href="" id="reg"
-                                        style="text-decoration: none;">Register</a>
-                                </p>
                             </div>
                         </div>
                     </div>
@@ -104,110 +100,53 @@
                         <div class="col-md-12">
                             <div class="l-form">
                                 <div class="login-form">
-                                    <form action="" method="post">
+                                    <form action="{% url 'auth' %}" method="post">
+                                        {% csrf_token %}
                                         <div class="form-group">
                                             <div class="input-group">
-                                                <span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
-                                                <input type="email" class="form-control" name="email"
-                                                    placeholder="Email Address" required="required">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="input-group">
-                                                <span class="input-group-addon"><i class="fa fa-lock"></i></span>
-                                                <input type="text" class="form-control" name="password"
-                                                    placeholder="Password" required="required">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <a href="{% url 'dashboard' %}" type="button" id="sub"
-                                                class="btn btn-primary btn-block btn-lg"
-                                                style="text-decoration:none;color:white">Login</a>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6" id="n-right2">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-text">
-                                <h3>REGISTER</h3>
-                                <p id="login">
-                                    Already have an account? <a href="" id="log"
-                                        style="text-decoration: none;">Login</a>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="reg-line mx-auto text-center">
-                                <hr id="re-div">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="l-form">
-                                <div class="login-form">
-                                    <form method="post">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <div class="input-group">
-                                                        <span class="input-group-addon"><i
-                                                                class="fa fa-user"></i></span>
-                                                        <input type="text" class="form-control" placeholder="First name"
-                                                            required="required">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <div class="input-group">
-                                                        <span class="input-group-addon"><i
-                                                                class="fa fa-user"></i></span>
-                                                        <input type="text" class="form-control" placeholder="Last name"
-                                                            required="required">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="input-group">
-                                                <span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
-                                                <input type="email" class="form-control" name="email"
-                                                    placeholder="Email Address" required="required">
+                                                <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                                                <input type="text" class="form-control" name="username"
+                                                    placeholder="Enter Username" required="required">
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <div class="input-group">
                                                 <span class="input-group-addon"><i class="fa fa-lock"></i></span>
-                                                <input type="text" class="form-control" name="password"
-                                                    placeholder="Password" required="required">
+                                                <input type="password" class="form-control" name="password"
+                                                    placeholder="Enter Password" required="required">
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <div class="input-group">
-                                                <span class="input-group-addon">
-                                                    <i class="fa fa-lock"></i>
-                                                    <i class="fa fa-check"></i>
-                                                </span>
-                                                <input type="text" class="form-control" name="confirm_password"
-                                                    placeholder="Confirm Password" required="required">
-                                            </div>
+                                            <button type="submit" id="sub" class="btn btn-primary btn-block btn-lg"
+                                                style="text-decoration:none;color:white">Login</button>
                                         </div>
-                                        <div class="form-group">
-                                            <button type="submit" class="btn btn-primary btn-block btn-lg">Sign
-                                                Up</button>
-                                        </div>
-                                        <p class="small">By clicking the Sign Up button, you agree to our <br><a
-                                                href="#">Terms &amp; Conditions</a>, and <a href="#">Privacy Policy</a>.
-                                        </p>
                                     </form>
+                                    <!--alert -->
+                                    {% if messages %}
+                                    {% for message in messages %}
+                                    {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                                    <div class="alert alert-success d-flex align-items-center alert-dismissible alert-success"
+                                        role="alert">
+                                        <i class="las la-check-double" style="color: white;font-size: 2rem"></i>
+                                        <div class="a-icon mx-2">
+                                            {{message}}
+                                        </div>
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    {% elif message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                                    <div class="alert alert-danger d-flex align-items-center alert-dismissible alert-warn"
+                                        role="alert">
+                                        <i class="las la-exclamation-triangle" style="color: white;font-size: 2rem"></i>
+                                        <div class="a-icon mx-2">
+                                            {{message}}
+                                        </div>
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    {% endif %}
+                                    {% endfor %}
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -216,21 +155,6 @@
             </div>
 
     </section>
-    <script>
-        $(document).ready(function () {
-            $("#reg").click(function (e) {
-                e.preventDefault();
-                $("#n-right1").hide();
-                $("#n-right2").show();
-            })
-            $("#log").click(function (e) {
-                e.preventDefault();
-                $("#n-right2").hide();
-                $("#n-right1").show();
-            })
-        })
-    </script>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
         integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous">
     </script>
