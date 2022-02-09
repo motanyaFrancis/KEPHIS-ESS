@@ -23,15 +23,15 @@ def ImprestRequisition(request):
         open = []
         Approved = []
         Rejected = []
-        for tender in response['value']:
-            if tender['Status'] == 'Open' and tender['User_Id'] == request.session['User_ID']:
-                output_json = json.dumps(tender)
+        for imprest in response['value']:
+            if imprest['Status'] == 'Open' and imprest['User_Id'] == request.session['User_ID']:
+                output_json = json.dumps(imprest)
                 open.append(json.loads(output_json))
-            if tender['Status'] == 'Released':
-                output_json = json.dumps(tender)
+            if imprest['Status'] == 'Released':
+                output_json = json.dumps(imprest)
                 Approved.append(json.loads(output_json))
-            if tender['Status'] == 'Rejected':
-                output_json = json.dumps(tender)
+            if imprest['Status'] == 'Rejected':
+                output_json = json.dumps(imprest)
                 Rejected.append(json.loads(output_json))
         counts = len(open)
         counter = len(Approved)
@@ -89,13 +89,23 @@ def ImprestDetails(request, pk):
     try:
         response = session.get(Access_Point, timeout=10).json()
         openImp = []
-        for tender in response['value']:
-            if tender['Status'] == 'Open' and tender['User_Id'] == request.session['User_ID']:
-                output_json = json.dumps(tender)
+        for imprest in response['value']:
+            if imprest['Status'] == 'Open' and imprest['User_Id'] == request.session['User_ID']:
+                output_json = json.dumps(imprest)
                 openImp.append(json.loads(output_json))
                 for imprest in openImp:
                     if imprest['No_'] == pk:
                         res = imprest
+    except requests.exceptions.ConnectionError as e:
+        print(e)
+    Lines_Res = config.O_DATA.format("/QyImprestLines")
+    try:
+        response = session.get(Lines_Res, timeout=10).json()
+        openLines = []
+        for imprest in response['value']:
+            if imprest['AuxiliaryIndex1'] == pk:
+                output_json = json.dumps(imprest)
+                openLines.append(json.loads(output_json))
     except requests.exceptions.ConnectionError as e:
         print(e)
     lineNo = 2
@@ -135,7 +145,7 @@ def ImprestDetails(request, pk):
     except Exception as e:
         print(e)
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-    ctx = {"today": todays_date, "res": res}
+    ctx = {"today": todays_date, "res": res, "line": openLines}
     return render(request, 'imprestDetail.html', ctx)
 
 
@@ -152,16 +162,16 @@ def ImprestSurrender(request):
         open = []
         Approved = []
         New = []
-        for tender in response['value']:
-            if tender['Status'] == 'Open':
-                output_json = json.dumps(tender)
+        for imprest in response['value']:
+            if imprest['Status'] == 'Open':
+                output_json = json.dumps(imprest)
                 open.append(json.loads(output_json))
-            if tender['Status'] == 'Released':
-                output_json = json.dumps(tender)
+            if imprest['Status'] == 'Released':
+                output_json = json.dumps(imprest)
                 Approved.append(json.loads(output_json))
-        for tender in r['value']:
-            if tender['Status'] == 'Released':
-                output_json = json.dumps(tender)
+        for imprest in r['value']:
+            if imprest['Status'] == 'Released':
+                output_json = json.dumps(imprest)
                 New.append(json.loads(output_json))
         counts = len(open)
         counter = len(Approved)
@@ -190,15 +200,15 @@ def StaffClaim(request):
         open = []
         Approved = []
         Rejected = []
-        for tender in response['value']:
-            if tender['Status'] == 'Open':
-                output_json = json.dumps(tender)
+        for imprest in response['value']:
+            if imprest['Status'] == 'Open':
+                output_json = json.dumps(imprest)
                 open.append(json.loads(output_json))
-            if tender['Status'] == 'Released':
-                output_json = json.dumps(tender)
+            if imprest['Status'] == 'Released':
+                output_json = json.dumps(imprest)
                 Approved.append(json.loads(output_json))
-            if tender['Status'] == 'Rejected':
-                output_json = json.dumps(tender)
+            if imprest['Status'] == 'Rejected':
+                output_json = json.dumps(imprest)
                 Rejected.append(json.loads(output_json))
         counts = len(open)
         counter = len(Approved)
