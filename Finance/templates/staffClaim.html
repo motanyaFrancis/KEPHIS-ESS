@@ -29,11 +29,11 @@
                             </li>
                             <li class="nav-item">
                                 <a href="#c-approve" class="nav-link" data-bs-toggle="tab">Appproved Staff Claim
-                                    ({{counter}})</a>
+                                    ({{claim}})</a>
                             </li>
-                            <li class="nav-item">
+                            <li class="reject">
                                 <a href="#c-reject" class="nav-link" data-bs-toggle="tab">Rejected Staff Claim
-                                    (5)</a>
+                                    ({{rej}})</a>
                             </li>
                         </ul>
                         <div class="tab-content">
@@ -87,11 +87,11 @@
                                         <thead>
                                             <tr id="tops">
                                                 <th id="long">Claim No</th>
-                                                <th>Date Created</th>
-                                                <th>Apply on behalf</th>
                                                 <th>Claim Type</th>
-                                                <th>Due Date</th>
+                                                <th>Apply on behalf</th>
                                                 <th>Payee</th>
+                                                <th>Staff</th>
+                                                <th>staffNo</th>
                                                 <th>Status</th>
                                                 <th>Action</th>
                                             </tr>
@@ -100,11 +100,52 @@
                                             {% for res in response %}
                                             <tr>
                                                 <td>{{res.No_}}</td>
-                                                <td id="rap">{{res.Time_Inserted}}</td>
-                                                <td>{{res.Apply_on_behalf}}</td>
                                                 <td>{{res.Claim_Type}}</td>
-                                                <td>{{res.Due_Date}}</td>
+                                                <td>{{res.Apply_on_behalf}}</td>
                                                 <td>{{res.Payee}}</td>
+                                                <td>{{res.User_Id}}</td>
+                                                <td>{{res.Staff_No_}}</td>
+                                                <td>{{res.Status}}</td>
+                                                <td>
+                                                    <a role="button" href="#modal{{res.No_}}" data-bs-toggle="modal"
+                                                        class="btn btn-success btn-icon-text"
+                                                        style="background: #25CC88;">View
+                                                        <i class="las la-external-link-alt" style="font-size: 1rem"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="c-reject">
+                                <h4 class="mt-2 text-dark">Rejected Staff Claim</h4>
+                                <div class="card-body">
+                                    <table id="example"
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
+                                        <thead>
+                                            <tr id="tops">
+                                                <th id="long">Claim No</th>
+                                                <th>Claim Type</th>
+                                                <th>Apply on behalf</th>
+                                                <th>Payee</th>
+                                                <th>Staff</th>
+                                                <th>staffNo</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for res in reject %}
+                                            <tr>
+                                                <td>{{res.No_}}</td>
+                                                <td>{{res.Claim_Type}}</td>
+                                                <td>{{res.Apply_on_behalf}}</td>
+                                                <td>{{res.Payee}}</td>
+                                                <td>{{res.User_Id}}</td>
+                                                <td>{{res.Staff_No_}}</td>
                                                 <td>{{res.Status}}</td>
                                                 <td>
                                                     <a role="button" href="#modal{{res.No_}}" data-bs-toggle="modal"

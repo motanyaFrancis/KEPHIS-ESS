@@ -54,21 +54,19 @@ BASE_URL = 'http://20.121.189.145:7047/BC140/WS/KMPDC/Codeunit/WebPortal'
 AUTHS.auth = HttpNtlmAuth('domain\\NAVADMIN', WEB_SERVICE_PWD)
 CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
 
-imprestNo = ""
+claimNo = ""
+claimType = 2
 isOnBehalf = False
-accountNo = ""
-responsibilityCenter = ''
-travelType = 1
+accountNo = ''
 payee = 'Papa'
 purpose = 'Test'
 usersId = "NAVADMIN"
-personalNo = "EMP-00002"
-idPassport = '34356578'
-isImprest = True
-isDsa = False
+staffNo = ''
+currency = ""
+imprestSurrDocNo = ''
 myAction = 'insert'
 
 
-response = CLIENT.service.FnImprestHeader(
-    imprestNo, isOnBehalf, accountNo, responsibilityCenter, travelType, payee, purpose, usersId, personalNo, idPassport, isImprest, isDsa, myAction)
+response = CLIENT.service.FnStaffClaimHeader(
+    claimNo, claimType, isOnBehalf, accountNo, payee, purpose, usersId, staffNo, currency, imprestSurrDocNo, myAction)
 print(response)
