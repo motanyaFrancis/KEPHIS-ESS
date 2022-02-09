@@ -39,10 +39,11 @@ def login_request(request):
                         " " + Employees[0]['Last_Name']
                     request.session['fullname'] = fullname
                     request.session['User_ID'] = Employees[0]['User_ID']
+                    request.session['No_'] = Employees[0]['No_']
                     user_id = request.session['User_ID']
-                else:
-                    messages.error(request, "Invalid username!!")
-                    return redirect('auth')
+                    full = request.session['fullname']
+                    Emp_No = request.session['No_']
+                    print(Emp_No)
             # print(logged_in)
             return redirect('dashboard')
         except:

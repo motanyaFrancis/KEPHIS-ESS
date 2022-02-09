@@ -49,7 +49,7 @@
                                             <tr id="tops">
                                                 <th id="long">Imprest No</th>
                                                 <th>Date</th>
-                                                <th>Staff No</th>
+                                                <th>Imprest</th>
                                                 <th>Imprest Payee</th>
                                                 <th>Travel Type</th>
                                                 <th>Created By</th>
@@ -62,7 +62,7 @@
                                             <tr>
                                                 <td>{{res.No_}}</td>
                                                 <td id="rap">{{res.Date}}</td>
-                                                <td>{{res.Staff_No_}}</td>
+                                                <td>{{res.Imprest}}</td>
                                                 <td>{{res.Payee}}</td>
                                                 <td>{{res.Travel_Type}}</td>
                                                 <td>{{res.User_Id}}</td>
@@ -89,7 +89,7 @@
                                             <tr id="tops">
                                                 <th id="long">Imprest No</th>
                                                 <th>Date</th>
-                                                <th>Staff No</th>
+                                                <th>Imprest</th>
                                                 <th>Imprest Payee</th>
                                                 <th>Travel Type</th>
                                                 <th>Created By</th>
@@ -102,7 +102,7 @@
                                             <tr>
                                                 <td>{{res.No_}}</td>
                                                 <td id="rap">{{res.Date}}</td>
-                                                <td>{{res.Staff_No_}}</td>
+                                                <td>{{res.Imprest}}</td>
                                                 <td>{{res.Payee}}</td>
                                                 <td>{{res.Travel_Type}}</td>
                                                 <td>{{res.User_Id}}</td>
@@ -128,7 +128,7 @@
     <!-- Modal -->
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="staticBackdropLabel">New Imprest Requisition
@@ -136,9 +136,84 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="myForm">
-                        <!-- One "tab" for each step in the form: -->
-                        <div class="mb-2"> <span class="w-name">
+                    <form id="myForm" action="{% url 'create' %}" method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-2">
+                                    <label class="form-label">isOnBehalf</label>
+                                    <select class="form-select" aria-label="Default select example" name="isOnBehalf">
+                                        <option selected>Select isOnBehalf</option>
+                                        <option value="True">True</option>
+                                        <option value="False">False</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-2">
+                                    <label class="form-label">Travel Type</label>
+                                    <select class="form-select" name="travelType" aria-label="Default select example">
+                                        <option selected>Travel Type</option>
+                                        <option value="1">Local</option>
+                                        <option value="2">Foreign</option>
+                                    </select>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-2">
+                                    <label for="responsibility" class="col-form-label">responsibility</label>
+                                    <input type="text" class="form-control" placeholder="responsibility">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-2">
+                                    <label for="payee" class="col-form-label">Payee</label>
+                                    <input type="text" class="form-control" name="payee">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-2">
+                                    <label for="purpose" class="form-label">Purpose</label>
+                                    <textarea class="form-control" name="purpose" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-2">
+                                    <label class="form-label">isImprest</label>
+                                    <select class="form-select" aria-label="Default select example" name="isImprest">
+                                        <option selected>Select isImprest</option>
+                                        <option value="True">True</option>
+                                        <option value="False">False</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-2">
+                                    <label class="form-label">isDsa</label>
+                                    <select class="form-select" aria-label="Default select example" name="isDsa">
+                                        <option selected>isDsa</option>
+                                        <option value="True">True</option>
+                                        <option value="False">False</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-2">
+                                    <label for="idPassport" class="col-form-label">ID/Passport</label>
+                                    <input type="text" class="form-control" name="idPassport" placeholder="">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="mb-2"> <span class="w-name">
                                 General Information:
                             </span>
                             <div class="row">
@@ -406,17 +481,18 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                    </form>
+                            </div> -->
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
-                    <button type="button" id="sasa" class="btn btn-primary">Submit</button>
+                    <button type="submit" id="sasa" class="btn btn-primary">Submit</button>
                 </div>
+                </form>
             </div>
         </div>
     </div>
-    <script>
+    <!--<script>
         var form = $('#myForm'),
             checkbox1 = $('#trans'),
             checkbox2 = $('#accom'),
@@ -506,7 +582,7 @@
                 Fuel.find('input').attr('required', false);
             }
         })
-    </script>
+    </script>-->
 </section>
 
 {% endblock %}

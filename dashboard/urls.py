@@ -6,6 +6,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 urlpatterns = [
     path('dash', views.dashboard, name="dashboard"),
+    path('canvas', views.Canvas, name="canvas"),
     path('details/<str:pk>/', views.details, name="details")
 
 ]

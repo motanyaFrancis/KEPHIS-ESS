@@ -6,6 +6,7 @@ from requests_ntlm import HttpNtlmAuth
 import json
 from django.conf import settings as config
 import datetime
+from django.contrib import messages
 
 
 # Create your views here.
@@ -22,7 +23,7 @@ def ImprestRequisition(request):
         Approved = []
         Rejected = []
         for tender in response['value']:
-            if tender['Status'] == 'Open':
+            if tender['Status'] == 'Open' and tender['User_Id'] == request.session['User_ID']:
                 output_json = json.dumps(tender)
                 open.append(json.loads(output_json))
             if tender['Status'] == 'Released':
@@ -40,6 +41,47 @@ def ImprestRequisition(request):
     ctx = {"today": todays_date, "res": open, "count": counts,
            "response": Approved, "counter": counter}
     return render(request, 'imprestReq.html', ctx)
+
+
+def CreateImprest(request):
+    session = requests.Session()
+    session.auth = config.AUTHS
+    imprestNo = ""
+    isOnBehalf = ""
+    accountNo = request.session['No_']
+    responsibilityCenter = ''
+    travelType = ''
+    payee = ''
+    purpose = ''
+    usersId = request.session['User_ID']
+    personalNo = request.session['No_']
+    idPassport = ''
+    isImprest = ''
+    isDsa = ''
+    myAction = 'insert'
+    if request.method == 'POST':
+        try:
+            isOnBehalf = request.POST.get('isOnBehalf')
+            travelType = int(request.POST.get('travelType'))
+            payee = request.POST.get('payee')
+            purpose = request.POST.get('purpose')
+            idPassport = request.POST.get('idPassport')
+            isImprest = request.POST.get('isImprest')
+            isDsa = request.POST.get('isDsa')
+        except ValueError:
+            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            return redirect('imprestReq')
+    try:
+        response = config.CLIENT.service.FnImprestHeader(
+            imprestNo, isOnBehalf, accountNo, responsibilityCenter, travelType, payee, purpose, usersId, personalNo, idPassport, isImprest, isDsa, myAction)
+        print(response)
+    except Exception as e:
+        print(e)
+    return redirect('imprestReq')
+
+
+def ImprestDetails(request, pk):
+    return render(request, 'imprestDetail.html')
 
 
 def ImprestSurrender(request):

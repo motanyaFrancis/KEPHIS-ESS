@@ -41,3 +41,10 @@ def details(request, pk):
     todays_date = datetime.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date}
     return render(request, "main/details.html", ctx)
+
+
+def Canvas(request):
+
+    fullname = request.session['fullname']
+    ctx = {"fullname": fullname}
+    return render(request, "offcanvas.html", ctx)
