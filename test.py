@@ -37,12 +37,14 @@
 # print(r.status_code)
 
 
+from traceback import print_tb
 import requests
 from requests import Session
 from requests_ntlm import HttpNtlmAuth
 from zeep import Client
 from zeep.transports import Transport
-
+import enum
+from datetime import datetime
 
 AUTHS = Session()
 
@@ -52,20 +54,27 @@ BASE_URL = 'http://20.121.189.145:7047/BC140/WS/KMPDC/Codeunit/WebPortal'
 AUTHS.auth = HttpNtlmAuth('domain\\NAVADMIN', WEB_SERVICE_PWD)
 CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
 
-
-imprestNo = ""
-isOnBehalf = False
-accountNo = "EMP-00002"
-responsibilityCenter = ''
-travelType = 1
-payee = 'Enock'
-purpose = "Test"
-usersId = "NAVADMIN"
-personalNo = "EMP-00002"
-idPassport = '12345678'
-isImprest = True
-isDsa = True
+lineNo = 0
+imprestNo = "IMP00022"
+destination = "Nairobi"
+travelDate = datetime.fromisoformat("2022-01-20")
+returnDate = datetime.fromisoformat("2022-01-23")
+requisitionType = ''
+dailyRate = 10
+quantity = 3
+areaCode = ""
+businessGroupCode = ''
+dimension3 = ''
 myAction = 'insert'
-result = CLIENT.service.FnImprestHeader(
-    imprestNo, isOnBehalf, accountNo, responsibilityCenter, travelType, payee, purpose, usersId, personalNo, idPassport, isImprest, isDsa, myAction)
-print(result)
+
+
+class Data(enum.Enum):
+    imprestType = '1'
+
+
+x = (Data.imprestType).value
+print(x)
+
+# result = CLIENT.service.FnImprestLine(
+#     lineNo, imprestNo, imprestTypes, destination, travelDate, returnDate, requisitionType, dailyRate, quantity, areaCode, businessGroupCode, dimension3, myAction)
+# print(result)

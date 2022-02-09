@@ -111,6 +111,105 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">New Imprest Line
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="myForm" action="{% url 'IMPDetails' res.No_%}" method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-2">
+                                    <label for="responsibility" class="col-form-label">Imprest No</label>
+                                    <input type="text" class="form-control" placeholder="{{res.No_}}" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-2">
+                                    <label class="col-form-label">Destination</label>
+                                    <input type="text" class="form-control" name="destination">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-2">
+                                    <label for="recipient-name" class="col-form-label">Imprest Type:</label>
+                                    <select class="form-select" aria-label="Default select example" name="imprestType">
+                                        <option selected>Select Imprest Type</option>
+                                        <option value="1">Imprest</option>
+                                        <option value="2">DSA</option>
+                                        <option value="3">Allowance</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="" class="col-form-label">Travel Date:</label>
+                                <input type="date" name="travel">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="" class="col-form-label">Return Date:</label>
+                                <input type="date" id="to" name="returnDate">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-2">
+                                    <label for="responsibility" class="col-form-label">Requisition
+                                        Type</label>
+                                    <input type="text" class="form-control" placeholder="Not Consumed" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-2">
+                                    <label class="col-form-label">Daily Rate</label>
+                                    <input type="text" disabled class="form-control" value="20" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-2">
+                                    <label class="col-form-label">Quantity</label>
+                                    <input type="number" class="form-control" name="quantity">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-2">
+                                    <label for="responsibility" class="col-form-label">Area Code</label>
+                                    <input type="text" disabled class="form-control" placeholder="None" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-2">
+                                    <label class="col-form-label">Business G. Code</label>
+                                    <input type="text" disabled class="form-control" placeholder="None" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-2">
+                                    <label class="col-form-label">Dimension 3</label>
+                                    <input type="text" disabled class="form-control" placeholder="None" readonly>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
+                    <button type="submit" id="sasa" class="btn btn-primary">Submit</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </section>
 
 {% endblock %}

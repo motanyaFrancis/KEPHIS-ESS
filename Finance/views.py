@@ -1,12 +1,13 @@
 from django.shortcuts import render, redirect
-from datetime import date
+from datetime import date, datetime
 import requests
 from requests import Session
 from requests_ntlm import HttpNtlmAuth
 import json
 from django.conf import settings as config
-import datetime
+import datetime as dt
 from django.contrib import messages
+import enum
 
 
 # Create your views here.
@@ -37,7 +38,7 @@ def ImprestRequisition(request):
     except requests.exceptions.ConnectionError as e:
         print(e)
 
-    todays_date = datetime.datetime.now().strftime("%b. %d, %Y %A")
+    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": open, "count": counts,
            "response": Approved, "counter": counter}
     return render(request, 'imprestReq.html', ctx)
@@ -97,8 +98,43 @@ def ImprestDetails(request, pk):
                         res = imprest
     except requests.exceptions.ConnectionError as e:
         print(e)
+    lineNo = 2
+    imprestNo = pk
+    destination = ""
+    imprestType = ''
+    travelDate = ''
+    returnDate = ''
+    requisitionType = ''
+    dailyRate = 10
+    quantity = ""
+    areaCode = ""
+    imprestTypes = ''
+    businessGroupCode = ''
+    dimension3 = ''
+    myAction = 'insert'
+    if request.method == 'POST':
+        try:
+            destination = request.POST.get('destination')
+            imprestTypes = request.POST.get('imprestType')
+            travelDate = request.POST.get('travel')
+            returnDate = request.POST.get('returnDate')
+            quantity = int(request.POST.get('quantity'))
 
-    todays_date = datetime.datetime.now().strftime("%b. %d, %Y %A")
+        except ValueError:
+            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            return redirect('IMPDetails', pk=imprestNo)
+
+    class Data(enum.Enum):
+        values = imprestTypes
+    imprestType = (Data.values).value
+    try:
+        response = config.CLIENT.service.FnImprestLine(
+            lineNo, imprestNo, imprestType, destination, travelDate, returnDate, requisitionType, dailyRate, quantity, areaCode, businessGroupCode, dimension3, myAction)
+        print(response)
+        return redirect('IMPDetails', pk=imprestNo)
+    except Exception as e:
+        print(e)
+    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": res}
     return render(request, 'imprestDetail.html', ctx)
 
@@ -133,7 +169,7 @@ def ImprestSurrender(request):
     except requests.exceptions.ConnectionError as e:
         print(e)
 
-    todays_date = datetime.datetime.now().strftime("%b. %d, %Y %A")
+    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": open, "count": counts,
            "response": Approved, "counter": counter, 'new': New, "counted": counted}
     return render(request, 'imprestSurr.html', ctx)
@@ -169,7 +205,7 @@ def StaffClaim(request):
     except requests.exceptions.ConnectionError as e:
         print(e)
 
-    todays_date = datetime.datetime.now().strftime("%b. %d, %Y %A")
+    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": open, "count": counts,
            "response": Approved, "counter": counter}
     return render(request, 'staffClaim.html', ctx)
