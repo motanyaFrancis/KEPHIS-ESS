@@ -5,9 +5,15 @@
 <section class="dash2">
     <div class="content-wrapper" style="padding-bottom: 5rem;">
         <div class="d-xl-flex justify-content-between align-items-start">
-            <h2 class="text-dark font-weight-bold mb-2"> Imprest Requisition <button class="btn btn-primary"
-                    data-bs-toggle="modal" data-bs-target="#staticBackdrop"> <i class="las la-plus"></i> New Imprest
-                    Lines</button></h2>
+            <h2 class="text-dark font-weight-bold mb-2"> Imprest Requisition
+                {% if state == 1 %}
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> <i
+                        class="las la-plus"></i> New Imprest
+                    Lines</button>
+                {% else %}
+                <button class="btn btn-info"> <i class="las la-plus"></i> {{res.Status}}</button>
+                {% endif %}
+            </h2>
 
             <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
                 <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
@@ -18,6 +24,28 @@
                 </div>
             </div>
         </div>
+        <!--alert -->
+        {% if messages %}
+        {% for message in messages %}
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+        <div class="alert alert-success d-flex align-items-center alert-dismissible alert-success" role="alert">
+            <i class="las la-check-double" style="color: white;font-size: 2rem"></i>
+            <div class="a-icon mx-2">
+                {{message}}
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% elif message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+        <div class="alert alert-danger d-flex align-items-center alert-dismissible alert-warn" role="alert">
+            <i class="las la-exclamation-triangle" style="color: white;font-size: 2rem"></i>
+            <div class="a-icon mx-2">
+                {{message}}
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+        {% endfor %}
+        {% endif %}
         <div class="row">
             <div class="col-md-12">
                 <form class="row g-3">

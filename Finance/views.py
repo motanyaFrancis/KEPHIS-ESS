@@ -27,10 +27,10 @@ def ImprestRequisition(request):
             if imprest['Status'] == 'Open' and imprest['User_Id'] == request.session['User_ID']:
                 output_json = json.dumps(imprest)
                 open.append(json.loads(output_json))
-            if imprest['Status'] == 'Released':
+            if imprest['Status'] == 'Released' and imprest['User_Id'] == request.session['User_ID']:
                 output_json = json.dumps(imprest)
                 Approved.append(json.loads(output_json))
-            if imprest['Status'] == 'Rejected':
+            if imprest['Status'] == 'Rejected' and imprest['User_Id'] == request.session['User_ID']:
                 output_json = json.dumps(imprest)
                 Rejected.append(json.loads(output_json))
         counts = len(open)
@@ -49,7 +49,7 @@ def CreateImprest(request):
     session.auth = config.AUTHS
     imprestNo = ""
     isOnBehalf = ""
-    accountNo = request.session['No_']
+    accountNo = ''
     responsibilityCenter = ''
     travelType = ''
     payee = ''
@@ -75,6 +75,7 @@ def CreateImprest(request):
     try:
         response = config.CLIENT.service.FnImprestHeader(
             imprestNo, isOnBehalf, accountNo, responsibilityCenter, travelType, payee, purpose, usersId, personalNo, idPassport, isImprest, isDsa, myAction)
+        messages.success(request, "Successfully Added!!")
         print(response)
     except Exception as e:
         print(e)
@@ -84,13 +85,28 @@ def CreateImprest(request):
 def ImprestDetails(request, pk):
     session = requests.Session()
     session.auth = config.AUTHS
-
+    state = ''
+    res = ''
     Access_Point = config.O_DATA.format("/Imprests")
     try:
         response = session.get(Access_Point, timeout=10).json()
         openImp = []
         for imprest in response['value']:
+            if imprest['Status'] == 'Released' and imprest['User_Id'] == request.session['User_ID']:
+                output_json = json.dumps(imprest)
+                openImp.append(json.loads(output_json))
+                for imprest in openImp:
+                    if imprest['No_'] == pk:
+                        res = imprest
             if imprest['Status'] == 'Open' and imprest['User_Id'] == request.session['User_ID']:
+                output_json = json.dumps(imprest)
+                openImp.append(json.loads(output_json))
+                for imprest in openImp:
+                    if imprest['No_'] == pk:
+                        res = imprest
+                        if imprest['Status'] == 'Open':
+                            state = 1
+            if imprest['Status'] == 'Released' and imprest['User_Id'] == request.session['User_ID']:
                 output_json = json.dumps(imprest)
                 openImp.append(json.loads(output_json))
                 for imprest in openImp:
@@ -108,7 +124,7 @@ def ImprestDetails(request, pk):
                 openLines.append(json.loads(output_json))
     except requests.exceptions.ConnectionError as e:
         print(e)
-    lineNo = 2
+    lineNo = 4
     imprestNo = pk
     destination = ""
     imprestType = ''
@@ -140,12 +156,13 @@ def ImprestDetails(request, pk):
     try:
         response = config.CLIENT.service.FnImprestLine(
             lineNo, imprestNo, imprestType, destination, travelDate, returnDate, requisitionType, dailyRate, quantity, areaCode, businessGroupCode, dimension3, myAction)
+        messages.success(request, "Successfully Added!!")
         print(response)
         return redirect('IMPDetails', pk=imprestNo)
     except Exception as e:
         print(e)
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-    ctx = {"today": todays_date, "res": res, "line": openLines}
+    ctx = {"today": todays_date, "res": res, "line": openLines, "state": state}
     return render(request, 'imprestDetail.html', ctx)
 
 

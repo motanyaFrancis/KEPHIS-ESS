@@ -54,27 +54,21 @@ BASE_URL = 'http://20.121.189.145:7047/BC140/WS/KMPDC/Codeunit/WebPortal'
 AUTHS.auth = HttpNtlmAuth('domain\\NAVADMIN', WEB_SERVICE_PWD)
 CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
 
-lineNo = 0
-imprestNo = "IMP00022"
-destination = "Nairobi"
-travelDate = datetime.fromisoformat("2022-01-20")
-returnDate = datetime.fromisoformat("2022-01-23")
-requisitionType = ''
-dailyRate = 10
-quantity = 3
-areaCode = ""
-businessGroupCode = ''
-dimension3 = ''
+imprestNo = ""
+isOnBehalf = False
+accountNo = ""
+responsibilityCenter = ''
+travelType = 1
+payee = 'Papa'
+purpose = 'Test'
+usersId = "NAVADMIN"
+personalNo = "EMP-00002"
+idPassport = '34356578'
+isImprest = True
+isDsa = False
 myAction = 'insert'
 
 
-class Data(enum.Enum):
-    imprestType = '1'
-
-
-x = (Data.imprestType).value
-print(x)
-
-# result = CLIENT.service.FnImprestLine(
-#     lineNo, imprestNo, imprestTypes, destination, travelDate, returnDate, requisitionType, dailyRate, quantity, areaCode, businessGroupCode, dimension3, myAction)
-# print(result)
+response = CLIENT.service.FnImprestHeader(
+    imprestNo, isOnBehalf, accountNo, responsibilityCenter, travelType, payee, purpose, usersId, personalNo, idPassport, isImprest, isDsa, myAction)
+print(response)
