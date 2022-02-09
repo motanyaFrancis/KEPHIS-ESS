@@ -1,0 +1,116 @@
+{% extends 'offcanvas.html' %}
+{% load bootstrap5 %}
+{% load static %}
+{% block main %}
+<section class="dash2">
+    <div class="content-wrapper" style="padding-bottom: 5rem;">
+        <div class="d-xl-flex justify-content-between align-items-start">
+            <h2 class="text-dark font-weight-bold mb-2"> Imprest Requisition <button class="btn btn-primary"
+                    data-bs-toggle="modal" data-bs-target="#staticBackdrop"> <i class="las la-plus"></i> New Imprest
+                    Lines</button></h2>
+
+            <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
+                <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
+                    <button class="btn bg-white dropdown-toggle p-3 d-flex align-items-center" type="button"
+                        id="dropdownMenuButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i
+                            class="mdi mdi-calendar mr-1"></i>{{today}}
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <form class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Imprest Number</label>
+                        <input type="text" class="form-control" placeholder="{{res.No_}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Apply on behalf</label>
+                        <input type="text" class="form-control" placeholder="{{res.Apply_on_behalf}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Account No</label>
+                        <input type="text" class="form-control" placeholder="{{res.Account_No_}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">ResponsibilityCenter</label>
+                        <input type="text" class="form-control" placeholder="Not Consumed" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Travel Type</label>
+                        <input type="text" class="form-control" placeholder="{{res.Travel_Type}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Payee</label>
+                        <input type="text" class="form-control" placeholder="{{res.Payee}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">User</label>
+                        <input type="text" class="form-control" placeholder="{{res.User_Id}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">ID/ Passport</label>
+                        <input type="text" class="form-control" placeholder="{{res.ID_Passport}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Imprest</label>
+                        <input type="text" class="form-control" placeholder="{{res.Imprest}}" readonly>
+                    </div>
+                    <div class="col-12">
+                        <label for="inputAddress" class="form-label">purpose</label>
+                        <textarea class="form-control" placeholder="{{res.Payment_Narration}}" rows="3"
+                            readonly></textarea>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row my-2">
+            <div class="col-md-12">
+                <div class="card" id="d-card">
+                    <h4 class="mt-2 mx-2 text-dark">Imprest Requisitions Lines</h4>
+                    <div class="card-body">
+                        <table id="example" class="table table-striped table-bordered dt-responsive table-responsive-lg"
+                            style="width:100%">
+                            <thead>
+                                <tr id="tops">
+                                    <th id="long">Request No</th>
+                                    <th>Name</th>
+                                    <th>Training Date</th>
+                                    <th>From</th>
+                                    <th>To</th>
+                                    <th>Department</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>#GS-2234</td>
+                                    <td id="rap">Enock Abere</td>
+                                    <td id="rap">Sunday, Oct 24th, 2021</td>
+                                    <td>Oct 29th, 2021</td>
+                                    <td>Oct 31th, 2021</td>
+                                    <td>Microsoft</td>
+                                    <td>
+                                        <a type="button" href="" class="btn btn-warning btn-icon-text">Pending <i
+                                                class="las la-meh"></i>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a type="button" href="" class="btn btn-success  btn-icon-text"
+                                            style="background: #25CC88;">View <i class="las la-external-link-alt"
+                                                style="font-size: 1rem"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

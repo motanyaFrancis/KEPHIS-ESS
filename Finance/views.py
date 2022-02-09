@@ -81,7 +81,26 @@ def CreateImprest(request):
 
 
 def ImprestDetails(request, pk):
-    return render(request, 'imprestDetail.html')
+    session = requests.Session()
+    session.auth = config.AUTHS
+
+    Access_Point = config.O_DATA.format("/Imprests")
+    try:
+        response = session.get(Access_Point, timeout=10).json()
+        openImp = []
+        for tender in response['value']:
+            if tender['Status'] == 'Open' and tender['User_Id'] == request.session['User_ID']:
+                output_json = json.dumps(tender)
+                openImp.append(json.loads(output_json))
+                for imprest in openImp:
+                    if imprest['No_'] == pk:
+                        res = imprest
+    except requests.exceptions.ConnectionError as e:
+        print(e)
+
+    todays_date = datetime.datetime.now().strftime("%b. %d, %Y %A")
+    ctx = {"today": todays_date, "res": res}
+    return render(request, 'imprestDetail.html', ctx)
 
 
 def ImprestSurrender(request):
