@@ -40,7 +40,7 @@ def ImprestRequisition(request):
 
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": open, "count": counts,
-           "response": Approved, "counter": counter}
+           "response": Approved, "counter": counter, "reject": Rejected}
     return render(request, 'imprestReq.html', ctx)
 
 
