@@ -7,7 +7,9 @@
 <section class="dash2">
     <div class="content-wrapper" style="padding-bottom: 5rem;">
         <div class="d-xl-flex justify-content-between align-items-start">
-            <h2 class="text-dark font-weight-bold mb-2"> Staff Claim</h2>
+            <h2 class="text-dark font-weight-bold mb-2"> Staff Claim <button class="btn btn-primary"
+                    data-bs-toggle="modal" data-bs-target="#staticBackdrop"> <i class="las la-plus"></i> New Staff
+                    Claim</button></h2>
 
             <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
                 <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
@@ -18,6 +20,28 @@
                 </div>
             </div>
         </div>
+        <!--alert -->
+        {% if messages %}
+        {% for message in messages %}
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+        <div class="alert alert-success d-flex align-items-center alert-dismissible alert-success" role="alert">
+            <i class="las la-check-double" style="color: white;font-size: 2rem"></i>
+            <div class="a-icon mx-2">
+                {{message}}
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% elif message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+        <div class="alert alert-danger d-flex align-items-center alert-dismissible alert-warn" role="alert">
+            <i class="las la-exclamation-triangle" style="color: white;font-size: 2rem"></i>
+            <div class="a-icon mx-2">
+                {{message}}
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+        {% endfor %}
+        {% endif %}
         <div class="row my-2">
             <div class="col-md-12">
                 <div class="card" id="d-card">
@@ -167,66 +191,102 @@
         </div>
     </div>
     <!-- Modal -->
-    <div class="modal fade" id="modal{{res.No_}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Raise Imprest Surrender
+                    <h5 class="modal-title" id="staticBackdropLabel">New Imprest Requisition
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="myForm">
-                        <!-- One "tab" for each step in the form: -->
-                        <div class="mb-2"> <span class="w-name">
-                                General Information:
-                            </span>
-                            <div class="row">
-                                <div>
-                                    <label for="recipient-name" class="col-form-label">Imprest Issue Document No.
-                                        :</label>
-                                    <select class="form-select" aria-label="Default select example">
-                                        <option selected>Select Imprest Issue Document No.</option>
-                                        <option value="1">Imprest 0000001</option>
+                    <form id="myForm" action="{% url 'NewClaim' %}" method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-2">
+                                    <label class="form-label">Claim Type</label>
+                                    <select class="form-select" aria-label="Default select example" name="claimType">
+                                        <option selected>Select Claim Type</option>
+                                        <option value="1">General Claim</option>
+                                        <option value="2">Medical Claim</option>
+                                        <option value="3">Imprest Claim</option>
                                     </select>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="my-3">
-                                        <label class="form-label">Actual Amount</label>
-                                        <input type="text" class="form-control" value="4000" id="actual"
-                                            placeholder="4000" readonly>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="my-3">
-                                        <label class="form-label">Amount Spent</label>
-                                        <input type="text" class="form-control" id="spent" placeholder="0.00">
-                                    </div>
+                            <div class="col-md-6">
+                                <div class="mb-2">
+                                    <label class="form-label">isOnBehalf</label>
+                                    <select class="form-select" aria-label="Default select example" name="isOnBehalf">
+                                        <option selected>Select isOnBehalf</option>
+                                        <option value="True">True</option>
+                                        <option value="False">False</option>
+                                    </select>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="my-3">
-                                        <label class="form-label">Balance</label>
-                                        <input type="text" class="form-control" id="actual" placeholder="0000" readonly>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="my-3">
-                                        <label for="formFile" class="form-label">Attachments</label>
-                                        <input class="form-control" type="file" id="formFile">
-                                    </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-2">
+                                    <label class="form-label">Account Number</label>
+                                    <select class="form-select" aria-label="Default select example" disabled>
+                                        <option selected>Select Account Number</option>
+                                        <option value="True">True</option>
+                                        <option value="False">False</option>
+                                    </select>
                                 </div>
                             </div>
-                    </form>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-2">
+                                    <label for="responsibility" class="col-form-label">staff No</label>
+                                    <input type="text" class="form-control" placeholder="none" disabled readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-2">
+                                    <label for="payee" class="col-form-label">Payee</label>
+                                    <input type="text" class="form-control" name="payee">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-2">
+                                    <label class="form-label">Currency</label>
+                                    <select class="form-select" aria-label="Default select example" disabled>
+                                        <option selected>Select Currency</option>
+                                        <option value="True">KSH</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-2">
+                                    <label class="form-label">imprestSurrDocNo</label>
+                                    <select class="form-select" aria-label="Default select example" disabled readonly>
+                                        <option selected>iimprestSurrDocNo</option>
+                                        <option value="True">00000001</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-2">
+                                    <label for="purpose" class="form-label">Purpose</label>
+                                    <textarea class="form-control" name="purpose" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
-                    <button type="button" id="sasa" class="btn btn-primary">Submit</button>
+                    <button type="submit" id="sasa" class="btn btn-primary">Submit</button>
                 </div>
+                </form>
             </div>
         </div>
     </div>

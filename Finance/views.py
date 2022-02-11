@@ -224,7 +224,6 @@ def StaffClaim(request):
             if imprest['Status'] == 'Released' and imprest['User_Id'] == request.session['User_ID']:
                 output_json = json.dumps(imprest)
                 Approved.append(json.loads(output_json))
-                print(Approved)
             if imprest['Status'] == 'Rejected' and imprest['User_Id'] == request.session['User_ID']:
                 output_json = json.dumps(imprest)
                 Rejected.append(json.loads(output_json))
@@ -238,3 +237,31 @@ def StaffClaim(request):
     ctx = {"today": todays_date, "res": open, "count": counts, "rej": rej,
            "response": Approved, "claim": counter, 'reject': Rejected}
     return render(request, 'staffClaim.html', ctx)
+
+
+def CreateClaim(request):
+    claimNo = ""
+    claimType = ""
+    isOnBehalf = False
+    accountNo = ''
+    payee = 'Papa'
+    purpose = 'Test'
+    usersId = request.session['User_ID']
+    staffNo = 'AH'
+    currency = ""
+    imprestSurrDocNo = ''
+    myAction = 'insert'
+    if request.method == 'POST':
+        claimType = int(request.POST.get('claimType'))
+        isOnBehalf = request.POST.get('isOnBehalf')
+        payee = request.POST.get('payee')
+        purpose = request.POST.get('purpose')
+    try:
+        response = config.CLIENT.service.FnStaffClaimHeader(
+            claimNo, claimType, isOnBehalf, accountNo, payee, purpose, usersId, staffNo, currency, imprestSurrDocNo, myAction)
+        messages.success(request, "Successfully Added!!")
+        print(response)
+        return redirect('claim')
+    except Exception as e:
+        print(e)
+    return redirect('claim')

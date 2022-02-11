@@ -55,13 +55,13 @@ AUTHS.auth = HttpNtlmAuth('domain\\NAVADMIN', WEB_SERVICE_PWD)
 CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
 
 claimNo = ""
-claimType = 2
+claimType = 1
 isOnBehalf = False
 accountNo = ''
 payee = 'Papa'
 purpose = 'Test'
 usersId = "NAVADMIN"
-staffNo = ''
+staffNo = 'AH'
 currency = ""
 imprestSurrDocNo = ''
 myAction = 'insert'
