@@ -172,11 +172,14 @@ def ImprestSurrender(request):
     session.auth = config.AUTHS
 
     Access_Point = config.O_DATA.format("/QyImprestSurrenders")
+    Released_imprest = config.O_DATA.format("/Imprests")
     try:
         response = session.get(Access_Point, timeout=10).json()
+        Released = session.get(Released_imprest, timeout=10).json()
         open = []
         Approved = []
         Reject = []
+        APPImp = []
         for imprest in response['value']:
             if imprest['Status'] == 'Open' and imprest['User_Id'] == request.session['User_ID']:
                 output_json = json.dumps(imprest)
@@ -187,6 +190,10 @@ def ImprestSurrender(request):
             if imprest['Status'] == 'Rejected' and imprest['User_Id'] == request.session['User_ID']:
                 output_json = json.dumps(imprest)
                 Reject.append(json.loads(output_json))
+        for imprest in Released['value']:
+            if imprest['Status'] == 'Released' and imprest['User_Id'] == request.session['User_ID']:
+                output_json = json.dumps(imprest)
+                APPImp.append(json.loads(output_json))
         counts = len(open)
         counter = len(Approved)
         Rejects = len(Reject)
@@ -195,12 +202,42 @@ def ImprestSurrender(request):
 
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": open, "count": counts,
-           "response": Approved, "counter": counter, "reject": Rejects, "rej": Reject}
+           "response": Approved, "counter": counter, "reject": Rejects, "rej": Reject, "app": APPImp}
     return render(request, 'imprestSurr.html', ctx)
 
 
-def SurrenderDetails(request, pk):
+def CreateSurrender(request):
+
+    surrenderNo = ""
+    imprestIssueDocNo = ''
+    isOnBehalf = ""
+    accountNo = ""
+    payee = ""
+    purpose = ""
+    usersId = request.session['User_ID']
+    staffNo = ""
+    myAction = 'insert'
+    if request.method == 'POST':
+        try:
+            imprestIssueDocNo = request.POST.get('imprestIssueDocNo')
+            isOnBehalf = request.POST.get('isOnBehalf')
+            payee = request.POST.get('payee')
+            purpose = request.POST.get('purpose')
+        except ValueError:
+            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            return redirect('imprestSurr')
+    try:
+        response = config.CLIENT.service.FnImprestSurrenderHeader(
+            surrenderNo, imprestIssueDocNo, isOnBehalf, accountNo, payee, purpose, usersId, staffNo, myAction)
+        messages.success(request, "Successfully Added!!")
+        print(response)
+    except Exception as e:
+        print(e)
     return redirect('imprestSurr')
+
+
+def SurrenderDetails(request, pk):
+    return render(request, 'imprestSurr')
 
 
 def StaffClaim(request):
