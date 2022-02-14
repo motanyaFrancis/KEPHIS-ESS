@@ -9,5 +9,5 @@ urlpatterns = [
     path('ImprestSurrender', views.ImprestSurrender, name='imprestSurr'),
     path('StaffClaim', views.StaffClaim, name='claim'),
     path("NewClaim", views.CreateClaim, name="NewClaim"),
-    path('raise/<str:pk>', views.SurrenderDetails, name='raise'),
+    path('Claim/<str:pk>', views.ClaimDetails, name='ClaimDetail'),
 ]

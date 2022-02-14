@@ -24,11 +24,7 @@
                     <div class="m-4">
                         <ul class="nav nav-tabs" id="myTab">
                             <li class="nav-item">
-                                <a href="#home" class="nav-link active" data-bs-toggle="tab">Raise Surrender
-                                    ({{counted}})</a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#s-open" class="nav-link" data-bs-toggle="tab"> Open Surrender Imprest
+                                <a href="#s-open" class="nav-link active" data-bs-toggle="tab"> Open Surrender Imprest
                                     ({{count}})</a>
                             </li>
                             <li class="nav-item">
@@ -41,48 +37,7 @@
                             </li>
                         </ul>
                         <div class="tab-content">
-                            <div class="tab-pane fade show active" id="home">
-                                <h4 class="mt-2 text-dark">Surrender Imprest</h4>
-                                <div class="card-body">
-                                    <table id="example"
-                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                                        style="width:100%">
-                                        <thead>
-                                            <tr id="tops">
-                                                <th id="long">Imprest No</th>
-                                                <th>Date</th>
-                                                <th>Staff No</th>
-                                                <th>Imprest Payee</th>
-                                                <th>Travel Type</th>
-                                                <th>Created By</th>
-                                                <th>Status</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for res in new %}
-                                            <tr>
-                                                <td>{{res.No_}}</td>
-                                                <td id="rap">{{res.Date}}</td>
-                                                <td>{{res.Staff_No_}}</td>
-                                                <td>{{res.Payee}}</td>
-                                                <td>{{res.Travel_Type}}</td>
-                                                <td>{{res.User_Id}}</td>
-                                                <td>{{res.Status}}</td>
-                                                <td>
-                                                    <a role="button" href="#modal{{res.No_}}" data-bs-toggle="modal"
-                                                        class="btn btn-success btn-icon-text"
-                                                        style="background: #25CC88;">Surrender
-                                                        <i class="las la-external-link-alt" style="font-size: 1rem"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="tab-pane fade" id="s-open">
+                            <div class="tab-pane fade show active" id="s-open">
                                 <h4 class="mt-2 text-dark">Open Surrender Imprest</h4>
                                 <div class="card-body">
                                     <table id="example"

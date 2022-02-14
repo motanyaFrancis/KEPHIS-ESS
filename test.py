@@ -54,19 +54,34 @@ BASE_URL = 'http://20.121.189.145:7047/BC140/WS/KMPDC/Codeunit/WebPortal'
 AUTHS.auth = HttpNtlmAuth('domain\\NAVADMIN', WEB_SERVICE_PWD)
 CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
 
-claimNo = ""
-claimType = 1
+# lineNo = 1
+# claimNo = "SC0016"
+# claimType = 3
+# accountNo = ''
+# amount = 10
+# description = "Test"
+# claimReceiptNo = "Test"
+# dimension3 = ""
+# date_string = "2012-12-12"
+# expenditureDate = datetime.fromisoformat(date_string)
+# expenditureDescription = "Testing"
+# myAction = 'insert'
+
+
+# response = CLIENT.service.FnStaffClaimLine(lineNo,
+#                                            claimNo, claimType, accountNo, amount, description, claimReceiptNo, dimension3, expenditureDate, expenditureDescription, myAction)
+# print(response)
+surrenderNo = ""
+imprestIssueDocNo = 'IMP00010'
 isOnBehalf = False
-accountNo = ''
-payee = 'Papa'
-purpose = 'Test'
+accountNo = ""
+payee = "Enock"
+purpose = "Test"
 usersId = "NAVADMIN"
-staffNo = 'AH'
-currency = ""
-imprestSurrDocNo = ''
+staffNo = ""
 myAction = 'insert'
 
 
-response = CLIENT.service.FnStaffClaimHeader(
-    claimNo, claimType, isOnBehalf, accountNo, payee, purpose, usersId, staffNo, currency, imprestSurrDocNo, myAction)
+response = CLIENT.service.FnImprestSurrenderHeader(
+    surrenderNo, imprestIssueDocNo, isOnBehalf, accountNo, payee, purpose, usersId, staffNo, myAction)
 print(response)

@@ -172,13 +172,10 @@ def ImprestSurrender(request):
     session.auth = config.AUTHS
 
     Access_Point = config.O_DATA.format("/QyImprestSurrenders")
-    Access_Point2 = config.O_DATA.format("/Imprests")
     try:
         response = session.get(Access_Point, timeout=10).json()
-        r = session.get(Access_Point2, timeout=10).json()
         open = []
         Approved = []
-        New = []
         for imprest in response['value']:
             if imprest['Status'] == 'Open':
                 output_json = json.dumps(imprest)
@@ -186,19 +183,14 @@ def ImprestSurrender(request):
             if imprest['Status'] == 'Released':
                 output_json = json.dumps(imprest)
                 Approved.append(json.loads(output_json))
-        for imprest in r['value']:
-            if imprest['Status'] == 'Released':
-                output_json = json.dumps(imprest)
-                New.append(json.loads(output_json))
         counts = len(open)
         counter = len(Approved)
-        counted = len(New)
     except requests.exceptions.ConnectionError as e:
         print(e)
 
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": open, "count": counts,
-           "response": Approved, "counter": counter, 'new': New, "counted": counted}
+           "response": Approved, "counter": counter}
     return render(request, 'imprestSurr.html', ctx)
 
 
@@ -265,3 +257,51 @@ def CreateClaim(request):
     except Exception as e:
         print(e)
     return redirect('claim')
+
+
+def ClaimDetails(request, pk):
+    session = requests.Session()
+    session.auth = config.AUTHS
+    state = ''
+    res = ''
+    Access_Point = config.O_DATA.format("/QyStaffClaims")
+    try:
+        response = session.get(Access_Point, timeout=10).json()
+        openClaim = []
+        for claim in response['value']:
+            if claim['Status'] == 'Released' and claim['User_Id'] == request.session['User_ID']:
+                output_json = json.dumps(claim)
+                openClaim.append(json.loads(output_json))
+                for claim in openClaim:
+                    if claim['No_'] == pk:
+                        res = claim
+            if claim['Status'] == 'Open' and claim['User_Id'] == request.session['User_ID']:
+                output_json = json.dumps(claim)
+                openClaim.append(json.loads(output_json))
+                for claim in openClaim:
+                    if claim['No_'] == pk:
+                        res = claim
+                        if claim['Status'] == 'Open':
+                            state = 1
+            if claim['Status'] == 'Rejected' and claim['User_Id'] == request.session['User_ID']:
+                output_json = json.dumps(claim)
+                openClaim.append(json.loads(output_json))
+                for claim in openClaim:
+                    if claim['No_'] == pk:
+                        res = claim
+    except requests.exceptions.ConnectionError as e:
+        print(e)
+    # Lines_Res = config.O_DATA.format("/QyImprestLines")
+    # try:
+    #     response = session.get(Lines_Res, timeout=10).json()
+    #     openLines = []
+    #     for imprest in response['value']:
+    #         if imprest['AuxiliaryIndex1'] == pk:
+    #             output_json = json.dumps(imprest)
+    #             openLines.append(json.loads(output_json))
+    # except requests.exceptions.ConnectionError as e:
+    #     print(e)
+
+    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
+    ctx = {"today": todays_date, "res": res, "state": state}
+    return render(request, "ClaimDetail.html", ctx)
