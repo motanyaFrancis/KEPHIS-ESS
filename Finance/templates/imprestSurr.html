@@ -7,7 +7,9 @@
 <section class="dash2">
     <div class="content-wrapper" style="padding-bottom: 5rem;">
         <div class="d-xl-flex justify-content-between align-items-start">
-            <h2 class="text-dark font-weight-bold mb-2"> Imprest Surrender</h2>
+            <h2 class="text-dark font-weight-bold mb-2"> Staff Claim <button class="btn btn-primary"
+                    data-bs-toggle="modal" data-bs-target="#staticBackdrop"> <i class="las la-plus"></i> New Imprest
+                    Surrender</button></h2>
 
             <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
                 <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
@@ -18,6 +20,28 @@
                 </div>
             </div>
         </div>
+        <!--alert -->
+        {% if messages %}
+        {% for message in messages %}
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+        <div class="alert alert-success d-flex align-items-center alert-dismissible alert-success" role="alert">
+            <i class="las la-check-double" style="color: white;font-size: 2rem"></i>
+            <div class="a-icon mx-2">
+                {{message}}
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% elif message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+        <div class="alert alert-danger d-flex align-items-center alert-dismissible alert-warn" role="alert">
+            <i class="las la-exclamation-triangle" style="color: white;font-size: 2rem"></i>
+            <div class="a-icon mx-2">
+                {{message}}
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+        {% endfor %}
+        {% endif %}
         <div class="row my-2">
             <div class="col-md-12">
                 <div class="card" id="d-card">
@@ -33,7 +57,7 @@
                             </li>
                             <li class="nav-item">
                                 <a href="#s-reject" class="nav-link" data-bs-toggle="tab">Rejected Imprest
-                                    (5)</a>
+                                    ({{reject}})</a>
                             </li>
                         </ul>
                         <div class="tab-content">
@@ -115,6 +139,45 @@
                                     </table>
                                 </div>
                             </div>
+                            <div class="tab-pane fade" id="s-reject">
+                                <h4 class="mt-2 text-dark">Rejected Surrender Imprest</h4>
+                                <div class="card-body">
+                                    <table id="example"
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
+                                        <thead>
+                                            <tr id="tops">
+                                                <th id="long">Imprest No</th>
+                                                <th>Date</th>
+                                                <th>Pay Mode</th>
+                                                <th>Payee</th>
+                                                <th>Created By</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for res in rej %}
+                                            <tr>
+                                                <td>{{res.No_}}</td>
+                                                <td id="rap">{{res.Date}}</td>
+                                                <td>{{res.Pay_Mode}}</td>
+                                                <td>{{res.Payee}}</td>
+                                                <td>{{res.User_Id}}</td>
+                                                <td>{{res.Status}}</td>
+                                                <td>
+                                                    <a role="button" href="#modal" data-bs-toggle="modal"
+                                                        class="btn btn-success btn-icon-text"
+                                                        style="background: #25CC88;">View
+                                                        <i class="las la-external-link-alt" style="font-size: 1rem"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -122,7 +185,7 @@
         </div>
     </div>
     <!-- Modal -->
-    <div class="modal fade" id="modal{{res.No_}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
@@ -182,6 +245,106 @@
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
                     <button type="button" id="sasa" class="btn btn-primary">Submit</button>
                 </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">New Imprest Requisition
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="myForm" action="{% url 'NewClaim' %}" method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-2">
+                                    <label class="form-label">Claim Type</label>
+                                    <select class="form-select" aria-label="Default select example" name="claimType">
+                                        <option selected>Select Claim Type</option>
+                                        <option value="1">General Claim</option>
+                                        <option value="2">Medical Claim</option>
+                                        <option value="3">Imprest Claim</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-2">
+                                    <label class="form-label">isOnBehalf</label>
+                                    <select class="form-select" aria-label="Default select example" name="isOnBehalf">
+                                        <option selected>Select isOnBehalf</option>
+                                        <option value="True">True</option>
+                                        <option value="False">False</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-2">
+                                    <label class="form-label">Account Number</label>
+                                    <select class="form-select" aria-label="Default select example" disabled>
+                                        <option selected>Select Account Number</option>
+                                        <option value="True">True</option>
+                                        <option value="False">False</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-2">
+                                    <label for="responsibility" class="col-form-label">staff No</label>
+                                    <input type="text" class="form-control" placeholder="none" disabled readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-2">
+                                    <label for="payee" class="col-form-label">Payee</label>
+                                    <input type="text" class="form-control" name="payee">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-2">
+                                    <label class="form-label">Currency</label>
+                                    <select class="form-select" aria-label="Default select example" disabled>
+                                        <option selected>Select Currency</option>
+                                        <option value="True">KSH</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-2">
+                                    <label class="form-label">imprestSurrDocNo</label>
+                                    <select class="form-select" aria-label="Default select example" disabled readonly>
+                                        <option selected>iimprestSurrDocNo</option>
+                                        <option value="True">00000001</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-2">
+                                    <label for="purpose" class="form-label">Purpose</label>
+                                    <textarea class="form-control" name="purpose" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
+                    <button type="submit" id="sasa" class="btn btn-primary">Submit</button>
+                </div>
+                </form>
             </div>
         </div>
     </div>

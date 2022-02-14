@@ -176,21 +176,26 @@ def ImprestSurrender(request):
         response = session.get(Access_Point, timeout=10).json()
         open = []
         Approved = []
+        Reject = []
         for imprest in response['value']:
-            if imprest['Status'] == 'Open':
+            if imprest['Status'] == 'Open' and imprest['User_Id'] == request.session['User_ID']:
                 output_json = json.dumps(imprest)
                 open.append(json.loads(output_json))
-            if imprest['Status'] == 'Released':
+            if imprest['Status'] == 'Released' and imprest['User_Id'] == request.session['User_ID']:
                 output_json = json.dumps(imprest)
                 Approved.append(json.loads(output_json))
+            if imprest['Status'] == 'Rejected' and imprest['User_Id'] == request.session['User_ID']:
+                output_json = json.dumps(imprest)
+                Reject.append(json.loads(output_json))
         counts = len(open)
         counter = len(Approved)
+        Rejects = len(Reject)
     except requests.exceptions.ConnectionError as e:
         print(e)
 
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": open, "count": counts,
-           "response": Approved, "counter": counter}
+           "response": Approved, "counter": counter, "reject": Rejects, "rej": Reject}
     return render(request, 'imprestSurr.html', ctx)
 
 
