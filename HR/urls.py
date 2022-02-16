@@ -11,4 +11,6 @@ urlpatterns = [
     path('Loan', views.Loan_Request, name='loan'),
     path('NewLoan', views.CreateLoanRequest, name='NewLoan'),
     path('LoanLines/<str:pk>', views.LoanLines, name='LoanLines'),
+    path('LoanCollateral/<str:pk>',
+         views.FnLoanCollateral, name='FnLoanCollateral'),
 ]

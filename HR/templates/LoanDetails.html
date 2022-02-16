@@ -1,0 +1,241 @@
+{% extends 'offcanvas.html' %}
+{% load bootstrap5 %}
+{% load static %}
+{% block main %}
+<section class="dash2">
+    <div class="content-wrapper" style="padding-bottom: 5rem;">
+        <div class="d-xl-flex justify-content-between align-items-start">
+            <h2 class="text-dark font-weight-bold mb-2"> Loan Requests
+                {% if state == 1 %}
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> <i
+                        class="las la-plus"></i> Add Collateral</button>
+                {% else %}
+                <button class="btn btn-info"> <i class="las la-plus"></i> {{res.Status}}</button>
+                {% endif %}
+            </h2>
+
+            <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
+                <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
+                    <button class="btn bg-white dropdown-toggle p-3 d-flex align-items-center" type="button"
+                        id="dropdownMenuButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i
+                            class="mdi mdi-calendar mr-1"></i>{{today}}
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!--alert -->
+        {% if messages %}
+        {% for message in messages %}
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+        <div class="alert alert-success d-flex align-items-center alert-dismissible alert-success" role="alert">
+            <i class="las la-check-double" style="color: white;font-size: 2rem"></i>
+            <div class="a-icon mx-2">
+                {{message}}
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% elif message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+        <div class="alert alert-danger d-flex align-items-center alert-dismissible alert-warn" role="alert">
+            <i class="las la-exclamation-triangle" style="color: white;font-size: 2rem"></i>
+            <div class="a-icon mx-2">
+                {{message}}
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+        {% endfor %}
+        {% endif %}
+        <div class="row">
+            <div class="col-md-12">
+                <form class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Loan Number</label>
+                        <input type="text" class="form-control" placeholder="{{res.No_}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Requested Date</label>
+                        <input type="text" class="form-control" placeholder="{{res.Apply_on_behalf}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">PML No</label>
+                        <input type="text" class="form-control" placeholder="{{res.Account_No_}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Loan Product Type</label>
+                        <input type="text" class="form-control" placeholder="Not Consumed" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Loan Duration</label>
+                        <input type="text" class="form-control" placeholder="{{res.Travel_Type}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Requested Amount</label>
+                        <input type="text" class="form-control" placeholder="{{res.Payee}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">User</label>
+                        <input type="text" class="form-control" placeholder="{{res.User_Id}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Interest Calculation Method</label>
+                        <input type="text" class="form-control" placeholder="{{res.ID_Passport}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Repayment Frequency</label>
+                        <input type="text" class="form-control" placeholder="{{res.Imprest}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Bank Name</label>
+                        <input type="text" class="form-control" placeholder="{{res.Imprest}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Bank Account No</label>
+                        <input type="text" class="form-control" placeholder="{{res.Imprest}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Bank Branch Name</label>
+                        <input type="text" class="form-control" placeholder="{{res.Imprest}}" readonly>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card" id="d-card">
+                    <h4 class="mt-2 mx-2 text-dark">Imprest Requisitions Lines</h4>
+                    <div class="card-body">
+                        <table id="example"
+                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                            style="width:100%">
+                            <thead>
+                                <tr id="tops">
+                                    <th id="long">Collateral Code</th>
+                                    <th>Collateral Type</th>
+                                    <th>Maturity Date</th>
+                                    <th>Collateral Value</th>
+                                    <th>Perfected</th>
+                                    <th>Excluded Activities</th>
+                                    <th>Nema Compliant</th>
+                                    <th>Security Type</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for res in line %}
+                                <tr>
+                                    <td>{{res.collateralCode}}</td>
+                                    <td>{{res.collateralType}}</td>
+                                    <td>{{res.maturityDate}}</td>
+                                    <td>{{res.collateralValue}}</td>
+                                    <td>{{res.isPerfected}}</td>
+                                    <td>{{res.isExcludedActivities}}</td>
+                                    <td>{{res.isNemaCompliant}}</td>
+                                    <td>{{res.securityType}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">New Loan Collateral
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="myForm" action="{% url 'FnLoanCollateral' res.No_ %}" method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-2">
+                                    <label for="recipient-name" class="col-form-label">Collateral Type:</label>
+                                    <select class="form-select" aria-label="Default select example"
+                                        name="collateralType">
+                                        <option selected>Select Collateral Type</option>
+                                        <option value="1">Imprest</option>
+                                        <option value="2">DSA</option>
+                                        <option value="3">Allowance</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="" class="col-form-label">Maturity Date:</label>
+                                <input type="date" name="maturityDate">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-2">
+                                    <label class="col-form-label">Collateral Value</label>
+                                    <input type="text" class="form-control" name="collateralValue">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="my-2">
+                                    <label class="form-label">Perfected</label>
+                                    <select class="form-select" name="isPerfected">
+                                        <option selected>Select </option>
+                                        <option value="True">True</option>
+                                        <option value="False">False</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="my-2">
+                                    <label class="form-label">Excluded Activities</label>
+                                    <select class="form-select" name="isExcludedActivities">
+                                        <option selected>Select </option>
+                                        <option value="1">True</option>
+                                        <option value="2">False</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="my-2">
+                                    <label class="form-label">Nema Compliant</label>
+                                    <select class="form-select" name="isNemaCompliant">
+                                        <option selected>Select </option>
+                                        <option value="1">True</option>
+                                        <option value="2">False</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="my-2">
+                                    <label class="form-label">Security Type</label>
+                                    <select class="form-select" name="securityType">
+                                        <option selected>Select </option>
+                                        <option value="1">True</option>
+                                        <option value="2">False</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
+                    <button type="submit" id="sasa" class="btn btn-primary">Submit</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
