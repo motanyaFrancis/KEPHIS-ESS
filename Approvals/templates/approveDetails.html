@@ -1,0 +1,176 @@
+{% extends 'offcanvas.html' %}
+{% load bootstrap5 %}
+{% load static %}
+{% block main %}
+<section class="dash2">
+    <div class="content-wrapper" style="padding-bottom: 5rem;">
+        <div class="d-xl-flex justify-content-between align-items-start">
+            <h2 class="text-dark font-weight-bold mb-2"> Imprest Requisition
+            </h2>
+
+            <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
+                <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
+                    <button class="btn bg-white dropdown-toggle p-3 d-flex align-items-center" type="button"
+                        id="dropdownMenuButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i
+                            class="mdi mdi-calendar mr-1"></i>{{today}}
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!--alert -->
+        {% if messages %}
+        {% for message in messages %}
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+        <div class="alert alert-success d-flex align-items-center alert-dismissible alert-success" role="alert">
+            <i class="las la-check-double" style="color: white;font-size: 2rem"></i>
+            <div class="a-icon mx-2">
+                {{message}}
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% elif message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+        <div class="alert alert-danger d-flex align-items-center alert-dismissible alert-warn" role="alert">
+            <i class="las la-exclamation-triangle" style="color: white;font-size: 2rem"></i>
+            <div class="a-icon mx-2">
+                {{message}}
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+        {% endfor %}
+        {% endif %}
+        <div class="row">
+            <div class="col-md-12">
+                <form class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Document No</label>
+                        <input type="text" class="form-control" placeholder="{{res.Document_No_}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Document Type</label>
+                        <input type="text" class="form-control" placeholder="{{res.Document_Type}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Sender</label>
+                        <input type="text" class="form-control" placeholder="{{res.Sender_ID}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Approver</label>
+                        <input type="text" class="form-control" placeholder="{{res.Approver_ID}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Status</label>
+                        <input type="text" class="form-control" placeholder="{{res.Status}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Last Date Time Modified</label>
+                        <input type="text" class="form-control" placeholder="{{res.Last_Date_Time_Modified}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Last Modified By User ID</label>
+                        <input type="text" class="form-control" placeholder="{{res.Last_Modified_By_User_ID}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Due Date</label>
+                        <input type="text" class="form-control" placeholder="{{res.Due_Date}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Amount</label>
+                        <input type="text" class="form-control" placeholder="{{res.Amount}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Amount__LCY_</label>
+                        <input type="text" class="form-control" placeholder="{{res.Amount__LCY_}}" readonly>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="d-grid gap-2 d-md-block">
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
+                    type="button">Approve Document</button>
+                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#rejects" type="button">Reject
+                    Approval</button>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="rejects" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">New Imprest Requisition
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="myForm" action="{% url 'All_Approved' res.Document_No_ %} " method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="form-label">Document No</label>
+                                <input type="text" class="form-control" placeholder="{{res.Document_No_}}"
+                                    value="{{res.Document_No_}}" readonly>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-2">
+                                    <label for="purpose" class="form-label">Purpose</label>
+                                    <textarea class="form-control" name="approvalComments" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
+                    <button type="submit" id="sasa" class="btn btn-primary">Submit</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">New Imprest Requisition
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="myForm" action="{% url 'Rejected' res.Document_No_ %}" method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="form-label">Document No</label>
+                                <input type="text" class="form-control" placeholder="{{res.Document_No_}}"
+                                    value="{{res.Document_No_}}" readonly>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-2">
+                                    <label for="purpose" class="form-label">Purpose</label>
+                                    <textarea class="form-control" name="approvalComments" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
+                    <button type="submit" id="sasa" class="btn btn-primary">Submit</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
