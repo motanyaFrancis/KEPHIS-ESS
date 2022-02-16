@@ -6,6 +6,7 @@ from requests_ntlm import HttpNtlmAuth
 import json
 from django.conf import settings as config
 import datetime
+from django.contrib import messages
 
 # Create your views here.
 
@@ -15,11 +16,14 @@ def Leave_Request(request):
     session.auth = config.AUTHS
 
     Access_Point = config.O_DATA.format("/QyLeaveApplications")
+    LeaveTypes = config.O_DATA.format("/QyLeaveTypes")
     try:
         response = session.get(Access_Point, timeout=10).json()
+        res_types = session.get(LeaveTypes, timeout=10).json()
         open = []
         Approved = []
         Rejected = []
+        Leave = res_types['value']
         for imprest in response['value']:
             if imprest['Status'] == 'Open' and imprest['User_ID'] == request.session['User_ID']:
                 output_json = json.dumps(imprest)
@@ -39,8 +43,42 @@ def Leave_Request(request):
     todays_date = datetime.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": open, "count": counts,
            "response": Approved, "counter": counter, "rej": Rejected,
-           'reject': reject}
+           'reject': reject, 'leave': Leave}
     return render(request, 'leave.html', ctx)
+
+
+def CreateLeave(request):
+    applicationNo = ''
+    employeeNo = request.session['Employee_No_']
+    usersId = request.session['User_ID']
+    dimension3 = ''
+    leavePeriod = ''
+    leaveType = ""
+    plannerStartDate = ''
+    isReturnSameDay = ''
+    daysApplied = ""
+    isLeaveAllowancePayable = ""
+    myAction = 'insert'
+    if request.method == 'POST':
+        try:
+            leaveType = request.POST.get('leaveType')
+            plannerStartDate = request.POST.get('plannerStartDate')
+            isReturnSameDay = request.POST.get('isReturnSameDay')
+            daysApplied = int(request.POST.get('daysApplied'))
+            isLeaveAllowancePayable = request.POST.get(
+                'isLeaveAllowancePayable')
+        except ValueError:
+            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            return redirect('leave')
+    try:
+        response = config.CLIENT.service.FnLeaveApplication(
+            applicationNo, employeeNo, usersId, dimension3, leavePeriod, leaveType, plannerStartDate, isReturnSameDay, daysApplied, isLeaveAllowancePayable, myAction)
+        messages.success(request, "Successfully Added!!")
+        print(response)
+    except Exception as e:
+        messages.error(request, e)
+        print(e)
+    return redirect('leave')
 
 
 def Training_Request(request):

@@ -69,11 +69,7 @@
                                         style="width:100%">
                                         <thead>
                                             <tr id="tops">
-                                                <th id="long">Application No</th>
                                                 <th>Application_Date</th>
-                                                <th>Employee Name</th>
-                                                <th>Mobile No</th>
-                                                <th>User</th>
                                                 <th>Leave Period</th>
                                                 <th>Leave Code</th>
                                                 <th>Status</th>
@@ -81,7 +77,7 @@
                                                 <th>Return same day</th>
                                                 <th>Days Applied</th>
                                                 <th>Start Date</th>
-                                                <th>Created By</th>
+                                                <th>End Date</th>
                                                 <th>Leave Allowance Payable</th>
                                                 <th>Employment Type</th>
                                             </tr>
@@ -89,11 +85,7 @@
                                         <tbody>
                                             {% for res in res %}
                                             <tr>
-                                                <td>{{res.Application_No}}</td>
                                                 <td id="rap">{{res.Application_Date}}</td>
-                                                <td>{{res.Employee_Name}}</td>
-                                                <td>{{res.Mobile_No}}</td>
-                                                <td>{{res.User_ID}}</td>
                                                 <td>{{res.Leave_Period}}</td>
                                                 <td>{{res.Leave_Code}}</td>
                                                 <td>{{res.Status}}</td>
@@ -113,15 +105,12 @@
                             <div class="tab-pane fade" id="s-approve">
                                 <h4 class="mt-2 text-dark">Approved Leave Request</h4>
                                 <div class="card-body">
-                                    <table id="example"
+                                    <table
                                         class="display table table-striped table-bordered dt-responsive table-responsive-lg"
                                         style="width:100%">
                                         <thead>
                                             <tr id="tops">
-                                                <th id="long">Application No</th>
                                                 <th>Application_Date</th>
-                                                <th>Employee Name</th>
-                                                <th>Mobile No</th>
                                                 <th>User</th>
                                                 <th>Leave Period</th>
                                                 <th>Leave Code</th>
@@ -130,7 +119,7 @@
                                                 <th>Return same day</th>
                                                 <th>Days Applied</th>
                                                 <th>Start Date</th>
-                                                <th>Created By</th>
+                                                <th>End Date</th>
                                                 <th>Leave Allowance Payable</th>
                                                 <th>Employment Type</th>
                                             </tr>
@@ -138,10 +127,7 @@
                                         <tbody>
                                             {% for res in response %}
                                             <tr>
-                                                <td>{{res.Application_No}}</td>
                                                 <td id="rap">{{res.Application_Date}}</td>
-                                                <td>{{res.Employee_Name}}</td>
-                                                <td>{{res.Mobile_No}}</td>
                                                 <td>{{res.User_ID}}</td>
                                                 <td>{{res.Leave_Period}}</td>
                                                 <td>{{res.Leave_Code}}</td>
@@ -220,46 +206,64 @@
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Raise Imprest Surrender
+                    <h5 class="modal-title" id="staticBackdropLabel">Raise Leave Request
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="myForm" action="{% url 'CreateSurrender' %}" method="post">
+                    <form id="myForm" action="{% url 'CreateLeave' %}" method="post">
                         {% csrf_token %}
                         <div class="mb-2"> <span class="w-name">
                                 General Information:
                             </span>
                             <div class="row">
                                 <div>
-                                    <label for="recipient-name" class="col-form-label">Imprest Issue Document No.
+                                    <label for="" class="col-form-label">Leave Type
                                         :</label>
-                                    <select class="form-select" aria-label="Default select example"
-                                        name="imprestIssueDocNo">
-                                        <option selected>Select Imprest Issue Document No.</option>
-                                        {% for res in app %}
-                                        <option value="{{res.No_}}">{{res.No_}}-{{res.Payment_Narration}}</option>
+                                    <select class="form-select" name="leaveType">
+                                        {% for res in leave %}
+                                        <option selected>Select Leave Type</option>
+                                        <option value="{{res.Code}}">{{res.Description}}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div class="my-3">
-                                        <label class="form-label">Payee</label>
-                                        <input type="text" class="form-control" id="spent" name="payee" placeholder="">
-                                    </div>
+                                    <label for="" class="col-form-label">Start Date:</label>
+                                    <input type="date" name="plannerStartDate">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div>
+                                    <label for="" class="col-form-label">Return Same Day
+                                        :</label>
+                                    <select class="form-select" name="isReturnSameDay">
+                                        <option selected>Select</option>
+                                        <option value="True">True</option>
+                                        <option value="False">False</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="my-3">
-                                        <label class="form-label">Purpose</label>
-                                        <textarea class="form-control" id="" name="purpose" rows="3"></textarea>
+                                        <label class="form-label">Days Applied</label>
+                                        <input type="number" class="form-control" name="daysApplied" placeholder="">
                                     </div>
                                 </div>
                             </div>
-
+                            <div class="row">
+                                <div>
+                                    <label for="" class="col-form-label"> Leave Allowance Payable
+                                        :</label>
+                                    <select class="form-select" name="isLeaveAllowancePayable">
+                                        <option selected>Select</option>
+                                        <option value="True">True</option>
+                                        <option value="False">False</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
