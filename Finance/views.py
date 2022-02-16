@@ -211,11 +211,11 @@ def CreateSurrender(request):
     surrenderNo = ""
     imprestIssueDocNo = ''
     isOnBehalf = ""
-    accountNo = ""
+    accountNo = "C00010"
     payee = ""
     purpose = ""
     usersId = request.session['User_ID']
-    staffNo = ""
+    staffNo = "AH"
     myAction = 'insert'
     if request.method == 'POST':
         try:
@@ -237,7 +237,40 @@ def CreateSurrender(request):
 
 
 def SurrenderDetails(request, pk):
-    return render(request, 'imprestSurr')
+    session = requests.Session()
+    session.auth = config.AUTHS
+    state = ''
+    res = ''
+    Access_Point = config.O_DATA.format("/QyImprestSurrenders")
+    try:
+        response = session.get(Access_Point, timeout=10).json()
+        openImp = []
+        for imprest in response['value']:
+            if imprest['Status'] == 'Released' and imprest['User_Id'] == request.session['User_ID']:
+                output_json = json.dumps(imprest)
+                openImp.append(json.loads(output_json))
+                for imprest in openImp:
+                    if imprest['No_'] == pk:
+                        res = imprest
+            if imprest['Status'] == 'Open' and imprest['User_Id'] == request.session['User_ID']:
+                output_json = json.dumps(imprest)
+                openImp.append(json.loads(output_json))
+                for imprest in openImp:
+                    if imprest['No_'] == pk:
+                        res = imprest
+                        if imprest['Status'] == 'Open':
+                            state = 1
+            if imprest['Status'] == 'Released' and imprest['User_Id'] == request.session['User_ID']:
+                output_json = json.dumps(imprest)
+                openImp.append(json.loads(output_json))
+                for imprest in openImp:
+                    if imprest['No_'] == pk:
+                        res = imprest
+    except requests.exceptions.ConnectionError as e:
+        print(e)
+    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
+    ctx = {"today": todays_date, "res": res, "state": state}
+    return render(request, 'SurrenderDetail.html', ctx)
 
 
 def StaffClaim(request):

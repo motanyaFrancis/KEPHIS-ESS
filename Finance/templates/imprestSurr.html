@@ -88,9 +88,9 @@
                                                 <td>{{res.User_Id}}</td>
                                                 <td>{{res.Status}}</td>
                                                 <td>
-                                                    <a role="button" href="#modal" data-bs-toggle="modal"
+                                                    <a role="button" href="{% url 'IMPSurrender' res.No_ %}"
                                                         class="btn btn-success btn-icon-text"
-                                                        style="background: #25CC88;">View
+                                                        style="background: #25CC88;">Add Lines
                                                         <i class="las la-external-link-alt" style="font-size: 1rem"></i>
                                                     </a>
                                                 </td>
@@ -250,109 +250,7 @@
                 </div>
             </div>
         </div>
-        <!-- Modal -->
-        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-            aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="staticBackdropLabel">New Imprest Requisition
-                        </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="myForm" action="{% url 'NewClaim' %}" method="post">
-                            {% csrf_token %}
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-2">
-                                        <label class="form-label">Claim Type</label>
-                                        <select class="form-select" aria-label="Default select example"
-                                            name="claimType">
-                                            <option selected>Select Claim Type</option>
-                                            <option value="1">General Claim</option>
-                                            <option value="2">Medical Claim</option>
-                                            <option value="3">Imprest Claim</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-2">
-                                        <label class="form-label">isOnBehalf</label>
-                                        <select class="form-select" aria-label="Default select example"
-                                            name="isOnBehalf">
-                                            <option selected>Select isOnBehalf</option>
-                                            <option value="True">True</option>
-                                            <option value="False">False</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="mb-2">
-                                        <label class="form-label">Account Number</label>
-                                        <select class="form-select" aria-label="Default select example" disabled>
-                                            <option selected>Select Account Number</option>
-                                            <option value="True">True</option>
-                                            <option value="False">False</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-2">
-                                        <label for="responsibility" class="col-form-label">staff No</label>
-                                        <input type="text" class="form-control" placeholder="none" disabled readonly>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-2">
-                                        <label for="payee" class="col-form-label">Payee</label>
-                                        <input type="text" class="form-control" name="payee">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-2">
-                                        <label class="form-label">Currency</label>
-                                        <select class="form-select" aria-label="Default select example" disabled>
-                                            <option selected>Select Currency</option>
-                                            <option value="True">KSH</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-2">
-                                        <label class="form-label">imprestSurrDocNo</label>
-                                        <select class="form-select" aria-label="Default select example" disabled
-                                            readonly>
-                                            <option selected>iimprestSurrDocNo</option>
-                                            <option value="True">00000001</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="mb-2">
-                                        <label for="purpose" class="form-label">Purpose</label>
-                                        <textarea class="form-control" name="purpose" rows="3"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
-                        <button type="submit" id="sasa" class="btn btn-primary">Submit</button>
-                    </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+    </div>
 </section>
 
 {% endblock %}

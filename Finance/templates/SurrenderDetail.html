@@ -1,0 +1,148 @@
+{% extends 'offcanvas.html' %}
+{% load bootstrap5 %}
+{% load static %}
+{% block main %}
+<section class="dash2">
+    <div class="content-wrapper" style="padding-bottom: 5rem;">
+        <div class="d-xl-flex justify-content-between align-items-start">
+            <h2 class="text-dark font-weight-bold mb-2"> Imprest Surrender
+                {% if state == 1 %}
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> <i
+                        class="las la-plus"></i> Surrender Lines
+                    Lines</button>
+                {% else %}
+                <button class="btn btn-info"> <i class="las la-plus"></i> {{res.Status}}</button>
+                {% endif %}
+            </h2>
+
+            <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
+                <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
+                    <button class="btn bg-white dropdown-toggle p-3 d-flex align-items-center" type="button"
+                        id="dropdownMenuButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i
+                            class="mdi mdi-calendar mr-1"></i>{{today}}
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!--alert -->
+        {% if messages %}
+        {% for message in messages %}
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+        <div class="alert alert-success d-flex align-items-center alert-dismissible alert-success" role="alert">
+            <i class="las la-check-double" style="color: white;font-size: 2rem"></i>
+            <div class="a-icon mx-2">
+                {{message}}
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% elif message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+        <div class="alert alert-danger d-flex align-items-center alert-dismissible alert-warn" role="alert">
+            <i class="las la-exclamation-triangle" style="color: white;font-size: 2rem"></i>
+            <div class="a-icon mx-2">
+                {{message}}
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+        {% endfor %}
+        {% endif %}
+        <div class="row">
+            <div class="col-md-12">
+                <form class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Surrender Number</label>
+                        <input type="text" class="form-control" placeholder="{{res.No_}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">imprestIssueDocNo</label>
+                        <input type="text" class="form-control" placeholder="{{res.Imprest_Issue_Doc__No}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">isOnBehalf</label>
+                        <input type="text" class="form-control" placeholder="{{res.Apply_on_behalf}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Payee</label>
+                        <input type="text" class="form-control" placeholder="{{res.Payee}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">User</label>
+                        <input type="text" class="form-control" placeholder="{{res.User_Id}}" readonly>
+                    </div>
+                    <label for="inputAddress" class="form-label">purpose</label>
+                    <textarea class="form-control" placeholder="{{res.Payment_Narration}}" rows="3" readonly></textarea>
+            </div>
+            </form>
+        </div>
+    </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Raise Imprest Surrender
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="myForm" action="{% url 'CreateSurrender' %}" method="post">
+                        {% csrf_token %}
+                        <div class="mb-2"> <span class="w-name">
+                                General Information:
+                            </span>
+                            <div class="row">
+                                <div>
+                                    <label for="recipient-name" class="col-form-label">Gen Posting Type
+                                        :</label>
+                                    <select class="form-select" aria-label="Default select example"
+                                        name="genPostingType">
+                                        <option selected>Select Gen Posting Type.</option>
+                                        <option value="1">Purchase</option>
+                                        <option value="2">Sale</option>
+                                        <option value="3">Settlement</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="my-3">
+                                        <label class="form-label">isOnBehalf</label>
+                                        <select class="form-select" aria-label="Default select example"
+                                            name="isOnBehalf">
+                                            <option selected>Select isOnBehalf</option>
+                                            <option value="True">True</option>
+                                            <option value="False">False</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="my-3">
+                                        <label class="form-label">Payee</label>
+                                        <input type="text" class="form-control" id="spent" name="payee" placeholder="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="my-3">
+                                        <label class="form-label">Purpose</label>
+                                        <textarea class="form-control" id="" name="purpose" rows="3"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

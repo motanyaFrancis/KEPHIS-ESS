@@ -71,17 +71,19 @@ CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
 # response = CLIENT.service.FnStaffClaimLine(lineNo,
 #                                            claimNo, claimType, accountNo, amount, description, claimReceiptNo, dimension3, expenditureDate, expenditureDescription, myAction)
 # print(response)
-surrenderNo = ""
-imprestIssueDocNo = 'IMP00010'
-isOnBehalf = False
-accountNo = ""
-payee = "Enock"
-purpose = "Test"
-usersId = "NAVADMIN"
-staffNo = ""
+
+lineNo = 0
+surrenderNo = "IMPSUR0019"
+expenditureType = "5RTT"
+accountNo = "C00010"
+genPostingType = 1
+purpose = "Test2"
+actualSpent = 10
+surrenderReceiptNo = ''
+dimension3 = ""
 myAction = 'insert'
 
 
-response = CLIENT.service.FnImprestSurrenderHeader(
-    surrenderNo, imprestIssueDocNo, isOnBehalf, accountNo, payee, purpose, usersId, staffNo, myAction)
+response = CLIENT.service.FnImprestSurrenderLine(lineNo,
+                                                 surrenderNo, expenditureType, accountNo, genPostingType, purpose, actualSpent, surrenderReceiptNo, dimension3, myAction)
 print(response)
