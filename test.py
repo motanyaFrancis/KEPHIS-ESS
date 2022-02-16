@@ -88,19 +88,20 @@ CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
 #                                              employeeNo, usersId, dimension3, leavePeriod, plannerStartDate, isReturnSameDay, dimension3, daysApplied, isLeaveAllowancePayable, myAction)
 # print(response)
 
-requestNo = ''
-employeeNo = 'AH'
+loanNo = ''
+requestedDate = datetime.fromisoformat("2012-12-12")
 usersId = "NAVADMIN"
-designation = ''
-isAdhoc = True
-trainingNeed = ""
-description = ""
-startDate = datetime.fromisoformat("2012-12-12")
-endDate = datetime.fromisoformat("2012-12-12")
-destination = ''
-currency = ''
+pmlNo = ''
+loanProductType = ''
+loanDuration = 1
+requestedAmount = 100
+interestCalculationMethod = ''
+repaymentFrequency = ''
+bankName = ''
+bankAccountNo = ''
+bankBranchName = ''
 myAction = 'insert'
 
-response = CLIENT.service.FnTrainingRequest(requestNo,
-                                            employeeNo, usersId, designation, isAdhoc, trainingNeed, description, startDate, endDate, destination, currency, myAction)
+response = CLIENT.service.FnLoanApplication(loanNo,
+                                            requestedDate, usersId, pmlNo, loanProductType, loanDuration, requestedAmount, interestCalculationMethod, repaymentFrequency, bankName, bankAccountNo, bankBranchName, myAction)
 print(response)

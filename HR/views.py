@@ -152,7 +152,74 @@ def CreateTrainingRequest(request):
 
 
 def Loan_Request(request):
+    session = requests.Session()
+    session.auth = config.AUTHS
+
+    Access_Point = config.O_DATA.format("/QyLoansRegister")
+    try:
+        response = session.get(Access_Point, timeout=10).json()
+        open = []
+        Approved = []
+        Rejected = []
+        for imprest in response['value']:
+            if imprest['Status'] == 'Open' and imprest['User_ID'] == request.session['User_ID']:
+                output_json = json.dumps(imprest)
+                open.append(json.loads(output_json))
+            if imprest['Status'] == 'Released' and imprest['User_ID'] == request.session['User_ID']:
+                output_json = json.dumps(imprest)
+                Approved.append(json.loads(output_json))
+            if imprest['Status'] == 'Rejected' and imprest['User_ID'] == request.session['User_ID']:
+                output_json = json.dumps(imprest)
+                Rejected.append(json.loads(output_json))
+        counts = len(open)
+        counter = len(Approved)
+        reject = len(Rejected)
+    except requests.exceptions.ConnectionError as e:
+        print(e)
 
     todays_date = datetime.datetime.now().strftime("%b. %d, %Y %A")
-    ctx = {"today": todays_date}
+    ctx = {"today": todays_date, "res": open, "count": counts,
+           "response": Approved, "counter": counter, "rej": Rejected,
+           'reject': reject}
     return render(request, 'loan.html', ctx)
+
+
+def CreateLoanRequest(request):
+    loanNo = ''
+    requestedDate = ''
+    usersId = request.session['User_ID']
+    pmlNo = ''
+    loanProductType = ''
+    loanDuration = ''
+    requestedAmount = ''
+    interestCalculationMethod = ''
+    repaymentFrequency = ''
+    bankName = ''
+    bankAccountNo = ''
+    bankBranchName = ''
+    myAction = 'insert'
+    if request.method == 'POST':
+        try:
+            requestedDate = request.POST.get('requestedDate')
+            pmlNo = request.POST.get('pmlNo')
+            loanProductType = request.POST.get('loanProductType')
+            loanDuration = int(request.POST.get('loanDuration'))
+            requestedAmount = float(request.POST.get('requestedAmount'))
+            interestCalculationMethod = request.POST.get(
+                'interestCalculationMethod')
+            repaymentFrequency = request.POST.get('repaymentFrequency')
+            bankName = request.POST.get('bankName')
+            bankAccountNo = request.POST.get('bankAccountNo')
+            bankBranchName = request.POST.get('bankBranchName')
+        except ValueError:
+            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            return redirect('loan')
+    try:
+        response = config.CLIENT.service.FnTrainingRequest(
+            loanNo, requestedDate, usersId, pmlNo, loanProductType, loanDuration, requestedAmount, interestCalculationMethod, repaymentFrequency, bankName, bankAccountNo, bankBranchName, myAction)
+        messages.success(request, "Successfully Added!!")
+        print(response)
+    except Exception as e:
+        messages.error(request, e)
+        print(e)
+    return redirect('loan')

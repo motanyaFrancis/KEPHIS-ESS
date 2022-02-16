@@ -9,4 +9,5 @@ urlpatterns = [
     path('TrainingRequest', views.CreateTrainingRequest,
          name='CreateTrainingRequest'),
     path('Loan', views.Loan_Request, name='loan'),
+    path('NewLoan', views.CreateLoanRequest, name='NewLoan'),
 ]
