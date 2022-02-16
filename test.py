@@ -72,18 +72,35 @@ CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
 #                                            claimNo, claimType, accountNo, amount, description, claimReceiptNo, dimension3, expenditureDate, expenditureDescription, myAction)
 # print(response)
 
-applicationNo = ''
+# applicationNo = ''
+# employeeNo = 'AH'
+# usersId = "NAVADMIN"
+# dimension3 = ''
+# leavePeriod = ''
+# leaveType = ""
+# plannerStartDate = datetime.fromisoformat("2012-12-12")
+# isReturnSameDay = datetime.fromisoformat("2012-12-12")
+# daysApplied = 1
+# isLeaveAllowancePayable = True
+# myAction = 'insert'
+
+# response = CLIENT.service.FnLeaveApplication(applicationNo,
+#                                              employeeNo, usersId, dimension3, leavePeriod, plannerStartDate, isReturnSameDay, dimension3, daysApplied, isLeaveAllowancePayable, myAction)
+# print(response)
+
+requestNo = ''
 employeeNo = 'AH'
 usersId = "NAVADMIN"
-dimension3 = ''
-leavePeriod = ''
-leaveType = ""
-plannerStartDate = datetime.fromisoformat("2012-12-12")
-isReturnSameDay = datetime.fromisoformat("2012-12-12")
-daysApplied = 1
-isLeaveAllowancePayable = True
+designation = ''
+isAdhoc = True
+trainingNeed = ""
+description = ""
+startDate = datetime.fromisoformat("2012-12-12")
+endDate = datetime.fromisoformat("2012-12-12")
+destination = ''
+currency = ''
 myAction = 'insert'
 
-response = CLIENT.service.FnLeaveApplication(applicationNo,
-                                             employeeNo, usersId, dimension3, leavePeriod, plannerStartDate, isReturnSameDay, dimension3, daysApplied, isLeaveAllowancePayable, myAction)
+response = CLIENT.service.FnTrainingRequest(requestNo,
+                                            employeeNo, usersId, designation, isAdhoc, trainingNeed, description, startDate, endDate, destination, currency, myAction)
 print(response)

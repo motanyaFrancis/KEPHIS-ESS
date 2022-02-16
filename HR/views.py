@@ -1,3 +1,4 @@
+from urllib import request
 from django.shortcuts import render, redirect
 from datetime import date
 import requests
@@ -82,10 +83,72 @@ def CreateLeave(request):
 
 
 def Training_Request(request):
+    session = requests.Session()
+    session.auth = config.AUTHS
+
+    Access_Point = config.O_DATA.format("/QyTrainingRequests")
+    currency = config.O_DATA.format("/QyCurrencies")
+    try:
+        response = session.get(Access_Point, timeout=10).json()
+        res_currency = session.get(currency, timeout=10).json()
+        open = []
+        Approved = []
+        Rejected = []
+        cur = res_currency['value']
+        for imprest in response['value']:
+            if imprest['Status'] == 'Open' and imprest['Employee_No'] == request.session['Employee_No_']:
+                output_json = json.dumps(imprest)
+                open.append(json.loads(output_json))
+            if imprest['Status'] == 'Released' and imprest['Employee_No'] == request.session['Employee_No_']:
+                output_json = json.dumps(imprest)
+                Approved.append(json.loads(output_json))
+            if imprest['Status'] == 'Rejected' and imprest['Employee_No'] == request.session['Employee_No_']:
+                output_json = json.dumps(imprest)
+                Rejected.append(json.loads(output_json))
+        counts = len(open)
+        counter = len(Approved)
+        reject = len(Rejected)
+    except requests.exceptions.ConnectionError as e:
+        print(e)
 
     todays_date = datetime.datetime.now().strftime("%b. %d, %Y %A")
-    ctx = {"today": todays_date}
+    ctx = {"today": todays_date, "res": open, "count": counts, "response": Approved, "counter": counter, "rej": Rejected,
+           'reject': reject, 'cur': cur}
     return render(request, 'training.html', ctx)
+
+
+def CreateTrainingRequest(request):
+    requestNo = ''
+    employeeNo = request.session['Employee_No_']
+    usersId = request.session['User_ID']
+    designation = ''
+    isAdhoc = ""
+    trainingNeed = ""
+    description = ""
+    startDate = ''
+    endDate = ''
+    destination = ''
+    currency = ''
+    myAction = 'insert'
+    if request.method == 'POST':
+        try:
+            isAdhoc = request.POST.get('isAdhoc')
+            description = request.POST.get('description')
+            startDate = request.POST.get('startDate')
+            endDate = request.POST.get('endDate')
+            currency = request.POST.get('currency')
+        except ValueError:
+            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            return redirect('training_request')
+    try:
+        response = config.CLIENT.service.FnTrainingRequest(
+            requestNo, employeeNo, usersId, designation, isAdhoc, trainingNeed, description, startDate, endDate, destination, currency, myAction)
+        messages.success(request, "Successfully Added!!")
+        print(response)
+    except Exception as e:
+        messages.error(request, e)
+        print(e)
+    return redirect('training_request')
 
 
 def Loan_Request(request):
