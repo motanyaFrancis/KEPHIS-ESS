@@ -18,11 +18,13 @@ def ImprestRequisition(request):
     session.auth = config.AUTHS
 
     Access_Point = config.O_DATA.format("/Imprests")
+
     try:
         response = session.get(Access_Point, timeout=10).json()
         open = []
         Approved = []
         Rejected = []
+
         for imprest in response['value']:
             if imprest['Status'] == 'Open' and imprest['User_Id'] == request.session['User_ID']:
                 output_json = json.dumps(imprest)
@@ -50,7 +52,7 @@ def CreateImprest(request):
     imprestNo = ""
     isOnBehalf = ""
     accountNo = ''
-    responsibilityCenter = ''
+    responsibilityCenter = request.session['User_Responsibility_Center']
     travelType = ''
     payee = ''
     purpose = ''
@@ -88,9 +90,28 @@ def ImprestDetails(request, pk):
     state = ''
     res = ''
     Access_Point = config.O_DATA.format("/Imprests")
+    Imprest_Type = config.O_DATA.format("/QyReceiptsAndPaymentTypes")
+    Dimension = config.O_DATA.format("/QyDimensionValues")
     try:
         response = session.get(Access_Point, timeout=10).json()
+        Imprest_RES = session.get(Imprest_Type, timeout=10).json()
+        Dimension_RES = session.get(Dimension, timeout=10).json()
+
         openImp = []
+        res_type = []
+        Area = []
+        BizGroup = []
+        for types in Dimension_RES['value']:
+            if types['Global_Dimension_No_'] == 1:
+                output_json = json.dumps(types)
+                Area.append(json.loads(output_json))
+            if types['Global_Dimension_No_'] == 2:
+                output_json = json.dumps(types)
+                BizGroup.append(json.loads(output_json))
+        for types in Imprest_RES['value']:
+            if types['Type'] == "Imprest":
+                output_json = json.dumps(types)
+                res_type.append(json.loads(output_json))
         for imprest in response['value']:
             if imprest['Status'] == 'Released' and imprest['User_Id'] == request.session['User_ID']:
                 output_json = json.dumps(imprest)
@@ -124,7 +145,14 @@ def ImprestDetails(request, pk):
                 openLines.append(json.loads(output_json))
     except requests.exceptions.ConnectionError as e:
         print(e)
-    lineNo = 4
+    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
+    ctx = {"today": todays_date, "res": res,
+           "line": openLines, "state": state, "type": res_type, "area": Area, "biz": BizGroup}
+    return render(request, 'imprestDetail.html', ctx)
+
+
+def CreateImprestLines(request, pk):
+    lineNo = 0
     imprestNo = pk
     destination = ""
     imprestType = ''
@@ -142,10 +170,12 @@ def ImprestDetails(request, pk):
         try:
             destination = request.POST.get('destination')
             imprestTypes = request.POST.get('imprestType')
+            requisitionType = request.POST.get('requisitionType')
             travelDate = request.POST.get('travel')
+            areaCode = request.POST.get("areaCode")
+            businessGroupCode = request.POST.get('businessGroupCode')
             returnDate = request.POST.get('returnDate')
             quantity = int(request.POST.get('quantity'))
-
         except ValueError:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('IMPDetails', pk=imprestNo)
@@ -160,10 +190,9 @@ def ImprestDetails(request, pk):
         print(response)
         return redirect('IMPDetails', pk=imprestNo)
     except Exception as e:
+        messages.error(request, e)
         print(e)
-    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-    ctx = {"today": todays_date, "res": res, "line": openLines, "state": state}
-    return render(request, 'imprestDetail.html', ctx)
+    return redirect('IMPDetails', pk=imprestNo)
 
 
 def ImprestSurrender(request):
@@ -211,11 +240,11 @@ def CreateSurrender(request):
     surrenderNo = ""
     imprestIssueDocNo = ''
     isOnBehalf = ""
-    accountNo = "C00010"
+    accountNo = request.session['Customer_No_']
     payee = ""
     purpose = ""
     usersId = request.session['User_ID']
-    staffNo = "AH"
+    staffNo = request.session['Employee_No_']
     myAction = 'insert'
     if request.method == 'POST':
         try:
@@ -242,9 +271,17 @@ def SurrenderDetails(request, pk):
     state = ''
     res = ''
     Access_Point = config.O_DATA.format("/QyImprestSurrenders")
+    Imprest_Type = config.O_DATA.format("/QyReceiptsAndPaymentTypes")
     try:
         response = session.get(Access_Point, timeout=10).json()
+        Imprest_RES = session.get(Imprest_Type, timeout=10).json()
+
         openImp = []
+        res_type = []
+        for types in Imprest_RES['value']:
+            if types['Type'] == "Imprest":
+                output_json = json.dumps(types)
+                res_type.append(json.loads(output_json))
         for imprest in response['value']:
             if imprest['Status'] == 'Released' and imprest['User_Id'] == request.session['User_ID']:
                 output_json = json.dumps(imprest)
@@ -268,9 +305,53 @@ def SurrenderDetails(request, pk):
                         res = imprest
     except requests.exceptions.ConnectionError as e:
         print(e)
+    Lines_Res = config.O_DATA.format("/QyImprestSurrenderLines")
+    try:
+        response_Lines = session.get(Lines_Res, timeout=10).json()
+        openLines = []
+        for imprest in response_Lines['value']:
+            if imprest['AuxiliaryIndex1'] == pk:
+                output_json = json.dumps(imprest)
+                openLines.append(json.loads(output_json))
+    except requests.exceptions.ConnectionError as e:
+        print(e)
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-    ctx = {"today": todays_date, "res": res, "state": state}
+    ctx = {"today": todays_date, "res": res,
+           "state": state, "line": openLines, "type": res_type}
     return render(request, 'SurrenderDetail.html', ctx)
+
+
+def CreateSurrenderLines(request, pk):
+    lineNo = 0
+    surrenderNo = pk
+    expenditureType = ""
+    accountNo = request.session['Customer_No_']
+    genPostingType = ""
+    purpose = ""
+    actualSpent = ""
+    surrenderReceiptNo = ''
+    dimension3 = ""
+    myAction = 'insert'
+    if request.method == 'POST':
+        try:
+            expenditureType = request.POST.get('expenditureType')
+            genPostingType = request.POST.get('genPostingType')
+            purpose = request.POST.get('purpose')
+            actualSpent = float(request.POST.get('actualSpent'))
+
+        except ValueError:
+            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            return redirect('IMPDetails', pk=surrenderNo)
+    try:
+        response = config.CLIENT.service.FnImprestSurrenderLine(
+            lineNo, surrenderNo, expenditureType, accountNo, genPostingType, purpose, actualSpent, surrenderReceiptNo, dimension3, myAction)
+        messages.success(request, "Successfully Added!!")
+        print(response)
+        return redirect('IMPSurrender', pk=surrenderNo)
+    except Exception as e:
+        messages.error(request, e)
+        print(e)
+    return redirect('IMPSurrender', pk=surrenderNo)
 
 
 def StaffClaim(request):

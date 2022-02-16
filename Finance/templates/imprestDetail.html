@@ -143,7 +143,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="myForm" action="{% url 'IMPDetails' res.No_%}" method="post">
+                    <form id="myForm" action="{% url 'CreateImpLines' res.No_%}" method="post">
                         {% csrf_token %}
                         <div class="row">
                             <div class="col-md-6">
@@ -183,20 +183,24 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-12">
                                 <div class="mb-2">
-                                    <label for="responsibility" class="col-form-label">Requisition
-                                        Type</label>
-                                    <input type="text" class="form-control" placeholder="Not Consumed" readonly>
+                                    <div class="mb-2">
+                                        <label for="recipient-name" class="col-form-label">Requisition Type:</label>
+                                        <select class="form-select" aria-label="Default select example"
+                                            name="requisitionType">
+                                            <option selected>Select Requisition Type</option>
+                                            {% for res in type %}
+                                            <option value="{{res.Code}}">{{res.Description}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="mb-2">
-                                    <label class="col-form-label">Daily Rate</label>
-                                    <input type="text" disabled class="form-control" value="20" readonly>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
                                 <div class="mb-2">
                                     <label class="col-form-label">Quantity</label>
                                     <input type="number" class="form-control" name="quantity">
@@ -204,22 +208,30 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-12">
                                 <div class="mb-2">
-                                    <label for="responsibility" class="col-form-label">Area Code</label>
-                                    <input type="text" disabled class="form-control" placeholder="None" readonly>
+                                    <label for="" class="col-form-label">Area:</label>
+                                    <select class="form-select" aria-label="Default select example" name="areaCode">
+                                        <option selected>Select Area</option>
+                                        {% for res in area %}
+                                        <option value="{{res.Code}}">{{res.Name}}</option>
+                                        {% endfor %}
+                                    </select>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
                                 <div class="mb-2">
-                                    <label class="col-form-label">Business G. Code</label>
-                                    <input type="text" disabled class="form-control" placeholder="None" readonly>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="mb-2">
-                                    <label class="col-form-label">Dimension 3</label>
-                                    <input type="text" disabled class="form-control" placeholder="None" readonly>
+                                    <label for="" class="col-form-label">Business Group :</label>
+                                    <select class="form-select" aria-label="Default select example"
+                                        name="businessGroupCode">
+                                        <option selected>Select Business Group</option>
+                                        {% for res in biz %}
+                                        <option value="{{res.Code}}">{{res.Name}}</option>
+                                        {% endfor %}
+                                    </select>
                                 </div>
                             </div>
                         </div>

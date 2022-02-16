@@ -74,6 +74,45 @@
             </div>
             </form>
         </div>
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card" id="d-card">
+                    <h4 class="mt-2 mx-2 text-dark">Imprest Surrender Lines</h4>
+                    <div class="card-body">
+                        <table id="example"
+                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                            style="width:100%">
+                            <thead>
+                                <tr id="tops">
+                                    <th id="long">Surrender No</th>
+                                    <th>Expenditure Type </th>
+                                    <th>Purpose</th>
+                                    <th>Account No</th>
+                                    <th>Description</th>
+                                    <th>Amount</th>
+                                    <th>Actual Spent</th>
+                                    <th>Remaining Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for res in line %}
+                                <tr>
+                                    <td>{{res.AuxiliaryIndex1}}</td>
+                                    <td>{{res.Expenditure_Type}}</td>
+                                    <td>{{res.Purpose}}</td>
+                                    <td>{{res.Account_No}}</td>
+                                    <td>{{res.Description}}</td>
+                                    <td>{{res.Amount}}</td>
+                                    <td>{{res.Actual_Spent}}</td>
+                                    <td>{{res.Remaining_Amount}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     </div>
     <!-- Modal -->
@@ -87,13 +126,23 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="myForm" action="{% url 'CreateSurrender' %}" method="post">
+                    <form id="myForm" action="{% url 'CreateSurrenderLines' res.No_ %}" method="post">
                         {% csrf_token %}
                         <div class="mb-2"> <span class="w-name">
                                 General Information:
                             </span>
                             <div class="row">
-                                <div>
+                                <div class="col-md-6">
+                                    <label for="" class="col-form-label">Expenditure Type:</label>
+                                    <select class="form-select" aria-label="Default select example"
+                                        name="expenditureType">
+                                        <option selected>Select Expenditure Type</option>
+                                        {% for res in type %}
+                                        <option value="{{res.Code}}">{{res.Description}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
                                     <label for="recipient-name" class="col-form-label">Gen Posting Type
                                         :</label>
                                     <select class="form-select" aria-label="Default select example"
@@ -108,13 +157,8 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="my-3">
-                                        <label class="form-label">isOnBehalf</label>
-                                        <select class="form-select" aria-label="Default select example"
-                                            name="isOnBehalf">
-                                            <option selected>Select isOnBehalf</option>
-                                            <option value="True">True</option>
-                                            <option value="False">False</option>
-                                        </select>
+                                        <label class="form-label">Actual Spent</label>
+                                        <input type="text" class="form-control" name="actualSpent" placeholder="">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
