@@ -6,7 +6,7 @@ from requests import Session
 from requests_ntlm import HttpNtlmAuth
 import json
 from django.conf import settings as config
-import datetime
+import datetime as dt
 from django.contrib import messages
 
 # Create your views here.
@@ -41,7 +41,7 @@ def Leave_Request(request):
     except requests.exceptions.ConnectionError as e:
         print(e)
 
-    todays_date = datetime.datetime.now().strftime("%b. %d, %Y %A")
+    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": open, "count": counts,
            "response": Approved, "counter": counter, "rej": Rejected,
            'reject': reject, 'leave': Leave}
@@ -111,7 +111,7 @@ def Training_Request(request):
     except requests.exceptions.ConnectionError as e:
         print(e)
 
-    todays_date = datetime.datetime.now().strftime("%b. %d, %Y %A")
+    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": open, "count": counts, "response": Approved, "counter": counter, "rej": Rejected,
            'reject': reject, 'cur': cur}
     return render(request, 'training.html', ctx)
@@ -177,7 +177,7 @@ def Loan_Request(request):
     except requests.exceptions.ConnectionError as e:
         print(e)
 
-    todays_date = datetime.datetime.now().strftime("%b. %d, %Y %A")
+    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": open, "count": counts,
            "response": Approved, "counter": counter, "rej": Rejected,
            'reject': reject}
@@ -223,3 +223,77 @@ def CreateLoanRequest(request):
         messages.error(request, e)
         print(e)
     return redirect('loan')
+
+
+def LoanLines(request, pk):
+    session = requests.Session()
+    session.auth = config.AUTHS
+    state = ''
+    res = ''
+    Access_Point = config.O_DATA.format("/QyLoansRegister")
+    try:
+        response = session.get(Access_Point, timeout=10).json()
+        openClaim = []
+        for claim in response['value']:
+            if claim['Status'] == 'Released' and claim['User_ID'] == request.session['User_ID']:
+                output_json = json.dumps(claim)
+                openClaim.append(json.loads(output_json))
+                for claim in openClaim:
+                    if claim['No_'] == pk:
+                        res = claim
+            if claim['Status'] == 'Open' and claim['User_ID'] == request.session['User_ID']:
+                output_json = json.dumps(claim)
+                openClaim.append(json.loads(output_json))
+                for claim in openClaim:
+                    if claim['No_'] == pk:
+                        res = claim
+                        if claim['Status'] == 'Open':
+                            state = 1
+            if claim['Status'] == 'Rejected' and claim['User_ID'] == request.session['User_ID']:
+                output_json = json.dumps(claim)
+                openClaim.append(json.loads(output_json))
+                for claim in openClaim:
+                    if claim['No_'] == pk:
+                        res = claim
+    except requests.exceptions.ConnectionError as e:
+        print(e)
+    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
+    ctx = {"today": todays_date, "res": res, "state": state}
+    return render(request, 'LoanDetails.html', ctx)
+
+
+def FnLoanCollateral(request, pk):
+    collateralCode = ''
+    loanNo = pk
+    collateralType = ""
+    maturityDate = ""
+    collateralValue = ""
+    isPerfected = ''
+    isExcludedActivities = ""
+    isNemaCompliant = ""
+    securityType = ""
+    myAction = 'insert'
+    if request.method == 'POST':
+        try:
+            collateralType = request.POST.get('collateralType')
+            maturityDate = request.POST.get('maturityDate')
+            collateralValue = float(request.POST.get('collateralValue'))
+            isPerfected = request.POST.get('isPerfected')
+            isExcludedActivities = int(
+                request.POST.get('isExcludedActivities'))
+            isNemaCompliant = int(request.POST.get('isNemaCompliant'))
+            securityType = request.POST.get('securityType')
+
+        except ValueError:
+            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            return redirect('IMPDetails', pk=loanNo)
+    try:
+        response = config.CLIENT.service.FnImprestSurrenderLine(
+            collateralCode, loanNo, collateralType, maturityDate, collateralValue, isPerfected, isExcludedActivities, isNemaCompliant, securityType, myAction)
+        messages.success(request, "Successfully Added!!")
+        print(response)
+        return redirect('LoanLines', pk=loanNo)
+    except Exception as e:
+        messages.error(request, e)
+        print(e)
+    return redirect('LoanLines', pk=loanNo)

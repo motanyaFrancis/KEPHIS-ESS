@@ -10,4 +10,5 @@ urlpatterns = [
          name='CreateTrainingRequest'),
     path('Loan', views.Loan_Request, name='loan'),
     path('NewLoan', views.CreateLoanRequest, name='NewLoan'),
+    path('LoanLines/<str:pk>', views.LoanLines, name='LoanLines'),
 ]
