@@ -18,13 +18,11 @@ def ImprestRequisition(request):
     session.auth = config.AUTHS
 
     Access_Point = config.O_DATA.format("/Imprests")
-
     try:
         response = session.get(Access_Point, timeout=10).json()
         open = []
         Approved = []
         Rejected = []
-
         for imprest in response['value']:
             if imprest['Status'] == 'Open' and imprest['User_Id'] == request.session['User_ID']:
                 output_json = json.dumps(imprest)
@@ -50,8 +48,7 @@ def CreateImprest(request):
     session = requests.Session()
     session.auth = config.AUTHS
     imprestNo = ""
-    isOnBehalf = ""
-    accountNo = ''
+    accountNo = request.session['Customer_No_']
     responsibilityCenter = request.session['User_Responsibility_Center']
     travelType = ''
     payee = ''
@@ -64,7 +61,6 @@ def CreateImprest(request):
     myAction = 'insert'
     if request.method == 'POST':
         try:
-            isOnBehalf = request.POST.get('isOnBehalf')
             travelType = int(request.POST.get('travelType'))
             payee = request.POST.get('payee')
             purpose = request.POST.get('purpose')
@@ -74,9 +70,10 @@ def CreateImprest(request):
         except ValueError:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('imprestReq')
+    print(accountNo)
     try:
         response = config.CLIENT.service.FnImprestHeader(
-            imprestNo, isOnBehalf, accountNo, responsibilityCenter, travelType, payee, purpose, usersId, personalNo, idPassport, isImprest, isDsa, myAction)
+            imprestNo, accountNo, responsibilityCenter, travelType, payee, purpose, usersId, personalNo, idPassport, isImprest, isDsa, myAction)
         messages.success(request, "Successfully Added!!")
         print(response)
     except Exception as e:
@@ -239,7 +236,6 @@ def CreateSurrender(request):
 
     surrenderNo = ""
     imprestIssueDocNo = ''
-    isOnBehalf = ""
     accountNo = request.session['Customer_No_']
     payee = ""
     purpose = ""
@@ -249,7 +245,6 @@ def CreateSurrender(request):
     if request.method == 'POST':
         try:
             imprestIssueDocNo = request.POST.get('imprestIssueDocNo')
-            isOnBehalf = request.POST.get('isOnBehalf')
             payee = request.POST.get('payee')
             purpose = request.POST.get('purpose')
         except ValueError:
@@ -257,7 +252,7 @@ def CreateSurrender(request):
             return redirect('imprestSurr')
     try:
         response = config.CLIENT.service.FnImprestSurrenderHeader(
-            surrenderNo, imprestIssueDocNo, isOnBehalf, accountNo, payee, purpose, usersId, staffNo, myAction)
+            surrenderNo, imprestIssueDocNo, accountNo, payee, purpose, usersId, staffNo, myAction)
         messages.success(request, "Successfully Added!!")
         print(response)
     except Exception as e:
@@ -360,11 +355,22 @@ def StaffClaim(request):
     session.auth = config.AUTHS
 
     Access_Point = config.O_DATA.format("/QyStaffClaims")
+    Claim = config.O_DATA.format("/QyImprestSurrenders")
+    currency = config.O_DATA.format("/QyCurrencies")
     try:
         response = session.get(Access_Point, timeout=10).json()
+        res_claim = session.get(Claim, timeout=10).json()
+        res_currency = session.get(currency, timeout=10).json()
         open = []
         Approved = []
         Rejected = []
+        My_Claim = []
+        all_currency = res_currency['value']
+
+        for imprest in res_claim['value']:
+            if imprest['Actual_Amount_Spent'] > imprest['Imprest_Amount']:
+                output_json = json.dumps(imprest)
+                My_Claim.append(json.loads(output_json))
         for imprest in response['value']:
             if imprest['Status'] == 'Open' and imprest['User_Id'] == request.session['User_ID']:
                 output_json = json.dumps(imprest)
@@ -383,34 +389,35 @@ def StaffClaim(request):
 
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": open, "count": counts, "rej": rej,
-           "response": Approved, "claim": counter, 'reject': Rejected}
+           "response": Approved, "claim": counter, 'reject': Rejected, "my_claim": My_Claim, "currency": all_currency}
     return render(request, 'staffClaim.html', ctx)
 
 
 def CreateClaim(request):
     claimNo = ""
     claimType = ""
-    isOnBehalf = False
-    accountNo = ''
-    payee = 'Papa'
-    purpose = 'Test'
+    accountNo = request.session['Customer_No_']
+    payee = ''
+    purpose = ''
     usersId = request.session['User_ID']
-    staffNo = 'AH'
+    staffNo = request.session['Employee_No_']
     currency = ""
     imprestSurrDocNo = ''
     myAction = 'insert'
     if request.method == 'POST':
         claimType = int(request.POST.get('claimType'))
-        isOnBehalf = request.POST.get('isOnBehalf')
         payee = request.POST.get('payee')
+        currency = request.POST.get('currency')
+        imprestSurrDocNo = request.POST.get('imprestSurrDocNo')
         purpose = request.POST.get('purpose')
     try:
         response = config.CLIENT.service.FnStaffClaimHeader(
-            claimNo, claimType, isOnBehalf, accountNo, payee, purpose, usersId, staffNo, currency, imprestSurrDocNo, myAction)
+            claimNo, claimType, accountNo, payee, purpose, usersId, staffNo, currency, imprestSurrDocNo, myAction)
         messages.success(request, "Successfully Added!!")
         print(response)
         return redirect('claim')
     except Exception as e:
+        messages.error(request, e)
         print(e)
     return redirect('claim')
 

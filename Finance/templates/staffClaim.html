@@ -204,7 +204,7 @@
                     <form id="myForm" action="{% url 'NewClaim' %}" method="post">
                         {% csrf_token %}
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <div class="mb-2">
                                     <label class="form-label">Claim Type</label>
                                     <select class="form-select" aria-label="Default select example" name="claimType">
@@ -215,13 +215,17 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
                                 <div class="mb-2">
-                                    <label class="form-label">isOnBehalf</label>
-                                    <select class="form-select" aria-label="Default select example" name="isOnBehalf">
-                                        <option selected>Select isOnBehalf</option>
-                                        <option value="True">True</option>
-                                        <option value="False">False</option>
+                                    <label class="form-label">Imprest Surrender No</label>
+                                    <select class="form-select" aria-label="Default select example"
+                                        name="imprestSurrDocNo">
+                                        <option selected>Select Imprest Surrender No</option>
+                                        {% for res in my_claim %}
+                                        <option value="{{res.No_}}">{{res.No_}} - {{res.Payment_Narration}}</option>
+                                        {% endfor %}
                                     </select>
                                 </div>
                             </div>
@@ -229,45 +233,20 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="mb-2">
-                                    <label class="form-label">Account Number</label>
-                                    <select class="form-select" aria-label="Default select example" disabled>
-                                        <option selected>Select Account Number</option>
-                                        <option value="True">True</option>
-                                        <option value="False">False</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-2">
-                                    <label for="responsibility" class="col-form-label">staff No</label>
-                                    <input type="text" class="form-control" placeholder="none" disabled readonly>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-2">
                                     <label for="payee" class="col-form-label">Payee</label>
                                     <input type="text" class="form-control" name="payee">
                                 </div>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <div class="mb-2">
                                     <label class="form-label">Currency</label>
-                                    <select class="form-select" aria-label="Default select example" disabled>
+                                    <select class="form-select" aria-label="Default select example" name="currency">
                                         <option selected>Select Currency</option>
-                                        <option value="True">KSH</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-2">
-                                    <label class="form-label">imprestSurrDocNo</label>
-                                    <select class="form-select" aria-label="Default select example" disabled readonly>
-                                        <option selected>iimprestSurrDocNo</option>
-                                        <option value="True">00000001</option>
+                                        {% for res in currency %}
+                                        <option value="{{res.Code}}">{{res.Description}} ({{res.Code}})</option>
+                                        {% endfor %}
                                     </select>
                                 </div>
                             </div>
@@ -284,7 +263,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
-                    <button type="submit" id="sasa" class="btn btn-primary">Submit</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
                 </form>
             </div>

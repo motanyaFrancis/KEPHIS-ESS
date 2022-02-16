@@ -8,7 +8,7 @@
             <h2 class="text-dark font-weight-bold mb-2"> Staff Claim
                 {% if state == 1 %}
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> <i
-                        class="las la-plus"></i> New Imprest
+                        class="las la-plus"></i> Add Claim Lines
                     Lines</button>
                 {% else %}
                 <button class="btn btn-info"> <i class="las la-plus"></i> {{res.Status}}</button>
@@ -73,6 +73,45 @@
                     <textarea class="form-control" placeholder="{{res.Payment_Narration}}" rows="3" readonly></textarea>
             </div>
             </form>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card" id="d-card">
+                    <h4 class="mt-2 mx-2 text-dark">Staff Claim Lines</h4>
+                    <div class="card-body">
+                        <table id="example"
+                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                            style="width:100%">
+                            <thead>
+                                <tr id="tops">
+                                    <th id="long">Surrender No</th>
+                                    <th>Expenditure Type </th>
+                                    <th>Purpose</th>
+                                    <th>Account No</th>
+                                    <th>Description</th>
+                                    <th>Amount</th>
+                                    <th>Actual Spent</th>
+                                    <th>Remaining Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for res in line %}
+                                <tr>
+                                    <td>{{res.AuxiliaryIndex1}}</td>
+                                    <td>{{res.Expenditure_Type}}</td>
+                                    <td>{{res.Purpose}}</td>
+                                    <td>{{res.Account_No}}</td>
+                                    <td>{{res.Description}}</td>
+                                    <td>{{res.Amount}}</td>
+                                    <td>{{res.Actual_Spent}}</td>
+                                    <td>{{res.Remaining_Amount}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     </div>

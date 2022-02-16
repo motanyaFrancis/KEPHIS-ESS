@@ -54,10 +54,10 @@ BASE_URL = 'http://20.121.189.145:7047/BC140/WS/KMPDC/Codeunit/WebPortal'
 AUTHS.auth = HttpNtlmAuth('domain\\NAVADMIN', WEB_SERVICE_PWD)
 CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
 
-# lineNo = 1
-# claimNo = "SC0016"
-# claimType = 3
-# accountNo = ''
+# lineNo = 0
+# claimNo = "SC0019"
+# claimType = 'SALARY ADAVANCE'
+# accountNo = 'C00010'
 # amount = 10
 # description = "Test"
 # claimReceiptNo = "Test"
@@ -72,18 +72,18 @@ CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
 #                                            claimNo, claimType, accountNo, amount, description, claimReceiptNo, dimension3, expenditureDate, expenditureDescription, myAction)
 # print(response)
 
-lineNo = 0
-surrenderNo = "IMPSUR0019"
-expenditureType = "5RTT"
-accountNo = "C00010"
-genPostingType = 1
-purpose = "Test2"
-actualSpent = 10
-surrenderReceiptNo = ''
-dimension3 = ""
+applicationNo = ''
+employeeNo = 'AH'
+usersId = "NAVADMIN"
+dimension3 = ''
+leavePeriod = ''
+leaveType = ""
+plannerStartDate = datetime.fromisoformat("2012-12-12")
+isReturnSameDay = datetime.fromisoformat("2012-12-12")
+daysApplied = 1
+isLeaveAllowancePayable = True
 myAction = 'insert'
 
-
-response = CLIENT.service.FnImprestSurrenderLine(lineNo,
-                                                 surrenderNo, expenditureType, accountNo, genPostingType, purpose, actualSpent, surrenderReceiptNo, dimension3, myAction)
+response = CLIENT.service.FnLeaveApplication(applicationNo,
+                                             employeeNo, usersId, dimension3, leavePeriod, plannerStartDate, isReturnSameDay, dimension3, daysApplied, isLeaveAllowancePayable, myAction)
 print(response)
