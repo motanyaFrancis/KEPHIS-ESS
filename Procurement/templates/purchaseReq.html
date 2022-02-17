@@ -198,7 +198,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="myForm" action="{% url 'CreateLeave' %}" method="post">
+                    <form id="myForm" action="{% url 'purchase' %}" method="post">
                         {% csrf_token %}
                         <div class="mb-2"> <span class="w-name">
                                 General Information:
