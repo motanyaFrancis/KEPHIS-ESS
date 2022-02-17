@@ -5,11 +5,10 @@
 <section class="dash2">
     <div class="content-wrapper" style="padding-bottom: 5rem;">
         <div class="d-xl-flex justify-content-between align-items-start">
-            <h2 class="text-dark font-weight-bold mb-2"> Purchase Requisition
+            <h2 class="text-dark font-weight-bold mb-2"> Repair Request
                 {% if state == 1 %}
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> <i
-                        class="las la-plus"></i> New Imprest
-                    Lines</button>
+                        class="las la-plus"></i> New Repair Request</button>
                 {% else %}
                 <button class="btn btn-info"> <i class="las la-plus"></i> {{res.Status}}</button>
                 {% endif %}
@@ -119,7 +118,7 @@
         <div class="row mt-4">
             <div class="col-md-12">
                 <div class="card" id="d-card">
-                    <h4 class="mt-2 mx-2 text-dark">Purchase Requisition Lines</h4>
+                    <h4 class="mt-2 mx-2 text-dark">Repair Request Lines</h4>
                     <div class="card-body">
                         <table id="example"
                             class="display table table-striped table-bordered dt-responsive table-responsive-lg"
@@ -166,7 +165,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="myForm" action="{% url 'PurchaseDetail' res.Application_No %}" method="post">
+                    <form id="myForm" action="{% url 'RepairDetail' res.Application_No %}" method="post">
                         {% csrf_token %}
                         <div class="row">
                             <div class="col-md-12">
