@@ -2,12 +2,13 @@
 {% load bootstrap5 %}
 {% load static %}
 {% block main %}
+<script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+    crossorigin="anonymous"></script>
 <section class="dash2">
-    <div class="content-wrapper" style="background: #6c8aaf;padding-bottom: 5rem;">
+    <div class="content-wrapper" style="padding-bottom: 5rem;">
         <div class="d-xl-flex justify-content-between align-items-start">
             <h2 class="text-dark font-weight-bold mb-2"> Store Request <button class="btn btn-primary"
-                    data-bs-toggle="modal" data-bs-target="#staticBackdrop"> <i class="las la-plus"></i> Create Imprest
-                    Requisition
+                    data-bs-toggle="modal" data-bs-target="#staticBackdrop"> <i class="las la-plus"></i> New Store
                     Request</button></h2>
 
             <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
@@ -19,149 +20,160 @@
                 </div>
             </div>
         </div>
+        <!--alert -->
+        {% if messages %}
+        {% for message in messages %}
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+        <div class="alert alert-success d-flex align-items-center alert-dismissible alert-success" role="alert">
+            <i class="las la-check-double" style="color: white;font-size: 2rem"></i>
+            <div class="a-icon mx-2">
+                {{message}}
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% elif message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+        <div class="alert alert-danger d-flex align-items-center alert-dismissible alert-warn" role="alert">
+            <i class="las la-exclamation-triangle" style="color: white;font-size: 2rem"></i>
+            <div class="a-icon mx-2">
+                {{message}}
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+        {% endfor %}
+        {% endif %}
         <div class="row my-2">
             <div class="col-md-12">
                 <div class="card" id="d-card">
                     <div class="m-4">
                         <ul class="nav nav-tabs" id="myTab">
                             <li class="nav-item">
-                                <a href="#home" class="nav-link active" data-bs-toggle="tab">New Training Requests
-                                    (5)</a>
+                                <a href="#home" class="nav-link active" data-bs-toggle="tab">Open Store Request
+                                    ({{count}})</a>
                             </li>
                             <li class="nav-item">
-                                <a href="#profile" class="nav-link" data-bs-toggle="tab">Approved Training Requests
-                                    (4)</a>
+                                <a href="#profile" class="nav-link" data-bs-toggle="tab">Approved Store Request
+                                    ({{counter}})</a>
                             </li>
                             <li class="nav-item">
-                                <a href="#messages" class="nav-link" data-bs-toggle="tab">Rejected Training Requests
-                                    (3)</a>
+                                <a href="#reject" class="nav-link" data-bs-toggle="tab">Rejected Store Request
+                                    (0)</a>
                             </li>
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane fade show active" id="home">
-                                <h4 class="mt-2">New Training Requests</h4>
+                                <h4 class="mt-2 text-dark">Open Store Request</h4>
                                 <div class="card-body">
                                     <table id="example"
-                                        class="table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
                                         style="width:100%">
                                         <thead>
                                             <tr id="tops">
-                                                <th id="long">Request No</th>
-                                                <th>Name</th>
-                                                <th>Training Date</th>
-                                                <th>From</th>
-                                                <th>To</th>
-                                                <th>Department</th>
+                                                <th id="long">Application No</th>
                                                 <th>Status</th>
+                                                <th>Planner Start Date</th>
+                                                <th>Return same day</th>
+                                                <th>Days Applied</th>
+                                                <th>Start Date</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            {% for res in res %}
                                             <tr>
-                                                <td>#GS-2234</td>
-                                                <td id="rap">Enock Abere</td>
-                                                <td id="rap">Sunday, Oct 24th, 2021</td>
-                                                <td>Oct 29th, 2021</td>
-                                                <td>Oct 31th, 2021</td>
-                                                <td>Microsoft</td>
+                                                <td>{{res.Application_No}}</td>
+                                                <td id="rap">{{res.Status}}</td>
+                                                <td>{{res.Planner_Start_Date}}</td>
+                                                <td>{{res.Return_same_day}}</td>
+                                                <td>{{res.Days_Applied}}</td>
+                                                <td>{{res.Start_Date}}</td>
                                                 <td>
-                                                    <a type="button" href=""
-                                                        class="btn btn-warning btn-icon-text">Pending <i
-                                                            class="las la-meh"></i>
-                                                    </a>
-                                                </td>
-                                                <td>
-                                                    <a type="button" href="" class="btn btn-success  btn-icon-text"
-                                                        style="background: #25CC88;">View <i
-                                                            class="las la-external-link-alt"
-                                                            style="font-size: 1rem"></i>
+                                                    <a type="button" href="{% url 'RepairDetail' res.Application_No %} "
+                                                        class="btn btn-success btn-icon-text"
+                                                        style="background: #25CC88;">View
+                                                        <i class="las la-external-link-alt" style="font-size: 1rem"></i>
                                                     </a>
                                                 </td>
                                             </tr>
+                                            {% endfor %}
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="profile">
-                                <h4 class="mt-2">Approved Training Requests</h4>
+                                <h4 class="mt-2">Approved Store Request</h4>
                                 <div class="card-body">
                                     <table id="example"
-                                        class="table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
                                         style="width:100%">
                                         <thead>
                                             <tr id="tops">
-                                                <th id="long">Request No</th>
-                                                <th>Name</th>
-                                                <th>Training Date</th>
-                                                <th>From</th>
-                                                <th>To</th>
-                                                <th>Department</th>
+                                                <th id="long">Application No</th>
                                                 <th>Status</th>
+                                                <th>Planner Start Date</th>
+                                                <th>Return same day</th>
+                                                <th>Days Applied</th>
+                                                <th>Start Date</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            {% for res in response %}
                                             <tr>
-                                                <td>#GS-2234</td>
-                                                <td id="rap">Enock Abere</td>
-                                                <td id="rap">Sunday, Oct 24th, 2021</td>
-                                                <td>Oct 29th, 2021</td>
-                                                <td>Oct 31th, 2021</td>
-                                                <td>Microsoft</td>
+                                                <td>{{res.Application_No}}</td>
+                                                <td id="rap">{{res.Status}}</td>
+                                                <td>{{res.Planner_Start_Date}}</td>
+                                                <td>{{res.Return_same_day}}</td>
+                                                <td>{{res.Days_Applied}}</td>
+                                                <td>{{res.Start_Date}}</td>
                                                 <td>
-                                                    <a type="button" href=""
-                                                        class="btn btn-success btn-icon-text">Approved <i
-                                                            class="las la-smile"></i>
-                                                    </a>
-                                                </td>
-                                                <td>
-                                                    <a type="button" href="" class="btn btn-success  btn-icon-text">View
+                                                    <a type="button" href="{% url 'RepairDetail' res.Application_No %} "
+                                                        class="btn btn-success btn-icon-text"
+                                                        style="background: #25CC88;">View
                                                         <i class="las la-external-link-alt" style="font-size: 1rem"></i>
                                                     </a>
                                                 </td>
                                             </tr>
+                                            {% endfor %}
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
-                            <div class="tab-pane fade" id="messages">
-                                <h4 class="mt-2">Rejected Training Requests</h4>
+                            <div class="tab-pane fade" id="reject">
+                                <h4 class="mt-2">Rejected Store Request</h4>
                                 <div class="card-body">
                                     <table id="example"
-                                        class="table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
                                         style="width:100%">
                                         <thead>
                                             <tr id="tops">
-                                                <th id="long">Request No</th>
-                                                <th>Name</th>
-                                                <th>Training Date</th>
-                                                <th>From</th>
-                                                <th>To</th>
-                                                <th>Department</th>
+                                                <th id="long">Application No</th>
                                                 <th>Status</th>
+                                                <th>Planner Start Date</th>
+                                                <th>Return same day</th>
+                                                <th>Days Applied</th>
+                                                <th>Start Date</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            {% for res in rej %}
                                             <tr>
-                                                <td>#GS-2234</td>
-                                                <td id="rap">Enock Abere</td>
-                                                <td id="rap">Sunday, Oct 24th, 2021</td>
-                                                <td>Oct 29th, 2021</td>
-                                                <td>Oct 31th, 2021</td>
-                                                <td>Microsoft</td>
+                                                <td>{{res.Application_No}}</td>
+                                                <td id="rap">{{res.Status}}</td>
+                                                <td>{{res.Planner_Start_Date}}</td>
+                                                <td>{{res.Return_same_day}}</td>
+                                                <td>{{res.Days_Applied}}</td>
+                                                <td>{{res.Start_Date}}</td>
                                                 <td>
-                                                    <a type="button" href=""
-                                                        class="btn btn-danger btn-icon-text">Rejected <i
-                                                            class="las la-frown"></i>
-                                                    </a>
-                                                </td>
-                                                <td>
-                                                    <a type="button" href="" class="btn btn-success btn-icon-text">View
+                                                    <a type="button" href="{% url 'RepairDetail' res.Application_No %}"
+                                                        class="btn btn-success btn-icon-text"
+                                                        style="background: #25CC88;">View
                                                         <i class="las la-external-link-alt" style="font-size: 1rem"></i>
                                                     </a>
                                                 </td>
                                             </tr>
+                                            {% endfor %}
                                         </tbody>
                                     </table>
                                 </div>
@@ -178,43 +190,70 @@
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Training Request
+                    <h5 class="modal-title" id="staticBackdropLabel">Raise Store Request
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form>
-                        <!-- One "tab" for each step in the form: -->
+                    <form id="myForm" action="{% url 'store' %}" method="post">
+                        {% csrf_token %}
                         <div class="mb-2"> <span class="w-name">
-                                Mandatory Requirements:
+                                General Information:
                             </span>
                             <div class="row">
                                 <div>
-                                    <label for="recipient-name" class="col-form-label">Select Department:</label>
-                                    <select class="form-select" aria-label="Default select example">
-                                        <option selected>Open this select menu</option>
-                                        <option value="1">Microsoft</option>
-                                        <option value="2">Finance</option>
-                                        <option value="3">HR</option>
+                                    <label for="" class="col-form-label">Leave Type
+                                        :</label>
+                                    <select class="form-select" name="leaveType">
+                                        {% for res in leave %}
+                                        <option selected>Select Leave Type</option>
+                                        <option value="{{res.Code}}">{{res.Description}}</option>
+                                        {% endfor %}
                                     </select>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-6">
-                                    <label for="" class="col-form-label">Date From:</label>
-                                    <input type="date" id="from" name="from">
+                                <div class="col-md-12">
+                                    <label for="" class="col-form-label">Start Date:</label>
+                                    <input type="date" name="plannerStartDate">
                                 </div>
-                                <div class="col-md-6">
-                                    <label for="" class="col-form-label">Date To:</label>
-                                    <input type="date" id="to" name="to">
+                            </div>
+                            <div class="row">
+                                <div>
+                                    <label for="" class="col-form-label">Return Same Day
+                                        :</label>
+                                    <select class="form-select" name="isReturnSameDay">
+                                        <option selected>Select</option>
+                                        <option value="True">True</option>
+                                        <option value="False">False</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="my-3">
+                                        <label class="form-label">Days Applied</label>
+                                        <input type="number" class="form-control" name="daysApplied" placeholder="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div>
+                                    <label for="" class="col-form-label"> Leave Allowance Payable
+                                        :</label>
+                                    <select class="form-select" name="isLeaveAllowancePayable">
+                                        <option selected>Select</option>
+                                        <option value="True">True</option>
+                                        <option value="False">False</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
                     </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
-                    <button type="button" class="btn btn-primary">Submit</button>
                 </div>
             </div>
         </div>
