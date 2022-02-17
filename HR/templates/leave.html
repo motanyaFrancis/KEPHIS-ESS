@@ -48,20 +48,20 @@
                     <div class="m-4">
                         <ul class="nav nav-tabs" id="myTab">
                             <li class="nav-item">
-                                <a href="#s-open" class="nav-link active" data-bs-toggle="tab"> Open Leave Request
+                                <a href="#home" class="nav-link active" data-bs-toggle="tab">Open Leave Request
                                     ({{count}})</a>
                             </li>
                             <li class="nav-item">
-                                <a href="#s-approve" class="nav-link" data-bs-toggle="tab">Appproved Leave Request
+                                <a href="#profile" class="nav-link" data-bs-toggle="tab">Approved Leave Request
                                     ({{counter}})</a>
                             </li>
                             <li class="nav-item">
-                                <a href="#s-reject" class="nav-link" data-bs-toggle="tab">Rejected Leave Request
-                                    ({{reject}})</a>
+                                <a href="#reject" class="nav-link" data-bs-toggle="tab">Rejected Leave Request
+                                    (0)</a>
                             </li>
                         </ul>
                         <div class="tab-content">
-                            <div class="tab-pane fade show active" id="s-open">
+                            <div class="tab-pane fade show active" id="home">
                                 <h4 class="mt-2 text-dark">Open Leave Request</h4>
                                 <div class="card-body">
                                     <table id="example"
@@ -69,84 +69,39 @@
                                         style="width:100%">
                                         <thead>
                                             <tr id="tops">
-                                                <th>Application_Date</th>
-                                                <th>Leave Period</th>
-                                                <th>Leave Code</th>
+                                                <th id="long">Application No</th>
                                                 <th>Status</th>
-                                                <th>Planner_Start_Date</th>
+                                                <th>Planner Start Date</th>
                                                 <th>Return same day</th>
                                                 <th>Days Applied</th>
                                                 <th>Start Date</th>
-                                                <th>End Date</th>
-                                                <th>Leave Allowance Payable</th>
-                                                <th>Employment Type</th>
+                                                <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {% for res in res %}
                                             <tr>
-                                                <td id="rap">{{res.Application_Date}}</td>
-                                                <td>{{res.Leave_Period}}</td>
-                                                <td>{{res.Leave_Code}}</td>
-                                                <td>{{res.Status}}</td>
+                                                <td>{{res.Application_No}}</td>
+                                                <td id="rap">{{res.Status}}</td>
                                                 <td>{{res.Planner_Start_Date}}</td>
                                                 <td>{{res.Return_same_day}}</td>
                                                 <td>{{res.Days_Applied}}</td>
                                                 <td>{{res.Start_Date}}</td>
-                                                <td>{{res.End_Date}}</td>
-                                                <td>{{res.Leave_Allowance_Payable}}</td>
-                                                <td>{{res.Employment_Type}}</td>
+                                                <td>
+                                                    <a type="button" href="{% url 'LeaveDetail' res.Application_No %} "
+                                                        class="btn btn-success btn-icon-text"
+                                                        style="background: #25CC88;">View
+                                                        <i class="las la-external-link-alt" style="font-size: 1rem"></i>
+                                                    </a>
+                                                </td>
                                             </tr>
                                             {% endfor %}
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
-                            <div class="tab-pane fade" id="s-approve">
-                                <h4 class="mt-2 text-dark">Approved Leave Request</h4>
-                                <div class="card-body">
-                                    <table
-                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                                        style="width:100%">
-                                        <thead>
-                                            <tr id="tops">
-                                                <th>Application_Date</th>
-                                                <th>User</th>
-                                                <th>Leave Period</th>
-                                                <th>Leave Code</th>
-                                                <th>Status</th>
-                                                <th>Planner_Start_Date</th>
-                                                <th>Return same day</th>
-                                                <th>Days Applied</th>
-                                                <th>Start Date</th>
-                                                <th>End Date</th>
-                                                <th>Leave Allowance Payable</th>
-                                                <th>Employment Type</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for res in response %}
-                                            <tr>
-                                                <td id="rap">{{res.Application_Date}}</td>
-                                                <td>{{res.User_ID}}</td>
-                                                <td>{{res.Leave_Period}}</td>
-                                                <td>{{res.Leave_Code}}</td>
-                                                <td>{{res.Status}}</td>
-                                                <td>{{res.Planner_Start_Date}}</td>
-                                                <td>{{res.Return_same_day}}</td>
-                                                <td>{{res.Days_Applied}}</td>
-                                                <td>{{res.Start_Date}}</td>
-                                                <td>{{res.End_Date}}</td>
-                                                <td>{{res.Leave_Allowance_Payable}}</td>
-                                                <td>{{res.Employment_Type}}</td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="tab-pane fade" id="s-reject">
-                                <h4 class="mt-2 text-dark">Rejected Leave Request</h4>
+                            <div class="tab-pane fade" id="profile">
+                                <h4 class="mt-2">Approved Leave Request</h4>
                                 <div class="card-body">
                                     <table id="example"
                                         class="display table table-striped table-bordered dt-responsive table-responsive-lg"
@@ -154,40 +109,69 @@
                                         <thead>
                                             <tr id="tops">
                                                 <th id="long">Application No</th>
-                                                <th>Application_Date</th>
-                                                <th>Employee Name</th>
-                                                <th>Mobile No</th>
-                                                <th>User</th>
-                                                <th>Leave Period</th>
-                                                <th>Leave Code</th>
                                                 <th>Status</th>
-                                                <th>Planner_Start_Date</th>
+                                                <th>Planner Start Date</th>
                                                 <th>Return same day</th>
                                                 <th>Days Applied</th>
                                                 <th>Start Date</th>
-                                                <th>Created By</th>
-                                                <th>Leave Allowance Payable</th>
-                                                <th>Employment Type</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for res in response %}
+                                            <tr>
+                                                <td>{{res.Application_No}}</td>
+                                                <td id="rap">{{res.Status}}</td>
+                                                <td>{{res.Planner_Start_Date}}</td>
+                                                <td>{{res.Return_same_day}}</td>
+                                                <td>{{res.Days_Applied}}</td>
+                                                <td>{{res.Start_Date}}</td>
+                                                <td>
+                                                    <a type="button" href="{% url 'LeaveDetail' res.Application_No %} "
+                                                        class="btn btn-success btn-icon-text"
+                                                        style="background: #25CC88;">View
+                                                        <i class="las la-external-link-alt" style="font-size: 1rem"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="reject">
+                                <h4 class="mt-2">Rejected Leave Request</h4>
+                                <div class="card-body">
+                                    <table id="example"
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
+                                        <thead>
+                                            <tr id="tops">
+                                                <th id="long">Application No</th>
+                                                <th>Status</th>
+                                                <th>Planner Start Date</th>
+                                                <th>Return same day</th>
+                                                <th>Days Applied</th>
+                                                <th>Start Date</th>
+                                                <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {% for res in rej %}
                                             <tr>
                                                 <td>{{res.Application_No}}</td>
-                                                <td id="rap">{{res.Application_Date}}</td>
-                                                <td>{{res.Employee_Name}}</td>
-                                                <td>{{res.Mobile_No}}</td>
-                                                <td>{{res.User_ID}}</td>
-                                                <td>{{res.Leave_Period}}</td>
-                                                <td>{{res.Leave_Code}}</td>
-                                                <td>{{res.Status}}</td>
+                                                <td id="rap">{{res.Status}}</td>
                                                 <td>{{res.Planner_Start_Date}}</td>
                                                 <td>{{res.Return_same_day}}</td>
                                                 <td>{{res.Days_Applied}}</td>
                                                 <td>{{res.Start_Date}}</td>
-                                                <td>{{res.End_Date}}</td>
-                                                <td>{{res.Leave_Allowance_Payable}}</td>
-                                                <td>{{res.Employment_Type}}</td>
+                                                <td>
+                                                    <a type="button" href="{% url 'LeaveDetail' res.Application_No %} "
+                                                        class="btn btn-success btn-icon-text"
+                                                        style="background: #25CC88;">View
+                                                        <i class="las la-external-link-alt" style="font-size: 1rem"></i>
+                                                    </a>
+                                                </td>
                                             </tr>
                                             {% endfor %}
                                         </tbody>

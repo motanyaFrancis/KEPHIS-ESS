@@ -82,6 +82,40 @@ def CreateLeave(request):
     return redirect('leave')
 
 
+def LeaveDetail(request, pk):
+    session = requests.Session()
+    session.auth = config.AUTHS
+    res = ''
+    Access_Point = config.O_DATA.format("/QyLeaveApplications")
+    try:
+        response = session.get(Access_Point, timeout=10).json()
+        openClaim = []
+        for claim in response['value']:
+            if claim['Status'] == 'Released' and claim['User_ID'] == request.session['User_ID']:
+                output_json = json.dumps(claim)
+                openClaim.append(json.loads(output_json))
+                for claim in openClaim:
+                    if claim['Application_No'] == pk:
+                        res = claim
+            if claim['Status'] == 'Open' and claim['User_ID'] == request.session['User_ID']:
+                output_json = json.dumps(claim)
+                openClaim.append(json.loads(output_json))
+                for claim in openClaim:
+                    if claim['Application_No'] == pk:
+                        res = claim
+            if claim['Status'] == 'Rejected' and claim['User_ID'] == request.session['User_ID']:
+                output_json = json.dumps(claim)
+                openClaim.append(json.loads(output_json))
+                for claim in openClaim:
+                    if claim['Application_No'] == pk:
+                        res = claim
+    except requests.exceptions.ConnectionError as e:
+        print(e)
+    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
+    ctx = {"today": todays_date, "res": res}
+    return render(request, 'leaveDetail.html', ctx)
+
+
 def Training_Request(request):
     session = requests.Session()
     session.auth = config.AUTHS
