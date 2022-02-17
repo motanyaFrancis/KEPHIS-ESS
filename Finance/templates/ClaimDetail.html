@@ -84,27 +84,25 @@
                             style="width:100%">
                             <thead>
                                 <tr id="tops">
-                                    <th id="long">Surrender No</th>
-                                    <th>Expenditure Type </th>
-                                    <th>Purpose</th>
+                                    <th id="long">Claim Type</th>
                                     <th>Account No</th>
+                                    <th>Payment Type</th>
                                     <th>Description</th>
                                     <th>Amount</th>
-                                    <th>Actual Spent</th>
-                                    <th>Remaining Amount</th>
+                                    <th>Expenditure Date</th>
+                                    <th>Expenditure Description</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for res in line %}
                                 <tr>
-                                    <td>{{res.AuxiliaryIndex1}}</td>
-                                    <td>{{res.Expenditure_Type}}</td>
-                                    <td>{{res.Purpose}}</td>
+                                    <td>{{res.Claim_Type}}</td>
                                     <td>{{res.Account_No}}</td>
+                                    <td>{{res.Payment_Type}}</td>
                                     <td>{{res.Description}}</td>
                                     <td>{{res.Amount}}</td>
-                                    <td>{{res.Actual_Spent}}</td>
-                                    <td>{{res.Remaining_Amount}}</td>
+                                    <td>{{res.Expenditure_Date}}</td>
+                                    <td>{{res.Expenditure_Description}}</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -114,6 +112,71 @@
             </div>
         </div>
     </div>
+    </div>
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">New Imprest Line
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="myForm" action="{% url 'ClaimLines' res.No_%}" method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="my-2">
+                                    <label class="form-label">Claim Type</label>
+                                    <select class="form-select" name="claimType">
+                                        <option selected>Select Claim Type</option>
+                                        {% for res in res_type %}
+                                        <option value="{{res.Code}}">{{res.Description}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-2">
+                                    <label for="" class="col-form-label">Amount:</label>
+                                    <input type="text" class="form-control" name="amount">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="" class="col-form-label">Expenditure Date:</label>
+                                <input type="date" name="expenditureDate">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-2">
+                                    <label for="" class="col-form-label">Expenditure Description</label>
+                                    <textarea class="form-control" name="expenditureDescription" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-2">
+                                    <label for="" class="col-form-label">Description</label>
+                                    <textarea class="form-control" name="description" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
+                    <button type="submit" id="sasa" class="btn btn-primary">Submit</button>
+                </div>
+                </form>
+            </div>
+        </div>
     </div>
 </section>
 

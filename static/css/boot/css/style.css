@@ -17541,15 +17541,6 @@ dl li {
   }
 }
 
-.content-wrapper {
-  background: #f0f1f6;
-  padding: 2.875rem 2.875rem 0 2.875rem;
-  width: 100%;
-  -webkit-box-flex: 1;
-  -ms-flex-positive: 1;
-  flex-grow: 1;
-}
-
 @media (max-width: 991px) {
   .content-wrapper {
     padding: 2rem 1rem;

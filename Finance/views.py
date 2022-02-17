@@ -450,9 +450,16 @@ def ClaimDetails(request, pk):
     state = ''
     res = ''
     Access_Point = config.O_DATA.format("/QyStaffClaims")
+    Claim_Type = config.O_DATA.format("/QyReceiptsAndPaymentTypes")
     try:
         response = session.get(Access_Point, timeout=10).json()
+        Claim_RES = session.get(Claim_Type, timeout=10).json()
         openClaim = []
+        res_type = []
+        for types in Claim_RES['value']:
+            if types['Type'] == "Claim":
+                output_json = json.dumps(types)
+                res_type.append(json.loads(output_json))
         for claim in response['value']:
             if claim['Status'] == 'Released' and claim['User_Id'] == request.session['User_ID']:
                 output_json = json.dumps(claim)
@@ -476,17 +483,52 @@ def ClaimDetails(request, pk):
                         res = claim
     except requests.exceptions.ConnectionError as e:
         print(e)
-    # Lines_Res = config.O_DATA.format("/QyImprestLines")
-    # try:
-    #     response = session.get(Lines_Res, timeout=10).json()
-    #     openLines = []
-    #     for imprest in response['value']:
-    #         if imprest['AuxiliaryIndex1'] == pk:
-    #             output_json = json.dumps(imprest)
-    #             openLines.append(json.loads(output_json))
-    # except requests.exceptions.ConnectionError as e:
-    #     print(e)
+    Lines_Res = config.O_DATA.format("/QyStaffClaimLines")
+    try:
+        res_Line = session.get(Lines_Res, timeout=10).json()
+        openLines = []
+        for claim in res_Line['value']:
+            if claim['No'] == pk:
+                output_json = json.dumps(claim)
+                openLines.append(json.loads(output_json))
+    except requests.exceptions.ConnectionError as e:
+        print(e)
 
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-    ctx = {"today": todays_date, "res": res, "state": state}
+    ctx = {"today": todays_date, "res": res,
+           "state": state, "res_type": res_type, "line": openLines}
     return render(request, "ClaimDetail.html", ctx)
+
+
+def CreateClaimLines(request, pk):
+    lineNo = 0
+    claimNo = pk
+    claimType = ""
+    accountNo = request.session['Customer_No_']
+    amount = ""
+    description = ""
+    claimReceiptNo = ""
+    dimension3 = ''
+    expenditureDate = ""
+    expenditureDescription = ""
+    myAction = 'insert'
+    if request.method == 'POST':
+        try:
+            claimType = request.POST.get('claimType')
+            amount = float(request.POST.get('amount'))
+            description = request.POST.get('description')
+            expenditureDate = request.POST.get('expenditureDate')
+            expenditureDescription = request.POST.get('expenditureDescription')
+        except ValueError:
+            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            return redirect('IMPDetails', pk=claimNo)
+    try:
+        response = config.CLIENT.service.FnStaffClaimLine(
+            lineNo, claimNo, claimType, accountNo, amount, description, claimReceiptNo, dimension3, expenditureDate, expenditureDescription, myAction)
+        messages.success(request, "Successfully Added!!")
+        print(response)
+        return redirect('ClaimDetail', pk=claimNo)
+    except Exception as e:
+        messages.error(request, e)
+        print(e)
+    return redirect('ClaimDetail', pk=claimNo)

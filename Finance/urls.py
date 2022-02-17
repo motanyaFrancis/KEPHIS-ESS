@@ -16,4 +16,5 @@ urlpatterns = [
     path('StaffClaim', views.StaffClaim, name='claim'),
     path("NewClaim", views.CreateClaim, name="NewClaim"),
     path('Claim/<str:pk>', views.ClaimDetails, name='ClaimDetail'),
+    path('ClaimLines/<str:pk>', views.CreateClaimLines, name='ClaimLines'),
 ]

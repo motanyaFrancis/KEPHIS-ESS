@@ -4,7 +4,7 @@
 {% block main %}
 
 <section>
-    <div class="content-wrapper">
+    <div class="content-wrapper general-bg">
         <div class="row" id="proBanner">
             <div class="col-12">
                 <span class="d-flex align-items-center purchase-popup">
@@ -256,7 +256,8 @@
                                                             <td id="rap">{{res.Document_Type}}</td>
                                                             <td>{{res.Sender_ID}}</td>
                                                             <td>
-                                                                <a type="button" href=""
+                                                                <a type="button"
+                                                                    href="{% url 'ApproveData' res.Document_No_ %}"
                                                                     class="btn btn-success btn-icon-text"
                                                                     style="background: #25CC88;">View
                                                                     <i class="las la-external-link-alt"
@@ -278,7 +279,7 @@
             </div>
 
             <div class="col-md-4">
-                <div class="muck-up">
+                <div class="muck-up" style="border-radius: 4px;">
                     <div class="overlay"></div>
                     <div class="top">
                         <div class="navs">

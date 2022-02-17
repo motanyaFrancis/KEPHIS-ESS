@@ -104,31 +104,19 @@ button:hover {
     color: #000;
 }
 
-/* Make circles that indicate the steps of the form: */
-.step {
-    height: 15px;
-    width: 15px;
-    margin: 0 2px;
-    background-color: var(--red-color);
-    border: none;
-    border-radius: 50%;
-    display: inline-block;
-    opacity: 0.5;
-}
-
-.step.active {
-    opacity: 1;
-}
-
-/* Mark the steps that are finished and valid: */
-.step.finish {
-    background-color: var(--green-color);
+.general-bg {
+    background: url(../img/bg/1.jpg) !important;
+    background-attachment: fixed !important;
 }
 
 .content-wrapper {
     min-height: 100vh;
-    background: url(../img/bg/1.jpg);
-    background-attachment: fixed;
+    background: #f0f1f6;
+    padding: 2.875rem 2.875rem 0 2.875rem;
+    width: 100%;
+    -webkit-box-flex: 1;
+    -ms-flex-positive: 1;
+    flex-grow: 1;
 }
 
 .muck-up {
