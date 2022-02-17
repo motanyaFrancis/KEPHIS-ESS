@@ -9,4 +9,6 @@ urlpatterns = [
     path('RepairDetail/<str:pk>',
          views.RepairRequestDetails, name='RepairDetail'),
     path('StoreRequest', views.StoreRequest, name='store'),
+    path('StoreDetail/<str:pk>',
+         views.StoreRequestDetails, name='StoreDetail'),
 ]
