@@ -200,15 +200,22 @@ def Loan_Request(request):
     Access_Point = config.O_DATA.format("/QyLoansRegister")
     Banks = config.O_DATA.format("/QyBanks")
     Branch_Name = config.O_DATA.format("/QyBankBranches")
+    PMLNo = config.O_DATA.format("/QyCustomers")
     try:
         response = session.get(Access_Point, timeout=10).json()
         res_banks = session.get(Banks, timeout=10).json()
         res_branch = session.get(Branch_Name, timeout=10).json()
+        res_PML = session.get(PMLNo, timeout=10).json()
         open = []
         Approved = []
         Rejected = []
+        PMLs = []
         Bank_response = res_banks['value']
         Branch_Code = res_branch['value']
+        for pml in res_PML['value']:
+            if pml['PML'] == True:
+                output_json = json.dumps(pml)
+                PMLs.append(json.loads(output_json))
         for imprest in response['value']:
             if imprest['Status'] == 'Open' and imprest['User_ID'] == request.session['User_ID']:
                 output_json = json.dumps(imprest)
@@ -228,7 +235,7 @@ def Loan_Request(request):
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": open, "count": counts,
            "response": Approved, "counter": counter, "rej": Rejected,
-           'reject': reject, "banks": Bank_response, "branch": Branch_Code}
+           'reject': reject, "banks": Bank_response, "branch": Branch_Code, "pml": PMLs}
     return render(request, 'loan.html', ctx)
 
 

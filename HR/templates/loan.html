@@ -194,11 +194,12 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="my-2">
-                                    <label class="form-label">PML No</label>
+                                    <label class="form-label">PML</label>
                                     <select class="form-select" name="pmlNo">
-                                        <option selected>Select </option>
-                                        <option value="True">True</option>
-                                        <option value="False">False</option>
+                                        <option selected>Select PML</option>
+                                        {% for res in pml %}
+                                        <option value="{{res.No_}}">{{res.Name}}</option>
+                                        {% endfor %}
                                     </select>
                                 </div>
                             </div>
