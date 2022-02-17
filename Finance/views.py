@@ -89,15 +89,18 @@ def ImprestDetails(request, pk):
     Access_Point = config.O_DATA.format("/Imprests")
     Imprest_Type = config.O_DATA.format("/QyReceiptsAndPaymentTypes")
     Dimension = config.O_DATA.format("/QyDimensionValues")
+    destination = config.O_DATA.format("/QyDestinations")
     try:
         response = session.get(Access_Point, timeout=10).json()
         Imprest_RES = session.get(Imprest_Type, timeout=10).json()
         Dimension_RES = session.get(Dimension, timeout=10).json()
+        res_dest = session.get(destination, timeout=10).json()
 
         openImp = []
         res_type = []
         Area = []
         BizGroup = []
+        destinations = res_dest['value']
         for types in Dimension_RES['value']:
             if types['Global_Dimension_No_'] == 1:
                 output_json = json.dumps(types)
@@ -144,7 +147,7 @@ def ImprestDetails(request, pk):
         print(e)
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": res,
-           "line": openLines, "state": state, "type": res_type, "area": Area, "biz": BizGroup}
+           "line": openLines, "state": state, "type": res_type, "area": Area, "biz": BizGroup, "des": destinations}
     return render(request, 'imprestDetail.html', ctx)
 
 

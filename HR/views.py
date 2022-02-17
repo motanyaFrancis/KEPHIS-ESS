@@ -88,13 +88,19 @@ def Training_Request(request):
 
     Access_Point = config.O_DATA.format("/QyTrainingRequests")
     currency = config.O_DATA.format("/QyCurrencies")
+    trainingNeed = config.O_DATA.format("/QyTrainingNeeds")
+    destination = config.O_DATA.format("/QyDestinations")
     try:
         response = session.get(Access_Point, timeout=10).json()
         res_currency = session.get(currency, timeout=10).json()
+        res_train = session.get(trainingNeed, timeout=10).json()
+        res_dest = session.get(destination, timeout=10).json()
         open = []
         Approved = []
         Rejected = []
         cur = res_currency['value']
+        trains = res_train['value']
+        destinations = res_dest['value']
         for imprest in response['value']:
             if imprest['Status'] == 'Open' and imprest['Employee_No'] == request.session['Employee_No_']:
                 output_json = json.dumps(imprest)
@@ -113,7 +119,7 @@ def Training_Request(request):
 
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": open, "count": counts, "response": Approved, "counter": counter, "rej": Rejected,
-           'reject': reject, 'cur': cur}
+           'reject': reject, 'cur': cur, "train": trains, "des": destinations}
     return render(request, 'training.html', ctx)
 
 
@@ -121,7 +127,7 @@ def CreateTrainingRequest(request):
     requestNo = ''
     employeeNo = request.session['Employee_No_']
     usersId = request.session['User_ID']
-    designation = ''
+    designation = request.session['User_Responsibility_Center']
     isAdhoc = ""
     trainingNeed = ""
     description = ""
@@ -135,6 +141,8 @@ def CreateTrainingRequest(request):
             isAdhoc = request.POST.get('isAdhoc')
             description = request.POST.get('description')
             startDate = request.POST.get('startDate')
+            trainingNeed = request.POST.get('trainingNeed')
+            destination = request.POST.get('destination')
             endDate = request.POST.get('endDate')
             currency = request.POST.get('currency')
         except ValueError:
@@ -156,11 +164,17 @@ def Loan_Request(request):
     session.auth = config.AUTHS
 
     Access_Point = config.O_DATA.format("/QyLoansRegister")
+    Banks = config.O_DATA.format("/QyBanks")
+    Branch_Name = config.O_DATA.format("/QyBankBranches")
     try:
         response = session.get(Access_Point, timeout=10).json()
+        res_banks = session.get(Banks, timeout=10).json()
+        res_branch = session.get(Branch_Name, timeout=10).json()
         open = []
         Approved = []
         Rejected = []
+        Bank_response = res_banks['value']
+        Branch_Code = res_branch['value']
         for imprest in response['value']:
             if imprest['Status'] == 'Open' and imprest['User_ID'] == request.session['User_ID']:
                 output_json = json.dumps(imprest)
@@ -180,7 +194,7 @@ def Loan_Request(request):
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": open, "count": counts,
            "response": Approved, "counter": counter, "rej": Rejected,
-           'reject': reject}
+           'reject': reject, "banks": Bank_response, "branch": Branch_Code}
     return render(request, 'loan.html', ctx)
 
 

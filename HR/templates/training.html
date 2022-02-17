@@ -188,19 +188,6 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="mb-2">
-                                    <label class="form-label">Designation</label>
-                                    <select class="form-select" name="designation" aria-label="Default select example">
-                                        <option selected>Designation</option>
-                                        <option value="1">Local</option>
-                                        <option value="2">Foreign</option>
-                                    </select>
-                                </div>
-
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="mb-2">
                                     <label class="form-label">Adhoc</label>
                                     <select class="form-select" name="isAdhoc">
                                         <option selected>Select </option>
@@ -215,9 +202,10 @@
                                 <div class="mb-2">
                                     <label class="form-label">Training Need</label>
                                     <select class="form-select" name="trainingNeed">
-                                        <option selected>Select </option>
-                                        <option value="True">True</option>
-                                        <option value="False">False</option>
+                                        <option selected>Select Training Need </option>
+                                        {% for res in train %}
+                                        <option value="{{res.Code}}">{{res.Description}}</option>
+                                        {% endfor %}
                                     </select>
                                 </div>
                             </div>
@@ -237,9 +225,10 @@
                                 <div class="my-2">
                                     <label class="form-label">Destination</label>
                                     <select class="form-select" name="destination">
-                                        <option selected>Select </option>
-                                        <option value="True">True</option>
-                                        <option value="False">False</option>
+                                        <option selected>Select Destination</option>
+                                        {% for res in des %}
+                                        <option value="{{res.Destination_Code}}">{{res.Destination_Code}}</option>
+                                        {% endfor %}
                                     </select>
                                 </div>
                             </div>

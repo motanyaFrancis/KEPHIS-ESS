@@ -54,23 +54,22 @@ BASE_URL = 'http://20.121.189.145:7047/BC140/WS/KMPDC/Codeunit/WebPortal'
 AUTHS.auth = HttpNtlmAuth('domain\\NAVADMIN', WEB_SERVICE_PWD)
 CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
 
-# lineNo = 0
-# claimNo = "SC0019"
-# claimType = 'SALARY ADAVANCE'
-# accountNo = 'C00010'
-# amount = 10
-# description = "Test"
-# claimReceiptNo = "Test"
-# dimension3 = ""
-# date_string = "2012-12-12"
-# expenditureDate = datetime.fromisoformat(date_string)
-# expenditureDescription = "Testing"
-# myAction = 'insert'
+lineNo = 0
+claimNo = "SC0020"
+claimType = 'SALARY ADAVANCE'
+accountNo = 'C00010'
+amount = 10
+description = "Test"
+claimReceiptNo = "Test"
+dimension3 = ""
+expenditureDate = datetime.fromisoformat("2022-12-12")
+expenditureDescription = "Testing"
+myAction = 'insert'
 
 
-# response = CLIENT.service.FnStaffClaimLine(lineNo,
-#                                            claimNo, claimType, accountNo, amount, description, claimReceiptNo, dimension3, expenditureDate, expenditureDescription, myAction)
-# print(response)
+response = CLIENT.service.FnStaffClaimLine(lineNo,
+                                           claimNo, claimType, accountNo, amount, description, claimReceiptNo, dimension3, expenditureDate, expenditureDescription, myAction)
+print(response)
 
 # applicationNo = ''
 # employeeNo = 'AH'
@@ -78,8 +77,8 @@ CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
 # dimension3 = ''
 # leavePeriod = ''
 # leaveType = ""
-# plannerStartDate = datetime.fromisoformat("2012-12-12")
-# isReturnSameDay = datetime.fromisoformat("2012-12-12")
+# plannerStartDate = datetime.fromisoformat("2022--1")
+# isReturnSameDay =
 # daysApplied = 1
 # isLeaveAllowancePayable = True
 # myAction = 'insert'
@@ -88,20 +87,20 @@ CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
 #                                              employeeNo, usersId, dimension3, leavePeriod, plannerStartDate, isReturnSameDay, dimension3, daysApplied, isLeaveAllowancePayable, myAction)
 # print(response)
 
-loanNo = ''
-requestedDate = datetime.fromisoformat("2012-12-12")
-usersId = "NAVADMIN"
-pmlNo = ''
-loanProductType = ''
-loanDuration = 1
-requestedAmount = 100
-interestCalculationMethod = ''
-repaymentFrequency = ''
-bankName = ''
-bankAccountNo = ''
-bankBranchName = ''
-myAction = 'insert'
+# loanNo = ''
+# requestedDate = datetime.fromisoformat("2012-12-12")
+# usersId = "NAVADMIN"
+# pmlNo = ''
+# loanProductType = ''
+# loanDuration = 1
+# requestedAmount = 100
+# interestCalculationMethod = ''
+# repaymentFrequency = ''
+# bankName = ''
+# bankAccountNo = ''
+# bankBranchName = ''
+# myAction = 'insert'
 
-response = CLIENT.service.FnLoanApplication(loanNo,
-                                            requestedDate, usersId, pmlNo, loanProductType, loanDuration, requestedAmount, interestCalculationMethod, repaymentFrequency, bankName, bankAccountNo, bankBranchName, myAction)
-print(response)
+# response = CLIENT.service.FnLoanApplication(loanNo,
+#                                             requestedDate, usersId, pmlNo, loanProductType, loanDuration, requestedAmount, interestCalculationMethod, repaymentFrequency, bankName, bankAccountNo, bankBranchName, myAction)
+# print(response)
