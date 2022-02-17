@@ -34,13 +34,23 @@ def ImprestRequisition(request):
                 output_json = json.dumps(imprest)
                 Rejected.append(json.loads(output_json))
         counts = len(open)
+        request.session['open_imprest'] = counts
+        open_imprest = request.session['open_imprest']
+
         counter = len(Approved)
+        request.session['App_imprest'] = counter
+        App_imprest = request.session['App_imprest']
+
+        reject = len(Rejected)
+        request.session['Rej_imprest'] = reject
+        Rej_imprest = request.session['Rej_imprest']
     except requests.exceptions.ConnectionError as e:
         print(e)
 
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
+
     ctx = {"today": todays_date, "res": open, "count": counts,
-           "response": Approved, "counter": counter, "reject": Rejected}
+           "response": Approved, "counter": counter, "reject": Rejected, "rej": reject}
     return render(request, 'imprestReq.html', ctx)
 
 
@@ -224,8 +234,16 @@ def ImprestSurrender(request):
                 output_json = json.dumps(imprest)
                 APPImp.append(json.loads(output_json))
         counts = len(open)
+        request.session['open_surrender'] = counts
+        open_surrender = request.session['open_surrender']
+
         counter = len(Approved)
+        request.session['App_surrender'] = counter
+        App_surrender = request.session['App_surrender']
+
         Rejects = len(Reject)
+        request.session['Rej_surrender'] = Rejects
+        Rej_surrender = request.session['Rej_surrender']
     except requests.exceptions.ConnectionError as e:
         print(e)
 
@@ -385,6 +403,7 @@ def StaffClaim(request):
                 output_json = json.dumps(imprest)
                 Rejected.append(json.loads(output_json))
         counts = len(open)
+
         counter = len(Approved)
         rej = len(Rejected)
     except requests.exceptions.ConnectionError as e:

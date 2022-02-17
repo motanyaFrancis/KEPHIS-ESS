@@ -36,8 +36,17 @@ def Leave_Request(request):
                 output_json = json.dumps(imprest)
                 Rejected.append(json.loads(output_json))
         counts = len(open)
+
+        request.session['Open_Leave'] = counts
+        open_leave = request.session['Open_Leave']
+
         counter = len(Approved)
+        request.session['Approved_Leave'] = counter
+        Approved_Leave = request.session['Approved_Leave']
+
         reject = len(Rejected)
+        request.session['Rejected_Leave'] = reject
+        Rejected_Leave = request.session['Rejected_Leave']
     except requests.exceptions.ConnectionError as e:
         print(e)
 
@@ -146,8 +155,16 @@ def Training_Request(request):
                 output_json = json.dumps(imprest)
                 Rejected.append(json.loads(output_json))
         counts = len(open)
+        request.session['Open_Train'] = counts
+        Open_Train = request.session['Open_Train']
+
         counter = len(Approved)
+        request.session['App_Train'] = counter
+        App_Train = request.session['App_Train']
+
         reject = len(Rejected)
+        request.session['Rej_Train'] = reject
+        Rej_Train = request.session['Rej_Train']
     except requests.exceptions.ConnectionError as e:
         print(e)
 
@@ -227,8 +244,16 @@ def Loan_Request(request):
                 output_json = json.dumps(imprest)
                 Rejected.append(json.loads(output_json))
         counts = len(open)
+        request.session['Open_Loan'] = counts
+        Open_Loan = request.session['Open_Loan']
+
         counter = len(Approved)
+        request.session['APP_Loan'] = counter
+        APP_Loan = request.session['APP_Loan']
+
         reject = len(Rejected)
+        request.session['Rej_Loan'] = reject
+        Rej_Loan = request.session['Rej_Loan']
     except requests.exceptions.ConnectionError as e:
         print(e)
 

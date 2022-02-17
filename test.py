@@ -56,11 +56,11 @@ CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
 
 # lineNo = 0
 # claimNo = "SC0020"
-# claimType = 'SALARY ADAVANCE'
+# claimType = "SALARY ADAVANCE"
 # accountNo = 'C00010'
 # amount = 10
 # description = "Test"
-# claimReceiptNo = "Test"
+# claimReceiptNo = ""
 # dimension3 = ""
 # expenditureDate = datetime.fromisoformat("2022-12-12")
 # expenditureDescription = "Testing"
@@ -71,38 +71,55 @@ CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
 #                                            claimNo, claimType, accountNo, amount, description, claimReceiptNo, dimension3, expenditureDate, expenditureDescription, myAction)
 # print(response)
 
-# applicationNo = ''
-# employeeNo = 'AH'
-# usersId = "NAVADMIN"
-# dimension3 = ''
-# leavePeriod = '2021'
-# leaveType = "ANNUAL"
-# date_str3 = '02-20-2022'
-# plannerStartDate = datetime.strptime(date_str3, '%m-%d-%Y')
-# isReturnSameDay = False
-# daysApplied = 2
-# isLeaveAllowancePayable = True
-# myAction = 'insert'
-
-# response = CLIENT.service.FnLeaveApplication(applicationNo,
-#                                              employeeNo, usersId, dimension3, leavePeriod, plannerStartDate, isReturnSameDay, dimension3, daysApplied, isLeaveAllowancePayable, myAction)
-# print(response)
-
-loanNo = ''
-date_str3 = '02-20-2022'
-requestedDate = datetime.strptime(date_str3, '%m-%d-%Y')
+applicationNo = ''
+employeeNo = 'AH'
 usersId = "NAVADMIN"
-pmlNo = ''
-loanProductType = ''
-loanDuration = 1
-requestedAmount = 100
-interestCalculationMethod = ''
-repaymentFrequency = ''
-bankName = "1"
-bankAccountNo = '12345678'
-bankBranchName = '100'
+dimension3 = ''
+leaveType = "ANNUAL"
+date_str3 = '02-20-2022'
+# plannerStartDate = datetime.strptime(date_str3, '%m-%d-%Y')
+plannerStartDate = "2021-09-01"
+isReturnSameDay = True
+daysApplied = 2
+isLeaveAllowancePayable = True
 myAction = 'insert'
 
-response = CLIENT.service.FnLoanApplication(loanNo,
-                                            requestedDate, usersId, pmlNo, loanProductType, loanDuration, requestedAmount, interestCalculationMethod, repaymentFrequency, bankName, bankAccountNo, bankBranchName, myAction)
+response = CLIENT.service.FnLeaveApplication(applicationNo,
+                                             employeeNo, usersId, dimension3, plannerStartDate, isReturnSameDay, dimension3, daysApplied, isLeaveAllowancePayable, myAction)
 print(response)
+
+# loanNo = ''
+# date_str3 = '02-20-2022'
+# requestedDate = datetime.strptime(date_str3, '%m-%d-%Y')
+# usersId = "NAVADMIN"
+# pmlNo = ''
+# loanProductType = ''
+# loanDuration = 1
+# requestedAmount = 100
+# interestCalculationMethod = ''
+# repaymentFrequency = ''
+# bankName = "1"
+# bankAccountNo = '12345678'
+# bankBranchName = '100'
+# myAction = 'insert'
+
+# response = CLIENT.service.FnLoanApplication(loanNo,
+#                                             requestedDate, usersId, pmlNo, loanProductType, loanDuration, requestedAmount, interestCalculationMethod, repaymentFrequency, bankName, bankAccountNo, bankBranchName, myAction)
+# print(response)
+
+
+# collateralCode = ''
+# loanNo = ""
+# collateralType = ""
+# date_str3 = '02-20-2022'
+# maturityDate = datetime.strptime(date_str3, '%m-%d-%Y')
+# collateralValue = 100
+# isPerfected = True
+# isExcludedActivities = 1
+# isNemaCompliant = 1
+# securityType = ""
+# myAction = 'insert'
+
+# response = CLIENT.service.FnLoanCollateral(collateralCode,
+#                                             loanNo, collateralType, maturityDate, collateralValue, isPerfected, isExcludedActivities, isNemaCompliant, securityType,  myAction)
+# print(response)

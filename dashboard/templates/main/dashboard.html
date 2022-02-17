@@ -2,6 +2,7 @@
 {% load bootstrap5 %}
 {% load static %}
 {% block main %}
+
 <section>
     <div class="content-wrapper">
         <div class="row" id="proBanner">
@@ -78,13 +79,25 @@
             <div class="col-md-4">
                 <div class="card h-100 summ-cards3">
                     <div class="card-title">
-                        Approvals Summary
+                        Finance Summary
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-4">
+                                <div class="c-content c1">
+                                    <h6>Imprest Requisition</h6>
+                                    <small>3</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="c-content c2">
+                                    <h6>Imprest Surrender</h6>
+                                    <small>3</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
                                 <div class="c-content">
-                                    <h6>Requests To Approve</h6>
+                                    <h6>Staff Claim</h6>
                                     <small>3</small>
                                 </div>
                             </div>
@@ -110,15 +123,24 @@
                             'Store',
                             'Purchase',
                             'Repair',
+                            'Imprest Requisition',
+                            'Imprest Surrender',
+                            "Staff Claim"
                         ];
-
+                        var Approved_Leave = 3
+                        var App_Train = 3
+                        var APP_Loan = 3
+                        var App_imprest = 3
+                        var App_surrender = 3
                         const data = {
                             labels: labels,
                             datasets: [{
                                 label: 'All Approved Requests',
                                 backgroundColor: 'rgb(255, 99, 132)',
                                 borderColor: 'rgb(255, 99, 132)',
-                                data: [0, 10, 5, 2, 20, 30, 45],
+                                data: [Approved_Leave, App_Train, APP_Loan, 3, 20, 30, 45,
+                                    App_imprest, App_surrender, 3
+                                ],
                             }]
                         };
 
@@ -152,8 +174,16 @@
                             'Store',
                             'Purchase',
                             'Repair',
+                            'Imprest Requisition',
+                            'Imprest Surrender',
+                            "Staff Claim"
                         ];
 
+                        var Rejected_Leave = 3
+                        var Rej_Train = 3
+                        var Rej_Loan = 3
+                        var Rej_imprest = 3
+                        var Rej_surrender = 3
                         const data2 = {
                             labels: newlabel,
                             datasets: [{
@@ -167,7 +197,9 @@
                                     '#40E0D0',
                                 ],
                                 borderColor: 'rgb(255, 99, 132)',
-                                data: [6, 10, 5, 2, 20, 8, 5],
+                                data: [Rejected_Leave, Rej_Train, Rej_Loan, 2, 20, 8, 5, Rej_imprest,
+                                    Rej_surrender, 3
+                                ],
                             }]
                         };
 
@@ -186,51 +218,116 @@
                 </div>
             </div>
         </div>
-        <div class="row my-3">
-            <div class="col-md-4">
-                <div class="card f-card h-100 p-3">
-                    <h6>Finance</h6>
-                    <div class="card-title mx-auto text-center pt-2">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <i class="las la-coins"></i>
-                                <h3>Kshs 5000</h3>
-                                <p>Unpaid Loans</p>
+        <div class="row pb-3">
+            <div class="col-md-8">
+                <div class="card h-100">
+                    <div class="row my-2 ">
+                        <div class="col-md-12">
+                            <div class="card h-100 px-2" id="d-card">
+                                <div class="m-4">
+                                    <ul class="nav nav-tabs" id="myTab">
+                                        <li class="nav-item">
+                                            <a href="#home" class="nav-link active" data-bs-toggle="tab">Documents
+                                                Pending
+                                                Your
+                                                Approval
+                                                ({{countsAPP}})</a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content">
+                                        <div class="tab-pane fade show active" id="home">
+                                            <h4 class="mt-2 text-dark">Documents Pending Your Approval</h4>
+                                            <div class="card-body">
+                                                <table id="example"
+                                                    class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                                    style="width:100%">
+                                                    <thead>
+                                                        <tr id="tops">
+                                                            <th id="long">Document No</th>
+                                                            <th>Document Type</th>
+                                                            <th>Sender</th>
+                                                            <th>Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for res in apps %}
+                                                        <tr>
+                                                            <td>{{res.Document_No_}}</td>
+                                                            <td id="rap">{{res.Document_Type}}</td>
+                                                            <td>{{res.Sender_ID}}</td>
+                                                            <td>
+                                                                <a type="button" href=""
+                                                                    class="btn btn-success btn-icon-text"
+                                                                    style="background: #25CC88;">View
+                                                                    <i class="las la-external-link-alt"
+                                                                        style="font-size: 1rem"></i>
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
             <div class="col-md-4">
-                <div class="card f-card h-100 p-3">
-                    <h6>Finance</h6>
-                    <div class="card-title mx-auto text-center pt-2">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <i class="las la-coins"></i>
-                                <h3>Kshs 5000</h3>
-                                <p>Unpaid Loans</p>
+                <div class="muck-up">
+                    <div class="overlay"></div>
+                    <div class="top">
+                        <div class="navs">
+                            <span class="ion-android-menu"></span>
+                            <p>My Profile</p>
+                        </div>
+                        <div class="user-profile">
+                            <img src="../../../static/img/logo/2.png">
+                            <div class="user-details">
+                                <h4>{{full}}</h4>
+                                <p>{{Responsibility}}</p>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card f-card h-100 p-3">
-                    <h6>Finance</h6>
-                    <div class="card-title mx-auto text-center pt-2">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <i class="las la-coins"></i>
-                                <h3>Kshs 5000</h3>
-                                <p>Unpaid Loans</p>
-                            </div>
+                    <div class="bottom">
+                        <div class="title">
+                            <h3>My Profile</h3>
+                            <small>Profile Information</small>
                         </div>
+                        <ul class="tasks">
+                            <li class="one red">
+                                <span class="task-title">Employee Number</span>
+                                <span class="task-time"><i class="las la-user-circle"></i></span>
+                                <span class="task-cat">{{Employee_No_}}</span>
+
+                            </li>
+                            <li class="one red">
+                                <span class="task-title">Account Number</span>
+                                <span class="task-time"><i class="las la-lock"></i></span>
+                                <span class="task-cat">{{Customer_No_}}</span>
+
+                            </li>
+                            <li class="two green">
+                                <span class="task-title">Email</span>
+                                <span class="task-time"><i class="las la-envelope"></i></span>
+                                {% if E_Mail %}
+                                <span class="task-cat">{{E_Mail}}</span>
+                                {% else %}
+                                <span class="task-cat">No Email</span>
+                                {% endif %}
+                            </li>
+                            </li>
+
+
+                        </ul>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 </section>
 {% endblock %}

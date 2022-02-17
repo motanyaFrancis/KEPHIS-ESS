@@ -13,13 +13,6 @@ from django.contrib import messages
 # Create your views here.
 
 
-def profile_request(request):
-
-    todays_date = datetime.datetime.now().strftime("%b. %d, %Y %A")
-    ctx = {"today": todays_date}
-    return render(request, 'profile.html', ctx)
-
-
 def login_request(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -55,6 +48,8 @@ def login_request(request):
                     Employee_No_ = request.session['Employee_No_']
                     request.session['Customer_No_'] = Data[0]['Customer_No_']
                     Customer_No_ = request.session['Customer_No_']
+                    request.session['E_Mail'] = Data[0]['E_Mail']
+                    E_Mail = request.session['E_Mail']
                     request.session['User_Responsibility_Center'] = Data[0]['User_Responsibility_Center']
                     User_Responsibility_Center = request.session['User_Responsibility_Center']
                     print('User_Responsibility_Center:',
