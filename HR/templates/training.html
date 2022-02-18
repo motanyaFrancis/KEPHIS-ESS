@@ -5,7 +5,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
     crossorigin="anonymous"></script>
 <section class="dash2">
-    <div class="content-wrapper" style="padding-bottom: 5rem;">
+    <div class="content-wrapper general-bg" style="padding-bottom: 5rem;">
         <div class="d-xl-flex justify-content-between align-items-start">
             <h2 class="text-dark font-weight-bold mb-2"> Training Requests <button class="btn btn-primary"
                     data-bs-toggle="modal" data-bs-target="#staticBackdrop"> <i class="las la-plus"></i> New Imprest
@@ -183,34 +183,30 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="myForm" action="{% url 'CreateTrainingRequest' %}" method="post">
+                    <form class="myForm" action="{% url 'CreateTrainingRequest' %}" method="post">
                         {% csrf_token %}
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="mb-2">
-                                    <label class="form-label">Adhoc</label>
-                                    <select class="form-select" name="isAdhoc">
-                                        <option selected>Select </option>
-                                        <option value="True">True</option>
-                                        <option value="False">False</option>
-                                    </select>
-                                </div>
+                        <div class="row mb-3">
+                            <div class="form-floating">
+                                <select class="form-select" id="isAdhoc" name="isAdhoc">
+                                    <option selected>Select </option>
+                                    <option value="True">True</option>
+                                    <option value="False">False</option>
+                                </select>
+                                <label for="isAdhoc">Adhoc</label>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="mb-2">
-                                    <label class="form-label">Training Need</label>
-                                    <select class="form-select" name="trainingNeed">
-                                        <option selected>Select Training Need </option>
-                                        {% for res in train %}
-                                        <option value="{{res.Code}}">{{res.Description}}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
+                        <div class="row mb-3">
+                            <div class="form-floating">
+                                <select class="form-select" id="trainingNeed" name="trainingNeed">
+                                    <option selected>Select Training Need </option>
+                                    {% for res in train %}
+                                    <option value="{{res.Code}}">{{res.Description}}</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="trainingNeed">Training Need</label>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="" class="col-form-label">Start Date:</label>
                                 <input type="date" name="startDate">
@@ -220,51 +216,43 @@
                                 <input type="date" name="endDate">
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="my-2">
-                                    <label class="form-label">Destination</label>
-                                    <select class="form-select" name="destination">
-                                        <option selected>Select Destination</option>
-                                        {% for res in des %}
-                                        <option value="{{res.Destination_Code}}">{{res.Destination_Code}}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
+                        <div class="row mb-3">
+                            <div class="form-floating">
+                                <select class="form-select" id="destination" name="destination">
+                                    <option selected>Select Destination</option>
+                                    {% for res in des %}
+                                    <option value="{{res.Destination_Code}}">{{res.Destination_Code}}</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="destination">Destination</label>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="mb-2">
-                                    <label class="form-label">Currency</label>
-                                    <select class="form-select" name="currency">
-                                        <option selected>Select </option>
-                                        {% for res in cur %}
-                                        <option value="{{res.Code}}">{{res.Description}} ({{res.Code}})</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
+                        <div class="row mb-3">
+                            <div class="form-floating">
+                                <select class="form-select" id="currency" name="currency">
+                                    <option selected>Select </option>
+                                    {% for res in cur %}
+                                    <option value="{{res.Code}}">{{res.Description}} ({{res.Code}})</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="currency">Currency</label>
                             </div>
                         </div>
-
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="mb-2">
-                                    <label for="purpose" class="form-label">Description</label>
-                                    <textarea class="form-control" name="description" rows="3"></textarea>
-                                </div>
+                        <div class="row mb-3">
+                            <div class="form-floating">
+                                <textarea class="form-control" name="description" rows="3"></textarea>
+                                <label for="description">Description</label>
                             </div>
                         </div>
 
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
+                            <button type="submit" id="sasa" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
-                    <button type="submit" id="sasa" class="btn btn-primary">Submit</button>
-                </div>
-                </form>
             </div>
         </div>
-    </div>
 </section>
 
 {% endblock %}

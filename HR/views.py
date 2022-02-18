@@ -96,9 +96,16 @@ def LeaveDetail(request, pk):
     session.auth = config.AUTHS
     res = ''
     Access_Point = config.O_DATA.format("/QyLeaveApplications")
+    Approver = config.O_DATA.format("/QyApprovalEntries")
     try:
         response = session.get(Access_Point, timeout=10).json()
+        res_approver = session.get(Approver, timeout=10).json()
         openClaim = []
+        Approvers = []
+        for approver in res_approver['value']:
+            if approver['Document_No_'] == pk:
+                output_json = json.dumps(approver)
+                Approvers.append(json.loads(output_json))
         for claim in response['value']:
             if claim['Status'] == 'Released' and claim['User_ID'] == request.session['User_ID']:
                 output_json = json.dumps(claim)
@@ -120,9 +127,36 @@ def LeaveDetail(request, pk):
                         res = claim
     except requests.exceptions.ConnectionError as e:
         print(e)
+    request.session['documentNo'] = pk
+    Leave_No = request.session['documentNo']
+    print("Leave Number", Leave_No)
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-    ctx = {"today": todays_date, "res": res}
+    ctx = {"today": todays_date, "res": res, "Approvers": Approvers}
     return render(request, 'leaveDetail.html', ctx)
+
+
+def LeaveApproval(request, pk):
+    entryNo = 0
+    documentNo = pk
+    userID = request.session['User_ID']
+    approvalComments = ""
+    myAction = 'insert'
+    if request.method == 'POST':
+        try:
+            approvalComments = request.POST.get('approvalComments')
+        except ValueError:
+            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            return redirect('LeaveDetail', pk=documentNo)
+    try:
+        response = config.CLIENT.service.FnDocumentApproval(
+            entryNo, documentNo, userID, approvalComments, myAction)
+        messages.success(request, "Successfully Added!!")
+        print(response)
+        return redirect('LeaveDetail', pk=documentNo)
+    except Exception as e:
+        messages.error(request, e)
+        print(e)
+    return redirect('LeaveDetail', pk=documentNo)
 
 
 def Training_Request(request):

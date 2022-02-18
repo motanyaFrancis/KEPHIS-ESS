@@ -5,7 +5,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
     crossorigin="anonymous"></script>
 <section class="dash2">
-    <div class="content-wrapper" style="padding-bottom: 5rem;">
+    <div class="content-wrapper general-bg" style="padding-bottom: 5rem;">
         <div class="d-xl-flex justify-content-between align-items-start">
             <h2 class="text-dark font-weight-bold mb-2"> Leave Requests <button class="btn btn-primary"
                     data-bs-toggle="modal" data-bs-target="#staticBackdrop"> <i class="las la-plus"></i> New Leave
@@ -195,57 +195,54 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="myForm" action="{% url 'CreateLeave' %}" method="post">
+                    <form class="myForm" action="{% url 'CreateLeave' %}" method="post">
                         {% csrf_token %}
                         <div class="mb-2"> <span class="w-name">
-                                General Information:
+                                Leave Request Header:
                             </span>
-                            <div class="row">
-                                <div>
-                                    <label for="" class="col-form-label">Leave Type
-                                        :</label>
-                                    <select class="form-select" name="leaveType">
+                            <div class="row mt-3">
+                                <div class="form-floating">
+                                    <select class="form-select" id="leaveType" name="leaveType">
                                         {% for res in leave %}
                                         <option selected>Select Leave Type</option>
                                         <option value="{{res.Code}}">{{res.Description}}</option>
                                         {% endfor %}
                                     </select>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <label for="" class="col-form-label">Start Date:</label>
-                                    <input type="date" name="plannerStartDate">
+                                    <label for="leaveType"> Leave Type</label>
                                 </div>
                             </div>
                             <div class="row">
                                 <div>
-                                    <label for="" class="col-form-label">Return Same Day
-                                        :</label>
-                                    <select class="form-select" name="isReturnSameDay">
+                                    <label for="plannerStartDate" class="col-form-label">Start Date</label>
+                                    <input type="date" id="plannerStartDate" name="plannerStartDate">
+                                </div>
+                            </div>
+                            <div class="row my-3">
+                                <div class="form-floating">
+                                    <select class="form-select" id="isReturnSameDay" name="isReturnSameDay">
                                         <option selected>Select</option>
                                         <option value="True">True</option>
                                         <option value="False">False</option>
                                     </select>
+                                    <label for="isReturnSameDay"> Return Same Day</label>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="my-3">
-                                        <label class="form-label">Days Applied</label>
-                                        <input type="number" class="form-control" name="daysApplied" placeholder="">
-                                    </div>
+                            <div class="row my-3">
+                                <div class="form-floating">
+                                    <input type="number" class="form-control" id="daysApplied" name="daysApplied"
+                                        placeholder="">
+                                    <label for="daysApplied">Days Applied</label>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div>
-                                    <label for="" class="col-form-label"> Leave Allowance Payable
-                                        :</label>
-                                    <select class="form-select" name="isLeaveAllowancePayable">
+                            <div class="row my-3">
+                                <div class="form-floating">
+                                    <select class="form-select" id="isLeaveAllowancePayable"
+                                        name="isLeaveAllowancePayable">
                                         <option selected>Select</option>
                                         <option value="True">True</option>
                                         <option value="False">False</option>
                                     </select>
+                                    <label for="isLeaveAllowancePayable"> Leave Allowance Payable</label>
                                 </div>
                             </div>
                         </div>

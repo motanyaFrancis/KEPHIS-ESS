@@ -119,6 +119,11 @@ button:hover {
     flex-grow: 1;
 }
 
+.myForm {
+    background: white;
+    padding: 1rem;
+}
+
 .muck-up {
     width: 100%;
     height: auto;

@@ -2,6 +2,7 @@
 {% load bootstrap5 %}
 {% load static %}
 {% block main %}
+
 <section class="dash2">
     <div class="content-wrapper" style="padding-bottom: 5rem;">
         <div class="d-xl-flex justify-content-between align-items-start">
@@ -107,9 +108,59 @@
                         <input type="text" class="form-control" placeholder="{{res.Employment_Type}}" readonly>
                     </div>
                 </form>
+                <div class="d-grid gap-2 my-3">
+                    <button class="btn btn-info" id="approveBtn" type="button">Request For Approval</button>
+                </div>
+                <form action="{% url 'LeaveApprove' res.Application_No %}" method="POST" class="myForm"
+                    style="display:none" id="approvalForm">
+                    {% csrf_token %}
+                    <div class="mb-3 form-floating">
+                        <textarea class="form-control" id="approvalComments" name="approvalComments"
+                            rows="3"></textarea>
+                        <label for="approvalComments">Approval Comment</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Request</button>
+
+                </form>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card" id="d-card">
+                    <h4 class="mt-2 mx-2 text-dark">Document Approvers</h4>
+                    <div class="card-body">
+                        <table id="example"
+                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                            style="width:100%">
+                            <thead>
+                                <tr id="tops">
+                                    <th id="long">Entry No</th>
+                                    <th>Name</th>
+                                    <th>Sequence</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for res in Approvers %}
+                                <tr>
+                                    <td>{{res.Entry_No_}}</td>
+                                    <td>{{res.Approver_ID}}</td>
+                                    <td>{{res.Sequence_No_}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</section>
 
+</section>
+<script>
+    $(document).ready(function () {
+        $("#approveBtn").click(function () {
+            $("#approvalForm").toggle(500)
+        })
+    })
+</script>
 {% endblock %}
