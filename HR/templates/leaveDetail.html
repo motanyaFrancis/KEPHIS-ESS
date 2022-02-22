@@ -111,12 +111,15 @@
                 <div class="d-grid gap-2 my-3">
                     <button class="btn btn-info" id="approveBtn" type="button">Request For Approval</button>
                 </div>
-                <form action="{% url 'LeaveApprove' res.Application_No %}" method="POST" class="myForm"
-                    style="display:none" id="approvalForm">
+                <form action="{% url 'LeaveApprove' res.Application_No %}" method="POST" class="myForm needs-validation"
+                    style="display:none" id="approvalForm" novalidate>
                     {% csrf_token %}
                     <div class="mb-3 form-floating">
-                        <textarea class="form-control" id="approvalComments" name="approvalComments"
-                            rows="3"></textarea>
+                        <textarea class="form-control" id="approvalComments" name="approvalComments" rows="3"
+                            required></textarea>
+                        <div class="invalid-feedback">
+                            Please provide approval comment.
+                        </div>
                         <label for="approvalComments">Approval Comment</label>
                     </div>
                     <button type="submit" class="btn btn-primary">Submit Request</button>

@@ -75,6 +75,7 @@
                                                 <th>Return same day</th>
                                                 <th>Days Applied</th>
                                                 <th>Start Date</th>
+                                                <th>Edit</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -87,6 +88,9 @@
                                                 <td>{{res.Return_same_day}}</td>
                                                 <td>{{res.Days_Applied}}</td>
                                                 <td>{{res.Start_Date}}</td>
+                                                <td><button class="btn btn-primary btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top" title="Edit"><i
+                                                            class="fa fa-edit"></i></button></td>
                                                 <td>
                                                     <a type="button" href="{% url 'LeaveDetail' res.Application_No %} "
                                                         class="btn btn-success btn-icon-text"
@@ -272,6 +276,8 @@
     </div>
 </section>
 <script>
-
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
 </script>
 {% endblock %}
