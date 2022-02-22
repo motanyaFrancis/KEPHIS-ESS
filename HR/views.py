@@ -1,6 +1,8 @@
+from curses.ascii import isdigit
 from urllib import request
 from django.shortcuts import render, redirect
-from datetime import date
+from datetime import date, datetime
+from isodate import date_isoformat
 import requests
 from requests import Session
 from requests_ntlm import HttpNtlmAuth
@@ -62,7 +64,6 @@ def CreateLeave(request):
     employeeNo = request.session['Employee_No_']
     usersId = request.session['User_ID']
     dimension3 = ''
-    leavePeriod = ''
     leaveType = ""
     plannerStartDate = ''
     isReturnSameDay = ''
@@ -77,13 +78,14 @@ def CreateLeave(request):
             daysApplied = int(request.POST.get('daysApplied'))
             isLeaveAllowancePayable = request.POST.get(
                 'isLeaveAllowancePayable')
-        except ValueError:
+        except ValueError as e:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('leave')
+    print(plannerStartDate)
     try:
         response = config.CLIENT.service.FnLeaveApplication(
-            applicationNo, employeeNo, usersId, dimension3, leavePeriod, leaveType, plannerStartDate, isReturnSameDay, daysApplied, isLeaveAllowancePayable, myAction)
-        messages.success(request, "Successfully Added!!")
+            applicationNo, employeeNo, usersId, dimension3, leaveType, plannerStartDate, isReturnSameDay, daysApplied, isLeaveAllowancePayable, myAction)
+        messages.success(request, "You have successfully  Added!!")
         print(response)
     except Exception as e:
         messages.error(request, e)

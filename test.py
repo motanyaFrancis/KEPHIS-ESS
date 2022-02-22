@@ -71,7 +71,7 @@ CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
 #                                            claimNo, claimType, accountNo, amount, description, claimReceiptNo, dimension3, expenditureDate, expenditureDescription, myAction)
 # print(response)
 
-applicationNo = ''
+applicationNo = 'LPL0004'
 employeeNo = 'AH'
 usersId = "NAVADMIN"
 dimension3 = ''
@@ -79,9 +79,9 @@ leaveType = "ANNUAL"
 date_str3 = '02-20-2022'
 # plannerStartDate = datetime.strptime(date_str3, '%m-%d-%Y')
 plannerStartDate = "2021-09-01"
-isReturnSameDay = True
+isReturnSameDay = False
 daysApplied = 2
-isLeaveAllowancePayable = True
+isLeaveAllowancePayable = False
 myAction = 'insert'
 
 response = CLIENT.service.FnLeaveApplication(applicationNo,
@@ -122,4 +122,75 @@ print(response)
 
 # response = CLIENT.service.FnLoanCollateral(collateralCode,
 #                                             loanNo, collateralType, maturityDate, collateralValue, isPerfected, isExcludedActivities, isNemaCompliant, securityType,  myAction)
+# print(response)
+
+# requisitionNo = ''
+# orderDate = datetime.strptime('02-20-2022', '%m-%d-%Y')
+# employeeNo = 'AH'
+# reason = "Test"
+# expectedReceiptDate = datetime.strptime('02-20-2022', '%m-%d-%Y')
+# isConsumable = True
+# myUserId = "NAVADMIN"
+# myAction = 'insert'
+
+# response = CLIENT.service.FnPurchaseRequisitionHeader(requisitionNo,
+#                                                       orderDate, employeeNo, reason, expectedReceiptDate, isConsumable, myUserId, myAction)
+# print(response)
+
+
+# requisitionNo = ''
+# lineNo = 0
+# procPlanItem = ''
+# itemType = ""
+# specification = ''
+# quantity = 1
+# myUserId = "NAVADMIN"
+# myAction = 'insert'
+
+# response = CLIENT.service.FnPurchaseRequisitionLine(requisitionNo,
+#                                                     lineNo, procPlanItem, itemType, specification, quantity, myUserId, myAction)
+# print(response)
+
+# requisitionNo = ''
+# orderDate = datetime.strptime('02-20-2022', '%m-%d-%Y')
+# employeeNo = 'AH'
+# reason = "Test"
+# expectedReceiptDate = datetime.strptime('02-20-2022', '%m-%d-%Y')
+# myUserId = "NAVADMIN"
+# myAction = 'insert'
+
+# response = CLIENT.service.FnRepairRequisitionHeader(requisitionNo,
+#                                                     orderDate, employeeNo, reason, expectedReceiptDate, myUserId, myAction)
+# print(response)
+
+# requisitionNo = ''
+# lineNo = 0
+# assetCode = ''
+# myAction = 'insert'
+
+# response = CLIENT.service.FnRepairRequisitionLine(requisitionNo,
+#                                                   lineNo, assetCode, myAction)
+# print(response)
+
+# requisitionNo = ''
+# employeeNo = 'AH'
+# issuingStore = "AFGHANISTA"
+# reason = ""
+# expectedReceiptDate = datetime.strptime('02-20-2022', '%m-%d-%Y')
+# myUserId = "NAVADMIN"
+# myAction = 'insert'
+
+# response = CLIENT.service.FnStoreRequisitionHeader(requisitionNo, employeeNo, issuingStore, reason, expectedReceiptDate,
+#                                                    myUserId, myAction)
+# print(response)
+
+# requisitionNo = ''
+# lineNo = 0
+# itemCode = ""
+# location = "AFGHANISTA"
+# quantity = 1
+# myAction = 'insert'
+
+# response = CLIENT.service.FnStoreRequisitionLine(requisitionNo, lineNo, itemCode, location, quantity,
+#                                                  myAction)
 # print(response)

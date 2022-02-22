@@ -62,7 +62,7 @@
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane fade show active" id="home">
-                                <h4 class="mt-2 text-dark">Open Leave Request</h4>
+                                <h4 class="mt-2 text-dark" id="test">Open Leave Request</h4>
                                 <div class="card-body">
                                     <table id="example"
                                         class="display table table-striped table-bordered dt-responsive table-responsive-lg"
@@ -195,54 +195,69 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="myForm" action="{% url 'CreateLeave' %}" method="post">
+                    <form class="myForm needs-validation" action="{% url 'CreateLeave' %}" method="post" novalidate>
                         {% csrf_token %}
                         <div class="mb-2"> <span class="w-name">
                                 Leave Request Header:
                             </span>
                             <div class="row mt-3">
-                                <div class="form-floating">
-                                    <select class="form-select" id="leaveType" name="leaveType">
+                                <div class="col-md-12">
+                                    <label for="leaveType" class="form-label"> Leave Type</label>
+                                    <select class="form-select" id="leaveType" name="leaveType" required>
+                                        <option selected disabled value="">Choose...</option>
                                         {% for res in leave %}
-                                        <option selected>Select Leave Type</option>
                                         <option value="{{res.Code}}">{{res.Description}}</option>
                                         {% endfor %}
                                     </select>
-                                    <label for="leaveType"> Leave Type</label>
+                                    <div class="invalid-feedback">
+                                        Please select a valid Leave Type.
+                                    </div>
                                 </div>
                             </div>
                             <div class="row">
-                                <div>
-                                    <label for="plannerStartDate" class="col-form-label">Start Date</label>
-                                    <input type="date" id="plannerStartDate" name="plannerStartDate">
+                                <div class="col-md-12">
+                                    <label for="plannerStartDate" class="form-label">Start Date</label>
+                                    <input type="date" id="plannerStartDate" class="form-control"
+                                        name="plannerStartDate" required>
+                                    <div class="invalid-feedback">
+                                        Please Provide Start Date
+                                    </div>
                                 </div>
                             </div>
-                            <div class="row my-3">
-                                <div class="form-floating">
-                                    <select class="form-select" id="isReturnSameDay" name="isReturnSameDay">
-                                        <option selected>Select</option>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label for="isReturnSameDay" class="form-label"> Return Same Day</label>
+                                    <select class="form-select" id="isReturnSameDay" name="isReturnSameDay" required>
+                                        <option selected value="">Select</option>
                                         <option value="True">True</option>
                                         <option value="False">False</option>
                                     </select>
-                                    <label for="isReturnSameDay"> Return Same Day</label>
+                                    <div class="invalid-feedback">
+                                        Please Select valid Option
+                                    </div>
+
                                 </div>
                             </div>
-                            <div class="row my-3">
-                                <div class="form-floating">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label for="daysApplied" class="form-label">Days Applied</label>
                                     <input type="number" class="form-control" id="daysApplied" name="daysApplied"
-                                        placeholder="">
-                                    <label for="daysApplied">Days Applied</label>
+                                        required>
+                                    <div class="invalid-feedback">
+                                        Please provide input.
+                                    </div>
                                 </div>
                             </div>
-                            <div class="row my-3">
-                                <div class="form-floating">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label for="isLeaveAllowancePayable" class="form-label"> Leave Allowance
+                                        Payable</label>
                                     <select class="form-select" id="isLeaveAllowancePayable"
-                                        name="isLeaveAllowancePayable">
-                                        <option selected>Select</option>
+                                        name="isLeaveAllowancePayable" required>
+                                        <option selected value="">Select</option>
                                         <option value="True">True</option>
                                         <option value="False">False</option>
                                     </select>
-                                    <label for="isLeaveAllowancePayable"> Leave Allowance Payable</label>
                                 </div>
                             </div>
                         </div>
@@ -256,5 +271,7 @@
         </div>
     </div>
 </section>
+<script>
 
+</script>
 {% endblock %}

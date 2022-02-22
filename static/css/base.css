@@ -119,6 +119,32 @@ button:hover {
     flex-grow: 1;
 }
 
+.form-label {
+    padding-top: calc(0.94rem + 1px);
+    padding-bottom: calc(0.94rem + 1px);
+    margin-bottom: 0;
+    font-size: inherit;
+    font-family: var(--primary-font);
+    line-height: 1;
+    color: #000;
+}
+
+.form-control,
+.form-select {
+    color: #3f3f3f;
+    background-color: transparent;
+    background-clip: padding-box;
+    border: 1px solid #28a745;
+    border-radius: 0;
+    font-family: var(--primary-font);
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus {
+    outline: red !important;
+    box-shadow: red !important;
+}
+
 .myForm {
     background: white;
     padding: 1rem;
