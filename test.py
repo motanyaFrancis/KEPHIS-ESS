@@ -71,22 +71,22 @@ CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
 #                                            claimNo, claimType, accountNo, amount, description, claimReceiptNo, dimension3, expenditureDate, expenditureDescription, myAction)
 # print(response)
 
-applicationNo = 'LPL0004'
-employeeNo = 'AH'
-usersId = "NAVADMIN"
-dimension3 = ''
-leaveType = "ANNUAL"
-date_str3 = '02-20-2022'
-# plannerStartDate = datetime.strptime(date_str3, '%m-%d-%Y')
-plannerStartDate = "2021-09-01"
-isReturnSameDay = False
-daysApplied = 2
-isLeaveAllowancePayable = False
-myAction = 'insert'
+# applicationNo = 'LPL0004'
+# employeeNo = 'AH'
+# usersId = "NAVADMIN"
+# dimension3 = ''
+# leaveType = "ANNUAL"
+# date_str3 = '02-20-2022'
+# # plannerStartDate = datetime.strptime(date_str3, '%m-%d-%Y')
+# plannerStartDate = "2021-09-01"
+# isReturnSameDay = False
+# daysApplied = 2
+# isLeaveAllowancePayable = False
+# myAction = 'insert'
 
-response = CLIENT.service.FnLeaveApplication(applicationNo,
-                                             employeeNo, usersId, dimension3, plannerStartDate, isReturnSameDay, dimension3, daysApplied, isLeaveAllowancePayable, myAction)
-print(response)
+# response = CLIENT.service.FnLeaveApplication(applicationNo,
+#                                              employeeNo, usersId, dimension3, plannerStartDate, isReturnSameDay, dimension3, daysApplied, isLeaveAllowancePayable, myAction)
+# print(response)
 
 # loanNo = ''
 # date_str3 = '02-20-2022'
@@ -193,4 +193,26 @@ print(response)
 
 # response = CLIENT.service.FnStoreRequisitionLine(requisitionNo, lineNo, itemCode, location, quantity,
 #                                                  myAction)
+# print(response)
+
+
+#  Modify Documents ---------------------------------------------------
+# -------------------------------------------------------------------------
+
+# requestNo = 'TRQ-00006'
+# employeeNo = 'AH'
+# usersId = "NAVADMIN"
+# designation = 'BIRMINGHAM'
+# isAdhoc = False
+# trainingNeed = 'TRNEV-0005'
+# description = "New Test"
+# startDate = datetime.strptime('02-23-2022', '%m-%d-%Y')
+# endDate = datetime.strptime('02-25-2022', '%m-%d-%Y')
+# destination = "ALGERIA"
+# currency = "AED"
+# isLeaveAllowancePayable = False
+# myAction = 'modify'
+
+# response = CLIENT.service.FnTrainingRequest(requestNo,
+#                                             employeeNo, usersId, designation, isAdhoc, trainingNeed, description, startDate, endDate, destination, currency, myAction)
 # print(response)

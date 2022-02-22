@@ -97,6 +97,7 @@ def LeaveDetail(request, pk):
     session = requests.Session()
     session.auth = config.AUTHS
     res = ''
+    state = ''
     Access_Point = config.O_DATA.format("/QyLeaveApplications")
     Approver = config.O_DATA.format("/QyApprovalEntries")
     try:
@@ -121,6 +122,8 @@ def LeaveDetail(request, pk):
                 for claim in openClaim:
                     if claim['Application_No'] == pk:
                         res = claim
+                        if claim['Status'] == 'Open':
+                            state = 1
             if claim['Status'] == 'Rejected' and claim['User_ID'] == request.session['User_ID']:
                 output_json = json.dumps(claim)
                 openClaim.append(json.loads(output_json))
@@ -133,7 +136,8 @@ def LeaveDetail(request, pk):
     Leave_No = request.session['documentNo']
     print("Leave Number", Leave_No)
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-    ctx = {"today": todays_date, "res": res, "Approvers": Approvers}
+    ctx = {"today": todays_date, "res": res,
+           "Approvers": Approvers, "state": state}
     return render(request, 'leaveDetail.html', ctx)
 
 
@@ -244,6 +248,75 @@ def CreateTrainingRequest(request):
         messages.error(request, e)
         print(e)
     return redirect('training_request')
+
+
+def TrainingDetail(request, pk):
+    session = requests.Session()
+    session.auth = config.AUTHS
+    res = ''
+    state = ""
+    Access_Point = config.O_DATA.format("/QyTrainingRequests")
+    Approver = config.O_DATA.format("/QyApprovalEntries")
+    try:
+        response = session.get(Access_Point, timeout=10).json()
+        res_approver = session.get(Approver, timeout=10).json()
+        openClaim = []
+        Approvers = []
+        for approver in res_approver['value']:
+            if approver['Document_No_'] == pk:
+                output_json = json.dumps(approver)
+                Approvers.append(json.loads(output_json))
+        for claim in response['value']:
+            if claim['Status'] == 'Released' and claim['Employee_No'] == request.session['Employee_No_']:
+                output_json = json.dumps(claim)
+                openClaim.append(json.loads(output_json))
+                for claim in openClaim:
+                    if claim['Request_No_'] == pk:
+                        res = claim
+            if claim['Status'] == 'Open' and claim['Employee_No'] == request.session['Employee_No_']:
+                output_json = json.dumps(claim)
+                openClaim.append(json.loads(output_json))
+                for claim in openClaim:
+                    if claim['Request_No_'] == pk:
+                        res = claim
+                        if claim['Status'] == 'Open':
+                            state = 1
+            if claim['Status'] == 'Rejected' and claim['Employee_No'] == request.session['Employee_No_']:
+                output_json = json.dumps(claim)
+                openClaim.append(json.loads(output_json))
+                for claim in openClaim:
+                    if claim['Request_No_'] == pk:
+                        res = claim
+    except requests.exceptions.ConnectionError as e:
+        print(e)
+    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
+    ctx = {"today": todays_date, "res": res,
+           "Approvers": Approvers, "state": state}
+    return render(request, 'trainingDetail.html', ctx)
+
+
+def TrainingApproval(request, pk):
+    entryNo = 0
+    documentNo = pk
+    userID = request.session['User_ID']
+    approvalComments = ""
+    myAction = 'insert'
+    if request.method == 'POST':
+        try:
+            approvalComments = request.POST.get('approvalComments')
+        except ValueError:
+            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            return redirect('TrainingDetail', pk=documentNo)
+    try:
+        response = config.CLIENT.service.FnDocumentApproval(
+            entryNo, documentNo, userID, approvalComments, myAction)
+        messages.success(request, "Successfully Sent!!")
+        print(response)
+        return redirect('TrainingDetail', pk=documentNo)
+    except Exception as e:
+        messages.error(request, e)
+        print(e)
+    return redirect('TrainingDetail', pk=documentNo)
 
 
 def Loan_Request(request):

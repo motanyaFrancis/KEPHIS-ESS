@@ -108,6 +108,7 @@
                         <input type="text" class="form-control" placeholder="{{res.Employment_Type}}" readonly>
                     </div>
                 </form>
+                {% if state == 1 %}
                 <div class="d-grid gap-2 my-3">
                     <button class="btn btn-info" id="approveBtn" type="button">Request For Approval</button>
                 </div>
@@ -125,6 +126,7 @@
                     <button type="submit" class="btn btn-primary">Submit Request</button>
 
                 </form>
+                {% endif %}
             </div>
         </div>
         <div class="row mt-4">
@@ -140,6 +142,7 @@
                                     <th id="long">Entry No</th>
                                     <th>Name</th>
                                     <th>Sequence</th>
+                                    <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -148,6 +151,7 @@
                                     <td>{{res.Entry_No_}}</td>
                                     <td>{{res.Approver_ID}}</td>
                                     <td>{{res.Sequence_No_}}</td>
+                                    <td>{{res.Status}}</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>

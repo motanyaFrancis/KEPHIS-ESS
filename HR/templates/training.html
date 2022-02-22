@@ -75,8 +75,8 @@
                                                 <th>Start Date</th>
                                                 <th>End Date</th>
                                                 <th>No Of Days</th>
-                                                <th>Destination</th>
-                                                <th>Currency</th>
+                                                <th>Edit</th>
+                                                <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -88,8 +88,16 @@
                                                 <td>{{res.Planned_Start_Date}}</td>
                                                 <td>{{res.Planned_End_Date}}</td>
                                                 <td>{{res.No__Of_Days}}</td>
-                                                <td>{{res.Destination}}</td>
-                                                <td>{{res.Currency}}</td>
+
+                                                <td><button class="btn btn-primary btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top" title="Edit"><i
+                                                            class="fa fa-edit"></i></button>
+                                                </td>
+                                                <td><a href="{% url 'TrainingDetail' res.Request_No_ %}"
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top" title="View"><i
+                                                            class="fa fa-table"></i></a>
+                                                </td>
                                             </tr>
                                             {% endfor %}
                                         </tbody>

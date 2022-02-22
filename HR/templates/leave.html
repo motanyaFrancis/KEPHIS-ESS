@@ -92,11 +92,10 @@
                                                         data-toggle="tooltip" data-placement="top" title="Edit"><i
                                                             class="fa fa-edit"></i></button></td>
                                                 <td>
-                                                    <a type="button" href="{% url 'LeaveDetail' res.Application_No %} "
-                                                        class="btn btn-success btn-icon-text"
-                                                        style="background: #25CC88;">View
-                                                        <i class="las la-external-link-alt" style="font-size: 1rem"></i>
-                                                    </a>
+                                                    <a href="{% url 'LeaveDetail' res.Application_No %} "
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top" title="View"><i
+                                                            class="fa fa-table"></i></a>
                                                 </td>
                                             </tr>
                                             {% endfor %}
@@ -131,11 +130,10 @@
                                                 <td>{{res.Days_Applied}}</td>
                                                 <td>{{res.Start_Date}}</td>
                                                 <td>
-                                                    <a type="button" href="{% url 'LeaveDetail' res.Application_No %} "
-                                                        class="btn btn-success btn-icon-text"
-                                                        style="background: #25CC88;">View
-                                                        <i class="las la-external-link-alt" style="font-size: 1rem"></i>
-                                                    </a>
+                                                    <a href="{% url 'LeaveDetail' res.Application_No %} "
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top" title="View"><i
+                                                            class="fa fa-table"></i></a>
                                                 </td>
                                             </tr>
                                             {% endfor %}
@@ -170,11 +168,10 @@
                                                 <td>{{res.Days_Applied}}</td>
                                                 <td>{{res.Start_Date}}</td>
                                                 <td>
-                                                    <a type="button" href="{% url 'LeaveDetail' res.Application_No %} "
-                                                        class="btn btn-success btn-icon-text"
-                                                        style="background: #25CC88;">View
-                                                        <i class="las la-external-link-alt" style="font-size: 1rem"></i>
-                                                    </a>
+                                                    <a href="{% url 'LeaveDetail' res.Application_No %} "
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top" title="View"><i
+                                                            class="fa fa-table"></i></a>
                                                 </td>
                                             </tr>
                                             {% endfor %}

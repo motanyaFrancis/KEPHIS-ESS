@@ -8,6 +8,8 @@ urlpatterns = [
     path('LeaveDetail/<str:pk>', views.LeaveDetail, name='LeaveDetail'),
     path('LeaveApprove/<str:pk>', views.LeaveApproval, name='LeaveApprove'),
     path('Training', views.Training_Request, name='training_request'),
+    path('TrainingDetail/<str:pk>', views.TrainingDetail, name='TrainingDetail'),
+    path('TrainApprove/<str:pk>', views.TrainingApproval, name='TrainApprove'),
     path('TrainingRequest', views.CreateTrainingRequest,
          name='CreateTrainingRequest'),
     path('Loan', views.Loan_Request, name='loan'),
