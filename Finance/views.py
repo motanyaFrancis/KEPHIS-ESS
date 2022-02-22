@@ -100,17 +100,24 @@ def ImprestDetails(request, pk):
     Imprest_Type = config.O_DATA.format("/QyReceiptsAndPaymentTypes")
     Dimension = config.O_DATA.format("/QyDimensionValues")
     destination = config.O_DATA.format("/QyDestinations")
+    Approver = config.O_DATA.format("/QyApprovalEntries")
     try:
         response = session.get(Access_Point, timeout=10).json()
         Imprest_RES = session.get(Imprest_Type, timeout=10).json()
         Dimension_RES = session.get(Dimension, timeout=10).json()
         res_dest = session.get(destination, timeout=10).json()
+        res_approver = session.get(Approver, timeout=10).json()
 
         openImp = []
         res_type = []
         Area = []
         BizGroup = []
+        Approvers = []
         destinations = res_dest['value']
+        for approver in res_approver['value']:
+            if approver['Document_No_'] == pk:
+                output_json = json.dumps(approver)
+                Approvers.append(json.loads(output_json))
         for types in Dimension_RES['value']:
             if types['Global_Dimension_No_'] == 1:
                 output_json = json.dumps(types)
@@ -157,7 +164,7 @@ def ImprestDetails(request, pk):
         print(e)
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": res,
-           "line": openLines, "state": state, "type": res_type, "area": Area, "biz": BizGroup, "des": destinations}
+           "line": openLines, "state": state, "Approvers": Approvers, "type": res_type, "area": Area, "biz": BizGroup, "des": destinations}
     return render(request, 'imprestDetail.html', ctx)
 
 
@@ -312,12 +319,18 @@ def SurrenderDetails(request, pk):
     res = ''
     Access_Point = config.O_DATA.format("/QyImprestSurrenders")
     Imprest_Type = config.O_DATA.format("/QyReceiptsAndPaymentTypes")
+    Approver = config.O_DATA.format("/QyApprovalEntries")
     try:
         response = session.get(Access_Point, timeout=10).json()
         Imprest_RES = session.get(Imprest_Type, timeout=10).json()
-
+        res_approver = session.get(Approver, timeout=10).json()
         openImp = []
         res_type = []
+        Approvers = []
+        for approver in res_approver['value']:
+            if approver['Document_No_'] == pk:
+                output_json = json.dumps(approver)
+                Approvers.append(json.loads(output_json))
         for types in Imprest_RES['value']:
             if types['Type'] == "Imprest":
                 output_json = json.dumps(types)
@@ -357,7 +370,7 @@ def SurrenderDetails(request, pk):
         print(e)
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": res,
-           "state": state, "line": openLines, "type": res_type}
+           "state": state, "line": openLines, "Approvers": Approvers, "type": res_type}
     return render(request, 'SurrenderDetail.html', ctx)
 
 
@@ -392,6 +405,30 @@ def CreateSurrenderLines(request, pk):
         messages.error(request, e)
         print(e)
     return redirect('IMPSurrender', pk=surrenderNo)
+
+
+def SurrenderApproval(request, pk):
+    entryNo = 0
+    documentNo = pk
+    userID = request.session['User_ID']
+    approvalComments = ""
+    myAction = 'insert'
+    if request.method == 'POST':
+        try:
+            approvalComments = request.POST.get('approvalComments')
+        except ValueError:
+            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            return redirect('IMPSurrender', pk=documentNo)
+    try:
+        response = config.CLIENT.service.FnDocumentApproval(
+            entryNo, documentNo, userID, approvalComments, myAction)
+        messages.success(request, "Successfully Sent!!")
+        print(response)
+        return redirect('IMPSurrender', pk=documentNo)
+    except Exception as e:
+        messages.error(request, e)
+        print(e)
+    return redirect('IMPSurrender', pk=documentNo)
 
 
 def StaffClaim(request):

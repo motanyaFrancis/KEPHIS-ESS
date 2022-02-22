@@ -12,6 +12,8 @@ urlpatterns = [
     path('ImprestSurrender', views.ImprestSurrender, name='imprestSurr'),
     path('CreateSurrender', views.CreateSurrender, name="CreateSurrender"),
     path('ImpSurrender/<str:pk>', views.SurrenderDetails, name='IMPSurrender'),
+    path('SurrenderApprove/<str:pk>',
+         views.SurrenderApproval, name='SurrenderApprove'),
     path('ImpSurrenderLines/<str:pk>',
          views.CreateSurrenderLines, name='CreateSurrenderLines'),
     path('StaffClaim', views.StaffClaim, name='claim'),

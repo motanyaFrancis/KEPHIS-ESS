@@ -73,6 +73,25 @@
                     <textarea class="form-control" placeholder="{{res.Payment_Narration}}" rows="3" readonly></textarea>
             </div>
             </form>
+            {% if state == 1 %}
+            <div class="d-grid gap-2 my-3">
+                <button class="btn btn-info" id="approveBtn" type="button">Request For Approval</button>
+            </div>
+            <form action="{% url 'SurrenderApprove' res.No_ %}" method="POST" class="myForm needs-validation"
+                style="display:none" id="approvalForm" novalidate>
+                {% csrf_token %}
+                <div class="mb-3 form-floating">
+                    <textarea class="form-control" id="approvalComments" name="approvalComments" rows="3"
+                        required></textarea>
+                    <div class="invalid-feedback">
+                        Please provide approval comment.
+                    </div>
+                    <label for="approvalComments">Approval Comment</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit Request</button>
+
+            </form>
+            {% endif %}
         </div>
         <div class="row mt-4">
             <div class="col-md-12">
@@ -113,6 +132,37 @@
                 </div>
             </div>
         </div>
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card" id="d-card">
+                    <h4 class="mt-2 mx-2 text-dark">Document Approvers</h4>
+                    <div class="card-body">
+                        <table id="example"
+                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                            style="width:100%">
+                            <thead>
+                                <tr id="tops">
+                                    <th id="long">Entry No</th>
+                                    <th>Name</th>
+                                    <th>Sequence</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for res in Approvers %}
+                                <tr>
+                                    <td>{{res.Entry_No_}}</td>
+                                    <td>{{res.Approver_ID}}</td>
+                                    <td>{{res.Sequence_No_}}</td>
+                                    <td>{{res.Status}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     </div>
     <!-- Modal -->
@@ -126,53 +176,61 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="myForm" action="{% url 'CreateSurrenderLines' res.No_ %}" method="post">
+                    <form class="myForm needs-validation" action="{% url 'CreateSurrenderLines' res.No_ %}"
+                        method="post" novalidate>
                         {% csrf_token %}
                         <div class="mb-2"> <span class="w-name">
-                                General Information:
+                                Imprest Surrender Lines:
                             </span>
                             <div class="row">
                                 <div class="col-md-6">
-                                    <label for="" class="col-form-label">Expenditure Type:</label>
-                                    <select class="form-select" aria-label="Default select example"
-                                        name="expenditureType">
-                                        <option selected>Select Expenditure Type</option>
+                                    <label for="" class="form-label">Expenditure Type:</label>
+                                    <select class="form-select" name="expenditureType" required>
+                                        <option selected disabled value="">Select Expenditure Type</option>
                                         {% for res in type %}
                                         <option value="{{res.Code}}">{{res.Description}}</option>
                                         {% endfor %}
                                     </select>
+                                    <div class="invalid-feedback">
+                                        Please Select Valid Expenditure Type.
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="recipient-name" class="col-form-label">Gen Posting Type
+                                    <label for="" class="form-label">Gen Posting Type
                                         :</label>
-                                    <select class="form-select" aria-label="Default select example"
-                                        name="genPostingType">
-                                        <option selected>Select Gen Posting Type.</option>
+                                    <select class="form-select" name="genPostingType" required>
+                                        <option selected disabled value="">Select Gen Posting Type.</option>
                                         <option value="1">Purchase</option>
                                         <option value="2">Sale</option>
                                         <option value="3">Settlement</option>
                                     </select>
+                                    <div class="invalid-feedback">
+                                        Please Select Valid Posting Type.
+                                    </div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
-                                    <div class="my-3">
-                                        <label class="form-label">Actual Spent</label>
-                                        <input type="text" class="form-control" name="actualSpent" placeholder="">
+                                    <label class="form-label">Actual Spent</label>
+                                    <input type="text" class="form-control" name="actualSpent" placeholder="" required>
+                                    <div class="invalid-feedback">
+                                        Enter Actual Spent.
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="my-3">
-                                        <label class="form-label">Payee</label>
-                                        <input type="text" class="form-control" id="spent" name="payee" placeholder="">
+                                    <label class="form-label">Payee</label>
+                                    <input type="text" class="form-control" name="payee" placeholder="" required>
+                                    <div class="invalid-feedback">
+                                        Enter Actual Payee.
                                     </div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div class="my-3">
-                                        <label class="form-label">Purpose</label>
-                                        <textarea class="form-control" id="" name="purpose" rows="3"></textarea>
+                                    <label class="form-label">Purpose</label>
+                                    <textarea class="form-control" id="" name="purpose" rows="3"></textarea>
+                                    <div class="invalid-feedback">
+                                        Purpose can't be Empty
                                     </div>
                                 </div>
                             </div>

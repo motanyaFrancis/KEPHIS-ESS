@@ -151,6 +151,37 @@
                 </div>
             </div>
         </div>
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card" id="d-card">
+                    <h4 class="mt-2 mx-2 text-dark">Document Approvers</h4>
+                    <div class="card-body">
+                        <table id="example"
+                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                            style="width:100%">
+                            <thead>
+                                <tr id="tops">
+                                    <th id="long">Entry No</th>
+                                    <th>Name</th>
+                                    <th>Sequence</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for res in Approvers %}
+                                <tr>
+                                    <td>{{res.Entry_No_}}</td>
+                                    <td>{{res.Approver_ID}}</td>
+                                    <td>{{res.Sequence_No_}}</td>
+                                    <td>{{res.Status}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
