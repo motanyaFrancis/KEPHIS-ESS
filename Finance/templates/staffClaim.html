@@ -90,11 +90,10 @@
                                                 <td>{{res.Payee}}</td>
                                                 <td>{{res.Status}}</td>
                                                 <td>
-                                                    <a type="button" href="{% url 'ClaimDetail' res.No_%}"
-                                                        class="btn btn-success btn-icon-text"
-                                                        style="background: #25CC88;">View
-                                                        <i class="las la-external-link-alt" style="font-size: 1rem"></i>
-                                                    </a>
+                                                    <a href="{% url 'ClaimDetail' res.No_%}"
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top" title="View"><i
+                                                            class="fa fa-table"></i></a>
                                                 </td>
                                             </tr>
                                             {% endfor %}
@@ -131,11 +130,10 @@
                                                 <td>{{res.Staff_No_}}</td>
                                                 <td>{{res.Status}}</td>
                                                 <td>
-                                                    <a role="button" href="{% url 'ClaimDetail' res.No_%}"
-                                                        data-bs-toggle="modal" class="btn btn-success btn-icon-text"
-                                                        style="background: #25CC88;">View
-                                                        <i class="las la-external-link-alt" style="font-size: 1rem"></i>
-                                                    </a>
+                                                    <a href="{% url 'ClaimDetail' res.No_%}"
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top" title="View"><i
+                                                            class="fa fa-table"></i></a>
                                                 </td>
                                             </tr>
                                             {% endfor %}
@@ -172,11 +170,10 @@
                                                 <td>{{res.Staff_No_}}</td>
                                                 <td>{{res.Status}}</td>
                                                 <td>
-                                                    <a role="button" href="{% url 'ClaimDetail' res.No_%}"
-                                                        data-bs-toggle="modal" class="btn btn-success btn-icon-text"
-                                                        style="background: #25CC88;">View
-                                                        <i class="las la-external-link-alt" style="font-size: 1rem"></i>
-                                                    </a>
+                                                    <a href="{% url 'ClaimDetail' res.No_%}"
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top" title="View"><i
+                                                            class="fa fa-table"></i></a>
                                                 </td>
                                             </tr>
                                             {% endfor %}
@@ -201,61 +198,66 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="myForm" action="{% url 'NewClaim' %}" method="post">
+                    <form class="myForm needs-validation" action="{% url 'NewClaim' %}" method="post" novalidate>
                         {% csrf_token %}
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="mb-2">
-                                    <label class="form-label">Claim Type</label>
-                                    <select class="form-select" aria-label="Default select example" name="claimType">
-                                        <option selected>Select Claim Type</option>
-                                        <option value="1">General Claim</option>
-                                        <option value="2">Medical Claim</option>
-                                        <option value="3">Imprest Claim</option>
-                                    </select>
+                                <label class="form-label">Claim Type</label>
+                                <select class="form-select" name="claimType" required>
+                                    <option selected disabled value="">Select Claim Type</option>
+                                    <option value="1">General Claim</option>
+                                    <option value="2">Medical Claim</option>
+                                    <option value="3">Imprest Claim</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please Select a Valid Claim Type.
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="mb-2">
-                                    <label class="form-label">Imprest Surrender No</label>
-                                    <select class="form-select" aria-label="Default select example"
-                                        name="imprestSurrDocNo">
-                                        <option selected>Select Imprest Surrender No</option>
-                                        {% for res in my_claim %}
-                                        <option value="{{res.No_}}">{{res.No_}} - {{res.Payment_Narration}}</option>
-                                        {% endfor %}
-                                    </select>
+                                <label class="form-label">Imprest Surrender No</label>
+                                <select class="form-select" name="imprestSurrDocNo" required>
+                                    <option selected disabled value="">Select Imprest Surrender No</option>
+                                    {% for res in my_claim %}
+                                    <option value="{{res.No_}}">{{res.No_}} - {{res.Payment_Narration}}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please Select a Valid Imprest Surrender No.
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="mb-2">
-                                    <label for="payee" class="col-form-label">Payee</label>
-                                    <input type="text" class="form-control" name="payee">
+                                <label for="payee" class="form-label">Payee</label>
+                                <input type="text" class="form-control" name="payee" required>
+                                <div class="invalid-feedback">
+                                    Enter Payee
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="mb-2">
-                                    <label class="form-label">Currency</label>
-                                    <select class="form-select" aria-label="Default select example" name="currency">
-                                        <option selected>Select Currency</option>
-                                        {% for res in currency %}
-                                        <option value="{{res.Code}}">{{res.Description}} ({{res.Code}})</option>
-                                        {% endfor %}
-                                    </select>
+                                <label class="form-label">Currency</label>
+                                <select class="form-select" name="currency" required>
+                                    <option selected disabled value="">Select Currency</option>
+                                    {% for res in currency %}
+                                    <option value="{{res.Code}}">{{res.Description}} ({{res.Code}})</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please Select Valid Currency
                                 </div>
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="mb-2">
-                                    <label for="purpose" class="form-label">Purpose</label>
-                                    <textarea class="form-control" name="purpose" rows="3"></textarea>
+                                <label for="purpose" class="form-label">Purpose</label>
+                                <textarea class="form-control" name="purpose" rows="3" required></textarea>
+                                <div class="invalid-feedback">
+                                    Purpose Can't be Empty.
                                 </div>
                             </div>
                         </div>

@@ -512,11 +512,18 @@ def ClaimDetails(request, pk):
     res = ''
     Access_Point = config.O_DATA.format("/QyStaffClaims")
     Claim_Type = config.O_DATA.format("/QyReceiptsAndPaymentTypes")
+    Approver = config.O_DATA.format("/QyApprovalEntries")
     try:
         response = session.get(Access_Point, timeout=10).json()
         Claim_RES = session.get(Claim_Type, timeout=10).json()
+        res_approver = session.get(Approver, timeout=10).json()
         openClaim = []
         res_type = []
+        Approvers = []
+        for approver in res_approver['value']:
+            if approver['Document_No_'] == pk:
+                output_json = json.dumps(approver)
+                Approvers.append(json.loads(output_json))
         for types in Claim_RES['value']:
             if types['Type'] == "Claim":
                 output_json = json.dumps(types)
@@ -557,7 +564,7 @@ def ClaimDetails(request, pk):
 
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": res,
-           "state": state, "res_type": res_type, "line": openLines}
+           "state": state, "res_type": res_type, "Approvers": Approvers, "line": openLines}
     return render(request, "ClaimDetail.html", ctx)
 
 
@@ -593,3 +600,27 @@ def CreateClaimLines(request, pk):
         messages.error(request, e)
         print(e)
     return redirect('ClaimDetail', pk=claimNo)
+
+
+def ClaimApproval(request, pk):
+    entryNo = 0
+    documentNo = pk
+    userID = request.session['User_ID']
+    approvalComments = ""
+    myAction = 'insert'
+    if request.method == 'POST':
+        try:
+            approvalComments = request.POST.get('approvalComments')
+        except ValueError:
+            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            return redirect('ClaimDetail', pk=documentNo)
+    try:
+        response = config.CLIENT.service.FnDocumentApproval(
+            entryNo, documentNo, userID, approvalComments, myAction)
+        messages.success(request, "Successfully Sent!!")
+        print(response)
+        return redirect('ClaimDetail', pk=documentNo)
+    except Exception as e:
+        messages.error(request, e)
+        print(e)
+    return redirect('ClaimDetail', pk=documentNo)
