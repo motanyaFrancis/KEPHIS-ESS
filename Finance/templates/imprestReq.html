@@ -90,11 +90,10 @@
                                                 <td>{{res.User_Id}}</td>
                                                 <td>{{res.Status}}</td>
                                                 <td>
-                                                    <a type="button" href="{% url 'IMPDetails' res.No_%}"
-                                                        class="btn btn-success btn-icon-text"
-                                                        style="background: #25CC88;">View
-                                                        <i class="las la-external-link-alt" style="font-size: 1rem"></i>
-                                                    </a>
+                                                    <a href="{% url 'IMPDetails' res.No_%}"
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top" title="View"><i
+                                                            class="fa fa-table"></i></a>
                                                 </td>
                                             </tr>
                                             {% endfor %}
@@ -131,11 +130,10 @@
                                                 <td>{{res.User_Id}}</td>
                                                 <td>{{res.Status}}</td>
                                                 <td>
-                                                    <a type="button" href="{% url 'IMPDetails' res.No_%}"
-                                                        class="btn btn-success btn-icon-text"
-                                                        style="background: #25CC88;">View
-                                                        <i class="las la-external-link-alt" style="font-size: 1rem"></i>
-                                                    </a>
+                                                    <a href="{% url 'IMPDetails' res.No_%}"
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top" title="View"><i
+                                                            class="fa fa-table"></i></a>
                                                 </td>
                                             </tr>
                                             {% endfor %}
@@ -172,11 +170,10 @@
                                                 <td>{{res.User_Id}}</td>
                                                 <td>{{res.Status}}</td>
                                                 <td>
-                                                    <a type="button" href="{% url 'IMPDetails' res.No_%}"
-                                                        class="btn btn-success btn-icon-text"
-                                                        style="background: #25CC88;">View
-                                                        <i class="las la-external-link-alt" style="font-size: 1rem"></i>
-                                                    </a>
+                                                    <a href="{% url 'IMPDetails' res.No_%}"
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top" title="View"><i
+                                                            class="fa fa-table"></i></a>
                                                 </td>
                                             </tr>
                                             {% endfor %}
@@ -201,62 +198,71 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="myForm" action="{% url 'create' %}" method="post">
+                    <form class="myForm needs-validation" action="{% url 'create' %}" method="post" novalidate>
                         {% csrf_token %}
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="mb-2">
+                        <div class="mb-2"> <span class="w-name">
+                                Imprest Requisition Header:
+                            </span>
+                            <div class="row">
+                                <div class="col-md-12">
                                     <label class="form-label">Travel Type</label>
-                                    <select class="form-select" name="travelType" aria-label="Default select example">
-                                        <option selected>Travel Type</option>
+                                    <select class="form-select" name="travelType" required>
+                                        <option selected disabled value="">Travel Type</option>
                                         <option value="1">Local</option>
                                         <option value="2">Foreign</option>
                                     </select>
-                                </div>
-
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-2">
-                                    <label for="idPassport" class="col-form-label">ID/Passport</label>
-                                    <input type="text" class="form-control" name="idPassport" placeholder="">
+                                    <div class="invalid-feedback">
+                                        Please select a valid Travel Type.
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="mb-2">
-                                    <label for="payee" class="col-form-label">Payee</label>
-                                    <input type="text" class="form-control" name="payee">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="idPassport" class="form-label">ID/Passport</label>
+                                    <input type="text" class="form-control" name="idPassport" placeholder="" required>
+                                    <div class="invalid-feedback">
+                                        Please Enter Valid ID/Passport.
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="payee" class="form-label">Payee</label>
+                                    <input type="text" class="form-control" name="payee" required>
+                                    <div class="invalid-feedback">
+                                        Please Enter Valid Payee.
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-2">
+                            <div class="row">
+                                <div class="col-md-6">
                                     <label class="form-label">isImprest</label>
-                                    <select class="form-select" aria-label="Default select example" name="isImprest">
-                                        <option selected>Select isImprest</option>
+                                    <select class="form-select" name="isImprest" required>
+                                        <option selected disabled value="">Select isImprest</option>
                                         <option value="True">True</option>
                                         <option value="False">False</option>
                                     </select>
+                                    <div class="invalid-feedback">
+                                        Please select a valid option.
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-2">
+                                <div class="col-md-6">
                                     <label class="form-label">isDsa</label>
-                                    <select class="form-select" aria-label="Default select example" name="isDsa">
-                                        <option selected>isDsa</option>
+                                    <select class="form-select" name="isDsa" required>
+                                        <option selected disabled value="">isDsa</option>
                                         <option value="True">True</option>
                                         <option value="False">False</option>
                                     </select>
+                                    <div class="invalid-feedback">
+                                        Please select a valid option.
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="mb-2">
-                                    <label for="purpose" class="form-label">Purpose</label>
-                                    <textarea class="form-control" name="purpose" rows="3"></textarea>
+                                <label for="purpose" class="form-label">Purpose</label>
+                                <textarea class="form-control" name="purpose" rows="3" required></textarea>
+                                <div class="invalid-feedback">
+                                    Purpose can't be empty.
                                 </div>
                             </div>
                         </div>
@@ -266,9 +272,10 @@
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
                     <button type="submit" id="sasa" class="btn btn-primary">Submit</button>
                 </div>
-                </form>
             </div>
+            </form>
         </div>
+    </div>
     </div>
 </section>
 
