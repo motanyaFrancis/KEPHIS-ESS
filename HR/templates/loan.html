@@ -183,108 +183,134 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="myForm" action="{% url 'NewLoan' %}" method="post">
+                    <form class="myForm needs-validation" action="{% url 'NewLoan' %}" method="post" novalidate>
                         {% csrf_token %}
-                        <div class="row">
-                            <div class="col-md-12">
-                                <label for="" class="col-form-label">Request Date:</label>
-                                <input type="date" name="requestedDate">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="my-2">
-                                    <label class="form-label">PML</label>
-                                    <select class="form-select" name="pmlNo">
-                                        <option selected>Select PML</option>
-                                        {% for res in pml %}
-                                        <option value="{{res.No_}}">{{res.Name}}</option>
-                                        {% endfor %}
-                                    </select>
+                        <div class="mb-2"> <span class="w-name">
+                                Leave Request Header:
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label for="" class="form-label">Request Date:</label>
+                                        <input type="date" name="requestedDate" class="form-control" required>
+                                        <div class="invalid-feedback">
+                                            Please Select Request Date.
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="mb-2">
-                                    <label class="form-label">loan Product Type</label>
-                                    <select class="form-select" name="loanProductType">
-                                        <option selected>Select </option>
-                                        <option value="True">True</option>
-                                        <option value="False">False</option>
-                                    </select>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label class="form-label">PML</label>
+                                        <select class="form-select" name="pmlNo" required>
+                                            <option selected disabled value="">Select PML</option>
+                                            {% for res in pml %}
+                                            <option value="{{res.No_}}">{{res.Name}}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <div class="invalid-feedback">
+                                            Please Select Valid PML.
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label for="" class="col-form-label">Loan Duration:</label>
-                                <input type="number" name="loanDuration" class="form-control" placeholder="">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="" class="col-form-label">Requested Amount:</label>
-                                <input type="text" name="requestedAmount" class="form-control" placeholder="">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="my-2">
-                                    <label class="form-label">Interest Calculation Method</label>
-                                    <select class="form-select" name="interestCalculationMethod">
-                                        <option selected>Select </option>
-                                        <option value="True">True</option>
-                                        <option value="False">False</option>
-                                    </select>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label class="form-label">Loan Product Type</label>
+                                        <select class="form-select" name="loanProductType" required>
+                                            <option selected disabled value="">Select </option>
+                                            <option value="True">True</option>
+                                            <option value="False">False</option>
+                                        </select>
+                                        <div class="invalid-feedback">
+                                            Please Select Valid Loan Product Type.
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="mb-2">
-                                    <label class="form-label">Repayment Frequency</label>
-                                    <select class="form-select" name="repaymentFrequency">
-                                        <option selected>Select </option>
-                                        <option value="True">True</option>
-                                        <option value="False">False</option>
-                                    </select>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="" class="form-label">Loan Duration:</label>
+                                        <input type="number" name="loanDuration" class="form-control" placeholder=""
+                                            required>
+                                        <div class="invalid-feedback">
+                                            Please Enter Valid Loan Duration.
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="" class="form-label">Requested Amount:</label>
+                                        <input type="text" name="requestedAmount" class="form-control" placeholder=""
+                                            required>
+                                        <div class="invalid-feedback">
+                                            Please Enter Valid Loan Request Amount.
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="mb-2">
-                                    <label class="form-label">Bank Name</label>
-                                    <select class="form-select" name="bankName">
-                                        <option selected>Select Bank </option>
-                                        {% for res in banks %}
-                                        <option value="{{res.Code}}">{{res.Name}}</option>
-                                        {% endfor %}
-                                    </select>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label class="form-label">Interest Calculation Method</label>
+                                        <select class="form-select" name="interestCalculationMethod" required>
+                                            <option selected disabled value="">Select </option>
+                                            <option value="True">True</option>
+                                            <option value="False">False</option>
+                                        </select>
+                                        <div class="invalid-feedback">
+                                            Please Select Interest Calcualtion Method.
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <label for="" class="col-form-label">Bank Branch Name:</label>
-                                <select class="form-select" name="bankName">
-                                    <option selected>Select Bank </option>
-                                    {% for res in branch %}
-                                    <option value="{{res.Branch_Code}}">{{res.Branch_Name}}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <label for="" class="col-form-label">bank Account No:</label>
-                                <input type="text" name="bankAccountNo" class="form-control" placeholder="">
-                            </div>
-                        </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label class="form-label">Repayment Frequency</label>
+                                        <select class="form-select" name="repaymentFrequency" required>
+                                            <option selected disabled value="">Select </option>
+                                            <option value="True">True</option>
+                                            <option value="False">False</option>
+                                        </select>
+                                        <div class="invalid-feedback">
+                                            Please Select Valid Repayment Frequency.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label class="form-label">Bank Name</label>
+                                        <select class="form-select" name="bankName" required>
+                                            <option selected disabled value="">Select Bank </option>
+                                            {% for res in banks %}
+                                            <option value="{{res.Code}}">{{res.Name}}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <div class="invalid-feedback">
+                                            Please Select Valid Bank Name.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label for="" class="form-label">Bank Branch Name:</label>
+                                        <select class="form-select" name="bankName" required>
+                                            <option selected disabled value="">Select Bank </option>
+                                            {% for res in branch %}
+                                            <option value="{{res.Branch_Code}}">{{res.Branch_Name}}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <div class="invalid-feedback">
+                                            Please Select Valid Bank Branch.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label for="" class="form-label">bank Account No:</label>
+                                        <input type="text" name="bankAccountNo" class="form-control" placeholder=""
+                                            required>
+                                        <div class="invalid-feedback">
+                                            Please Valid Bank Account No.
+                                        </div>
+                                    </div>
+                                </div>
 
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
-                    <button type="submit" id="sasa" class="btn btn-primary">Submit</button>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
+                            <button type="submit" id="sasa" class="btn btn-primary">Submit</button>
+                        </div>
                 </div>
                 </form>
             </div>
