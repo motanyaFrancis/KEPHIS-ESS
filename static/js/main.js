@@ -171,3 +171,8 @@ function displayForms() {
 $(function () {
     $('[data-toggle="tooltip"]').tooltip();
 });
+$(document).ready(function () {
+    $("#approveBtn").click(function () {
+        $("#approvalForm").toggle(500)
+    })
+})

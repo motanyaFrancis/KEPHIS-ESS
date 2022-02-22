@@ -8,6 +8,7 @@ urlpatterns = [
     path('CreateImpLines/<str:pk>',
          views.CreateImprestLines, name='CreateImpLines'),
     path('Imp/<str:pk>', views.ImprestDetails, name='IMPDetails'),
+    path('ImpApprove/<str:pk>', views.ImprestApproval, name='ImpApprove'),
     path('ImprestSurrender', views.ImprestSurrender, name='imprestSurr'),
     path('CreateSurrender', views.CreateSurrender, name="CreateSurrender"),
     path('ImpSurrender/<str:pk>', views.SurrenderDetails, name='IMPSurrender'),

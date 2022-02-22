@@ -205,6 +205,30 @@ def CreateImprestLines(request, pk):
     return redirect('IMPDetails', pk=imprestNo)
 
 
+def ImprestApproval(request, pk):
+    entryNo = 0
+    documentNo = pk
+    userID = request.session['User_ID']
+    approvalComments = ""
+    myAction = 'insert'
+    if request.method == 'POST':
+        try:
+            approvalComments = request.POST.get('approvalComments')
+        except ValueError:
+            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            return redirect('IMPDetails', pk=documentNo)
+    try:
+        response = config.CLIENT.service.FnDocumentApproval(
+            entryNo, documentNo, userID, approvalComments, myAction)
+        messages.success(request, "Successfully Sent!!")
+        print(response)
+        return redirect('IMPDetails', pk=documentNo)
+    except Exception as e:
+        messages.error(request, e)
+        print(e)
+    return redirect('IMPDetails', pk=documentNo)
+
+
 def ImprestSurrender(request):
 
     session = requests.Session()

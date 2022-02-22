@@ -91,6 +91,25 @@
                             readonly></textarea>
                     </div>
                 </form>
+                {% if state == 1 %}
+                <div class="d-grid gap-2 my-3">
+                    <button class="btn btn-info" id="approveBtn" type="button">Request For Approval</button>
+                </div>
+                <form action="{% url 'ImpApprove' res.No_ %}" method="POST" class="myForm needs-validation"
+                    style="display:none" id="approvalForm" novalidate>
+                    {% csrf_token %}
+                    <div class="mb-3 form-floating">
+                        <textarea class="form-control" id="approvalComments" name="approvalComments" rows="3"
+                            required></textarea>
+                        <div class="invalid-feedback">
+                            Please provide approval comment.
+                        </div>
+                        <label for="approvalComments">Approval Comment</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Request</button>
+
+                </form>
+                {% endif %}
             </div>
         </div>
         <div class="row mt-4">
@@ -143,94 +162,101 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="myForm" action="{% url 'CreateImpLines' res.No_%}" method="post">
+                    <form class="myForm needs-validation" action="{% url 'CreateImpLines' res.No_%}" method="post"
+                        novalidate>
                         {% csrf_token %}
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="my-2">
-                                    <label class="form-label">Destination</label>
-                                    <select class="form-select" name="destination">
-                                        <option selected>Select Destination</option>
-                                        {% for res in des %}
-                                        <option value="{{res.Destination_Code}}">{{res.Destination_Code}}</option>
-                                        {% endfor %}
-                                    </select>
+                                <label class="form-label">Destination</label>
+                                <select class="form-select" name="destination" required>
+                                    <option selected disabled value="">Select Destination</option>
+                                    {% for res in des %}
+                                    <option value="{{res.Destination_Code}}">{{res.Destination_Code}}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please Select Valid Destination.
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="mb-2">
-                                    <label for="recipient-name" class="col-form-label">Imprest Type:</label>
-                                    <select class="form-select" aria-label="Default select example" name="imprestType">
-                                        <option selected>Select Imprest Type</option>
-                                        <option value="1">Imprest</option>
-                                        <option value="2">DSA</option>
-                                        <option value="3">Allowance</option>
-                                    </select>
+                                <label for="" class="form-label">Imprest Type:</label>
+                                <select class="form-select" name="imprestType" required>
+                                    <option selected disabled value="">Select Imprest Type</option>
+                                    <option value="1">Imprest</option>
+                                    <option value="2">DSA</option>
+                                    <option value="3">Allowance</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please Select Valid Imprest Type.
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6">
-                                <label for="" class="col-form-label">Travel Date:</label>
-                                <input type="date" name="travel">
+                                <label for="" class="form-label">Travel Date:</label>
+                                <input type="date" class="form-control" name="travel" required>
+                                <div class="invalid-feedback">
+                                    Please Select Valid Travel Date.
+                                </div>
                             </div>
                             <div class="col-md-6">
-                                <label for="" class="col-form-label">Return Date:</label>
-                                <input type="date" id="to" name="returnDate">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="mb-2">
-                                    <div class="mb-2">
-                                        <label for="recipient-name" class="col-form-label">Requisition Type:</label>
-                                        <select class="form-select" aria-label="Default select example"
-                                            name="requisitionType">
-                                            <option selected>Select Requisition Type</option>
-                                            {% for res in type %}
-                                            <option value="{{res.Code}}">{{res.Description}}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="mb-2">
-                                    <label class="col-form-label">Quantity</label>
-                                    <input type="number" class="form-control" name="quantity">
+                                <label for="" class="form-label">Return Date:</label>
+                                <input type="date" id="to" class="form-control" name="returnDate" required>
+                                <div class="invalid-feedback">
+                                    Please Select Valid Return Date.
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="mb-2">
-                                    <label for="" class="col-form-label">Area:</label>
-                                    <select class="form-select" aria-label="Default select example" name="areaCode">
-                                        <option selected>Select Area</option>
-                                        {% for res in area %}
-                                        <option value="{{res.Code}}">{{res.Name}}</option>
-                                        {% endfor %}
-                                    </select>
+                                <label for="" class="form-label">Requisition Type:</label>
+                                <select class="form-select" name="requisitionType" required>
+                                    <option selected disabled value="">Select Requisition Type</option>
+                                    {% for res in type %}
+                                    <option value="{{res.Code}}">{{res.Description}}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please Select Valid Requisition Type.
                                 </div>
                             </div>
-
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="mb-2">
-                                    <label for="" class="col-form-label">Business Group :</label>
-                                    <select class="form-select" aria-label="Default select example"
-                                        name="businessGroupCode">
-                                        <option selected>Select Business Group</option>
-                                        {% for res in biz %}
-                                        <option value="{{res.Code}}">{{res.Name}}</option>
-                                        {% endfor %}
-                                    </select>
+                                <label class="form-label">Quantity</label>
+                                <input type="number" class="form-control" name="quantity" required>
+                                <div class="invalid-feedback">
+                                    Quantity can't be empty.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="" class="form-label">Area:</label>
+                                <select class="form-select" name="areaCode" required>
+                                    <option selected disabled value="">Select Area</option>
+                                    {% for res in area %}
+                                    <option value="{{res.Code}}">{{res.Name}}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please Select a Valid Area.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="" class="form-label">Business Group :</label>
+                                <select class="form-select" name="businessGroupCode" required>
+                                    <option selected disabled value="">Select Business Group</option>
+                                    {% for res in biz %}
+                                    <option value="{{res.Code}}">{{res.Name}}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please Select a Valid Business Group.
                                 </div>
                             </div>
                         </div>
@@ -239,9 +265,15 @@
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
                     <button type="submit" id="sasa" class="btn btn-primary">Submit</button>
                 </div>
-                </form>
+
+
+
+
             </div>
+
+            </form>
         </div>
+    </div>
     </div>
 </section>
 
