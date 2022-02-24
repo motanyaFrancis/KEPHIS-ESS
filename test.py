@@ -124,18 +124,18 @@ CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
 #                                             loanNo, collateralType, maturityDate, collateralValue, isPerfected, isExcludedActivities, isNemaCompliant, securityType,  myAction)
 # print(response)
 
-# requisitionNo = ''
-# orderDate = datetime.strptime('02-20-2022', '%m-%d-%Y')
-# employeeNo = 'AH'
-# reason = "Test"
-# expectedReceiptDate = datetime.strptime('02-20-2022', '%m-%d-%Y')
-# isConsumable = True
-# myUserId = "NAVADMIN"
-# myAction = 'insert'
+requisitionNo = ''
+orderDate = datetime.strptime('02-20-2022', '%m-%d-%Y')
+employeeNo = 'AH'
+reason = "Test"
+expectedReceiptDate = datetime.strptime('02-20-2022', '%m-%d-%Y')
+isConsumable = True
+myUserId = "NAVADMIN"
+myAction = 'insert'
 
-# response = CLIENT.service.FnPurchaseRequisitionHeader(requisitionNo,
-#                                                       orderDate, employeeNo, reason, expectedReceiptDate, isConsumable, myUserId, myAction)
-# print(response)
+response = CLIENT.service.FnPurchaseRequisitionHeader(requisitionNo,
+                                                      orderDate, employeeNo, reason, expectedReceiptDate, isConsumable, myUserId, myAction)
+print(response)
 
 
 # requisitionNo = ''

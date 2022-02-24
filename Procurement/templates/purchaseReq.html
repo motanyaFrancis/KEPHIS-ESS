@@ -198,57 +198,50 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="myForm" action="{% url 'purchase' %}" method="post">
+                    <form class="myForm needs-validation" action="{% url 'CreatePurchaseRequisition' %}" method="post"
+                        novalidate>
                         {% csrf_token %}
                         <div class="mb-2"> <span class="w-name">
-                                General Information:
+                                Purchase Requisition Header:
                             </span>
                             <div class="row">
-                                <div>
-                                    <label for="" class="col-form-label">Leave Type
-                                        :</label>
-                                    <select class="form-select" name="leaveType">
-                                        {% for res in leave %}
-                                        <option selected>Select Leave Type</option>
-                                        <option value="{{res.Code}}">{{res.Description}}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row">
                                 <div class="col-md-12">
-                                    <label for="" class="col-form-label">Start Date:</label>
-                                    <input type="date" name="plannerStartDate">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div>
-                                    <label for="" class="col-form-label">Return Same Day
-                                        :</label>
-                                    <select class="form-select" name="isReturnSameDay">
-                                        <option selected>Select</option>
-                                        <option value="True">True</option>
-                                        <option value="False">False</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="my-3">
-                                        <label class="form-label">Days Applied</label>
-                                        <input type="number" class="form-control" name="daysApplied" placeholder="">
+                                    <label for="" class="form-label">Order Date</label>
+                                    <input type="date" name="orderDate" class="form-control" required>
+                                    <div class="invalid-feedback">
+                                        Please select a valid Order Date.
                                     </div>
                                 </div>
                             </div>
                             <div class="row">
-                                <div>
-                                    <label for="" class="col-form-label"> Leave Allowance Payable
-                                        :</label>
-                                    <select class="form-select" name="isLeaveAllowancePayable">
-                                        <option selected>Select</option>
+                                <div class="col-md-12">
+                                    <label for="" class="form-label">Expected Receipt Date</label>
+                                    <input type="date" name="expectedReceiptDate" class="form-control" required>
+                                    <div class="invalid-feedback">
+                                        Please select a valid Expected Receipt Date.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label for="" class="form-label">Consumable</label>
+                                    <select class="form-select" name="isConsumable" required>
+                                        <option selected disabled value="">Select</option>
                                         <option value="True">True</option>
                                         <option value="False">False</option>
                                     </select>
+                                    <div class="invalid-feedback">
+                                        Please select a valid Option.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label for="" class="form-label">Purpose</label>
+                                    <textarea class="form-control" name="reason" rows="3" required></textarea>
+                                    <div class="invalid-feedback">
+                                        Purpose can't be empty.
+                                    </div>
                                 </div>
                             </div>
                         </div>

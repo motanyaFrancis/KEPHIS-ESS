@@ -6,6 +6,7 @@ from requests_ntlm import HttpNtlmAuth
 import json
 from django.conf import settings as config
 import datetime as dt
+from django.contrib import messages
 
 # Create your views here.
 
@@ -42,6 +43,35 @@ def PurchaseRequisition(request):
            'reject': reject}
 
     return render(request, 'purchaseReq.html', ctx)
+
+
+def CreatePurchaseRequisition(request):
+    requisitionNo = ''
+    orderDate = ''
+    employeeNo = request.session['Employee_No_']
+    reason = ""
+    expectedReceiptDate = ''
+    isConsumable = ""
+    myUserId = request.session['User_ID']
+    myAction = 'insert'
+    if request.method == 'POST':
+        try:
+            orderDate = request.POST.get('orderDate')
+            reason = request.POST.get('reason')
+            expectedReceiptDate = request.POST.get('expectedReceiptDate')
+            isConsumable = request.POST.get('isConsumable')
+        except ValueError:
+            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            return redirect('purchase')
+    try:
+        response = config.CLIENT.service.FnPurchaseRequisitionHeader(
+            requisitionNo, orderDate, employeeNo, reason, expectedReceiptDate, isConsumable, myUserId, myAction)
+        messages.success(request, "Successfully Added!!")
+        print(response)
+    except Exception as e:
+        messages.error(request, e)
+        print(e)
+    return redirect('purchase')
 
 
 def PurchaseRequestDetails(request, pk):

@@ -3,6 +3,8 @@ from . import views
 
 urlpatterns = [
     path('PurchaseRequisition', views.PurchaseRequisition, name='purchase'),
+    path('CreatePurchaseRequisition', views.CreatePurchaseRequisition,
+         name='CreatePurchaseRequisition'),
     path('PurchaseDetail/<str:pk>',
          views.PurchaseRequestDetails, name='PurchaseDetail'),
     path('RepairRequest', views.RepairRequest, name='repair'),
