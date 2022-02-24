@@ -5,7 +5,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
     crossorigin="anonymous"></script>
 <section class="dash2">
-    <div class="content-wrapper" style="padding-bottom: 5rem;">
+    <div class="content-wrapper general-bg" style="padding-bottom: 5rem;">
         <div class="d-xl-flex justify-content-between align-items-start">
             <h2 class="text-dark font-weight-bold mb-2"> Store Request <button class="btn btn-primary"
                     data-bs-toggle="modal" data-bs-target="#staticBackdrop"> <i class="las la-plus"></i> New Store
@@ -69,26 +69,24 @@
                                         style="width:100%">
                                         <thead>
                                             <tr id="tops">
-                                                <th id="long">Application No</th>
+                                                <th id="long">Request No</th>
+                                                <th>Description</th>
+                                                <th>Expected Receipt Date</th>
+                                                <th>Location Code</th>
                                                 <th>Status</th>
-                                                <th>Planner Start Date</th>
-                                                <th>Return same day</th>
-                                                <th>Days Applied</th>
-                                                <th>Start Date</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {% for res in res %}
                                             <tr>
-                                                <td>{{res.Application_No}}</td>
-                                                <td id="rap">{{res.Status}}</td>
-                                                <td>{{res.Planner_Start_Date}}</td>
-                                                <td>{{res.Return_same_day}}</td>
-                                                <td>{{res.Days_Applied}}</td>
-                                                <td>{{res.Start_Date}}</td>
+                                                <td>{{res.No_}}</td>
+                                                <td>{{res.Reason_Description}}</td>
+                                                <td>{{res.Expected_Receipt_Date}}</td>
+                                                <td>{{res.Location_Code}}</td>
+                                                <td>{{res.Status}}</td>
                                                 <td>
-                                                    <a type="button" href="{% url 'StoreDetail' res.Application_No %} "
+                                                    <a type="button" href="{% url 'StoreDetail' res.No_ %} "
                                                         class="btn btn-success btn-icon-text"
                                                         style="background: #25CC88;">View
                                                         <i class="las la-external-link-alt" style="font-size: 1rem"></i>
@@ -108,26 +106,24 @@
                                         style="width:100%">
                                         <thead>
                                             <tr id="tops">
-                                                <th id="long">Application No</th>
+                                                <th id="long">Request No</th>
+                                                <th>Description</th>
+                                                <th>Expected Receipt Date</th>
+                                                <th>Location Code</th>
                                                 <th>Status</th>
-                                                <th>Planner Start Date</th>
-                                                <th>Return same day</th>
-                                                <th>Days Applied</th>
-                                                <th>Start Date</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {% for res in response %}
+                                            {% for res in res %}
                                             <tr>
-                                                <td>{{res.Application_No}}</td>
-                                                <td id="rap">{{res.Status}}</td>
-                                                <td>{{res.Planner_Start_Date}}</td>
-                                                <td>{{res.Return_same_day}}</td>
-                                                <td>{{res.Days_Applied}}</td>
-                                                <td>{{res.Start_Date}}</td>
+                                                <td>{{res.No_}}</td>
+                                                <td>{{res.Reason_Description}}</td>
+                                                <td>{{res.Expected_Receipt_Date}}</td>
+                                                <td>{{res.Location_Code}}</td>
+                                                <td>{{res.Status}}</td>
                                                 <td>
-                                                    <a type="button" href="{% url 'StoreDetail' res.Application_No %} "
+                                                    <a type="button" href="{% url 'StoreDetail' res.No_ %} "
                                                         class="btn btn-success btn-icon-text"
                                                         style="background: #25CC88;">View
                                                         <i class="las la-external-link-alt" style="font-size: 1rem"></i>
@@ -147,26 +143,24 @@
                                         style="width:100%">
                                         <thead>
                                             <tr id="tops">
-                                                <th id="long">Application No</th>
+                                                <th id="long">Request No</th>
+                                                <th>Description</th>
+                                                <th>Expected Receipt Date</th>
+                                                <th>Location Code</th>
                                                 <th>Status</th>
-                                                <th>Planner Start Date</th>
-                                                <th>Return same day</th>
-                                                <th>Days Applied</th>
-                                                <th>Start Date</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {% for res in rej %}
+                                            {% for res in res %}
                                             <tr>
-                                                <td>{{res.Application_No}}</td>
-                                                <td id="rap">{{res.Status}}</td>
-                                                <td>{{res.Planner_Start_Date}}</td>
-                                                <td>{{res.Return_same_day}}</td>
-                                                <td>{{res.Days_Applied}}</td>
-                                                <td>{{res.Start_Date}}</td>
+                                                <td>{{res.No_}}</td>
+                                                <td>{{res.Reason_Description}}</td>
+                                                <td>{{res.Expected_Receipt_Date}}</td>
+                                                <td>{{res.Location_Code}}</td>
+                                                <td>{{res.Status}}</td>
                                                 <td>
-                                                    <a type="button" href="{% url 'StoreDetail' res.Application_No %}"
+                                                    <a type="button" href="{% url 'StoreDetail' res.No_ %} "
                                                         class="btn btn-success btn-icon-text"
                                                         style="background: #25CC88;">View
                                                         <i class="las la-external-link-alt" style="font-size: 1rem"></i>
@@ -195,57 +189,42 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="myForm" action="{% url 'store' %}" method="post">
+                    <form class="myForm needs-validation" action="{% url 'CreateStoreRequest' %}" method="post"
+                        novalidate>
                         {% csrf_token %}
                         <div class="mb-2"> <span class="w-name">
-                                General Information:
+                                Store Request Header:
                             </span>
                             <div class="row">
-                                <div>
-                                    <label for="" class="col-form-label">Leave Type
-                                        :</label>
-                                    <select class="form-select" name="leaveType">
+                                <div class="col-md-12">
+                                    <label for="" class="form-label">Issuing Store</label>
+                                    <select class="form-select" name="issuingStore" required>
+                                        <option selected disabled value="">Select Issuing Store</option>
                                         {% for res in leave %}
-                                        <option selected>Select Leave Type</option>
                                         <option value="{{res.Code}}">{{res.Description}}</option>
                                         {% endfor %}
                                     </select>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <label for="" class="col-form-label">Start Date:</label>
-                                    <input type="date" name="plannerStartDate">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div>
-                                    <label for="" class="col-form-label">Return Same Day
-                                        :</label>
-                                    <select class="form-select" name="isReturnSameDay">
-                                        <option selected>Select</option>
-                                        <option value="True">True</option>
-                                        <option value="False">False</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="my-3">
-                                        <label class="form-label">Days Applied</label>
-                                        <input type="number" class="form-control" name="daysApplied" placeholder="">
+                                    <div class="invalid-feedback">
+                                        Please Select a Valid Store.
                                     </div>
                                 </div>
                             </div>
                             <div class="row">
-                                <div>
-                                    <label for="" class="col-form-label"> Leave Allowance Payable
-                                        :</label>
-                                    <select class="form-select" name="isLeaveAllowancePayable">
-                                        <option selected>Select</option>
-                                        <option value="True">True</option>
-                                        <option value="False">False</option>
-                                    </select>
+                                <div class="col-md-12">
+                                    <label for="" class="form-label">Expected Receipt Date</label>
+                                    <input type="date" name="expectedReceiptDate" class="form-control" required>
+                                    <div class="invalid-feedback">
+                                        Please select a valid Expected Receipt Date.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label for="" class="form-label">Purpose</label>
+                                    <textarea class="form-control" name="reason" rows="3" required></textarea>
+                                    <div class="invalid-feedback">
+                                        Purpose can't be empty.
+                                    </div>
                                 </div>
                             </div>
                         </div>

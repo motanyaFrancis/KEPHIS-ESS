@@ -124,25 +124,11 @@ CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
 #                                             loanNo, collateralType, maturityDate, collateralValue, isPerfected, isExcludedActivities, isNemaCompliant, securityType,  myAction)
 # print(response)
 
-requisitionNo = ''
-orderDate = datetime.strptime('02-20-2022', '%m-%d-%Y')
-employeeNo = 'AH'
-reason = "Test"
-expectedReceiptDate = datetime.strptime('02-20-2022', '%m-%d-%Y')
-isConsumable = True
-myUserId = "NAVADMIN"
-myAction = 'insert'
-
-response = CLIENT.service.FnPurchaseRequisitionHeader(requisitionNo,
-                                                      orderDate, employeeNo, reason, expectedReceiptDate, isConsumable, myUserId, myAction)
-print(response)
-
-
-# requisitionNo = ''
+# requisitionNo = 'PREQ-00012'
 # lineNo = 0
 # procPlanItem = ''
 # itemType = ""
-# specification = ''
+# specification = 'Tests'
 # quantity = 1
 # myUserId = "NAVADMIN"
 # myAction = 'insert'
@@ -161,15 +147,6 @@ print(response)
 
 # response = CLIENT.service.FnRepairRequisitionHeader(requisitionNo,
 #                                                     orderDate, employeeNo, reason, expectedReceiptDate, myUserId, myAction)
-# print(response)
-
-# requisitionNo = ''
-# lineNo = 0
-# assetCode = ''
-# myAction = 'insert'
-
-# response = CLIENT.service.FnRepairRequisitionLine(requisitionNo,
-#                                                   lineNo, assetCode, myAction)
 # print(response)
 
 # requisitionNo = ''
