@@ -15,21 +15,21 @@ def PurchaseRequisition(request):
     session = requests.Session()
     session.auth = config.AUTHS
 
-    Access_Point = config.O_DATA.format("/QyLeaveApplications")
+    Access_Point = config.O_DATA.format("/QyPurchaseRequisitionHeaders")
     try:
         response = session.get(Access_Point, timeout=10).json()
         open = []
         Approved = []
         Rejected = []
-        for imprest in response['value']:
-            if imprest['Status'] == 'Open' and imprest['User_ID'] == request.session['User_ID']:
-                output_json = json.dumps(imprest)
+        for document in response['value']:
+            if document['Status'] == 'Open' and document['Employee_No_'] == request.session['Employee_No_']:
+                output_json = json.dumps(document)
                 open.append(json.loads(output_json))
-            if imprest['Status'] == 'Released' and imprest['User_ID'] == request.session['User_ID']:
-                output_json = json.dumps(imprest)
+            if document['Status'] == 'Released' and document['Employee_No_'] == request.session['Employee_No_']:
+                output_json = json.dumps(document)
                 Approved.append(json.loads(output_json))
-            if imprest['Status'] == 'Rejected' and imprest['User_ID'] == request.session['User_ID']:
-                output_json = json.dumps(imprest)
+            if document['Status'] == 'Rejected' and document['Employee_No_'] == request.session['Employee_No_']:
+                output_json = json.dumps(document)
                 Rejected.append(json.loads(output_json))
         counts = len(open)
         counter = len(Approved)
@@ -38,10 +38,10 @@ def PurchaseRequisition(request):
         print(e)
 
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
+
     ctx = {"today": todays_date, "res": open, "count": counts,
            "response": Approved, "counter": counter, "rej": Rejected,
            'reject': reject}
-
     return render(request, 'purchaseReq.html', ctx)
 
 
