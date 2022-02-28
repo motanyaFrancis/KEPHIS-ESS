@@ -54,46 +54,6 @@ BASE_URL = 'http://20.121.189.145:7047/BC140/WS/KMPDC/Codeunit/WebPortal'
 AUTHS.auth = HttpNtlmAuth('domain\\NAVADMIN', WEB_SERVICE_PWD)
 CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
 
-# lineNo = 0
-# claimNo = "SC0022"
-# claimType = "SALARY ADAVANCE"
-# accountNo = 'C00010'
-# amount = 10
-# description = "Test"
-# claimReceiptNo = ""
-# dimension3 = ""
-# expenditureDate = datetime.fromisoformat("2022-12-12")
-# expenditureDescription = "Testing"
-# myAction = 'insert'
-
-
-# response = CLIENT.service.FnStaffClaimLine(lineNo,
-#                                            claimNo, claimType, accountNo, amount, description, claimReceiptNo, dimension3, expenditureDate, expenditureDescription, myAction)
-# print(response)
-
-# requisitionNo = ''
-# orderDate = datetime.strptime('02-20-2022', '%m-%d-%Y')
-# employeeNo = 'AH'
-# reason = "Test"
-# expectedReceiptDate = datetime.strptime('02-20-2022', '%m-%d-%Y')
-# myUserId = "NAVADMIN"
-# myAction = 'insert'
-
-# response = CLIENT.service.FnRepairRequisitionHeader(requisitionNo,
-#                                                     orderDate, employeeNo, reason, expectedReceiptDate, myUserId, myAction)
-# print(response)
-
-# requisitionNo = ''
-# employeeNo = 'AH'
-# issuingStore = "AFGHANISTA"
-# reason = ""
-# expectedReceiptDate = datetime.strptime('02-20-2022', '%m-%d-%Y')
-# myUserId = "NAVADMIN"
-# myAction = 'insert'
-
-# response = CLIENT.service.FnStoreRequisitionHeader(requisitionNo, employeeNo, issuingStore, reason, expectedReceiptDate,
-#                                                    myUserId, myAction)
-# print(response)
 
 # requisitionNo = ''
 # lineNo = 0

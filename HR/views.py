@@ -55,9 +55,12 @@ def Leave_Request(request):
         print(e)
 
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-    ctx = {"today": todays_date, "res": open, "count": counts,
-           "response": Approved, "counter": counter, "rej": Rejected,
-           'reject': reject, 'leave': Leave, "plan": Planner, "pend": pend, "pending": Pending}
+    ctx = {"today": todays_date, "res": open,
+           "count": counts, "response": Approved,
+           "counter": counter, "rej": Rejected,
+           'reject': reject, 'leave': Leave,
+           "plan": Planner, "pend": pend,
+           "pending": Pending}
     return render(request, 'leave.html', ctx)
 
 
@@ -234,8 +237,12 @@ def Training_Request(request):
         print(e)
 
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-    ctx = {"today": todays_date, "res": open, "count": counts, "response": Approved, "counter": counter, "rej": Rejected,
-           'reject': reject, 'cur': cur, "train": trains, "des": destinations, "pend": pend, "pending": Pending}
+    ctx = {"today": todays_date, "res": open,
+           "count": counts, "response": Approved,
+           "counter": counter, "rej": Rejected,
+           'reject': reject, 'cur': cur,
+           "train": trains, "des": destinations,
+           "pend": pend, "pending": Pending}
     return render(request, 'training.html', ctx)
 
 
@@ -330,24 +337,42 @@ def TrainingDetail(request, pk):
 
 
 def TrainingApproval(request, pk):
-    entryNo = 0
-    documentNo = pk
-    userID = request.session['User_ID']
-    approvalComments = ""
-    myAction = 'insert'
+    employeeNo = request.session['Employee_No_']
+    applicationNo = ""
     if request.method == 'POST':
         try:
-            approvalComments = request.POST.get('approvalComments')
-        except ValueError:
+            applicationNo = request.POST.get('applicationNo')
+        except ValueError as e:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
-            return redirect('TrainingDetail', pk=documentNo)
+            return redirect('TrainingDetail', pk=pk)
     try:
-        response = config.CLIENT.service.FnDocumentApproval(
-            entryNo, documentNo, userID, approvalComments, myAction)
-        messages.success(request, "Successfully Sent!!")
+        response = config.CLIENT.service.FnRequestLeaveApproval(
+            employeeNo, applicationNo)
+        messages.success(request, "Approval Request Successfully Sent!!")
         print(response)
-        return redirect('TrainingDetail', pk=documentNo)
+        return redirect('TrainingDetail', pk=pk)
     except Exception as e:
         messages.error(request, e)
         print(e)
-    return redirect('TrainingDetail', pk=documentNo)
+    return redirect('TrainingDetail', pk=pk)
+
+
+def TrainingCancelApproval(request, pk):
+    employeeNo = request.session['Employee_No_']
+    applicationNo = ""
+    if request.method == 'POST':
+        try:
+            applicationNo = request.POST.get('applicationNo')
+        except ValueError as e:
+            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            return redirect('TrainingDetail', pk=pk)
+    try:
+        response = config.CLIENT.service.FnCancelLeaveApproval(
+            employeeNo, applicationNo)
+        messages.success(request, "Cancel Request Successfully Sent!!")
+        print(response)
+        return redirect('TrainingDetail', pk=pk)
+    except Exception as e:
+        messages.error(request, e)
+        print(e)
+    return redirect('TrainingDetail', pk=pk)

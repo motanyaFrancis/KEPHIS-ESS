@@ -98,7 +98,8 @@
                 </form>
                 {% if state == 1 %}
                 <div class="d-grid gap-2 my-3">
-                    <form action="" method="" class="myForm" id="approvalForm">
+                    <form action="{% url 'TrainApprove' res.Request_No_ %}" method="post" class="myForm"
+                        id="approvalForm">
                         {% csrf_token %}
                         <div class="mb-3">
                             <input type="hidden" hidden name="applicationNo" value="{{res.Application_No}}">
@@ -108,7 +109,8 @@
                 </div>
                 {% elif state == 2 %}
                 <div class="d-grid gap-2 my-3">
-                    <form action="" method="" class="myForm" id="approvalForm">
+                    <form action="{% url 'TrainCancel' res.Request_No_ %}" method="post" class="myForm"
+                        id="approvalForm">
                         {% csrf_token %}
                         <div class="mb-3">
                             <input type="hidden" hidden name="applicationNo" value="{{res.Application_No}}">

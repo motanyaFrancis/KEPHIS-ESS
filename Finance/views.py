@@ -50,8 +50,11 @@ def ImprestRequisition(request):
 
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
 
-    ctx = {"today": todays_date, "res": open, "count": counts,
-           "response": Approved, "counter": counter, "reject": Rejected, "rej": reject, "pend": pend, "pending": Pending}
+    ctx = {"today": todays_date, "res": open,
+           "count": counts, "response": Approved,
+           "counter": counter, "reject": Rejected,
+           "rej": reject, "pend": pend,
+           "pending": Pending}
     return render(request, 'imprestReq.html', ctx)
 
 
@@ -228,7 +231,7 @@ def CreateImprestLines(request, pk):
     travelDate = ''
     returnDate = ''
     requisitionType = ''
-    dailyRate = 10
+    dailyRate = 0
     quantity = ""
     areaCode = ""
     imprestTypes = ''
@@ -382,7 +385,7 @@ def SurrenderDetails(request, pk):
                         res = imprest
                         if imprest['Status'] == 'Open':
                             state = 1
-            if imprest['Status'] == 'Released' and imprest['User_Id'] == request.session['User_ID']:
+            if imprest['Status'] == 'Rejected' and imprest['User_Id'] == request.session['User_ID']:
                 output_json = json.dumps(imprest)
                 openImp.append(json.loads(output_json))
                 for imprest in openImp:
