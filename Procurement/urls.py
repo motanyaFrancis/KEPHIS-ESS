@@ -9,6 +9,11 @@ urlpatterns = [
          views.PurchaseRequestDetails, name='PurchaseDetail'),
     path('PurchaseApprove/<str:pk>',
          views.PurchaseApproval, name='PurchaseApprove'),
+    path('PurchaseCancel/<str:pk>',
+         views.FnCancelPurchaseApproval, name='PurchaseCancel'),
+    path('PurchaseLines/<str:pk>',
+         views.CreatePurchaseLines, name='PurchaseLines'),
+
     path('RepairRequest', views.RepairRequest, name='repair'),
     path('CreateRepairRequest', views.CreateRepairRequest,
          name='CreateRepairRequest'),
@@ -18,6 +23,10 @@ urlpatterns = [
          views.RepairApproval, name='RepairApprove'),
     path('RepairLines/<str:pk>',
          views.CreateRepairLines, name='RepairLines'),
+    path('RepairCancel/<str:pk>',
+         views.FnCancelRepairApproval, name='RepairCancel'),
+
+
     path('StoreRequest', views.StoreRequest, name='store'),
     path('CreateStoreRequest', views.CreateStoreRequisition,
          name='CreateStoreRequest'),
@@ -25,6 +34,8 @@ urlpatterns = [
          views.StoreRequestDetails, name='StoreDetail'),
     path('StoreApprove/<str:pk>',
          views.StoreApproval, name='StoreApprove'),
+    path('StoreCancel/<str:pk>',
+         views.FnCancelStoreApproval, name='StoreCancel'),
     path('CreateStoreLine/<str:pk>',
          views.CreateStoreLines, name='CreateStoreLine'),
 ]

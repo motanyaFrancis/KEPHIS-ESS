@@ -71,25 +71,6 @@ CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
 #                                            claimNo, claimType, accountNo, amount, description, claimReceiptNo, dimension3, expenditureDate, expenditureDescription, myAction)
 # print(response)
 
-
-# class Data(enum.Enum):
-#     values = 2
-
-
-# requisitionNo = 'PREQ-00043'
-# lineNo = 0
-# procPlanItem = 'PRP-00002'
-# itemType = (Data.values).value
-# itemNo = "ITEM0001"
-# specification = 'Tests'
-# quantity = 1
-# myUserId = "NAVADMIN"
-# myAction = 'insert'
-
-# response = CLIENT.service.FnPurchaseRequisitionLine(requisitionNo,
-#                                                     lineNo, procPlanItem, itemType, itemNo, specification, quantity, myUserId, myAction)
-# print(response)
-
 # requisitionNo = ''
 # orderDate = datetime.strptime('02-20-2022', '%m-%d-%Y')
 # employeeNo = 'AH'
@@ -158,10 +139,10 @@ CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
 # print(response)
 
 
-employeeNo = 'AH'
-applicationNo = "IMP00023"
+# employeeNo = 'AH'
+# applicationNo = "IMP00023"
 
 
-response = CLIENT.service.FnRequestPaymentApproval(employeeNo,
-                                                   applicationNo)
-print(response)
+# response = CLIENT.service.FnCancelPaymentApproval(employeeNo,
+#                                                   applicationNo)
+# print(response)

@@ -69,28 +69,37 @@
                         <label class="form-label">User</label>
                         <input type="text" class="form-control" placeholder="{{res.User_Id}}" readonly>
                     </div>
-                    <label for="inputAddress" class="form-label">purpose</label>
-                    <textarea class="form-control" placeholder="{{res.Payment_Narration}}" rows="3" readonly></textarea>
+                    <div class="col-md-4">
+                        <label class="form-label">Status</label>
+                        <input type="text" class="form-control" placeholder="{{res.Status}}" readonly>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">purpose</label>
+                        <textarea class="form-control" placeholder="{{res.Payment_Narration}}" rows="3"
+                            readonly></textarea>
+                    </div>
             </div>
             </form>
             {% if state == 1 %}
             <div class="d-grid gap-2 my-3">
-                <button class="btn btn-info" id="approveBtn" type="button">Request For Approval</button>
-            </div>
-            <form action="{% url 'ClaimApprove' res.No_ %}" method="POST" class="myForm needs-validation"
-                style="display:none" id="approvalForm" novalidate>
-                {% csrf_token %}
-                <div class="mb-3 form-floating">
-                    <textarea class="form-control" id="approvalComments" name="approvalComments" rows="3"
-                        required></textarea>
-                    <div class="invalid-feedback">
-                        Please provide approval comment.
+                <form action="{% url 'ClaimApprove' res.No_ %}" method="POST" class="myForm">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <input type="hidden" hidden name="requisitionNo" value="{{res.No_}}">
                     </div>
-                    <label for="approvalComments">Approval Comment</label>
-                </div>
-                <button type="submit" class="btn btn-primary">Submit Request</button>
-
-            </form>
+                    <button class="btn btn-info" type="submit">Request For Approval</button>
+                </form>
+            </div>
+            {% elif state == 2 %}
+            <div class="d-grid gap-2 my-3">
+                <form action="{% url 'ClaimCancel' res.No_ %}" method="POST" class="myForm" id="approvalForm">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <input type="hidden" hidden name="requisitionNo" value="{{res.No_}}">
+                    </div>
+                    <button class="btn btn-info" type="submit">Cancel Request For Approval</button>
+                </form>
+            </div>
             {% endif %}
         </div>
         <div class="row mt-4">
@@ -130,6 +139,7 @@
                 </div>
             </div>
         </div>
+        {% if state == 2 %}
         <div class="row mt-4">
             <div class="col-md-12">
                 <div class="card" id="d-card">
@@ -161,6 +171,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
     </div>
     </div>
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"

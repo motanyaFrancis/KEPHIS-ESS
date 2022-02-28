@@ -7,6 +7,7 @@ import json
 from django.conf import settings as config
 import datetime as dt
 from django.contrib import messages
+import enum
 
 # Create your views here.
 
@@ -21,6 +22,7 @@ def PurchaseRequisition(request):
         open = []
         Approved = []
         Rejected = []
+        Pending = []
         for document in response['value']:
             if document['Status'] == 'Open' and document['Employee_No_'] == request.session['Employee_No_']:
                 output_json = json.dumps(document)
@@ -31,17 +33,23 @@ def PurchaseRequisition(request):
             if document['Status'] == 'Rejected' and document['Employee_No_'] == request.session['Employee_No_']:
                 output_json = json.dumps(document)
                 Rejected.append(json.loads(output_json))
+            if document['Status'] == "Pending Approval" and document['Employee_No_'] == request.session['Employee_No_']:
+                output_json = json.dumps(document)
+                Pending.append(json.loads(output_json))
         counts = len(open)
         counter = len(Approved)
         reject = len(Rejected)
+        pend = len(Pending)
     except requests.exceptions.ConnectionError as e:
         print(e)
 
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
 
-    ctx = {"today": todays_date, "res": open, "count": counts,
-           "response": Approved, "counter": counter, "rej": Rejected,
-           'reject': reject}
+    ctx = {"today": todays_date, "res": open,
+           "count": counts, "response": Approved,
+           "counter": counter, "rej": Rejected,
+           'reject': reject, "pend": pend,
+           "pending": Pending}
     return render(request, 'purchaseReq.html', ctx)
 
 
@@ -79,12 +87,33 @@ def PurchaseRequestDetails(request, pk):
     session.auth = config.AUTHS
     state = ''
     res = ''
+    Current_Year = date.today()
     Access_Point = config.O_DATA.format("/QyPurchaseRequisitionHeaders")
+    Approver = config.O_DATA.format("/QyApprovalEntries")
+    ProcPlan = config.O_DATA.format("/QyProcurementPlans")
+    itemNo = config.O_DATA.format("/QyItems")
+    GL_Acc = config.O_DATA.format("/QyGLAccounts")
     try:
         response = session.get(Access_Point, timeout=10).json()
-
+        res_approver = session.get(Approver, timeout=10).json()
+        Res_Proc = session.get(ProcPlan, timeout=10).json()
+        Res_itemNo = session.get(itemNo, timeout=10).json()
+        Res_GL = session.get(GL_Acc, timeout=10).json()
         openImp = []
         res_type = []
+        Pending = []
+        Approvers = []
+        Proc = []
+        Items = Res_itemNo['value']
+        Gl_Accounts = Res_GL['value']
+        for planitem in Res_Proc['value']:
+            if planitem['Plan_Year'] == Current_Year.year:
+                output_json = json.dumps(planitem)
+                Proc.append(json.loads(output_json))
+        for approver in res_approver['value']:
+            if approver['Document_No_'] == pk:
+                output_json = json.dumps(approver)
+                Approvers.append(json.loads(output_json))
         for document in response['value']:
             if document['Status'] == 'Released' and document['Employee_No_'] == request.session['Employee_No_']:
                 output_json = json.dumps(document)
@@ -106,9 +135,17 @@ def PurchaseRequestDetails(request, pk):
                 for document in openImp:
                     if document['No_'] == pk:
                         res = document
+            if document['Status'] == "Pending Approval" and document['Employee_No_'] == request.session['Employee_No_']:
+                output_json = json.dumps(document)
+                Pending.append(json.loads(output_json))
+                for document in Pending:
+                    if document['No_'] == pk:
+                        res = document
+                        if document['Status'] == 'Pending Approval':
+                            state = 2
     except requests.exceptions.ConnectionError as e:
         print(e)
-    Lines_Res = config.O_DATA.format("/QyImprestSurrenderLines")
+    Lines_Res = config.O_DATA.format("/QyPurchaseRequisitionLines")
     try:
         response_Lines = session.get(Lines_Res, timeout=10).json()
         openLines = []
@@ -120,32 +157,92 @@ def PurchaseRequestDetails(request, pk):
         print(e)
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": res,
-           "state": state, "line": openLines, "type": res_type}
+           "state": state, "line": openLines,
+           "type": res_type, "Approvers": Approvers,
+           "plans": Proc, "items": Items,
+           "gl": Gl_Accounts}
     return render(request, 'purchaseDetail.html', ctx)
 
 
-def PurchaseApproval(request, pk):
-    entryNo = 0
-    documentNo = pk
-    userID = request.session['User_ID']
-    approvalComments = ""
+def CreatePurchaseLines(request, pk):
+    # Create Enum For itemType which is 'Item'
+    requisitionNo = pk
+    lineNo = 0
+    procPlanItem = ''
+    itemTypes = ""
+    itemNo = ""
+    specification = ''
+    quantity = 1
+    myUserId = request.session['User_ID']
     myAction = 'insert'
     if request.method == 'POST':
         try:
-            approvalComments = request.POST.get('approvalComments')
+            procPlanItem = request.POST.get('procPlanItem')
+            itemTypes = request.POST.get('itemTypes')
+            itemNo = request.POST.get('itemNo')
+            specification = request.POST.get('specification')
+            print(specification)
+            quantity = int(request.POST.get('quantity'))
+
         except ValueError:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
-            return redirect('PurchaseDetail', pk=documentNo)
+            return redirect('PurchaseDetail', pk=requisitionNo)
+
+    class Data(enum.Enum):
+        values = itemTypes
+    itemType = (Data.values).value
     try:
-        response = config.CLIENT.service.FnDocumentApproval(
-            entryNo, documentNo, userID, approvalComments, myAction)
+        response = config.CLIENT.service.FnPurchaseRequisitionLine(
+            requisitionNo, lineNo, procPlanItem, itemType, itemNo, specification, quantity, myUserId, myAction)
         messages.success(request, "Successfully Added!!")
         print(response)
-        return redirect('PurchaseDetail', pk=documentNo)
+        return redirect('PurchaseDetail', pk=requisitionNo)
     except Exception as e:
         messages.error(request, e)
         print(e)
-    return redirect('PurchaseDetail', pk=documentNo)
+    return redirect('PurchaseDetail', pk=requisitionNo)
+
+
+def PurchaseApproval(request, pk):
+    employeeNo = request.session['Employee_No_']
+    requisitionNo = ""
+    if request.method == 'POST':
+        try:
+            requisitionNo = request.POST.get('requisitionNo')
+        except ValueError as e:
+            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            return redirect('PurchaseDetail', pk=pk)
+    try:
+        response = config.CLIENT.service.FnRequestPaymentApproval(
+            employeeNo, requisitionNo)
+        messages.success(request, "Approval Request Successfully Sent!!")
+        print(response)
+        return redirect('PurchaseDetail', pk=pk)
+    except Exception as e:
+        messages.error(request, e)
+        print(e)
+    return redirect('PurchaseDetail', pk=pk)
+
+
+def FnCancelPurchaseApproval(request, pk):
+    employeeNo = request.session['Employee_No_']
+    requisitionNo = ""
+    if request.method == 'POST':
+        try:
+            requisitionNo = request.POST.get('requisitionNo')
+        except ValueError as e:
+            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            return redirect('PurchaseDetail', pk=pk)
+    try:
+        response = config.CLIENT.service.FnCancelPaymentApproval(
+            employeeNo, requisitionNo)
+        messages.success(request, "Approval Request Successfully Sent!!")
+        print(response)
+        return redirect('PurchaseDetail', pk=pk)
+    except Exception as e:
+        messages.error(request, e)
+        print(e)
+    return redirect('PurchaseDetail', pk=pk)
 
 
 def RepairRequest(request):
@@ -158,6 +255,7 @@ def RepairRequest(request):
         open = []
         Approved = []
         Rejected = []
+        Pending = []
         for document in response['value']:
             if document['Status'] == 'Open' and document['Requested_By'] == f"NAV-TESTDAN\\{request.session['User_ID']}":
                 output_json = json.dumps(document)
@@ -168,16 +266,22 @@ def RepairRequest(request):
             if document['Status'] == 'Rejected' and document['Requested_By'] == f"NAV-TESTDAN\\{request.session['User_ID']}":
                 output_json = json.dumps(document)
                 Rejected.append(json.loads(output_json))
+            if document['Status'] == "Pending Approval" and document['Employee_No_'] == request.session['Employee_No_']:
+                output_json = json.dumps(document)
+                Pending.append(json.loads(output_json))
         counts = len(open)
         counter = len(Approved)
         reject = len(Rejected)
+        pend = len(Pending)
     except requests.exceptions.ConnectionError as e:
         print(e)
 
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-    ctx = {"today": todays_date, "res": open, "count": counts,
-           "response": Approved, "counter": counter, "rej": Rejected,
-           'reject': reject}
+    ctx = {"today": todays_date, "res": open,
+           "count": counts, "response": Approved,
+           "counter": counter, "rej": Rejected,
+           'reject': reject, "pend": pend, "pending": Pending
+           }
     return render(request, 'repairReq.html', ctx)
 
 
@@ -214,6 +318,7 @@ def RepairRequestDetails(request, pk):
     session.auth = config.AUTHS
     state = ''
     res = ''
+    output_json = ''
     Access_Point = config.O_DATA.format("/QyRepairRequisitionHeaders")
     Assets = config.O_DATA.format("/QyFixedAssets")
     Approver = config.O_DATA.format("/QyApprovalEntries")
@@ -230,13 +335,8 @@ def RepairRequestDetails(request, pk):
                 output_json = json.dumps(approver)
                 Approvers.append(json.loads(output_json))
         for document in response['value']:
-            if document['Status'] == 'Released' and document['Requested_By'] == f"NAV-TESTDAN\\{request.session['User_ID']}":
-                output_json = json.dumps(document)
-                openImp.append(json.loads(output_json))
-                for document in openImp:
-                    if document['No_'] == pk:
-                        res = document
             if document['Status'] == 'Open' and document['Requested_By'] == f"NAV-TESTDAN\\{request.session['User_ID']}":
+                output_json = json.dumps(document)
                 openImp.append(json.loads(output_json))
                 for document in openImp:
                     if document['No_'] == pk:
@@ -244,11 +344,25 @@ def RepairRequestDetails(request, pk):
                         if document['Status'] == 'Open':
                             state = 1
             if document['Status'] == 'Released' and document['Requested_By'] == f"NAV-TESTDAN\\{request.session['User_ID']}":
+                openImp.append(json.loads(output_json))
+                for document in openImp:
+                    if document['No_'] == pk:
+                        res = document
+
+            if document['Status'] == 'Rejected' and document['Requested_By'] == f"NAV-TESTDAN\\{request.session['User_ID']}":
                 output_json = json.dumps(document)
                 openImp.append(json.loads(output_json))
                 for document in openImp:
                     if document['No_'] == pk:
                         res = document
+            if document['Status'] == "Pending Approval" and document['Requested_By'] == f"NAV-TESTDAN\\{request.session['User_ID']}":
+                output_json = json.dumps(document)
+                openImp.append(json.loads(output_json))
+                for document in openImp:
+                    if document['No_'] == pk:
+                        res = document
+                        if document['Status'] == 'Pending Approval':
+                            state = 2
     except requests.exceptions.ConnectionError as e:
         print(e)
     Lines_Res = config.O_DATA.format("/QyRepairRequisitionLines")
@@ -263,32 +377,52 @@ def RepairRequestDetails(request, pk):
         print(e)
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": res,
-           "state": state, "line": openLines, "type": res_type, "Approvers": Approvers, "asset": my_asset}
+           "state": state, "line": openLines,
+           "type": res_type, "Approvers": Approvers,
+           "asset": my_asset}
     return render(request, 'repairDetail.html', ctx)
 
 
 def RepairApproval(request, pk):
-    entryNo = 0
-    documentNo = pk
-    userID = request.session['User_ID']
-    approvalComments = ""
-    myAction = 'insert'
+    employeeNo = request.session['Employee_No_']
+    requisitionNo = ""
     if request.method == 'POST':
         try:
-            approvalComments = request.POST.get('approvalComments')
-        except ValueError:
+            requisitionNo = request.POST.get('requisitionNo')
+        except ValueError as e:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
-            return redirect('RepairDetail', pk=documentNo)
+            return redirect('RepairDetail', pk=pk)
     try:
-        response = config.CLIENT.service.FnDocumentApproval(
-            entryNo, documentNo, userID, approvalComments, myAction)
-        messages.success(request, "Successfully Added!!")
+        response = config.CLIENT.service.FnRequestPaymentApproval(
+            employeeNo, requisitionNo)
+        messages.success(request, "Approval Request Successfully Sent!!")
         print(response)
-        return redirect('RepairDetail', pk=documentNo)
+        return redirect('RepairDetail', pk=pk)
     except Exception as e:
         messages.error(request, e)
         print(e)
-    return redirect('RepairDetail', pk=documentNo)
+    return redirect('RepairDetail', pk=pk)
+
+
+def FnCancelRepairApproval(request, pk):
+    employeeNo = request.session['Employee_No_']
+    requisitionNo = ""
+    if request.method == 'POST':
+        try:
+            requisitionNo = request.POST.get('requisitionNo')
+        except ValueError as e:
+            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            return redirect('RepairDetail', pk=pk)
+    try:
+        response = config.CLIENT.service.FnCancelPaymentApproval(
+            employeeNo, requisitionNo)
+        messages.success(request, "Approval Request Successfully Sent!!")
+        print(response)
+        return redirect('RepairDetail', pk=pk)
+    except Exception as e:
+        messages.error(request, e)
+        print(e)
+    return redirect('RepairDetail', pk=pk)
 
 
 def CreateRepairLines(request, pk):
@@ -321,31 +455,41 @@ def StoreRequest(request):
     session.auth = config.AUTHS
 
     Access_Point = config.O_DATA.format("/QyStoreRequisitionHeaders")
+    QYStore = config.O_DATA.format("/QyLocations")
     try:
         response = session.get(Access_Point, timeout=10).json()
+        Store_res = session.get(QYStore, timeout=10).json()
         open = []
         Approved = []
         Rejected = []
+        Pending = []
+        Stores = Store_res['value']
         for document in response['value']:
-            if document['Status'] == 'Open' and document['Employee_No_'] == request.session['Employee_No_']:
+            if document['Status'] == 'Open' and document['Requested_By'] == f"NAV-TESTDAN\\{request.session['User_ID']}":
                 output_json = json.dumps(document)
                 open.append(json.loads(output_json))
-            if document['Status'] == 'Released' and document['Employee_No_'] == request.session['Employee_No_']:
+            if document['Status'] == 'Released' and document['Requested_By'] == f"NAV-TESTDAN\\{request.session['User_ID']}":
                 output_json = json.dumps(document)
                 Approved.append(json.loads(output_json))
-            if document['Status'] == 'Rejected' and document['Employee_No_'] == request.session['Employee_No_']:
+            if document['Status'] == 'Rejected' and document['Requested_By'] == f"NAV-TESTDAN\\{request.session['User_ID']}":
                 output_json = json.dumps(document)
                 Rejected.append(json.loads(output_json))
+            if document['Status'] == "Pending Approval" and document['Requested_By'] == f"NAV-TESTDAN\\{request.session['User_ID']}":
+                output_json = json.dumps(document)
+                Pending.append(json.loads(output_json))
         counts = len(open)
         counter = len(Approved)
         reject = len(Rejected)
+        pend = len(Pending)
     except requests.exceptions.ConnectionError as e:
         print(e)
 
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-    ctx = {"today": todays_date, "res": open, "count": counts,
-           "response": Approved, "counter": counter, "rej": Rejected,
-           'reject': reject}
+    ctx = {"today": todays_date, "res": open,
+           "count": counts, "response": Approved,
+           "counter": counter, "rej": Rejected,
+           'reject': reject, "store": Stores,
+           "pend": pend, "pending": Pending}
     return render(request, 'storeReq.html', ctx)
 
 
@@ -384,22 +528,29 @@ def StoreRequestDetails(request, pk):
     Access_Point = config.O_DATA.format("/QyStoreRequisitionHeaders")
     Item = config.O_DATA.format("/QyItems")
     Location = config.O_DATA.format("/QyLocations")
+    Approver = config.O_DATA.format("/QyApprovalEntries")
     try:
         response = session.get(Access_Point, timeout=10).json()
         Item_res = session.get(Item, timeout=10).json()
         Loc_res = session.get(Location, timeout=10).json()
+        res_approver = session.get(Approver, timeout=10).json()
         openImp = []
         res_type = []
+        Approvers = []
         items = Item_res['value']
         Location = Loc_res['value']
+        for approver in res_approver['value']:
+            if approver['Document_No_'] == pk:
+                output_json = json.dumps(approver)
+                Approvers.append(json.loads(output_json))
         for document in response['value']:
-            if document['Status'] == 'Released' and document['Employee_No_'] == request.session['Employee_No_']:
+            if document['Status'] == 'Released' and document['Requested_By'] == f"NAV-TESTDAN\\{request.session['User_ID']}":
                 output_json = json.dumps(document)
                 openImp.append(json.loads(output_json))
                 for document in openImp:
                     if document['No_'] == pk:
                         res = document
-            if document['Status'] == 'Open' and document['Employee_No_'] == request.session['Employee_No_']:
+            if document['Status'] == 'Open' and document['Requested_By'] == f"NAV-TESTDAN\\{request.session['User_ID']}":
                 output_json = json.dumps(document)
                 openImp.append(json.loads(output_json))
                 for document in openImp:
@@ -407,12 +558,20 @@ def StoreRequestDetails(request, pk):
                         res = document
                         if document['Status'] == 'Open':
                             state = 1
-            if document['Status'] == 'Released' and document['Employee_No_'] == request.session['Employee_No_']:
+            if document['Status'] == 'Rejected' and document['Requested_By'] == f"NAV-TESTDAN\\{request.session['User_ID']}":
                 output_json = json.dumps(document)
                 openImp.append(json.loads(output_json))
                 for document in openImp:
                     if document['No_'] == pk:
                         res = document
+            if document['Status'] == "Pending Approval" and document['Requested_By'] == f"NAV-TESTDAN\\{request.session['User_ID']}":
+                output_json = json.dumps(document)
+                openImp.append(json.loads(output_json))
+                for document in openImp:
+                    if document['No_'] == pk:
+                        res = document
+                        if document['Status'] == 'Pending Approval':
+                            state = 2
     except requests.exceptions.ConnectionError as e:
         print(e)
     Lines_Res = config.O_DATA.format("/QyStoreRequisitionLines")
@@ -427,32 +586,52 @@ def StoreRequestDetails(request, pk):
         print(e)
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": res,
-           "state": state, "line": openLines, "type": res_type, "items": items, "loc": Location}
+           "state": state, "line": openLines,
+           "type": res_type, "items": items,
+           "Approvers": Approvers, "loc": Location}
     return render(request, 'storeDetail.html', ctx)
 
 
 def StoreApproval(request, pk):
-    entryNo = 0
-    documentNo = pk
-    userID = request.session['User_ID']
-    approvalComments = ""
-    myAction = 'insert'
+    employeeNo = request.session['Employee_No_']
+    requisitionNo = ""
     if request.method == 'POST':
         try:
-            approvalComments = request.POST.get('approvalComments')
-        except ValueError:
+            requisitionNo = request.POST.get('requisitionNo')
+        except ValueError as e:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
-            return redirect('StoreDetail', pk=documentNo)
+            return redirect('StoreDetail', pk=pk)
     try:
-        response = config.CLIENT.service.FnDocumentApproval(
-            entryNo, documentNo, userID, approvalComments, myAction)
-        messages.success(request, "Successfully Added!!")
+        response = config.CLIENT.service.FnRequestPaymentApproval(
+            employeeNo, requisitionNo)
+        messages.success(request, "Approval Request Successfully Sent!!")
         print(response)
-        return redirect('StoreDetail', pk=documentNo)
+        return redirect('StoreDetail', pk=pk)
     except Exception as e:
         messages.error(request, e)
         print(e)
-    return redirect('StoreDetail', pk=documentNo)
+    return redirect('StoreDetail', pk=pk)
+
+
+def FnCancelStoreApproval(request, pk):
+    employeeNo = request.session['Employee_No_']
+    requisitionNo = ""
+    if request.method == 'POST':
+        try:
+            requisitionNo = request.POST.get('requisitionNo')
+        except ValueError as e:
+            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            return redirect('StoreDetail', pk=pk)
+    try:
+        response = config.CLIENT.service.FnCancelPaymentApproval(
+            employeeNo, requisitionNo)
+        messages.success(request, "Approval Request Successfully Sent!!")
+        print(response)
+        return redirect('StoreDetail', pk=pk)
+    except Exception as e:
+        messages.error(request, e)
+        print(e)
+    return redirect('StoreDetail', pk=pk)
 
 
 def CreateStoreLines(request, pk):

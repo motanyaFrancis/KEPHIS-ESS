@@ -57,7 +57,11 @@
                             </li>
                             <li class="nav-item">
                                 <a href="#reject" class="nav-link" data-bs-toggle="tab">Rejected Purchase Requisitions
-                                    (0)</a>
+                                    ({{reject}})</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#pending" class="nav-link" data-bs-toggle="tab">Pending Approval
+                                    ({{pend}})</a>
                             </li>
                         </ul>
                         <div class="tab-content">
@@ -150,7 +154,43 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {% for res in res %}
+                                            {% for res in rej %}
+                                            <tr>
+                                                <td>{{res.No_}}</td>
+                                                <td>{{res.Order_Date}}</td>
+                                                <td>{{res.Procurement_Plan}}</td>
+                                                <td>{{res.Expected_Receipt_Date}}</td>
+                                                <td>{{res.Requested_By}}</td>
+                                                <td>
+                                                    <a href="{% url 'PurchaseDetail' res.No_ %} "
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top" title="View"
+                                                        style="background: #25CC88;"><i class="fa fa-table"></i></a>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="pending">
+                                <h4 class="mt-2">Pending Approval Purchase Requisitions</h4>
+                                <div class="card-body">
+                                    <table id="example"
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
+                                        <thead>
+                                            <tr id="tops">
+                                                <th id="long">Requisition No</th>
+                                                <th>Order Date</th>
+                                                <th>Procurement Plan</th>
+                                                <th>Expected Receipt Date</th>
+                                                <th>Requested By</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for res in rej %}
                                             <tr>
                                                 <td>{{res.No_}}</td>
                                                 <td>{{res.Order_Date}}</td>

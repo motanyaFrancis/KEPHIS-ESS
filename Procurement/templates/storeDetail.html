@@ -91,22 +91,24 @@
                 </form>
                 {% if state == 1 %}
                 <div class="d-grid gap-2 my-3">
-                    <button class="btn btn-info" id="approveBtn" type="button">Request For Approval</button>
-                </div>
-                <form action="{% url 'StoreApprove' res.No_ %}" method="POST" class="myForm needs-validation"
-                    style="display:none" id="approvalForm" novalidate>
-                    {% csrf_token %}
-                    <div class="mb-3 form-floating">
-                        <textarea class="form-control" id="approvalComments" name="approvalComments" rows="3"
-                            required></textarea>
-                        <div class="invalid-feedback">
-                            Please provide approval comment.
+                    <form action="{% url 'StoreApprove' res.No_ %}" method="POST" class="myForm">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <input type="hidden" hidden name="requisitionNo" value="{{res.No_}}">
                         </div>
-                        <label for="approvalComments">Approval Comment</label>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Submit Request</button>
-
-                </form>
+                        <button class="btn btn-info" type="submit">Request For Approval</button>
+                    </form>
+                </div>
+                {% elif state == 2 %}
+                <div class="d-grid gap-2 my-3">
+                    <form action="{% url 'StoreCancel' res.No_ %}" method="POST" class="myForm" id="approvalForm">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <input type="hidden" hidden name="requisitionNo" value="{{res.No_}}">
+                        </div>
+                        <button class="btn btn-info" type="submit">Cancel Request For Approval</button>
+                    </form>
+                </div>
                 {% endif %}
             </div>
         </div>
@@ -143,6 +145,39 @@
                 </div>
             </div>
         </div>
+        {% if state == 2 %}
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card" id="d-card">
+                    <h4 class="mt-2 mx-2 text-dark">Document Approvers</h4>
+                    <div class="card-body">
+                        <table id="example"
+                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                            style="width:100%">
+                            <thead>
+                                <tr id="tops">
+                                    <th id="long">Entry No</th>
+                                    <th>Name</th>
+                                    <th>Sequence</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for res in Approvers %}
+                                <tr>
+                                    <td>{{res.Entry_No_}}</td>
+                                    <td>{{res.Approver_ID}}</td>
+                                    <td>{{res.Sequence_No_}}</td>
+                                    <td>{{res.Status}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -154,8 +189,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="myForm needs-validation" action="{% url 'CreateStoreLine' res.No_ %}" method="post"
-                        novalidate>
+                    <form class="myForm needs-validation" action="" method="post" novalidate>
                         {% csrf_token %}
                         <div class="row">
                             <div class="col-md-12">
@@ -175,7 +209,7 @@
                             <div class="col-md-12">
                                 <label for="recipient-name" class="col-form-label">Location</label>
                                 <select class="form-select" name="location" required>
-                                    <option selected>Select Location</option>
+                                    <option selected disabled value="">Select Location</option>
                                     {% for res in loc %}
                                     <option value="{{res.Code}}">{{res.Name}}</option>
                                     {% endfor %}

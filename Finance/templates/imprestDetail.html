@@ -62,8 +62,8 @@
                         <input type="text" class="form-control" placeholder="{{res.Account_No_}}" readonly>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">ResponsibilityCenter</label>
-                        <input type="text" class="form-control" placeholder="Not Consumed" readonly>
+                        <label class="form-label">Status</label>
+                        <input type="text" class="form-control" placeholder="{{res.Status}}" readonly>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Travel Type</label>
@@ -103,7 +103,7 @@
                 </div>
                 {% elif state == 2 %}
                 <div class="d-grid gap-2 my-3">
-                    <form action="{% url 'ImpCancel' res.No_ %}" method="POST" class="myForm" id="approvalForm">
+                    <form action="{% url 'ImpresCancel' res.No_ %}" method="POST" class="myForm" id="approvalForm">
                         {% csrf_token %}
                         <div class="mb-3">
                             <input type="hidden" hidden name="requisitionNo" value="{{res.No_}}">

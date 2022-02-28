@@ -87,22 +87,24 @@
                 </form>
                 {% if state == 1 %}
                 <div class="d-grid gap-2 my-3">
-                    <button class="btn btn-info" id="approveBtn" type="button">Request For Approval</button>
-                </div>
-                <form action="{% url 'RepairApprove' res.No_ %}" method="POST" class="myForm needs-validation"
-                    style="display:none" id="approvalForm" novalidate>
-                    {% csrf_token %}
-                    <div class="mb-3 form-floating">
-                        <textarea class="form-control" id="approvalComments" name="approvalComments" rows="3"
-                            required></textarea>
-                        <div class="invalid-feedback">
-                            Please provide approval comment.
+                    <form action="{% url 'RepairApprove' res.No_ %}" method="POST" class="myForm">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <input type="hidden" hidden name="requisitionNo" value="{{res.No_}}">
                         </div>
-                        <label for="approvalComments">Approval Comment</label>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Submit Request</button>
-
-                </form>
+                        <button class="btn btn-info" type="submit">Request For Approval</button>
+                    </form>
+                </div>
+                {% elif state == 2 %}
+                <div class="d-grid gap-2 my-3">
+                    <form action="{% url 'RepairCancel' res.No_ %}" method="POST" class="myForm" id="approvalForm">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <input type="hidden" hidden name="requisitionNo" value="{{res.No_}}">
+                        </div>
+                        <button class="btn btn-info" type="submit">Cancel Request For Approval</button>
+                    </form>
+                </div>
                 {% endif %}
             </div>
         </div>
@@ -116,9 +118,10 @@
                             style="width:100%">
                             <thead>
                                 <tr id="tops">
-                                    <th id="long">Asset</th>
+                                    <th id="long">Asset No.</th>
                                     <th>Asset Description</th>
                                     <th>Description</th>
+                                    <th>Book Value</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -127,6 +130,7 @@
                                     <td>{{res.Asset}}</td>
                                     <td>{{res.Asset_Description}}</td>
                                     <td>{{res.Description}}</td>
+                                    <td>{{res.Book_Value}}</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -135,6 +139,7 @@
                 </div>
             </div>
         </div>
+        {% if state == 2 %}
         <div class="row mt-4">
             <div class="col-md-12">
                 <div class="card" id="d-card">
@@ -166,6 +171,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
     </div>
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -177,8 +183,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="myForm needs-validation" action="{% url 'RepairLines' res.No_ %}" method="post"
-                        novalidate>
+                    <form class="myForm needs-validation" action="" method="post" novalidate>
                         {% csrf_token %}
                         <div class="row">
                             <div class="col-md-12">
