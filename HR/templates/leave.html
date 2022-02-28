@@ -57,7 +57,11 @@
                             </li>
                             <li class="nav-item">
                                 <a href="#reject" class="nav-link" data-bs-toggle="tab">Rejected Leave Request
-                                    (0)</a>
+                                    ({{reject}})</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#pending" class="nav-link" data-bs-toggle="tab">Pending Approval Leave Request
+                                    ({{pend}})</a>
                             </li>
                         </ul>
                         <div class="tab-content">
@@ -179,6 +183,44 @@
                                     </table>
                                 </div>
                             </div>
+                            <div class="tab-pane fade" id="pending">
+                                <h4 class="mt-2">Pending Approval Leave Request</h4>
+                                <div class="card-body">
+                                    <table id="example"
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
+                                        <thead>
+                                            <tr id="tops">
+                                                <th id="long">Application No</th>
+                                                <th>Status</th>
+                                                <th>Planner Start Date</th>
+                                                <th>Return same day</th>
+                                                <th>Days Applied</th>
+                                                <th>Start Date</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for res in pending %}
+                                            <tr>
+                                                <td>{{res.Application_No}}</td>
+                                                <td id="rap">{{res.Status}}</td>
+                                                <td>{{res.Planner_Start_Date}}</td>
+                                                <td>{{res.Return_same_day}}</td>
+                                                <td>{{res.Days_Applied}}</td>
+                                                <td>{{res.Start_Date}}</td>
+                                                <td>
+                                                    <a href="{% url 'LeaveDetail' res.Application_No %} "
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top" title="View"><i
+                                                            class="fa fa-table"></i></a>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -215,13 +257,17 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row mt-3">
                                 <div class="col-md-12">
-                                    <label for="plannerStartDate" class="form-label">Start Date</label>
-                                    <input type="date" id="plannerStartDate" class="form-control"
-                                        name="plannerStartDate" required>
+                                    <label for="leaveType" class="form-label"> Planner Start Date</label>
+                                    <select class="form-select" id="leaveType" name="plannerStartDate" required>
+                                        <option selected disabled value="">Choose...</option>
+                                        {% for res in plan %}
+                                        <option value="{{res.Start_Date}}">{{res.Start_Date}}</option>
+                                        {% endfor %}
+                                    </select>
                                     <div class="invalid-feedback">
-                                        Please Provide Start Date
+                                        Please select a valid Start Date.
                                     </div>
                                 </div>
                             </div>
@@ -247,18 +293,6 @@
                                     <div class="invalid-feedback">
                                         Please provide input.
                                     </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <label for="isLeaveAllowancePayable" class="form-label"> Leave Allowance
-                                        Payable</label>
-                                    <select class="form-select" id="isLeaveAllowancePayable"
-                                        name="isLeaveAllowancePayable" required>
-                                        <option selected value="">Select</option>
-                                        <option value="True">True</option>
-                                        <option value="False">False</option>
-                                    </select>
                                 </div>
                             </div>
                         </div>

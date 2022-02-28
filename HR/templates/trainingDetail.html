@@ -98,25 +98,28 @@
                 </form>
                 {% if state == 1 %}
                 <div class="d-grid gap-2 my-3">
-                    <button class="btn btn-info" id="approveBtn" type="button">Request For Approval</button>
-                </div>
-                <form action="{% url 'TrainApprove' res.Request_No_ %}" method="POST" class="myForm needs-validation"
-                    style="display:none" id="approvalForm" novalidate>
-                    {% csrf_token %}
-                    <div class="mb-3 form-floating">
-                        <textarea class="form-control" id="approvalComments" name="approvalComments" rows="3"
-                            required></textarea>
-                        <div class="invalid-feedback">
-                            Please provide approval comment.
+                    <form action="" method="" class="myForm" id="approvalForm">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <input type="hidden" hidden name="applicationNo" value="{{res.Application_No}}">
                         </div>
-                        <label for="approvalComments">Approval Comment</label>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Submit Request</button>
-
-                </form>
+                        <button class="btn btn-info" type="submit">Request For Approval</button>
+                    </form>
+                </div>
+                {% elif state == 2 %}
+                <div class="d-grid gap-2 my-3">
+                    <form action="" method="" class="myForm" id="approvalForm">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <input type="hidden" hidden name="applicationNo" value="{{res.Application_No}}">
+                        </div>
+                        <button class="btn btn-info" type="submit">Cancel Request For Approval</button>
+                    </form>
+                </div>
                 {% endif %}
             </div>
         </div>
+        {% if state == 2 %}
         <div class="row mt-4">
             <div class="col-md-12">
                 <div class="card" id="d-card">
@@ -148,14 +151,8 @@
                 </div>
             </div>
         </div>
+        {% endif %}
     </div>
 
 </section>
-<script>
-    $(document).ready(function () {
-        $("#approveBtn").click(function () {
-            $("#approvalForm").toggle(500)
-        })
-    })
-</script>
 {% endblock %}

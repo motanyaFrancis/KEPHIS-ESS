@@ -57,7 +57,12 @@
                             </li>
                             <li class="nav-item">
                                 <a href="#reject" class="nav-link" data-bs-toggle="tab">Rejected Training Request
-                                    (0)</a>
+                                    ({{reject}})</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#pending" class="nav-link" data-bs-toggle="tab">Pending Approval Training
+                                    Request
+                                    ({{pend}})</a>
                             </li>
                         </ul>
                         <div class="tab-content">
@@ -159,6 +164,41 @@
                                         </thead>
                                         <tbody>
                                             {% for res in rej %}
+                                            <tr>
+                                                <td>{{res.Request_No_}}</td>
+                                                <td id="rap">{{res.Request_Date}}</td>
+                                                <td>{{res.Adhoc}}</td>
+                                                <td>{{res.Planned_Start_Date}}</td>
+                                                <td>{{res.Planned_End_Date}}</td>
+                                                <td>{{res.No__Of_Days}}</td>
+                                                <td>{{res.Destination}}</td>
+                                                <td>{{res.Currency}}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="pending">
+                                <h4 class="mt-2">Pending Approval Training Request</h4>
+                                <div class="card-body">
+                                    <table id="example"
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
+                                        <thead>
+                                            <tr id="tops">
+                                                <th id="long">Request No</th>
+                                                <th>Request Date</th>
+                                                <th>Adhoc</th>
+                                                <th>Start Date</th>
+                                                <th>End Date</th>
+                                                <th>No Of Days</th>
+                                                <th>Destination</th>
+                                                <th>Currency</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for res in pending %}
                                             <tr>
                                                 <td>{{res.Request_No_}}</td>
                                                 <td id="rap">{{res.Request_Date}}</td>

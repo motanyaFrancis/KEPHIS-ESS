@@ -55,7 +55,7 @@ AUTHS.auth = HttpNtlmAuth('domain\\NAVADMIN', WEB_SERVICE_PWD)
 CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
 
 # lineNo = 0
-# claimNo = "SC0020"
+# claimNo = "SC0022"
 # claimType = "SALARY ADAVANCE"
 # accountNo = 'C00010'
 # amount = 10
@@ -71,70 +71,23 @@ CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
 #                                            claimNo, claimType, accountNo, amount, description, claimReceiptNo, dimension3, expenditureDate, expenditureDescription, myAction)
 # print(response)
 
-# applicationNo = 'LPL0004'
-# employeeNo = 'AH'
-# usersId = "NAVADMIN"
-# dimension3 = ''
-# leaveType = "ANNUAL"
-# date_str3 = '02-20-2022'
-# # plannerStartDate = datetime.strptime(date_str3, '%m-%d-%Y')
-# plannerStartDate = "2021-09-01"
-# isReturnSameDay = False
-# daysApplied = 2
-# isLeaveAllowancePayable = False
-# myAction = 'insert'
 
-# response = CLIENT.service.FnLeaveApplication(applicationNo,
-#                                              employeeNo, usersId, dimension3, plannerStartDate, isReturnSameDay, dimension3, daysApplied, isLeaveAllowancePayable, myAction)
-# print(response)
-
-# loanNo = ''
-# date_str3 = '02-20-2022'
-# requestedDate = datetime.strptime(date_str3, '%m-%d-%Y')
-# usersId = "NAVADMIN"
-# pmlNo = ''
-# loanProductType = ''
-# loanDuration = 1
-# requestedAmount = 100
-# interestCalculationMethod = ''
-# repaymentFrequency = ''
-# bankName = "1"
-# bankAccountNo = '12345678'
-# bankBranchName = '100'
-# myAction = 'insert'
-
-# response = CLIENT.service.FnLoanApplication(loanNo,
-#                                             requestedDate, usersId, pmlNo, loanProductType, loanDuration, requestedAmount, interestCalculationMethod, repaymentFrequency, bankName, bankAccountNo, bankBranchName, myAction)
-# print(response)
+# class Data(enum.Enum):
+#     values = 2
 
 
-# collateralCode = ''
-# loanNo = ""
-# collateralType = ""
-# date_str3 = '02-20-2022'
-# maturityDate = datetime.strptime(date_str3, '%m-%d-%Y')
-# collateralValue = 100
-# isPerfected = True
-# isExcludedActivities = 1
-# isNemaCompliant = 1
-# securityType = ""
-# myAction = 'insert'
-
-# response = CLIENT.service.FnLoanCollateral(collateralCode,
-#                                             loanNo, collateralType, maturityDate, collateralValue, isPerfected, isExcludedActivities, isNemaCompliant, securityType,  myAction)
-# print(response)
-
-# requisitionNo = 'PREQ-00012'
+# requisitionNo = 'PREQ-00043'
 # lineNo = 0
-# procPlanItem = ''
-# itemType = ""
+# procPlanItem = 'PRP-00002'
+# itemType = (Data.values).value
+# itemNo = "ITEM0001"
 # specification = 'Tests'
 # quantity = 1
 # myUserId = "NAVADMIN"
 # myAction = 'insert'
 
 # response = CLIENT.service.FnPurchaseRequisitionLine(requisitionNo,
-#                                                     lineNo, procPlanItem, itemType, specification, quantity, myUserId, myAction)
+#                                                     lineNo, procPlanItem, itemType, itemNo, specification, quantity, myUserId, myAction)
 # print(response)
 
 # requisitionNo = ''
@@ -193,3 +146,22 @@ CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
 # response = CLIENT.service.FnTrainingRequest(requestNo,
 #                                             employeeNo, usersId, designation, isAdhoc, trainingNeed, description, startDate, endDate, destination, currency, myAction)
 # print(response)
+
+# entryNo = ''
+# documentNo = 'AH'
+# userID = "NAVADMIN"
+# approvalComments = 'test'
+# myAction = 'insert'
+
+# response = CLIENT.service.FnDocumentApproval(entryNo,
+#                                              documentNo, userID, approvalComments,  myAction)
+# print(response)
+
+
+employeeNo = 'AH'
+applicationNo = "IMP00023"
+
+
+response = CLIENT.service.FnRequestPaymentApproval(employeeNo,
+                                                   applicationNo)
+print(response)

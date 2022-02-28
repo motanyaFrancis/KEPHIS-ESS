@@ -20,13 +20,17 @@ def Leave_Request(request):
 
     Access_Point = config.O_DATA.format("/QyLeaveApplications")
     LeaveTypes = config.O_DATA.format("/QyLeaveTypes")
+    LeavePlanner = config.O_DATA.format("/QyLeavePlannerLines")
     try:
         response = session.get(Access_Point, timeout=10).json()
         res_types = session.get(LeaveTypes, timeout=10).json()
+        res_planner = session.get(LeavePlanner, timeout=10).json()
         open = []
         Approved = []
         Rejected = []
+        Pending = []
         Leave = res_types['value']
+        Planner = res_planner['value']
         for imprest in response['value']:
             if imprest['Status'] == 'Open' and imprest['User_ID'] == request.session['User_ID']:
                 output_json = json.dumps(imprest)
@@ -37,25 +41,23 @@ def Leave_Request(request):
             if imprest['Status'] == 'Rejected' and imprest['User_ID'] == request.session['User_ID']:
                 output_json = json.dumps(imprest)
                 Rejected.append(json.loads(output_json))
+            if imprest['Status'] == "Pending Approval" and imprest['User_ID'] == request.session['User_ID']:
+                output_json = json.dumps(imprest)
+                Pending.append(json.loads(output_json))
         counts = len(open)
-
-        request.session['Open_Leave'] = counts
-        open_leave = request.session['Open_Leave']
+        pend = len(Pending)
 
         counter = len(Approved)
-        request.session['Approved_Leave'] = counter
-        Approved_Leave = request.session['Approved_Leave']
 
         reject = len(Rejected)
-        request.session['Rejected_Leave'] = reject
-        Rejected_Leave = request.session['Rejected_Leave']
+
     except requests.exceptions.ConnectionError as e:
         print(e)
 
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": open, "count": counts,
            "response": Approved, "counter": counter, "rej": Rejected,
-           'reject': reject, 'leave': Leave}
+           'reject': reject, 'leave': Leave, "plan": Planner, "pend": pend, "pending": Pending}
     return render(request, 'leave.html', ctx)
 
 
@@ -65,26 +67,24 @@ def CreateLeave(request):
     usersId = request.session['User_ID']
     dimension3 = ''
     leaveType = ""
-    plannerStartDate = ''
-    isReturnSameDay = ''
+    plannerStartDate = "",
     daysApplied = ""
-    isLeaveAllowancePayable = ""
+    isReturnSameDay = ''
     myAction = 'insert'
     if request.method == 'POST':
         try:
             leaveType = request.POST.get('leaveType')
-            plannerStartDate = request.POST.get('plannerStartDate')
-            isReturnSameDay = request.POST.get('isReturnSameDay')
+            plannerStartDate = datetime.strptime(
+                (request.POST.get('plannerStartDate')), '%Y-%m-%d')
             daysApplied = int(request.POST.get('daysApplied'))
-            isLeaveAllowancePayable = request.POST.get(
-                'isLeaveAllowancePayable')
+            isReturnSameDay = request.POST.get('isReturnSameDay')
         except ValueError as e:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('leave')
     print(plannerStartDate)
     try:
         response = config.CLIENT.service.FnLeaveApplication(
-            applicationNo, employeeNo, usersId, dimension3, leaveType, plannerStartDate, isReturnSameDay, daysApplied, isLeaveAllowancePayable, myAction)
+            applicationNo, employeeNo, usersId, dimension3, leaveType, plannerStartDate, daysApplied, isReturnSameDay, myAction)
         messages.success(request, "You have successfully  Added!!")
         print(response)
     except Exception as e:
@@ -105,6 +105,7 @@ def LeaveDetail(request, pk):
         res_approver = session.get(Approver, timeout=10).json()
         openClaim = []
         Approvers = []
+        Pending = []
         for approver in res_approver['value']:
             if approver['Document_No_'] == pk:
                 output_json = json.dumps(approver)
@@ -130,11 +131,17 @@ def LeaveDetail(request, pk):
                 for claim in openClaim:
                     if claim['Application_No'] == pk:
                         res = claim
+            if claim['Status'] == "Pending Approval" and claim['User_ID'] == request.session['User_ID']:
+                output_json = json.dumps(claim)
+                Pending.append(json.loads(output_json))
+                for claim in Pending:
+                    if claim['Application_No'] == pk:
+                        res = claim
+                        if claim['Status'] == 'Pending Approval':
+                            state = 2
     except requests.exceptions.ConnectionError as e:
         print(e)
-    request.session['documentNo'] = pk
-    Leave_No = request.session['documentNo']
-    print("Leave Number", Leave_No)
+
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": res,
            "Approvers": Approvers, "state": state}
@@ -142,27 +149,45 @@ def LeaveDetail(request, pk):
 
 
 def LeaveApproval(request, pk):
-    entryNo = 0
-    documentNo = pk
-    userID = request.session['User_ID']
-    approvalComments = ""
-    myAction = 'insert'
+    employeeNo = request.session['Employee_No_']
+    applicationNo = ""
     if request.method == 'POST':
         try:
-            approvalComments = request.POST.get('approvalComments')
-        except ValueError:
+            applicationNo = request.POST.get('applicationNo')
+        except ValueError as e:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
-            return redirect('LeaveDetail', pk=documentNo)
+            return redirect('LeaveDetail', pk=pk)
     try:
-        response = config.CLIENT.service.FnDocumentApproval(
-            entryNo, documentNo, userID, approvalComments, myAction)
-        messages.success(request, "Successfully Added!!")
+        response = config.CLIENT.service.FnRequestLeaveApproval(
+            employeeNo, applicationNo)
+        messages.success(request, "Approval Request Successfully Sent!!")
         print(response)
-        return redirect('LeaveDetail', pk=documentNo)
+        return redirect('LeaveDetail', pk=pk)
     except Exception as e:
         messages.error(request, e)
         print(e)
-    return redirect('LeaveDetail', pk=documentNo)
+    return redirect('LeaveDetail', pk=pk)
+
+
+def LeaveCancelApproval(request, pk):
+    employeeNo = request.session['Employee_No_']
+    applicationNo = ""
+    if request.method == 'POST':
+        try:
+            applicationNo = request.POST.get('applicationNo')
+        except ValueError as e:
+            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            return redirect('LeaveDetail', pk=pk)
+    try:
+        response = config.CLIENT.service.FnCancelLeaveApproval(
+            employeeNo, applicationNo)
+        messages.success(request, "Cancel Request Successfully Sent!!")
+        print(response)
+        return redirect('LeaveDetail', pk=pk)
+    except Exception as e:
+        messages.error(request, e)
+        print(e)
+    return redirect('LeaveDetail', pk=pk)
 
 
 def Training_Request(request):
@@ -181,6 +206,7 @@ def Training_Request(request):
         open = []
         Approved = []
         Rejected = []
+        Pending = []
         cur = res_currency['value']
         trains = res_train['value']
         destinations = res_dest['value']
@@ -194,23 +220,22 @@ def Training_Request(request):
             if imprest['Status'] == 'Rejected' and imprest['Employee_No'] == request.session['Employee_No_']:
                 output_json = json.dumps(imprest)
                 Rejected.append(json.loads(output_json))
+            if imprest['Status'] == 'Pending Approval' and imprest['Employee_No'] == request.session['Employee_No_']:
+                output_json = json.dumps(imprest)
+                Pending.append(json.loads(output_json))
         counts = len(open)
-        request.session['Open_Train'] = counts
-        Open_Train = request.session['Open_Train']
 
         counter = len(Approved)
-        request.session['App_Train'] = counter
-        App_Train = request.session['App_Train']
 
         reject = len(Rejected)
-        request.session['Rej_Train'] = reject
-        Rej_Train = request.session['Rej_Train']
+
+        pend = len(Pending)
     except requests.exceptions.ConnectionError as e:
         print(e)
 
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": open, "count": counts, "response": Approved, "counter": counter, "rej": Rejected,
-           'reject': reject, 'cur': cur, "train": trains, "des": destinations}
+           'reject': reject, 'cur': cur, "train": trains, "des": destinations, "pend": pend, "pending": Pending}
     return render(request, 'training.html', ctx)
 
 
@@ -262,6 +287,7 @@ def TrainingDetail(request, pk):
         res_approver = session.get(Approver, timeout=10).json()
         openClaim = []
         Approvers = []
+        Pending = []
         for approver in res_approver['value']:
             if approver['Document_No_'] == pk:
                 output_json = json.dumps(approver)
@@ -287,6 +313,14 @@ def TrainingDetail(request, pk):
                 for claim in openClaim:
                     if claim['Request_No_'] == pk:
                         res = claim
+            if claim['Status'] == 'Pending Approval' and claim['Employee_No'] == request.session['Employee_No_']:
+                output_json = json.dumps(claim)
+                Pending.append(json.loads(output_json))
+                for claim in Pending:
+                    if claim['Request_No_'] == pk:
+                        res = claim
+                        if claim['Status'] == 'Pending Approval':
+                            state = 2
     except requests.exceptions.ConnectionError as e:
         print(e)
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
@@ -317,172 +351,3 @@ def TrainingApproval(request, pk):
         messages.error(request, e)
         print(e)
     return redirect('TrainingDetail', pk=documentNo)
-
-
-def Loan_Request(request):
-    session = requests.Session()
-    session.auth = config.AUTHS
-
-    Access_Point = config.O_DATA.format("/QyLoansRegister")
-    Banks = config.O_DATA.format("/QyBanks")
-    Branch_Name = config.O_DATA.format("/QyBankBranches")
-    PMLNo = config.O_DATA.format("/QyCustomers")
-    try:
-        response = session.get(Access_Point, timeout=10).json()
-        res_banks = session.get(Banks, timeout=10).json()
-        res_branch = session.get(Branch_Name, timeout=10).json()
-        res_PML = session.get(PMLNo, timeout=10).json()
-        open = []
-        Approved = []
-        Rejected = []
-        PMLs = []
-        Bank_response = res_banks['value']
-        Branch_Code = res_branch['value']
-        for pml in res_PML['value']:
-            if pml['PML'] == True:
-                output_json = json.dumps(pml)
-                PMLs.append(json.loads(output_json))
-        for imprest in response['value']:
-            if imprest['Status'] == 'Open' and imprest['User_ID'] == request.session['User_ID']:
-                output_json = json.dumps(imprest)
-                open.append(json.loads(output_json))
-            if imprest['Status'] == 'Released' and imprest['User_ID'] == request.session['User_ID']:
-                output_json = json.dumps(imprest)
-                Approved.append(json.loads(output_json))
-            if imprest['Status'] == 'Rejected' and imprest['User_ID'] == request.session['User_ID']:
-                output_json = json.dumps(imprest)
-                Rejected.append(json.loads(output_json))
-        counts = len(open)
-        request.session['Open_Loan'] = counts
-        Open_Loan = request.session['Open_Loan']
-
-        counter = len(Approved)
-        request.session['APP_Loan'] = counter
-        APP_Loan = request.session['APP_Loan']
-
-        reject = len(Rejected)
-        request.session['Rej_Loan'] = reject
-        Rej_Loan = request.session['Rej_Loan']
-    except requests.exceptions.ConnectionError as e:
-        print(e)
-
-    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-    ctx = {"today": todays_date, "res": open, "count": counts,
-           "response": Approved, "counter": counter, "rej": Rejected,
-           'reject': reject, "banks": Bank_response, "branch": Branch_Code, "pml": PMLs}
-    return render(request, 'loan.html', ctx)
-
-
-def CreateLoanRequest(request):
-    loanNo = ''
-    requestedDate = ''
-    usersId = request.session['User_ID']
-    pmlNo = ''
-    loanProductType = ''
-    loanDuration = ''
-    requestedAmount = ''
-    interestCalculationMethod = ''
-    repaymentFrequency = ''
-    bankName = ''
-    bankAccountNo = ''
-    bankBranchName = ''
-    myAction = 'insert'
-    if request.method == 'POST':
-        try:
-            requestedDate = request.POST.get('requestedDate')
-            pmlNo = request.POST.get('pmlNo')
-            loanProductType = request.POST.get('loanProductType')
-            loanDuration = int(request.POST.get('loanDuration'))
-            requestedAmount = float(request.POST.get('requestedAmount'))
-            interestCalculationMethod = request.POST.get(
-                'interestCalculationMethod')
-            repaymentFrequency = request.POST.get('repaymentFrequency')
-            bankName = request.POST.get('bankName')
-            bankAccountNo = request.POST.get('bankAccountNo')
-            bankBranchName = request.POST.get('bankBranchName')
-        except ValueError:
-            messages.error(request, "Not sent. Invalid Input, Try Again!!")
-            return redirect('loan')
-    try:
-        response = config.CLIENT.service.FnTrainingRequest(
-            loanNo, requestedDate, usersId, pmlNo, loanProductType, loanDuration, requestedAmount, interestCalculationMethod, repaymentFrequency, bankName, bankAccountNo, bankBranchName, myAction)
-        messages.success(request, "Successfully Added!!")
-        print(response)
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
-    return redirect('loan')
-
-
-def LoanLines(request, pk):
-    session = requests.Session()
-    session.auth = config.AUTHS
-    state = ''
-    res = ''
-    Access_Point = config.O_DATA.format("/QyLoansRegister")
-    try:
-        response = session.get(Access_Point, timeout=10).json()
-        openClaim = []
-        for claim in response['value']:
-            if claim['Status'] == 'Released' and claim['User_ID'] == request.session['User_ID']:
-                output_json = json.dumps(claim)
-                openClaim.append(json.loads(output_json))
-                for claim in openClaim:
-                    if claim['No_'] == pk:
-                        res = claim
-            if claim['Status'] == 'Open' and claim['User_ID'] == request.session['User_ID']:
-                output_json = json.dumps(claim)
-                openClaim.append(json.loads(output_json))
-                for claim in openClaim:
-                    if claim['No_'] == pk:
-                        res = claim
-                        if claim['Status'] == 'Open':
-                            state = 1
-            if claim['Status'] == 'Rejected' and claim['User_ID'] == request.session['User_ID']:
-                output_json = json.dumps(claim)
-                openClaim.append(json.loads(output_json))
-                for claim in openClaim:
-                    if claim['No_'] == pk:
-                        res = claim
-    except requests.exceptions.ConnectionError as e:
-        print(e)
-    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-    ctx = {"today": todays_date, "res": res, "state": state}
-    return render(request, 'LoanDetails.html', ctx)
-
-
-def FnLoanCollateral(request, pk):
-    collateralCode = ''
-    loanNo = pk
-    collateralType = ""
-    maturityDate = ""
-    collateralValue = ""
-    isPerfected = ''
-    isExcludedActivities = ""
-    isNemaCompliant = ""
-    securityType = ""
-    myAction = 'insert'
-    if request.method == 'POST':
-        try:
-            collateralType = request.POST.get('collateralType')
-            maturityDate = request.POST.get('maturityDate')
-            collateralValue = float(request.POST.get('collateralValue'))
-            isPerfected = request.POST.get('isPerfected')
-            isExcludedActivities = int(
-                request.POST.get('isExcludedActivities'))
-            isNemaCompliant = int(request.POST.get('isNemaCompliant'))
-            securityType = request.POST.get('securityType')
-
-        except ValueError:
-            messages.error(request, "Not sent. Invalid Input, Try Again!!")
-            return redirect('IMPDetails', pk=loanNo)
-    try:
-        response = config.CLIENT.service.FnImprestSurrenderLine(
-            collateralCode, loanNo, collateralType, maturityDate, collateralValue, isPerfected, isExcludedActivities, isNemaCompliant, securityType, myAction)
-        messages.success(request, "Successfully Added!!")
-        print(response)
-        return redirect('LoanLines', pk=loanNo)
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
-    return redirect('LoanLines', pk=loanNo)

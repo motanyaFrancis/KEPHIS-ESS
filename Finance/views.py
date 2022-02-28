@@ -23,6 +23,7 @@ def ImprestRequisition(request):
         open = []
         Approved = []
         Rejected = []
+        Pending = []
         for imprest in response['value']:
             if imprest['Status'] == 'Open' and imprest['User_Id'] == request.session['User_ID']:
                 output_json = json.dumps(imprest)
@@ -33,24 +34,24 @@ def ImprestRequisition(request):
             if imprest['Status'] == 'Rejected' and imprest['User_Id'] == request.session['User_ID']:
                 output_json = json.dumps(imprest)
                 Rejected.append(json.loads(output_json))
+            if imprest['Status'] == 'Pending Approval' and imprest['User_Id'] == request.session['User_ID']:
+                output_json = json.dumps(imprest)
+                Pending.append(json.loads(output_json))
         counts = len(open)
-        request.session['open_imprest'] = counts
-        open_imprest = request.session['open_imprest']
+
+        pend = len(Pending)
 
         counter = len(Approved)
-        request.session['App_imprest'] = counter
-        App_imprest = request.session['App_imprest']
 
         reject = len(Rejected)
-        request.session['Rej_imprest'] = reject
-        Rej_imprest = request.session['Rej_imprest']
+
     except requests.exceptions.ConnectionError as e:
         print(e)
 
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
 
     ctx = {"today": todays_date, "res": open, "count": counts,
-           "response": Approved, "counter": counter, "reject": Rejected, "rej": reject}
+           "response": Approved, "counter": counter, "reject": Rejected, "rej": reject, "pend": pend, "pending": Pending}
     return render(request, 'imprestReq.html', ctx)
 
 
@@ -113,6 +114,7 @@ def ImprestDetails(request, pk):
         Area = []
         BizGroup = []
         Approvers = []
+        Pending = []
         destinations = res_dest['value']
         for approver in res_approver['value']:
             if approver['Document_No_'] == pk:
@@ -150,6 +152,14 @@ def ImprestDetails(request, pk):
                 for imprest in openImp:
                     if imprest['No_'] == pk:
                         res = imprest
+            if imprest['Status'] == "Pending Approval" and imprest['User_Id'] == request.session['User_ID']:
+                output_json = json.dumps(imprest)
+                Pending.append(json.loads(output_json))
+                for imprest in Pending:
+                    if imprest['No_'] == pk:
+                        res = imprest
+                        if imprest['Status'] == 'Open':
+                            state = 2
     except requests.exceptions.ConnectionError as e:
         print(e)
     Lines_Res = config.O_DATA.format("/QyImprestLines")
@@ -166,6 +176,70 @@ def ImprestDetails(request, pk):
     ctx = {"today": todays_date, "res": res,
            "line": openLines, "state": state, "Approvers": Approvers, "type": res_type, "area": Area, "biz": BizGroup, "des": destinations}
     return render(request, 'imprestDetail.html', ctx)
+
+
+def ImprestApproval(request, pk):
+    employeeNo = request.session['Employee_No_']
+    requisitionNo = ""
+    if request.method == 'POST':
+        try:
+            requisitionNo = request.POST.get('requisitionNo')
+            print(requisitionNo)
+        except ValueError as e:
+            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            return redirect('IMPDetails', pk=pk)
+    try:
+        response = config.CLIENT.service.FnRequestPaymentApproval(
+            employeeNo, requisitionNo)
+        messages.success(request, "Approval Request Successfully Sent!!")
+        print(response)
+        return redirect('IMPDetails', pk=pk)
+    except Exception as e:
+        messages.error(request, e)
+        print(e)
+    return redirect('IMPDetails', pk=pk)
+
+
+def FnRequestPaymentApproval(request, pk):
+    employeeNo = request.session['Employee_No_']
+    requisitionNo = ""
+    if request.method == 'POST':
+        try:
+            requisitionNo = request.POST.get('requisitionNo')
+        except ValueError as e:
+            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            return redirect('IMPDetails', pk=pk)
+    try:
+        response = config.CLIENT.service.FnRequestPaymentApproval(
+            employeeNo, requisitionNo)
+        messages.success(request, "Approval Request Successfully Sent!!")
+        print(response)
+        return redirect('IMPDetails', pk=pk)
+    except Exception as e:
+        messages.error(request, e)
+        print(e)
+    return redirect('IMPDetails', pk=pk)
+
+
+def ImprestCancelApproval(request, pk):
+    employeeNo = request.session['Employee_No_']
+    requisitionNo = ""
+    if request.method == 'POST':
+        try:
+            requisitionNo = request.POST.get('requisitionNo')
+        except ValueError as e:
+            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            return redirect('IMPDetails', pk=pk)
+    try:
+        response = config.CLIENT.service.FnCancelPaymentApproval(
+            employeeNo, requisitionNo)
+        messages.success(request, "Cancel Request Successfully Sent!!")
+        print(response)
+        return redirect('IMPDetails', pk=pk)
+    except Exception as e:
+        messages.error(request, e)
+        print(e)
+    return redirect('IMPDetails', pk=pk)
 
 
 def CreateImprestLines(request, pk):

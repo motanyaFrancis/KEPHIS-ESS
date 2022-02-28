@@ -7,6 +7,13 @@ urlpatterns = [
     path('CreateImp', views.CreateImprest, name='create'),
     path('CreateImpLines/<str:pk>',
          views.CreateImprestLines, name='CreateImpLines'),
+    path('ImprestApproval/<str:pk>',
+         views.ImprestApproval, name='ImprestApproval'),
+
+    path('Impres/<str:pk>', views.FnRequestPaymentApproval, name='Impres'),
+
+    path('ImpCancel/<str:pk>',
+         views.ImprestCancelApproval, name='ImpCancel'),
     path('Imp/<str:pk>', views.ImprestDetails, name='IMPDetails'),
     path('ImpApprove/<str:pk>', views.ImprestApproval, name='ImpApprove'),
     path('ImprestSurrender', views.ImprestSurrender, name='imprestSurr'),
@@ -21,4 +28,5 @@ urlpatterns = [
     path('Claim/<str:pk>', views.ClaimDetails, name='ClaimDetail'),
     path('ClaimLines/<str:pk>', views.CreateClaimLines, name='ClaimLines'),
     path('ClaimApprove/<str:pk>', views.ClaimApproval, name='ClaimApprove'),
+
 ]

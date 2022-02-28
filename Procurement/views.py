@@ -159,13 +159,13 @@ def RepairRequest(request):
         Approved = []
         Rejected = []
         for document in response['value']:
-            if document['Status'] == 'Open' and document['Employee_No_'] == request.session['Employee_No_']:
+            if document['Status'] == 'Open' and document['Requested_By'] == f"NAV-TESTDAN\\{request.session['User_ID']}":
                 output_json = json.dumps(document)
                 open.append(json.loads(output_json))
-            if document['Status'] == 'Released' and document['Employee_No_'] == request.session['Employee_No_']:
+            if document['Status'] == 'Released' and document['Requested_By'] == f"NAV-TESTDAN\\{request.session['User_ID']}":
                 output_json = json.dumps(document)
                 Approved.append(json.loads(output_json))
-            if document['Status'] == 'Rejected' and document['Employee_No_'] == request.session['Employee_No_']:
+            if document['Status'] == 'Rejected' and document['Requested_By'] == f"NAV-TESTDAN\\{request.session['User_ID']}":
                 output_json = json.dumps(document)
                 Rejected.append(json.loads(output_json))
         counts = len(open)
@@ -230,21 +230,20 @@ def RepairRequestDetails(request, pk):
                 output_json = json.dumps(approver)
                 Approvers.append(json.loads(output_json))
         for document in response['value']:
-            if document['Status'] == 'Released' and document['Employee_No_'] == request.session['Employee_No_']:
+            if document['Status'] == 'Released' and document['Requested_By'] == f"NAV-TESTDAN\\{request.session['User_ID']}":
                 output_json = json.dumps(document)
                 openImp.append(json.loads(output_json))
                 for document in openImp:
                     if document['No_'] == pk:
                         res = document
-            if document['Status'] == 'Open' and document['Employee_No_'] == request.session['Employee_No_']:
-                output_json = json.dumps(document)
+            if document['Status'] == 'Open' and document['Requested_By'] == f"NAV-TESTDAN\\{request.session['User_ID']}":
                 openImp.append(json.loads(output_json))
                 for document in openImp:
                     if document['No_'] == pk:
                         res = document
                         if document['Status'] == 'Open':
                             state = 1
-            if document['Status'] == 'Released' and document['Employee_No_'] == request.session['Employee_No_']:
+            if document['Status'] == 'Released' and document['Requested_By'] == f"NAV-TESTDAN\\{request.session['User_ID']}":
                 output_json = json.dumps(document)
                 openImp.append(json.loads(output_json))
                 for document in openImp:

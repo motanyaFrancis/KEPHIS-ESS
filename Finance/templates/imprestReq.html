@@ -59,6 +59,10 @@
                                 <a href="#reject" class="nav-link" data-bs-toggle="tab">Rejected Imprest Requisitions
                                     ({{rej}})</a>
                             </li>
+                            <li class="nav-item">
+                                <a href="#pending" class="nav-link" data-bs-toggle="tab">Pending Approval Imprest
+                                    ({{pend}})</a>
+                            </li>
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane fade show active" id="home">
@@ -161,6 +165,46 @@
                                         </thead>
                                         <tbody>
                                             {% for res in reject %}
+                                            <tr>
+                                                <td>{{res.No_}}</td>
+                                                <td id="rap">{{res.Date}}</td>
+                                                <td>{{res.Imprest}}</td>
+                                                <td>{{res.Payee}}</td>
+                                                <td>{{res.Travel_Type}}</td>
+                                                <td>{{res.User_Id}}</td>
+                                                <td>{{res.Status}}</td>
+                                                <td>
+                                                    <a href="{% url 'IMPDetails' res.No_%}"
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top" title="View"><i
+                                                            class="fa fa-table"></i></a>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="pending">
+                                <h4 class="mt-2">Pending Approval Imprest Requisitions</h4>
+                                <div class="card-body">
+                                    <table id="example"
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
+                                        <thead>
+                                            <tr id="tops">
+                                                <th id="long">Imprest No</th>
+                                                <th>Date</th>
+                                                <th>Imprest</th>
+                                                <th>Imprest Payee</th>
+                                                <th>Travel Type</th>
+                                                <th>Created By</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for res in pending %}
                                             <tr>
                                                 <td>{{res.No_}}</td>
                                                 <td id="rap">{{res.Date}}</td>
