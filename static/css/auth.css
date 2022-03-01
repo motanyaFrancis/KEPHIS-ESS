@@ -70,13 +70,13 @@
 }
 
 .l-image img {
-    max-width: 250px;
-    height: 250px;
+    max-width: 200px;
+    height: 200px;
 }
 
 @media screen and (min-width: 1400px) {
     .l-image img {
-        max-width: 450px;
+        max-width: 400px;
     }
 }
 
