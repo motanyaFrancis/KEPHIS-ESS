@@ -15,7 +15,6 @@ import enum
 def PurchaseRequisition(request):
     session = requests.Session()
     session.auth = config.AUTHS
-
     Access_Point = config.O_DATA.format("/QyPurchaseRequisitionHeaders")
     try:
         response = session.get(Access_Point, timeout=10).json()
@@ -204,7 +203,7 @@ def CreatePurchaseLines(request, pk):
 
 
 def PurchaseApproval(request, pk):
-    employeeNo = request.session['Employee_No_']
+    myUserID = request.session['User_ID']
     requisitionNo = ""
     if request.method == 'POST':
         try:
@@ -213,8 +212,8 @@ def PurchaseApproval(request, pk):
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('PurchaseDetail', pk=pk)
     try:
-        response = config.CLIENT.service.FnRequestPaymentApproval(
-            employeeNo, requisitionNo)
+        response = config.CLIENT.service.FnRequestInternalRequestApproval(
+            myUserID, requisitionNo)
         messages.success(request, "Approval Request Successfully Sent!!")
         print(response)
         return redirect('PurchaseDetail', pk=pk)
@@ -257,16 +256,16 @@ def RepairRequest(request):
         Rejected = []
         Pending = []
         for document in response['value']:
-            if document['Status'] == 'Open' and document['Requested_By'] == f"NAV-TESTDAN\\{request.session['User_ID']}":
+            if document['Status'] == 'Open' and document['Requested_By'] == request.session['User_ID']:
                 output_json = json.dumps(document)
                 open.append(json.loads(output_json))
-            if document['Status'] == 'Released' and document['Requested_By'] == f"NAV-TESTDAN\\{request.session['User_ID']}":
+            if document['Status'] == 'Released' and document['Requested_By'] == request.session['User_ID']:
                 output_json = json.dumps(document)
                 Approved.append(json.loads(output_json))
-            if document['Status'] == 'Rejected' and document['Requested_By'] == f"NAV-TESTDAN\\{request.session['User_ID']}":
+            if document['Status'] == 'Rejected' and document['Requested_By'] == request.session['User_ID']:
                 output_json = json.dumps(document)
                 Rejected.append(json.loads(output_json))
-            if document['Status'] == "Pending Approval" and document['Employee_No_'] == request.session['Employee_No_']:
+            if document['Status'] == "Pending Approval" and document['Requested_By'] == request.session['User_ID']:
                 output_json = json.dumps(document)
                 Pending.append(json.loads(output_json))
         counts = len(open)
@@ -335,7 +334,7 @@ def RepairRequestDetails(request, pk):
                 output_json = json.dumps(approver)
                 Approvers.append(json.loads(output_json))
         for document in response['value']:
-            if document['Status'] == 'Open' and document['Requested_By'] == f"NAV-TESTDAN\\{request.session['User_ID']}":
+            if document['Status'] == 'Open' and document['Requested_By'] == request.session['User_ID']:
                 output_json = json.dumps(document)
                 openImp.append(json.loads(output_json))
                 for document in openImp:
@@ -343,19 +342,19 @@ def RepairRequestDetails(request, pk):
                         res = document
                         if document['Status'] == 'Open':
                             state = 1
-            if document['Status'] == 'Released' and document['Requested_By'] == f"NAV-TESTDAN\\{request.session['User_ID']}":
+            if document['Status'] == 'Released' and document['Requested_By'] == request.session['User_ID']:
                 openImp.append(json.loads(output_json))
                 for document in openImp:
                     if document['No_'] == pk:
                         res = document
 
-            if document['Status'] == 'Rejected' and document['Requested_By'] == f"NAV-TESTDAN\\{request.session['User_ID']}":
+            if document['Status'] == 'Rejected' and document['Requested_By'] == request.session['User_ID']:
                 output_json = json.dumps(document)
                 openImp.append(json.loads(output_json))
                 for document in openImp:
                     if document['No_'] == pk:
                         res = document
-            if document['Status'] == "Pending Approval" and document['Requested_By'] == f"NAV-TESTDAN\\{request.session['User_ID']}":
+            if document['Status'] == "Pending Approval" and document['Requested_By'] == request.session['User_ID']:
                 output_json = json.dumps(document)
                 openImp.append(json.loads(output_json))
                 for document in openImp:
@@ -465,16 +464,16 @@ def StoreRequest(request):
         Pending = []
         Stores = Store_res['value']
         for document in response['value']:
-            if document['Status'] == 'Open' and document['Requested_By'] == f"NAV-TESTDAN\\{request.session['User_ID']}":
+            if document['Status'] == 'Open' and document['Requested_By'] == request.session['User_ID']:
                 output_json = json.dumps(document)
                 open.append(json.loads(output_json))
-            if document['Status'] == 'Released' and document['Requested_By'] == f"NAV-TESTDAN\\{request.session['User_ID']}":
+            if document['Status'] == 'Released' and document['Requested_By'] == request.session['User_ID']:
                 output_json = json.dumps(document)
                 Approved.append(json.loads(output_json))
-            if document['Status'] == 'Rejected' and document['Requested_By'] == f"NAV-TESTDAN\\{request.session['User_ID']}":
+            if document['Status'] == 'Rejected' and document['Requested_By'] == request.session['User_ID']:
                 output_json = json.dumps(document)
                 Rejected.append(json.loads(output_json))
-            if document['Status'] == "Pending Approval" and document['Requested_By'] == f"NAV-TESTDAN\\{request.session['User_ID']}":
+            if document['Status'] == "Pending Approval" and document['Requested_By'] == request.session['User_ID']:
                 output_json = json.dumps(document)
                 Pending.append(json.loads(output_json))
         counts = len(open)
@@ -544,13 +543,13 @@ def StoreRequestDetails(request, pk):
                 output_json = json.dumps(approver)
                 Approvers.append(json.loads(output_json))
         for document in response['value']:
-            if document['Status'] == 'Released' and document['Requested_By'] == f"NAV-TESTDAN\\{request.session['User_ID']}":
+            if document['Status'] == 'Released' and document['Requested_By'] == request.session['User_ID']:
                 output_json = json.dumps(document)
                 openImp.append(json.loads(output_json))
                 for document in openImp:
                     if document['No_'] == pk:
                         res = document
-            if document['Status'] == 'Open' and document['Requested_By'] == f"NAV-TESTDAN\\{request.session['User_ID']}":
+            if document['Status'] == 'Open' and document['Requested_By'] == request.session['User_ID']:
                 output_json = json.dumps(document)
                 openImp.append(json.loads(output_json))
                 for document in openImp:
@@ -558,13 +557,13 @@ def StoreRequestDetails(request, pk):
                         res = document
                         if document['Status'] == 'Open':
                             state = 1
-            if document['Status'] == 'Rejected' and document['Requested_By'] == f"NAV-TESTDAN\\{request.session['User_ID']}":
+            if document['Status'] == 'Rejected' and document['Requested_By'] == request.session['User_ID']:
                 output_json = json.dumps(document)
                 openImp.append(json.loads(output_json))
                 for document in openImp:
                     if document['No_'] == pk:
                         res = document
-            if document['Status'] == "Pending Approval" and document['Requested_By'] == f"NAV-TESTDAN\\{request.session['User_ID']}":
+            if document['Status'] == "Pending Approval" and document['Requested_By'] == request.session['User_ID']:
                 output_json = json.dumps(document)
                 openImp.append(json.loads(output_json))
                 for document in openImp:

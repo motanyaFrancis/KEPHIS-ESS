@@ -99,10 +99,18 @@ CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
 # print(response)
 
 
-# employeeNo = 'AH'
-# applicationNo = "IMP00023"
+# myUserID = "NAV-TESTDAN\\NAVADMIN"
+# applicationNo = "STREQ-000009"
 
 
-# response = CLIENT.service.FnCancelPaymentApproval(employeeNo,
-#                                                   applicationNo)
+# response = CLIENT.service.FnRequestInternalRequestApproval(myUserID,
+#                                                            applicationNo)
 # print(response)
+
+myUserID = "NAVADMIN"
+trainingNo = "TRQ-00010"
+
+
+response = CLIENT.service.FnRequestTrainingApproval(myUserID,
+                                                    trainingNo)
+print(response)

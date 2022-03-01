@@ -169,7 +169,7 @@ django_heroku.settings(locals())
 
 AUTHS = Session()
 
-WEB_SERVICE_PWD = 'W3C0d3@llD@y'
+WEB_SERVICE_PWD = config('WEB_SERVICE_PWD')
 
 O_DATA = "http://20.121.189.145:7048/BC140/ODataV4/Company('KMPDC'){}"
 BASE_URL = 'http://20.121.189.145:7047/BC140/WS/KMPDC/Codeunit/WebPortal'

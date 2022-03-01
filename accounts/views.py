@@ -40,6 +40,7 @@ def login_request(request):
                     full = request.session['fullname']
                     Emp_No = request.session['No_']
                     print("logged In as:", full)
+                    print("UserID", user_id)
             for data in res_data['value']:
                 if data['User_ID'] == username:
                     output_json = json.dumps(data)
