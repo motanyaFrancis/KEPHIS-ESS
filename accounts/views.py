@@ -7,6 +7,7 @@ import requests
 from requests import Session
 from requests_ntlm import HttpNtlmAuth
 import datetime
+from datetime import date
 from zeep import Client
 from zeep.transports import Transport
 from django.contrib import messages
@@ -14,6 +15,10 @@ from django.contrib import messages
 
 
 def login_request(request):
+    todays_date = date.today()
+    year = todays_date.year
+    request.session['years'] = year
+    print(request.session['years'])
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -59,5 +64,5 @@ def login_request(request):
         except:
             messages.error(request, "Invalid username or password!!")
             return redirect('auth')
-
-    return render(request, 'auth.html')
+    ctx = {"year": year}
+    return render(request, 'auth.html', ctx)

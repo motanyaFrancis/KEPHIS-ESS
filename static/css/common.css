@@ -107,20 +107,28 @@
 
 .table thead {
     height: 3rem;
+    background: var(--first-color);
 }
 
 .table thead tr th {
     color: white;
-    font-family: var(--normal-font);
-    text-align: inherit;
-    font-size: .9rem;
+    text-shadow: 0 1px 0 var(--first-color);
     font-weight: bold;
-    background: var(--green-color);
-    text-align: -webkit-match-parent;
+
 }
 
+.page-link {
+    color: var(--dark-color) !important;
+}
+
+.page-item.active .page-link {
+    background-color: var(--olive) !important;
+    border: 1px solid var(--olive);
+    color: white;
+}
+
+
 .table tbody tr td {
-    font-size: .8rem;
     color: #222;
     text-align: inherit;
 }
@@ -130,13 +138,13 @@
 }
 
 div.dataTables_filter input {
-    border-color: var(--green-color);
+    border-color: var(--first-color);
+    display: none;
 }
-
 
 @media screen and (max-width:375px) {
     div.dataTables_filter input {
-        border-color: var(--green-color);
+        border-color: var(--first-color);
     }
 }
 
