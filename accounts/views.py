@@ -21,8 +21,8 @@ def login_request(request):
     request.session['years'] = year
     print(request.session['years'])
     if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
+        username = request.POST.get('username').upper().strip()
+        password = request.POST.get('password').strip()
         user = Session()
         user.auth = HTTPBasicAuth(username, password)
         Access_Point = config.O_DATA.format("/QyEmployees")
