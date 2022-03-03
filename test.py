@@ -108,10 +108,10 @@ CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
 #                                                            applicationNo)
 # print(response)
 
-myUserID = "NAVADMIN"
-trainingNo = "TRQ-00012"
+myUserID = "WINNIE"
+trainingNo = "TRQ-00011"
 
 
-response = CLIENT.service.FnRequestTrainingApproval(myUserID,
-                                                    trainingNo)
+response = CLIENT.service.FnCancelTrainingApproval(myUserID,
+                                                   trainingNo)
 print(response)

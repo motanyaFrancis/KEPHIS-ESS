@@ -235,7 +235,7 @@ def FnCancelPurchaseApproval(request, pk):
     try:
         response = config.CLIENT.service.FnCancelPaymentApproval(
             employeeNo, requisitionNo)
-        messages.success(request, "Approval Request Successfully Sent!!")
+        messages.success(request, "Cancel Approval Successful !!")
         print(response)
         return redirect('PurchaseDetail', pk=pk)
     except Exception as e:
@@ -415,7 +415,7 @@ def FnCancelRepairApproval(request, pk):
     try:
         response = config.CLIENT.service.FnCancelPaymentApproval(
             employeeNo, requisitionNo)
-        messages.success(request, "Approval Request Successfully Sent!!")
+        messages.success(request, "Cancel Approval Successful !!")
         print(response)
         return redirect('RepairDetail', pk=pk)
     except Exception as e:
@@ -428,7 +428,7 @@ def CreateRepairLines(request, pk):
     requisitionNo = pk
     lineNo = 0
     assetCode = ''
-    description = 'Tests'
+    description = ''
     myAction = 'insert'
     if request.method == 'POST':
         try:
@@ -624,7 +624,7 @@ def FnCancelStoreApproval(request, pk):
     try:
         response = config.CLIENT.service.FnCancelPaymentApproval(
             employeeNo, requisitionNo)
-        messages.success(request, "Approval Request Successfully Sent!!")
+        messages.success(request, "Cancel Approval Successful !!")
         print(response)
         return redirect('StoreDetail', pk=pk)
     except Exception as e:

@@ -91,6 +91,7 @@ def CreateImprest(request):
         messages.success(request, "Successfully Added!!")
         print(response)
     except Exception as e:
+        messages.error(request, e)
         print(e)
     return redirect('imprestReq')
 
@@ -214,7 +215,7 @@ def FnCancelPaymentApproval(request, pk):
     try:
         response = config.CLIENT.service.FnCancelPaymentApproval(
             employeeNo, requisitionNo)
-        messages.success(request, "Approval Request Successfully Sent!!")
+        messages.success(request, "Cancel Approval Successful !!")
         print(response)
         return redirect('IMPDetails', pk=pk)
     except Exception as e:
@@ -341,6 +342,7 @@ def CreateSurrender(request):
         messages.success(request, "Successfully Added!!")
         print(response)
     except Exception as e:
+        messages.error(request, e)
         print(e)
     return redirect('imprestSurr')
 
@@ -482,7 +484,7 @@ def FnCancelSurrenderApproval(request, pk):
     try:
         response = config.CLIENT.service.FnCancelPaymentApproval(
             employeeNo, requisitionNo)
-        messages.success(request, "Approval Request Successfully Sent!!")
+        messages.success(request, "Cancel Approval Successful !!")
         print(response)
         return redirect('IMPSurrender', pk=pk)
     except Exception as e:
@@ -712,7 +714,7 @@ def FnCancelClaimApproval(request, pk):
     try:
         response = config.CLIENT.service.FnCancelPaymentApproval(
             employeeNo, requisitionNo)
-        messages.success(request, "Approval Request Successfully Sent!!")
+        messages.success(request, "Cancel Approval Successful !!")
         print(response)
         return redirect('ClaimDetail', pk=pk)
     except Exception as e:

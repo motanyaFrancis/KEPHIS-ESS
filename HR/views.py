@@ -29,8 +29,12 @@ def Leave_Request(request):
         Approved = []
         Rejected = []
         Pending = []
+        Plan = []
         Leave = res_types['value']
-        Planner = res_planner['value']
+        for planner in res_planner['value']:
+            if planner['Employee_No_'] == request.session['Employee_No_']:
+                output_json = json.dumps(planner)
+                Plan.append(json.loads(output_json))
         for imprest in response['value']:
             if imprest['Status'] == 'Open' and imprest['User_ID'] == request.session['User_ID']:
                 output_json = json.dumps(imprest)
@@ -59,7 +63,7 @@ def Leave_Request(request):
            "count": counts, "response": Approved,
            "counter": counter, "rej": Rejected,
            'reject': reject, 'leave': Leave,
-           "plan": Planner, "pend": pend,
+           "plan": Plan, "pend": pend,
            "pending": Pending}
     return render(request, 'leave.html', ctx)
 
@@ -184,7 +188,7 @@ def LeaveCancelApproval(request, pk):
     try:
         response = config.CLIENT.service.FnCancelLeaveApproval(
             employeeNo, applicationNo)
-        messages.success(request, "Cancel Request Successfully Sent!!")
+        messages.success(request, "Cancel Approval Request Successful !!")
         print(response)
         return redirect('LeaveDetail', pk=pk)
     except Exception as e:
@@ -338,17 +342,17 @@ def TrainingDetail(request, pk):
 
 
 def TrainingApproval(request, pk):
-    employeeNo = request.session['Employee_No_']
-    applicationNo = ""
+    myUserID = request.session['User_ID']
+    trainingNo = ""
     if request.method == 'POST':
         try:
-            applicationNo = request.POST.get('applicationNo')
+            trainingNo = request.POST.get('trainingNo')
         except ValueError as e:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('TrainingDetail', pk=pk)
     try:
-        response = config.CLIENT.service.FnRequestLeaveApproval(
-            employeeNo, applicationNo)
+        response = config.CLIENT.service.FnRequestTrainingApproval(
+            myUserID, trainingNo)
         messages.success(request, "Approval Request Successfully Sent!!")
         print(response)
         return redirect('TrainingDetail', pk=pk)
@@ -359,18 +363,18 @@ def TrainingApproval(request, pk):
 
 
 def TrainingCancelApproval(request, pk):
-    employeeNo = request.session['Employee_No_']
-    applicationNo = ""
+    myUserID = request.session['User_ID']
+    trainingNo = ""
     if request.method == 'POST':
         try:
-            applicationNo = request.POST.get('applicationNo')
+            trainingNo = request.POST.get('trainingNo')
         except ValueError as e:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('TrainingDetail', pk=pk)
     try:
-        response = config.CLIENT.service.FnCancelLeaveApproval(
-            employeeNo, applicationNo)
-        messages.success(request, "Cancel Request Successfully Sent!!")
+        response = config.CLIENT.service.FnCancelTrainingApproval(
+            myUserID, trainingNo)
+        messages.success(request, "Cancel Approval Request Successful !!")
         print(response)
         return redirect('TrainingDetail', pk=pk)
     except Exception as e:

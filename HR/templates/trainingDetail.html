@@ -98,22 +98,20 @@
                 </form>
                 {% if state == 1 %}
                 <div class="d-grid gap-2 my-3">
-                    <form action="{% url 'TrainApprove' res.Request_No_ %}" method="post" class="myForm"
-                        id="approvalForm">
+                    <form action="{% url 'TrainApprove' res.Request_No_ %}" method="post" class="myForm">
                         {% csrf_token %}
                         <div class="mb-3">
-                            <input type="hidden" hidden name="applicationNo" value="{{res.Application_No}}">
+                            <input type="hidden" name="trainingNo" value="{{res.Request_No_}}">
                         </div>
                         <button class="btn btn-info" type="submit">Request For Approval</button>
                     </form>
                 </div>
                 {% elif state == 2 %}
                 <div class="d-grid gap-2 my-3">
-                    <form action="{% url 'TrainCancel' res.Request_No_ %}" method="post" class="myForm"
-                        id="approvalForm">
+                    <form action="{% url 'TrainCancel' res.Request_No_ %}" method="post" class="myForm">
                         {% csrf_token %}
                         <div class="mb-3">
-                            <input type="hidden" hidden name="applicationNo" value="{{res.Application_No}}">
+                            <input type="hidden" name="trainingNo" value="{{res.Request_No_}}">
                         </div>
                         <button class="btn btn-info" type="submit">Cancel Request For Approval</button>
                     </form>

@@ -55,13 +55,14 @@ def ApproveDetails(request, pk):
 
 
 def All_Approved(request, pk):
-    entryNo = 0
+    entryNo = ''
     documentNo = pk
     userID = request.session['User_ID']
     approvalComments = ""
     myAction = 'approve'
     if request.method == 'POST':
         try:
+            entryNo = request.POST.get('entryNo')
             approvalComments = request.POST.get('approvalComments')
         except ValueError:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
@@ -75,17 +76,20 @@ def All_Approved(request, pk):
     except Exception as e:
         messages.error(request, e)
         print(e)
+
+    print(approvalComments)
     return redirect('ApproveData', pk=documentNo)
 
 
 def Rejected(request, pk):
-    entryNo = 0
+    entryNo = ''
     documentNo = pk
     userID = request.session['User_ID']
     approvalComments = ""
     myAction = 'reject'
     if request.method == 'POST':
         try:
+            entryNo = request.POST.get('entryNo')
             approvalComments = request.POST.get('approvalComments')
         except ValueError:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")

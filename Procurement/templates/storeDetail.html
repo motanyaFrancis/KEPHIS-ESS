@@ -189,7 +189,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="myForm needs-validation" action="" method="post" novalidate>
+                    <form class="myForm needs-validation" action="{% url 'CreateStoreLine' res.No_ %}" method="post"
+                        novalidate>
                         {% csrf_token %}
                         <div class="row">
                             <div class="col-md-12">
