@@ -20,7 +20,7 @@ from requests import Session
 from requests_ntlm import HttpNtlmAuth
 from zeep import Client
 from zeep.transports import Transport
-
+from requests.auth import HTTPBasicAuth
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -169,11 +169,11 @@ django_heroku.settings(locals())
 
 AUTHS = Session()
 
-WEB_SERVICE_PWD = 'W3C0d3@llD@y'
+WEB_SERVICE_PWD = 'Password@123'
 
-O_DATA = "http://20.121.189.145:7048/BC140/ODataV4/Company('KMPDC'){}"
-BASE_URL = 'http://20.121.189.145:7047/BC140/WS/KMPDC/Codeunit/WebPortal'
-AUTHS.auth = HttpNtlmAuth('domain\\NAVADMIN', WEB_SERVICE_PWD)
+O_DATA = "http://20.121.189.145:7048/KMPDC/ODataV4/Company('KMPDC'){}"
+BASE_URL = 'http://20.121.189.145:7047/KMPDC/WS/KMPDC/Codeunit/WebPortal'
+AUTHS.auth = HTTPBasicAuth('WINNIE', WEB_SERVICE_PWD)
 
 CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
-AUTHS = HttpNtlmAuth('domain\\NAVADMIN', WEB_SERVICE_PWD)
+AUTHS = HTTPBasicAuth('WINNIE', WEB_SERVICE_PWD)

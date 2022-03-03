@@ -11,6 +11,7 @@ from datetime import date
 from zeep import Client
 from zeep.transports import Transport
 from django.contrib import messages
+from requests.auth import HTTPBasicAuth
 # Create your views here.
 
 
@@ -23,7 +24,7 @@ def login_request(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = Session()
-        user.auth = HttpNtlmAuth(f'domain\\{username}', password)
+        user.auth = HTTPBasicAuth(username, password)
         Access_Point = config.O_DATA.format("/QyEmployees")
         Access2 = config.O_DATA.format("/QyUserSetup")
         try:

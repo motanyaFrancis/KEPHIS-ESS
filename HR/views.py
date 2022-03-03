@@ -194,6 +194,7 @@ def LeaveCancelApproval(request, pk):
 
 
 def Training_Request(request):
+    print("emps", request.session['Employee_No_'])
     session = requests.Session()
     session.auth = config.AUTHS
 

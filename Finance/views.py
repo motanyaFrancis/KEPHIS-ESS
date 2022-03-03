@@ -231,7 +231,6 @@ def CreateImprestLines(request, pk):
     travelDate = ''
     returnDate = ''
     requisitionType = ''
-    dailyRate = 0
     quantity = ""
     areaCode = ""
     imprestTypes = ''
@@ -257,7 +256,7 @@ def CreateImprestLines(request, pk):
     imprestType = (Data.values).value
     try:
         response = config.CLIENT.service.FnImprestLine(
-            lineNo, imprestNo, imprestType, destination, travelDate, returnDate, requisitionType, dailyRate, quantity, areaCode, businessGroupCode, dimension3, myAction)
+            lineNo, imprestNo, imprestType, destination, travelDate, returnDate, requisitionType, quantity, areaCode, businessGroupCode, dimension3, myAction)
         messages.success(request, "Successfully Added!!")
         print(response)
         return redirect('IMPDetails', pk=imprestNo)

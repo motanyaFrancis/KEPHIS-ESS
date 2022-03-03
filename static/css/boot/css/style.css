@@ -13820,7 +13820,7 @@ dl li {
 
 /* purchase btn */
 .purchase-popup {
-  background: var(--green);
+  background: white;
   padding: 10px 15px;
   border-radius: 3px;
 }

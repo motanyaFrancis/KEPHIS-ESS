@@ -45,13 +45,14 @@ from zeep import Client
 from zeep.transports import Transport
 import enum
 from datetime import datetime
+from requests.auth import HTTPBasicAuth
 
 AUTHS = Session()
 
-WEB_SERVICE_PWD = 'W3C0d3@llD@y'
-BASE_URL = 'http://20.121.189.145:7047/BC140/WS/KMPDC/Codeunit/WebPortal'
+WEB_SERVICE_PWD = 'Password@123'
+BASE_URL = 'http://20.121.189.145:7047/KMPDC/WS/KMPDC/Codeunit/WebPortal'
 
-AUTHS.auth = HttpNtlmAuth('domain\\NAVADMIN', WEB_SERVICE_PWD)
+AUTHS.auth = HTTPBasicAuth('WINNIE', WEB_SERVICE_PWD)
 CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
 
 
@@ -108,7 +109,7 @@ CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
 # print(response)
 
 myUserID = "NAVADMIN"
-trainingNo = "TRQ-00010"
+trainingNo = "TRQ-00012"
 
 
 response = CLIENT.service.FnRequestTrainingApproval(myUserID,
