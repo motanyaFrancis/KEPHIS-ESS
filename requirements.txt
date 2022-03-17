@@ -106,6 +106,5 @@ Werkzeug==1.0.1
 whitenoise==6.0.0
 WTForms==2.3.3
 xdg==5
-xkit==0.0.0
 zeep==4.1.0
 zipp==1.0.0
