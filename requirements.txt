@@ -45,7 +45,6 @@ isodate==0.6.1
 itsdangerous==1.1.0
 jeepney==0.7.1
 Jinja2==2.11.3
-kazam==1.4.5
 keyring==23.0.1
 language-selector==0.1
 launchpadlib==1.10.13
