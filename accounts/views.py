@@ -19,7 +19,6 @@ def login_request(request):
     todays_date = date.today()
     year = todays_date.year
     request.session['years'] = year
-    print(request.session['years'])
     if request.method == 'POST':
         username = request.POST.get('username').upper().strip()
         password = request.POST.get('password').strip()

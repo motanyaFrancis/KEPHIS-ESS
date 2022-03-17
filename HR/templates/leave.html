@@ -79,7 +79,6 @@
                                                 <th>Return same day</th>
                                                 <th>Days Applied</th>
                                                 <th>Start Date</th>
-                                                <th>Edit</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -92,16 +91,160 @@
                                                 <td>{{res.Return_same_day}}</td>
                                                 <td>{{res.Days_Applied}}</td>
                                                 <td>{{res.Start_Date}}</td>
-                                                <td><button class="btn btn-primary btn-icon-text" type="button"
-                                                        data-toggle="tooltip" data-placement="top" title="Edit"><i
-                                                            class="fa fa-edit"></i></button></td>
                                                 <td>
+                                                    <form action="{% url 'FnDeleteLeaveApplication' %}" method="post"
+                                                        style="display: inline-block;">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="applicationNo"
+                                                            value="{{res.Application_No}}">
+                                                        <button type="submit" class="btn btn-danger"
+                                                            data-toggle="tooltip" data-placement="top" title="Delete"><i
+                                                                class="fas fa-trash-alt"></i>
+                                                        </button>
+                                                    </form>
+                                                    <button class="btn btn-primary" data-toggle="tooltip"
+                                                        data-placement="top" title="edit" data-bs-toggle="modal"
+                                                        data-bs-target="#edit{{res.Application_No}}"><i
+                                                            class="fas fa-edit"></i>
+                                                    </button>
                                                     <a href="{% url 'LeaveDetail' res.Application_No %} "
                                                         class="btn btn-success btn-icon-text" type="button"
                                                         data-toggle="tooltip" data-placement="top" title="View"><i
-                                                            class="fa fa-table"></i></a>
+                                                            class="fa fa-table"></i>
+                                                    </a>
+                                                    <!-- Modal Edit Leave -->
+                                                    <div class="modal fade" id="edit{{res.Application_No}}"
+                                                        data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                                        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                        <div
+                                                            class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="staticBackdropLabel">
+                                                                        Edit Leave
+                                                                        Request
+                                                                    </h5>
+                                                                    <button type="button" class="btn-close"
+                                                                        data-bs-dismiss="modal"
+                                                                        aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <form class="myForm needs-validation"
+                                                                        action="{% url 'CreateLeave' %}" method="post"
+                                                                        novalidate>
+                                                                        {% csrf_token %}
+                                                                        <div class="mb-2 myForm">
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <input type="hidden"
+                                                                                        name="applicationNo"
+                                                                                        value="{{res.Application_No}}">
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <input type="hidden" name="myAction"
+                                                                                        value="modify">
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <label for="leaveType"
+                                                                                        class="form-label">
+                                                                                        Leave Type</label>
+                                                                                    <select class="form-select"
+                                                                                        id="leaveType" name="leaveType"
+                                                                                        required>
+                                                                                        <option selected
+                                                                                            value="{{res.Leave_Code}}">
+                                                                                            {{res.Leave_Code}}</option>
+                                                                                        {% for res in leave %}
+                                                                                        <option value="{{res.Code}}">
+                                                                                            {{res.Description}}</option>
+                                                                                        {% endfor %}
+                                                                                    </select>
+                                                                                    <div class="invalid-feedback">
+                                                                                        Please select a valid Leave
+                                                                                        Type.
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row mt-3">
+                                                                                <div class="col-md-12">
+                                                                                    <label for="leaveType"
+                                                                                        class="form-label">
+                                                                                        Planner Start Date</label>
+                                                                                    <select class="form-select"
+                                                                                        id="leaveType"
+                                                                                        name="plannerStartDate"
+                                                                                        required>
+                                                                                        <option selected disabled
+                                                                                            value="">
+                                                                                            Choose...</option>
+                                                                                        {% for res in plan %}
+                                                                                        <option
+                                                                                            value="{{res.Start_Date}}">
+                                                                                            {{res.Start_Date}}</option>
+                                                                                        {% endfor %}
+                                                                                    </select>
+                                                                                    <div class="invalid-feedback">
+                                                                                        Please select a valid Start
+                                                                                        Date.
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <label for="isReturnSameDay"
+                                                                                        class="form-label"> Return Same
+                                                                                        Day</label>
+                                                                                    <select class="form-select"
+                                                                                        id="isReturnSameDay"
+                                                                                        name="isReturnSameDay" required>
+                                                                                        <option selected value="">Select
+                                                                                        </option>
+                                                                                        <option value="True">True
+                                                                                        </option>
+                                                                                        <option value="False">False
+                                                                                        </option>
+                                                                                    </select>
+                                                                                    <div class="invalid-feedback">
+                                                                                        Please Select valid Option
+                                                                                    </div>
+
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <label for="daysApplied"
+                                                                                        class="form-label">Days
+                                                                                        Applied</label>
+                                                                                    <input type="number"
+                                                                                        class="form-control"
+                                                                                        id="daysApplied"
+                                                                                        name="daysApplied"
+                                                                                        placeholder="{{res.Days_Applied}}"
+                                                                                        required>
+                                                                                    <div class="invalid-feedback">
+                                                                                        Please provide input.
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <button type="button" class="btn btn-danger"
+                                                                                data-bs-dismiss="modal">Discard</button>
+                                                                            <button type="submit"
+                                                                                class="btn btn-primary">Submit</button>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </td>
                                             </tr>
+
                                             {% endfor %}
                                         </tbody>
                                     </table>
@@ -243,6 +386,16 @@
                         <div class="mb-2"> <span class="w-name">
                                 Leave Request Header:
                             </span>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <input type="hidden" name="applicationNo" value="">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <input type="hidden" name="myAction" value="insert">
+                                </div>
+                            </div>
                             <div class="row mt-3">
                                 <div class="col-md-12">
                                     <label for="leaveType" class="form-label"> Leave Type</label>

@@ -4,9 +4,17 @@
 {% block main %}
 
 <section class="dash2">
-    <div class="content-wrapper" style="padding-bottom: 5rem;">
+    <div class="content-wrapper">
         <div class="d-xl-flex justify-content-between align-items-start">
             <h2 class="text-dark font-weight-bold mb-2"> Training Requests
+                {% if train_status == "Adhoc" %}
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> <i
+                        class="las la-plus"></i> Add Training Lines
+                </button>
+                {% elif state == 3 %}
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#report"> Generate
+                    Report</button>
+                {% endif %}
             </h2>
 
             <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
@@ -40,6 +48,113 @@
         {% endif %}
         {% endfor %}
         {% endif %}
+        <div class="row my-3">
+            <div class="col-md-3">
+                <div class="card l-bg-cherry statCard h-100">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-dollar-sign"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Adhoc</h5>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{res.Adhoc}}
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card l-bg-blue-dark statCard h-100">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-users"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Training Status</h5>
+                        </div>
+                        {% if res.Status == "Open" %}
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{res.Status}}
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="progress mt-1 " data-height="8" style="height: 8px;">
+                            <div class="progress-bar l-bg-red" role="progressbar" data-width="50%" aria-valuenow="25"
+                                aria-valuemin="0" aria-valuemax="100"
+                                style="width: 50%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
+                            </div>
+                        </div>
+                        {% elif res.Status == "Pending Approval" %}
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{res.Status}}
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="progress mt-1" data-height="8" style="height: 8px;">
+                            <div class="progress-bar" role="progressbar" data-width="75%" aria-valuenow="75"
+                                aria-valuemin="0" aria-valuemax="75"
+                                style="width: 75%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
+                            </div>
+                        </div>
+                        {% elif res.Status == "Released" %}
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    Approved
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="progress mt-1 " data-height="8" style="height: 8px;">
+                            <div class="progress-bars" role="progressbar" data-width="75%" aria-valuenow="75"
+                                aria-valuemin="0" aria-valuemax="100"
+                                style="width: 100%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card l-bg-green-dark statCard h-100">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-calendar-alt"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Planned Start Date</h5>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{res.Planned_Start_Date}}
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card l-bg-orange-dark statCard h-100">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-calendar-times"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">No Of Days</h5>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{res.No__Of_Days}}
+                                </h2>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="row">
             <div class="col-md-12">
                 <form class="row g-3">
@@ -56,24 +171,12 @@
                         <input type="text" class="form-control" placeholder="{{res.Designation}}" readonly>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Adhoc</label>
-                        <input type="text" class="form-control" placeholder="{{res.Adhoc}}" readonly>
-                    </div>
-                    <div class="col-md-4">
                         <label class="form-label">Training Need</label>
                         <input type="text" class="form-control" placeholder="{{res.Training_Need}}" readonly>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Planned Start Date</label>
-                        <input type="text" class="form-control" placeholder="{{res.Planned_Start_Date}}" readonly>
-                    </div>
-                    <div class="col-md-4">
                         <label class="form-label">Planned End Date</label>
                         <input type="text" class="form-control" placeholder="{{res.Planned_End_Date}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">No Of Days</label>
-                        <input type="text" class="form-control" placeholder="{{res.No__Of_Days}}" readonly>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Destination</label>
@@ -82,10 +185,6 @@
                     <div class="col-md-4">
                         <label class="form-label">Currency</label>
                         <input type="text" class="form-control" placeholder="{{res.Currency}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Return same day</label>
-                        <input type="text" class="form-control" placeholder="{{res.Return_same_day}}" readonly>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Status</label>
@@ -97,14 +196,25 @@
                     </div>
                 </form>
                 {% if state == 1 %}
-                <div class="d-grid gap-2 my-3">
-                    <form action="{% url 'TrainApprove' res.Request_No_ %}" method="post" class="myForm">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <input type="hidden" name="trainingNo" value="{{res.Request_No_}}">
-                        </div>
-                        <button class="btn btn-info" type="submit">Request For Approval</button>
-                    </form>
+                <div class=" my-3 myForm">
+                    <div style="display: inline-block;">
+                        <form action="{% url 'TrainApprove' res.Request_No_ %}" method="post">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <input type="hidden" name="trainingNo" value="{{res.Request_No_}}">
+                            </div>
+                            <button class="btn btn-info" type="submit">Request For Approval</button>
+                        </form>
+                    </div>
+                    <div class="attach" style="display: inline-block;">
+                        <form action="" method="post">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <input type="hidden" name="trainingNo" value="{{res.Request_No_}}">
+                            </div>
+                            <button class="btn btn-info" type="submit">Add Attachment</button>
+                        </form>
+                    </div>
                 </div>
                 {% elif state == 2 %}
                 <div class="d-grid gap-2 my-3">
@@ -119,6 +229,136 @@
                 {% endif %}
             </div>
         </div>
+        {% if train_status == "Adhoc" %}
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card" id="d-card">
+                    <h4 class="mt-2 mx-2 text-dark">Adhoc Training Lines </h4>
+                    <div class="card-body">
+                        <table id="example"
+                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                            style="width:100%">
+                            <thead>
+                                <tr id="tops">
+                                    <th id="long">Training Name</th>
+                                    <th>Training Area</th>
+                                    <th>Training Objectives</th>
+                                    <th>Venue</th>
+                                    <th>Provider</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for res in line %}
+                                <tr>
+                                    <td>{{res.Training_Name}}</td>
+                                    <td>{{res.Training_area}}</td>
+                                    <td>{{res.Training_Objectives}}</td>
+                                    <td>{{res.Venue}}</td>
+                                    <td>{{res.Provider}}</td>
+                                    <td>
+                                        <form action="{% url 'FnAdhocLineDelete' res.Source_Document_No %}"
+                                            method="post" style="display: inline-block;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="needNo" value="{{res.No}}">
+                                            <button type="submit" class="btn btn-danger" data-toggle="tooltip"
+                                                data-placement="top" title="Delete"><i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+
+                                        <a href="{% url 'FnAdhocEdit' res.Source_Document_No res.No %}"
+                                            class="btn btn-primary" data-toggle="tooltip" data-placement="top"
+                                            title="edit" data-bs-toggle="modal" data-bs-target="#trainedit"><i
+                                                class="fas fa-edit"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                <!-- Modal to Edit Training Lines -->
+                                <div class="modal fade" id="trainedit" data-bs-backdrop="static"
+                                    data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="staticBackdropLabel">Edit Training Line
+                                                </h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form class="myForm needs-validation"
+                                                    action="{% url 'FnAdhocEdit' res.Source_Document_No res.No %}"
+                                                    method="post" novalidate>
+                                                    {% csrf_token %}
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <label class="form-label">Training Name</label>
+                                                            <input type="text" class="form-control" name="trainingName"
+                                                                required>
+                                                            <div class="invalid-feedback">
+                                                                Enter Training Name
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <label for="" class="form-label">Training Area</label>
+                                                            <input type="text" class="form-control" name="trainingArea"
+                                                                required>
+                                                            <div class="invalid-feedback">
+                                                                Enter Training Area
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <label for="" class="form-label">Venue</label>
+                                                            <input type="text" class="form-control" name="venue"
+                                                                required>
+                                                            <div class="invalid-feedback">
+                                                                Enter Training Venue
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <label for="" class="form-label">Provider</label>
+                                                            <input type="text" class="form-control" name="provider"
+                                                                required>
+                                                            <div class="invalid-feedback">
+                                                                Enter Training Venue
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <label for="" class="form-label">Training Objectives</label>
+                                                            <textarea class="form-control" name="trainingObjectives"
+                                                                rows="3" required></textarea>
+                                                            <div class="invalid-feedback">
+                                                                Objectives Can't be Empty
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-danger"
+                                                    data-bs-dismiss="modal">Discard</button>
+                                                <button type="submit" id="sasa" class="btn btn-primary">Submit</button>
+                                            </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
         {% if state == 2 %}
         <div class="row mt-4">
             <div class="col-md-12">
@@ -153,6 +393,106 @@
         </div>
         {% endif %}
     </div>
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">New Imprest Line
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="myForm needs-validation" action="{% url 'FnAdhocTraining' res.Request_No_ %}"
+                        method="post" novalidate>
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="form-label">Training Name</label>
+                                <input type="text" class="form-control" name="trainingName" required>
+                                <div class="invalid-feedback">
+                                    Enter Training Name
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="" class="form-label">Training Area</label>
+                                <input type="text" class="form-control" name="trainingArea" required>
+                                <div class="invalid-feedback">
+                                    Enter Training Area
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="" class="form-label">Venue</label>
+                                <input type="text" class="form-control" name="venue" required>
+                                <div class="invalid-feedback">
+                                    Enter Training Venue
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="" class="form-label">Provider</label>
+                                <input type="text" class="form-control" name="provider" required>
+                                <div class="invalid-feedback">
+                                    Enter Training Venue
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="" class="form-label">Training Objectives</label>
+                                <textarea class="form-control" name="trainingObjectives" rows="3" required></textarea>
+                                <div class="invalid-feedback">
+                                    Objectives Can't be Empty
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
+                    <button type="submit" id="sasa" class="btn btn-primary">Submit</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report -->
+    <div class="modal fade" id="report" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">New Imprest Line
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="myForm needs-validation" id="frm_" action="" method="post" novalidate>
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="form-label">Document Name</label>
+                                <input type="text" class="form-control" name="filenameFromApp"
+                                    placeholder="Enter Document Name">
+                            </div>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
+                    <button type="submit" id="sasa" class="btn btn-primary">Submit</button>
+                </div>
+            </div>
+
+            </form>
+        </div>
+    </div>
+    <!-- End Report -->
 
 </section>
 {% endblock %}

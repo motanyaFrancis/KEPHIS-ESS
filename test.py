@@ -107,11 +107,15 @@ CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
 # response = CLIENT.service.FnRequestInternalRequestApproval(myUserID,
 #                                                            applicationNo)
 # print(response)
+requisitionNo = ''
+employeeNo = "AH"
+issuingStore = "BLUE"
+reason = "test"
+expectedReceiptDate = datetime.strptime('2022-10-01', '%Y-%m-%d').date()
+myUserId = "WINNIE"
+myAction = 'insert'
 
-myUserID = "WINNIE"
-trainingNo = "TRQ-00011"
 
-
-response = CLIENT.service.FnCancelTrainingApproval(myUserID,
-                                                   trainingNo)
+response = CLIENT.service.FnStoreRequisitionHeader(
+    requisitionNo, employeeNo, issuingStore, reason, expectedReceiptDate, myUserId, myAction)
 print(response)

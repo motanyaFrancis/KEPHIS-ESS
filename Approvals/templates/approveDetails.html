@@ -87,24 +87,7 @@
         </div>
         <div class="row my-3">
             <div class="d-grid gap-2 d-md-block">
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#approve" type="button">Approve
-                    Document</button>
-                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#reject" type="button">Reject
-                    Approval</button>
-            </div>
-        </div>
-    </div>
-    <!-- Modal -->
-    <div class="modal fade" id="approve" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Approve Document
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
+                <div style="display: inline-block;">
                     <form id="myForm" action="{% url 'All_Approved' res.Document_No_ %} " method="post">
                         {% csrf_token %}
                         <div class="row">
@@ -114,25 +97,17 @@
                                 </div>
                             </div>
                         </div>
-
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="mb-2">
-                                    <label for="purpose" class="form-label">Purpose</label>
-                                    <textarea class="form-control" name="approvalComments" rows="3"></textarea>
-                                </div>
-                            </div>
-                        </div>
+                        <button class="btn btn-primary" type="submit">Approve
+                            Document</button>
+                    </form>
 
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
-                    <button type="submit" id="sasa" class="btn btn-primary">Submit</button>
-                </div>
-                </form>
+                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#reject" type="button">Reject
+                    Approval</button>
             </div>
         </div>
     </div>
+    <!-- Modal -->
     <div class="modal fade" id="reject" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">

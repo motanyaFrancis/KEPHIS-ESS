@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from datetime import date
+from datetime import date, datetime
 import requests
 from requests import Session
 from requests_ntlm import HttpNtlmAuth
@@ -8,11 +8,15 @@ from django.conf import settings as config
 import datetime as dt
 from django.contrib import messages
 import enum
+import secrets
+import string
 
 # Create your views here.
 
 
 def PurchaseRequisition(request):
+    fullname = request.session['fullname']
+    year = request.session['years']
     session = requests.Session()
     session.auth = config.AUTHS
     Access_Point = config.O_DATA.format("/QyPurchaseRequisitionHeaders")
@@ -48,7 +52,8 @@ def PurchaseRequisition(request):
            "count": counts, "response": Approved,
            "counter": counter, "rej": Rejected,
            'reject': reject, "pend": pend,
-           "pending": Pending}
+           "pending": Pending, "year": year,
+           "full": fullname}
     return render(request, 'purchaseReq.html', ctx)
 
 
@@ -60,24 +65,30 @@ def CreatePurchaseRequisition(request):
     expectedReceiptDate = ''
     isConsumable = ""
     myUserId = request.session['User_ID']
-    myAction = 'insert'
+    myAction = ' '
     if request.method == 'POST':
         try:
-            orderDate = request.POST.get('orderDate')
+            requisitionNo = request.POST.get('requisitionNo')
+            orderDate = datetime.strptime(
+                request.POST.get('orderDate'), '%Y-%m-%d').date()
             reason = request.POST.get('reason')
-            expectedReceiptDate = request.POST.get('expectedReceiptDate')
-            isConsumable = request.POST.get('isConsumable')
+            expectedReceiptDate = datetime.strptime(
+                request.POST.get('expectedReceiptDate'), '%Y-%m-%d').date()
+            isConsumable = eval(request.POST.get('isConsumable'))
+            myAction = request.POST.get('myAction')
         except ValueError:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('purchase')
-    try:
-        response = config.CLIENT.service.FnPurchaseRequisitionHeader(
-            requisitionNo, orderDate, employeeNo, reason, expectedReceiptDate, isConsumable, myUserId, myAction)
-        messages.success(request, "Successfully Added!!")
-        print(response)
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
+        if not requisitionNo:
+            requisitionNo = " "
+        try:
+            response = config.CLIENT.service.FnPurchaseRequisitionHeader(
+                requisitionNo, orderDate, employeeNo, reason, expectedReceiptDate, isConsumable, myUserId, myAction)
+            messages.success(request, "Successfully Added!!")
+            print(response)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
     return redirect('purchase')
 
 
@@ -105,10 +116,11 @@ def PurchaseRequestDetails(request, pk):
         Proc = []
         Items = Res_itemNo['value']
         Gl_Accounts = Res_GL['value']
-        for planitem in Res_Proc['value']:
-            if planitem['Plan_Year'] == Current_Year.year:
-                output_json = json.dumps(planitem)
-                Proc.append(json.loads(output_json))
+        planitem = Res_Proc['value']
+        # for planitem in Res_Proc['value']:
+        #     if planitem['Plan_Year'] == Current_Year.year:
+        #         output_json = json.dumps(planitem)
+        #         Proc.append(json.loads(output_json))
         for approver in res_approver['value']:
             if approver['Document_No_'] == pk:
                 output_json = json.dumps(approver)
@@ -134,6 +146,8 @@ def PurchaseRequestDetails(request, pk):
                 for document in openImp:
                     if document['No_'] == pk:
                         res = document
+                        if document['Status'] == 'Released':
+                            state = 3
             if document['Status'] == "Pending Approval" and document['Employee_No_'] == request.session['Employee_No_']:
                 output_json = json.dumps(document)
                 Pending.append(json.loads(output_json))
@@ -158,7 +172,7 @@ def PurchaseRequestDetails(request, pk):
     ctx = {"today": todays_date, "res": res,
            "state": state, "line": openLines,
            "type": res_type, "Approvers": Approvers,
-           "plans": Proc, "items": Items,
+           "plans": planitem, "items": Items,
            "gl": Gl_Accounts}
     return render(request, 'purchaseDetail.html', ctx)
 
@@ -166,54 +180,55 @@ def PurchaseRequestDetails(request, pk):
 def CreatePurchaseLines(request, pk):
     # Create Enum For itemType which is 'Item'
     requisitionNo = pk
-    lineNo = 0
+    lineNo = ""
     procPlanItem = ''
     itemTypes = ""
     itemNo = ""
     specification = ''
     quantity = 1
     myUserId = request.session['User_ID']
-    myAction = 'insert'
+    myAction = ''
     if request.method == 'POST':
         try:
+            lineNo = int(request.POST.get('lineNo'))
             procPlanItem = request.POST.get('procPlanItem')
             itemTypes = request.POST.get('itemTypes')
             itemNo = request.POST.get('itemNo')
             specification = request.POST.get('specification')
-            print(specification)
             quantity = int(request.POST.get('quantity'))
+            myAction = request.POST.get('myAction')
 
         except ValueError:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('PurchaseDetail', pk=requisitionNo)
 
-    class Data(enum.Enum):
-        values = itemTypes
-    itemType = (Data.values).value
-    try:
-        response = config.CLIENT.service.FnPurchaseRequisitionLine(
-            requisitionNo, lineNo, procPlanItem, itemType, itemNo, specification, quantity, myUserId, myAction)
-        messages.success(request, "Successfully Added!!")
-        print(response)
-        return redirect('PurchaseDetail', pk=requisitionNo)
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
+        class Data(enum.Enum):
+            values = itemTypes
+        itemType = (Data.values).value
+        try:
+            response = config.CLIENT.service.FnPurchaseRequisitionLine(
+                requisitionNo, lineNo, procPlanItem, itemType, itemNo, specification, quantity, myUserId, myAction)
+            messages.success(request, "Successfully Added!!")
+            print(response)
+            return redirect('PurchaseDetail', pk=requisitionNo)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
     return redirect('PurchaseDetail', pk=requisitionNo)
 
 
 def PurchaseApproval(request, pk):
     myUserID = request.session['User_ID']
-    requisitionNo = ""
+    requistionNo = ""
     if request.method == 'POST':
         try:
-            requisitionNo = request.POST.get('requisitionNo')
+            requistionNo = request.POST.get('requistionNo')
         except ValueError as e:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('PurchaseDetail', pk=pk)
     try:
         response = config.CLIENT.service.FnRequestInternalRequestApproval(
-            myUserID, requisitionNo)
+            myUserID, requistionNo)
         messages.success(request, "Approval Request Successfully Sent!!")
         print(response)
         return redirect('PurchaseDetail', pk=pk)
@@ -224,17 +239,17 @@ def PurchaseApproval(request, pk):
 
 
 def FnCancelPurchaseApproval(request, pk):
-    employeeNo = request.session['Employee_No_']
-    requisitionNo = ""
+    myUserID = request.session['User_ID']
+    requistionNo = ""
     if request.method == 'POST':
         try:
-            requisitionNo = request.POST.get('requisitionNo')
+            requistionNo = request.POST.get('requistionNo')
         except ValueError as e:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('PurchaseDetail', pk=pk)
     try:
-        response = config.CLIENT.service.FnCancelPaymentApproval(
-            employeeNo, requisitionNo)
+        response = config.CLIENT.service.FnCancelInternalRequestApproval(
+            myUserID, requistionNo)
         messages.success(request, "Cancel Approval Successful !!")
         print(response)
         return redirect('PurchaseDetail', pk=pk)
@@ -244,7 +259,63 @@ def FnCancelPurchaseApproval(request, pk):
     return redirect('PurchaseDetail', pk=pk)
 
 
+def FnDeletePurchaseRequisitionHeader(request):
+    requisitionNo = ""
+    if request.method == 'POST':
+        requisitionNo = request.POST.get('requisitionNo')
+        try:
+            response = config.CLIENT.service.FnDeletePurchaseRequisitionHeader(
+                requisitionNo)
+            messages.success(request, "Successfully Deleted")
+            print(response)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+    return redirect('purchase')
+
+
+def FnGeneratePurchaseReport(request, pk):
+    nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
+                        for i in range(5))
+    reqNo = pk
+    filenameFromApp = ''
+    if request.method == 'POST':
+        try:
+            filenameFromApp = request.POST.get('filenameFromApp')
+        except ValueError as e:
+            return redirect('PurchaseDetail', pk=pk)
+    filenameFromApp = filenameFromApp + str(nameChars) + ".pdf"
+    try:
+        response = config.CLIENT.service.FnGenerateRepairReport(
+            reqNo, filenameFromApp)
+        messages.success(request, "Successfully Sent!!")
+        print(response)
+        return redirect('PurchaseDetail', pk=pk)
+    except Exception as e:
+        messages.error(request, e)
+        print(e)
+    return redirect('PurchaseDetail', pk=pk)
+
+
+def FnDeletePurchaseRequisitionLine(request, pk):
+    requisitionNo = pk
+    lineNo = ""
+    if request.method == 'POST':
+        lineNo = int(request.POST.get('lineNo'))
+        try:
+            response = config.CLIENT.service.FnDeletePurchaseRequisitionLine(
+                requisitionNo, lineNo)
+            messages.success(request, "Successfully Deleted")
+            print(response)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+    return redirect('PurchaseDetail', pk=pk)
+
+
 def RepairRequest(request):
+    fullname = request.session['fullname']
+    year = request.session['years']
     session = requests.Session()
     session.auth = config.AUTHS
 
@@ -279,7 +350,9 @@ def RepairRequest(request):
     ctx = {"today": todays_date, "res": open,
            "count": counts, "response": Approved,
            "counter": counter, "rej": Rejected,
-           'reject': reject, "pend": pend, "pending": Pending
+           'reject': reject, "pend": pend,
+           "year": year, "full": fullname,
+           "pending": Pending
            }
     return render(request, 'repairReq.html', ctx)
 
@@ -291,28 +364,35 @@ def CreateRepairRequest(request):
     reason = ""
     expectedReceiptDate = ''
     myUserId = request.session['User_ID']
-    myAction = 'insert'
+    myAction = ' '
     if request.method == 'POST':
         try:
-            orderDate = request.POST.get('orderDate')
+            requisitionNo = request.POST.get('requisitionNo')
+            orderDate = datetime.strptime(
+                request.POST.get('orderDate'), '%Y-%m-%d').date()
             reason = request.POST.get('reason')
-            expectedReceiptDate = request.POST.get('expectedReceiptDate')
-            isConsumable = request.POST.get('isConsumable')
+            expectedReceiptDate = datetime.strptime(
+                request.POST.get('expectedReceiptDate'), '%Y-%m-%d').date()
+            myAction = request.POST.get('myAction')
         except ValueError:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('repair')
-    try:
-        response = config.CLIENT.service.FnRepairRequisitionHeader(
-            requisitionNo, orderDate, employeeNo, reason, expectedReceiptDate, myUserId, myAction)
-        messages.success(request, "Successfully Added!!")
-        print(response)
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
+        if not requisitionNo:
+            requisitionNo = " "
+        try:
+            response = config.CLIENT.service.FnRepairRequisitionHeader(
+                requisitionNo, orderDate, employeeNo, reason, expectedReceiptDate, myUserId, myAction)
+            messages.success(request, "Successfully Added!!")
+            print(response)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
     return redirect('repair')
 
 
 def RepairRequestDetails(request, pk):
+    fullname = request.session['fullname']
+    year = request.session['years']
     session = requests.Session()
     session.auth = config.AUTHS
     state = ''
@@ -347,6 +427,8 @@ def RepairRequestDetails(request, pk):
                 for document in openImp:
                     if document['No_'] == pk:
                         res = document
+                        if document['Status'] == 'Released':
+                            state = 3
 
             if document['Status'] == 'Rejected' and document['Requested_By'] == request.session['User_ID']:
                 output_json = json.dumps(document)
@@ -378,22 +460,23 @@ def RepairRequestDetails(request, pk):
     ctx = {"today": todays_date, "res": res,
            "state": state, "line": openLines,
            "type": res_type, "Approvers": Approvers,
-           "asset": my_asset}
+           "asset": my_asset, "full": fullname,
+           "year": year}
     return render(request, 'repairDetail.html', ctx)
 
 
 def RepairApproval(request, pk):
-    employeeNo = request.session['Employee_No_']
-    requisitionNo = ""
+    myUserID = request.session['User_ID']
+    requistionNo = ""
     if request.method == 'POST':
         try:
-            requisitionNo = request.POST.get('requisitionNo')
+            requistionNo = request.POST.get('requistionNo')
         except ValueError as e:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('RepairDetail', pk=pk)
     try:
-        response = config.CLIENT.service.FnRequestPaymentApproval(
-            employeeNo, requisitionNo)
+        response = config.CLIENT.service.FnRequestInternalRequestApproval(
+            myUserID, requistionNo)
         messages.success(request, "Approval Request Successfully Sent!!")
         print(response)
         return redirect('RepairDetail', pk=pk)
@@ -404,17 +487,17 @@ def RepairApproval(request, pk):
 
 
 def FnCancelRepairApproval(request, pk):
-    employeeNo = request.session['Employee_No_']
-    requisitionNo = ""
+    myUserID = request.session['User_ID']
+    requistionNo = ""
     if request.method == 'POST':
         try:
-            requisitionNo = request.POST.get('requisitionNo')
+            requistionNo = request.POST.get('requistionNo')
         except ValueError as e:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('RepairDetail', pk=pk)
     try:
-        response = config.CLIENT.service.FnCancelPaymentApproval(
-            employeeNo, requisitionNo)
+        response = config.CLIENT.service.FnCancelInternalRequestApproval(
+            myUserID, requistionNo)
         messages.success(request, "Cancel Approval Successful !!")
         print(response)
         return redirect('RepairDetail', pk=pk)
@@ -429,27 +512,62 @@ def CreateRepairLines(request, pk):
     lineNo = 0
     assetCode = ''
     description = ''
-    myAction = 'insert'
+    myAction = ''
     if request.method == 'POST':
         try:
+            lineNo = int(request.POST.get('lineNo'))
             assetCode = request.POST.get('assetCode')
             description = request.POST.get('description')
+            myAction = request.POST.get('myAction')
         except ValueError:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('RepairDetail', pk=requisitionNo)
-    try:
-        response = config.CLIENT.service.FnRepairRequisitionLine(
-            requisitionNo, lineNo, assetCode, description, myAction)
-        messages.success(request, "Successfully Added!!")
-        print(response)
-        return redirect('RepairDetail', pk=requisitionNo)
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
+        try:
+            response = config.CLIENT.service.FnRepairRequisitionLine(
+                requisitionNo, lineNo, assetCode, description, myAction)
+            messages.success(request, "Successfully Added!!")
+            print(response)
+            return redirect('RepairDetail', pk=requisitionNo)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
     return redirect('RepairDetail', pk=requisitionNo)
 
 
+def FnDeleteRepairRequisitionHeader(request):
+    requisitionNo = ""
+    if request.method == 'POST':
+        requisitionNo = request.POST.get('requisitionNo')
+        try:
+            response = config.CLIENT.service.FnDeleteRepairRequisitionHeader(
+                requisitionNo)
+            messages.success(request, "Successfully Deleted")
+            print(response)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+    return redirect('repair')
+
+
+def FnDeleteRepairRequisitionLine(request, pk):
+    requisitionNo = pk
+    lineNo = ""
+    if request.method == 'POST':
+        lineNo = int(request.POST.get('lineNo'))
+        try:
+            response = config.CLIENT.service.FnDeleteRepairRequisitionLine(
+                requisitionNo, lineNo)
+            messages.success(request, "Successfully Deleted")
+            print(response)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+    return redirect('RepairDetail', pk=pk)
+
+
 def StoreRequest(request):
+    fullname = request.session['fullname']
+    year = request.session['years']
     session = requests.Session()
     session.auth = config.AUTHS
 
@@ -488,7 +606,8 @@ def StoreRequest(request):
            "count": counts, "response": Approved,
            "counter": counter, "rej": Rejected,
            'reject': reject, "store": Stores,
-           "pend": pend, "pending": Pending}
+           "pend": pend, "pending": Pending,
+           "full": fullname, "year": year}
     return render(request, 'storeReq.html', ctx)
 
 
@@ -499,27 +618,35 @@ def CreateStoreRequisition(request):
     reason = ""
     expectedReceiptDate = ''
     myUserId = request.session['User_ID']
-    myAction = 'insert'
+    myAction = ''
     if request.method == 'POST':
         try:
+            requisitionNo = request.POST.get('requisitionNo')
             issuingStore = request.POST.get('issuingStore')
             reason = request.POST.get('reason')
-            expectedReceiptDate = request.POST.get('expectedReceiptDate')
+            expectedReceiptDate = datetime.strptime(
+                request.POST.get('expectedReceiptDate'), '%Y-%m-%d').date()
+            myAction = request.POST.get('myAction')
         except ValueError:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('store')
-    try:
-        response = config.CLIENT.service.FnStoreRequisitionHeader(
-            requisitionNo, employeeNo, issuingStore, reason, expectedReceiptDate, myUserId, myAction)
-        messages.success(request, "Successfully Added!!")
-        print(response)
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
+        if not requisitionNo:
+            requisitionNo = " "
+
+        try:
+            response = config.CLIENT.service.FnStoreRequisitionHeader(
+                requisitionNo, employeeNo, issuingStore, reason, expectedReceiptDate, myUserId, myAction)
+            messages.success(request, "Successfully Added!!")
+            print(response)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
     return redirect('store')
 
 
 def StoreRequestDetails(request, pk):
+    fullname = request.session['fullname']
+    year = request.session['years']
     session = requests.Session()
     session.auth = config.AUTHS
     state = ''
@@ -528,16 +655,19 @@ def StoreRequestDetails(request, pk):
     Item = config.O_DATA.format("/QyItems")
     Location = config.O_DATA.format("/QyLocations")
     Approver = config.O_DATA.format("/QyApprovalEntries")
+    Measure = config.O_DATA.format("/QyUnitsOfMeasure")
     try:
         response = session.get(Access_Point, timeout=10).json()
         Item_res = session.get(Item, timeout=10).json()
         Loc_res = session.get(Location, timeout=10).json()
         res_approver = session.get(Approver, timeout=10).json()
+        res_Measure = session.get(Measure, timeout=10).json()
         openImp = []
         res_type = []
         Approvers = []
         items = Item_res['value']
         Location = Loc_res['value']
+        unit = res_Measure['value']
         for approver in res_approver['value']:
             if approver['Document_No_'] == pk:
                 output_json = json.dumps(approver)
@@ -549,6 +679,8 @@ def StoreRequestDetails(request, pk):
                 for document in openImp:
                     if document['No_'] == pk:
                         res = document
+                        if document['Status'] == 'Released':
+                            state = 3
             if document['Status'] == 'Open' and document['Requested_By'] == request.session['User_ID']:
                 output_json = json.dumps(document)
                 openImp.append(json.loads(output_json))
@@ -587,22 +719,24 @@ def StoreRequestDetails(request, pk):
     ctx = {"today": todays_date, "res": res,
            "state": state, "line": openLines,
            "type": res_type, "items": items,
-           "Approvers": Approvers, "loc": Location}
+           "Approvers": Approvers, "loc": Location,
+           "year": year, "full": fullname,
+           "unit": unit}
     return render(request, 'storeDetail.html', ctx)
 
 
 def StoreApproval(request, pk):
-    employeeNo = request.session['Employee_No_']
-    requisitionNo = ""
+    myUserID = request.session['User_ID']
+    requistionNo = ""
     if request.method == 'POST':
         try:
-            requisitionNo = request.POST.get('requisitionNo')
+            requistionNo = request.POST.get('requistionNo')
         except ValueError as e:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('StoreDetail', pk=pk)
     try:
-        response = config.CLIENT.service.FnRequestPaymentApproval(
-            employeeNo, requisitionNo)
+        response = config.CLIENT.service.FnRequestInternalRequestApproval(
+            myUserID, requistionNo)
         messages.success(request, "Approval Request Successfully Sent!!")
         print(response)
         return redirect('StoreDetail', pk=pk)
@@ -613,17 +747,17 @@ def StoreApproval(request, pk):
 
 
 def FnCancelStoreApproval(request, pk):
-    employeeNo = request.session['Employee_No_']
-    requisitionNo = ""
+    myUserID = request.session['User_ID']
+    requistionNo = ""
     if request.method == 'POST':
         try:
-            requisitionNo = request.POST.get('requisitionNo')
+            requistionNo = request.POST.get('requistionNo')
         except ValueError as e:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('StoreDetail', pk=pk)
     try:
-        response = config.CLIENT.service.FnCancelPaymentApproval(
-            employeeNo, requisitionNo)
+        response = config.CLIENT.service.FnCancelInternalRequestApproval(
+            myUserID, requistionNo)
         messages.success(request, "Cancel Approval Successful !!")
         print(response)
         return redirect('StoreDetail', pk=pk)
@@ -635,23 +769,26 @@ def FnCancelStoreApproval(request, pk):
 
 def CreateStoreLines(request, pk):
     requisitionNo = pk
-    lineNo = 0
+    lineNo = ""
     itemCode = ""
     location = ""
     quantity = ""
-    myAction = 'insert'
+    unitOfMeasure = ""
+    myAction = ''
     if request.method == 'POST':
         try:
+            lineNo = int(request.POST.get('lineNo'))
             itemCode = request.POST.get('itemCode')
             location = request.POST.get('location')
+            unitOfMeasure = request.POST.get('unitOfMeasure')
             quantity = int(request.POST.get('quantity'))
-            print(itemCode)
+            myAction = request.POST.get('myAction')
         except ValueError:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('StoreDetail', pk=requisitionNo)
     try:
         response = config.CLIENT.service.FnStoreRequisitionLine(
-            requisitionNo, lineNo, itemCode, location, quantity, myAction)
+            requisitionNo, lineNo, itemCode, location, quantity, unitOfMeasure, myAction)
         messages.success(request, "Successfully Added!!")
         print(response)
         return redirect('StoreDetail', pk=requisitionNo)
@@ -659,3 +796,82 @@ def CreateStoreLines(request, pk):
         messages.error(request, e)
         print(e)
     return redirect('StoreDetail', pk=requisitionNo)
+
+# Delete Store Header
+
+
+def FnDeleteStoreRequisitionHeader(request):
+    requisitionNo = ""
+    if request.method == 'POST':
+        requisitionNo = request.POST.get('requisitionNo')
+        try:
+            response = config.CLIENT.service.FnDeleteStoreRequisitionHeader(
+                requisitionNo)
+            messages.success(request, "Successfully Deleted")
+            print(response)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+    return redirect('store')
+
+
+def FnDeleteStoreRequisitionLine(request, pk):
+    requisitionNo = pk
+    lineNo = ""
+    if request.method == 'POST':
+        lineNo = int(request.POST.get('lineNo'))
+        try:
+            response = config.CLIENT.service.FnDeleteStoreRequisitionLine(
+                requisitionNo, lineNo)
+            messages.success(request, "Successfully Deleted")
+            print(response)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+    return redirect('StoreDetail', pk=requisitionNo)
+
+
+def FnGenerateStoreReport(request, pk):
+    nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
+                        for i in range(5))
+    reqNo = pk
+    filenameFromApp = ''
+    if request.method == 'POST':
+        try:
+            filenameFromApp = request.POST.get('filenameFromApp')
+        except ValueError as e:
+            return redirect('StoreDetail', pk=pk)
+    filenameFromApp = filenameFromApp + str(nameChars) + ".pdf"
+    try:
+        response = config.CLIENT.service.FnGenerateStoreReport(
+            reqNo, filenameFromApp)
+        messages.success(request, "Successfully Sent!!")
+        print(response)
+        return redirect('StoreDetail', pk=pk)
+    except Exception as e:
+        messages.error(request, e)
+        print(e)
+    return redirect('StoreDetail', pk=pk)
+
+
+def FnGenerateRepairReport(request, pk):
+    nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
+                        for i in range(5))
+    reqNo = pk
+    filenameFromApp = ''
+    if request.method == 'POST':
+        try:
+            filenameFromApp = request.POST.get('filenameFromApp')
+        except ValueError as e:
+            return redirect('RepairDetail', pk=pk)
+    filenameFromApp = filenameFromApp + str(nameChars) + ".pdf"
+    try:
+        response = config.CLIENT.service.FnGenerateRepairReport(
+            reqNo, filenameFromApp)
+        messages.success(request, "Successfully Sent!!")
+        print(response)
+        return redirect('RepairDetail', pk=pk)
+    except Exception as e:
+        messages.error(request, e)
+        print(e)
+    return redirect('RepairDetail', pk=pk)

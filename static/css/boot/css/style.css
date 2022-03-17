@@ -3312,20 +3312,6 @@ a.badge-dark.focus {
   color: #33353c;
 }
 
-.alert-success {
-  color: #236b22;
-  background-color: #daf5d9;
-  border-color: #cbf1ca;
-}
-
-.alert-success hr {
-  border-top-color: #b7ecb6;
-}
-
-.alert-success .alert-link {
-  color: #164416;
-}
-
 .alert-info {
   color: #553270;
   background-color: #eddff7;

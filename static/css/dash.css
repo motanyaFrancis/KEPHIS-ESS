@@ -5,6 +5,7 @@
     --first-color: #144a85;
     --first-color-light: #6c8aaf;
     --green-color: #25CC88;
+    --green: #134326;
     --red-color: #e51e25;
     --sand-tan: #e1b382;
     --dark-color: #444a4a;
@@ -46,6 +47,7 @@
     color: #000;
     padding-left: 1rem;
     font-family: var(--primary-font);
+    text-shadow: 0 1px 0 white;
 }
 
 .summ-cards2 {
@@ -57,17 +59,19 @@
     color: #000;
     padding-left: 1rem;
     font-family: var(--primary-font);
+    text-shadow: 0 1px 0 white;
 }
 
 .summ-cards3 {
     padding: 1rem;
-    border-bottom: 3px solid var(--green-color)
+    border-bottom: 3px solid var(--green)
 }
 
 .summ-cards3 .card-title {
     color: #000;
     padding-left: 1rem;
     font-family: var(--primary-font);
+    text-shadow: 0 1px 0 white;
 }
 
 .c1,
@@ -84,6 +88,7 @@
     font-family: var(--primary-font);
     font-size: 1rem;
     color: #000;
+    text-shadow: 0 1px 0 white;
 }
 
 #care:hover {

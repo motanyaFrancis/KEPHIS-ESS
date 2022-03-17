@@ -90,10 +90,127 @@
                                                 <td>{{res.Expected_Receipt_Date}}</td>
                                                 <td>{{res.Requested_By}}</td>
                                                 <td>
+                                                    <form action="{% url 'FnDeletePurchaseRequisitionHeader' %}"
+                                                        method="post" style="display: inline-block;">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="requisitionNo" value="{{res.No_}}">
+                                                        <button type="submit" class="btn btn-danger"
+                                                            data-toggle="tooltip" data-placement="top" title="Delete"><i
+                                                                class="fas fa-trash-alt"></i>
+                                                        </button>
+                                                    </form>
+                                                    <button class="btn btn-primary" data-bs-toggle="modal"
+                                                        data-bs-target="#trainedit{{res.No_}}" data-toggle="tooltip"
+                                                        data-placement="top" title="edit"><i class="fas fa-edit"></i>
+                                                    </button>
                                                     <a href="{% url 'PurchaseDetail' res.No_ %} "
                                                         class="btn btn-success btn-icon-text" type="button"
                                                         data-toggle="tooltip" data-placement="top" title="View"
-                                                        style="background: #25CC88;"><i class="fa fa-table"></i></a>
+                                                        style="background: #25CC88;"><i class="fa fa-table"></i>
+                                                    </a>
+                                                    <!-- Modal -->
+                                                    <div class="modal fade" id="trainedit{{res.No_}}"
+                                                        data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                                        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                        <div
+                                                            class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="staticBackdropLabel">
+                                                                        Edit Purchase Request
+                                                                    </h5>
+                                                                    <button type="button" class="btn-close"
+                                                                        data-bs-dismiss="modal"
+                                                                        aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <form class="myForm needs-validation"
+                                                                        action="{% url 'CreatePurchaseRequisition' %}"
+                                                                        method="post" novalidate>
+                                                                        {% csrf_token %}
+                                                                        <div class="mb-2">
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <input type="hidden"
+                                                                                        name="requisitionNo"
+                                                                                        value="{{res.No_}}">
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <input type="hidden" name="myAction"
+                                                                                        value="modify">
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <label for=""
+                                                                                        class="form-label">Order
+                                                                                        Date</label>
+                                                                                    <input type="date" name="orderDate"
+                                                                                        class="form-control" required>
+                                                                                    <div class="invalid-feedback">
+                                                                                        Please select a valid Order
+                                                                                        Date.
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <label for=""
+                                                                                        class="form-label">Expected
+                                                                                        Receipt Date</label>
+                                                                                    <input type="date"
+                                                                                        name="expectedReceiptDate"
+                                                                                        class="form-control" required>
+                                                                                    <div class="invalid-feedback">
+                                                                                        Please select a valid Expected
+                                                                                        Receipt Date.
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <label for=""
+                                                                                        class="form-label">Consumable</label>
+                                                                                    <select class="form-select"
+                                                                                        name="isConsumable" required>
+                                                                                        <option selected disabled
+                                                                                            value="">Select</option>
+                                                                                        <option value="True">True
+                                                                                        </option>
+                                                                                        <option value="False">False
+                                                                                        </option>
+                                                                                    </select>
+                                                                                    <div class="invalid-feedback">
+                                                                                        Please select a valid Option.
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <label for=""
+                                                                                        class="form-label">Purpose</label>
+                                                                                    <textarea class="form-control"
+                                                                                        name="reason" rows="3"
+                                                                                        required></textarea>
+                                                                                    <div class="invalid-feedback">
+                                                                                        Purpose can't be empty.
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <button type="button" class="btn btn-danger"
+                                                                                data-bs-dismiss="modal">Discard</button>
+                                                                            <button type="submit"
+                                                                                class="btn btn-primary">Submit</button>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </td>
                                             </tr>
                                             {% endfor %}
@@ -118,7 +235,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {% for res in res %}
+                                            {% for res in response %}
                                             <tr>
                                                 <td>{{res.No_}}</td>
                                                 <td>{{res.Order_Date}}</td>
@@ -190,7 +307,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {% for res in rej %}
+                                            {% for res in pending %}
                                             <tr>
                                                 <td>{{res.No_}}</td>
                                                 <td>{{res.Order_Date}}</td>
@@ -232,6 +349,16 @@
                         <div class="mb-2"> <span class="w-name">
                                 Purchase Requisition Header:
                             </span>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <input type="hidden" name="requisitionNo" value="">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <input type="hidden" name="myAction" value="insert">
+                                </div>
+                            </div>
                             <div class="row">
                                 <div class="col-md-12">
                                     <label for="" class="form-label">Order Date</label>

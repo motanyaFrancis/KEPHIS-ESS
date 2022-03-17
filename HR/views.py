@@ -14,7 +14,176 @@ from django.contrib import messages
 # Create your views here.
 
 
+def Leave_Planner(request):
+    fullname = request.session['fullname']
+    year = request.session['years']
+    session = requests.Session()
+    session.auth = config.AUTHS
+
+    Access_Point = config.O_DATA.format("/QyLeavePlannerHeaders")
+    try:
+        response = session.get(Access_Point, timeout=10).json()
+        Plans = []
+        for leave in response['value']:
+            if leave['Employee_No_'] == request.session['Employee_No_']:
+                output_json = json.dumps(leave)
+                Plans.append(json.loads(output_json))
+    except requests.exceptions.ConnectionError as e:
+        print(e)
+
+    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
+    ctx = {"today": todays_date, "res": Plans,
+           "year": year, "full": fullname}
+    return render(request, 'planner.html', ctx)
+
+
+def CreatePlanner(request):
+    plannerNo = ""
+    employeeNo = request.session['Employee_No_']
+    myAction = ""
+    if request.method == 'POST':
+        try:
+            myAction = request.POST.get('myAction')
+        except ValueError as e:
+            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            return redirect('LeavePlanner')
+    try:
+        response = config.CLIENT.service.FnLeavePlannerHeader(
+            plannerNo, employeeNo, myAction)
+        messages.success(request, "You have successfully  Added!!")
+        print(response)
+    except Exception as e:
+        messages.error(request, e)
+        print(e)
+    return redirect('LeavePlanner')
+
+
+def PlanDetail(request, pk):
+    fullname = request.session['fullname']
+    year = request.session['years']
+    session = requests.Session()
+    session.auth = config.AUTHS
+    res = ''
+    state = ''
+    Access_Point = config.O_DATA.format("/QyLeavePlannerHeaders")
+    try:
+        response = session.get(Access_Point, timeout=10).json()
+        openPlan = []
+        Pending = []
+        for plan in response['value']:
+            if plan['Employee_No_'] == request.session['Employee_No_']:
+                output_json = json.dumps(plan)
+                openPlan.append(json.loads(output_json))
+                for claim in openPlan:
+                    if claim['No_'] == pk:
+                        res = claim
+    except requests.exceptions.ConnectionError as e:
+        print(e)
+    Lines_Res = config.O_DATA.format("/QyLeavePlannerLines")
+    try:
+        responses = session.get(Lines_Res, timeout=10).json()
+        openLines = []
+        for train in responses['value']:
+            if train['Document_No_'] == pk and train['Employee_No_'] == request.session['Employee_No_']:
+                output_json = json.dumps(train)
+                openLines.append(json.loads(output_json))
+    except requests.exceptions.ConnectionError as e:
+        print(e)
+    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
+    ctx = {"today": todays_date, "res": res,
+           "year": year, "full": fullname,
+           "line": openLines}
+    return render(request, 'planDetails.html', ctx)
+
+
+def FnSubmitLeavePlanner(request, pk):
+    plannerNo = pk
+    employeeNo = request.session['Employee_No_']
+    if request.method == 'POST':
+        try:
+            response = config.CLIENT.service.FnSubmitLeavePlanner(
+                plannerNo, employeeNo)
+            messages.success(request, "You have successfully  Added!!")
+            print(response)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+    return redirect('PlanDetail', pk=pk)
+
+# Delete leave Planner Header
+
+
+def FnDeleteLeavePlannerHeader(request):
+    plannerNo = ""
+    employeeNo = request.session['Employee_No_']
+    if request.method == 'POST':
+        plannerNo = request.POST.get('plannerNo')
+        try:
+            response = config.CLIENT.service.FnDeleteLeavePlannerHeader(
+                plannerNo, employeeNo)
+            messages.success(request, "Successfully Deleted")
+            print(response)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+    return redirect('LeavePlanner')
+
+
+def CreatePlannerLine(request, pk):
+    lineNo = ""
+    plannerNo = pk
+    startDate = ""
+    endDate = ""
+    myAction = ""
+
+    if request.method == 'POST':
+        try:
+            lineNo = int(request.POST.get('lineNo'))
+            startDate = datetime.strptime(
+                (request.POST.get('startDate')), '%Y-%m-%d').date()
+            endDate = datetime.strptime(
+                (request.POST.get('endDate')), '%Y-%m-%d').date()
+            myAction = request.POST.get('myAction')
+        except ValueError as e:
+            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            return redirect('PlanDetail', pk=pk)
+    if not lineNo:
+        lineNo = 0
+    try:
+        response = config.CLIENT.service.FnLeavePlannerLine(
+            lineNo, plannerNo, startDate, endDate, myAction)
+        messages.success(request, "You have successfully  Added!!")
+        print(response)
+    except Exception as e:
+        messages.error(request, e)
+        print(e)
+    return redirect('PlanDetail', pk=pk)
+
+
+def FnDeleteLeavePlannerLine(request, pk):
+    plannerNo = pk
+    lineNo = ""
+
+    if request.method == 'POST':
+        try:
+            lineNo = int(request.POST.get('lineNo'))
+        except ValueError as e:
+            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            return redirect('PlanDetail', pk=pk)
+    try:
+        response = config.CLIENT.service.FnDeleteLeavePlannerLine(plannerNo,
+                                                                  lineNo)
+        messages.success(request, "Successfully  Deleted!!")
+        print(response)
+    except Exception as e:
+        messages.error(request, e)
+        print(e)
+    return redirect('PlanDetail', pk=pk)
+
+
 def Leave_Request(request):
+    fullname = request.session['fullname']
+    year = request.session['years']
     session = requests.Session()
     session.auth = config.AUTHS
 
@@ -50,6 +219,7 @@ def Leave_Request(request):
                 Pending.append(json.loads(output_json))
         counts = len(open)
         pend = len(Pending)
+        print(request.session['User_ID'])
 
         counter = len(Approved)
 
@@ -64,7 +234,8 @@ def Leave_Request(request):
            "counter": counter, "rej": Rejected,
            'reject': reject, 'leave': Leave,
            "plan": Plan, "pend": pend,
-           "pending": Pending}
+           "pending": Pending, "year": year,
+           "full": fullname}
     return render(request, 'leave.html', ctx)
 
 
@@ -77,18 +248,22 @@ def CreateLeave(request):
     plannerStartDate = "",
     daysApplied = ""
     isReturnSameDay = ''
-    myAction = 'insert'
+    myAction = ''
     if request.method == 'POST':
         try:
+            applicationNo = request.POST.get('applicationNo')
             leaveType = request.POST.get('leaveType')
             plannerStartDate = datetime.strptime(
-                (request.POST.get('plannerStartDate')), '%Y-%m-%d')
+                (request.POST.get('plannerStartDate')), '%Y-%m-%d').date()
             daysApplied = int(request.POST.get('daysApplied'))
-            isReturnSameDay = request.POST.get('isReturnSameDay')
+            isReturnSameDay = eval(request.POST.get('isReturnSameDay'))
+            myAction = request.POST.get('myAction')
         except ValueError as e:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('leave')
-    print(plannerStartDate)
+    if not applicationNo:
+        applicationNo = " "
+    print(applicationNo)
     try:
         response = config.CLIENT.service.FnLeaveApplication(
             applicationNo, employeeNo, usersId, dimension3, leaveType, plannerStartDate, daysApplied, isReturnSameDay, myAction)
@@ -100,19 +275,61 @@ def CreateLeave(request):
     return redirect('leave')
 
 
+def FnDeleteLeavePlannerHeader(request):
+    plannerNo = ""
+    employeeNo = request.session['Employee_No_']
+    if request.method == 'POST':
+        plannerNo = request.POST.get('plannerNo')
+        try:
+            response = config.CLIENT.service.FnDeleteLeavePlannerHeader(
+                plannerNo, employeeNo)
+            messages.success(request, "Successfully Deleted")
+            print(response)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+    return redirect('LeavePlanner')
+
+
+def FnDeleteLeaveApplication(request):
+    employeeNo = request.session['Employee_No_']
+    applicationNo = ""
+
+    if request.method == 'POST':
+        applicationNo = request.POST.get('applicationNo')
+        try:
+            response = config.CLIENT.service.FnDeleteLeaveApplication(
+                employeeNo, applicationNo)
+            messages.success(request, "Successfully Deleted")
+            print(response)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+    return redirect('leave')
+
+
 def LeaveDetail(request, pk):
+    fullname = request.session['fullname']
+    year = request.session['years']
     session = requests.Session()
     session.auth = config.AUTHS
     res = ''
     state = ''
     Access_Point = config.O_DATA.format("/QyLeaveApplications")
     Approver = config.O_DATA.format("/QyApprovalEntries")
+    Ledger = config.O_DATA.format("/QyLeaveLedgerEntries")
     try:
         response = session.get(Access_Point, timeout=10).json()
         res_approver = session.get(Approver, timeout=10).json()
+        res_Ledger = session.get(Ledger, timeout=10).json()
         openClaim = []
         Approvers = []
         Pending = []
+        Ledgers = []
+        for Ledger in res_Ledger['value']:
+            if Ledger['Staff_No_'] == request.session['Employee_No_'] and Ledger['Leave_Period_Code'] == request.session['Leave_Period'] and Ledger['Leave_Type'] == request.session['Leave_Code']:
+                output_json = json.dumps(Ledger)
+                Ledgers.append(json.loads(output_json))
         for approver in res_approver['value']:
             if approver['Document_No_'] == pk:
                 output_json = json.dumps(approver)
@@ -124,11 +341,15 @@ def LeaveDetail(request, pk):
                 for claim in openClaim:
                     if claim['Application_No'] == pk:
                         res = claim
+                        if claim['Status'] == 'Released':
+                            state = 3
             if claim['Status'] == 'Open' and claim['User_ID'] == request.session['User_ID']:
                 output_json = json.dumps(claim)
                 openClaim.append(json.loads(output_json))
                 for claim in openClaim:
                     if claim['Application_No'] == pk:
+                        request.session['Leave_Period'] = claim['Leave_Period']
+                        request.session['Leave_Code'] = claim['Leave_Code']
                         res = claim
                         if claim['Status'] == 'Open':
                             state = 1
@@ -151,7 +372,8 @@ def LeaveDetail(request, pk):
 
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": res,
-           "Approvers": Approvers, "state": state}
+           "Approvers": Approvers, "state": state,
+           "year": year, "full": fullname}
     return render(request, 'leaveDetail.html', ctx)
 
 
@@ -198,7 +420,9 @@ def LeaveCancelApproval(request, pk):
 
 
 def Training_Request(request):
-    print("emps", request.session['Employee_No_'])
+    fullname = request.session['fullname']
+    year = request.session['years']
+
     session = requests.Session()
     session.auth = config.AUTHS
 
@@ -247,7 +471,8 @@ def Training_Request(request):
            "counter": counter, "rej": Rejected,
            'reject': reject, 'cur': cur,
            "train": trains, "des": destinations,
-           "pend": pend, "pending": Pending}
+           "pend": pend, "pending": Pending,
+           "year": year, "full": fullname}
     return render(request, 'training.html', ctx)
 
 
@@ -262,8 +487,49 @@ def CreateTrainingRequest(request):
     startDate = ''
     endDate = ''
     destination = ''
+    myAction = ''
+    if request.method == 'POST':
+        try:
+            requestNo = request.POST.get('requestNo')
+            isAdhoc = eval(request.POST.get('isAdhoc'))
+            description = request.POST.get('description')
+            startDate = datetime.strptime(
+                request.POST.get('startDate'), '%Y-%m-%d').date()
+            trainingNeed = request.POST.get('trainingNeed')
+            destination = request.POST.get('destination')
+            endDate = datetime.strptime(
+                request.POST.get('endDate'), '%Y-%m-%d').date()
+            myAction = request.POST.get('myAction')
+        except ValueError:
+            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            return redirect('training_request')
+    if not requestNo:
+        requestNo = " s"
+    print(requestNo)
+    try:
+        response = config.CLIENT.service.FnTrainingRequest(
+            requestNo, employeeNo, usersId, designation, isAdhoc, trainingNeed, description, startDate, endDate, destination, myAction)
+        messages.success(request, "Successfully Added!!")
+        print(response)
+    except Exception as e:
+        messages.error(request, e)
+        print(e)
+    return redirect('training_request')
+
+
+def EditTrainingRequest(request):
+    requestNo = ''
+    employeeNo = request.session['Employee_No_']
+    usersId = request.session['User_ID']
+    designation = request.session['User_Responsibility_Center']
+    isAdhoc = ""
+    trainingNeed = ""
+    description = ""
+    startDate = ''
+    endDate = ''
+    destination = ''
     currency = ''
-    myAction = 'insert'
+    myAction = 'modify'
     if request.method == 'POST':
         try:
             isAdhoc = request.POST.get('isAdhoc')
@@ -288,10 +554,14 @@ def CreateTrainingRequest(request):
 
 
 def TrainingDetail(request, pk):
+    fullname = request.session['fullname']
+    year = request.session['years']
+
     session = requests.Session()
     session.auth = config.AUTHS
     res = ''
     state = ""
+    train_status = ""
     Access_Point = config.O_DATA.format("/QyTrainingRequests")
     Approver = config.O_DATA.format("/QyApprovalEntries")
     try:
@@ -311,6 +581,8 @@ def TrainingDetail(request, pk):
                 for claim in openClaim:
                     if claim['Request_No_'] == pk:
                         res = claim
+                        if claim['Status'] == 'Released':
+                            state = 3
             if claim['Status'] == 'Open' and claim['Employee_No'] == request.session['Employee_No_']:
                 output_json = json.dumps(claim)
                 openClaim.append(json.loads(output_json))
@@ -319,6 +591,8 @@ def TrainingDetail(request, pk):
                         res = claim
                         if claim['Status'] == 'Open':
                             state = 1
+                        if claim['Adhoc'] == True:
+                            train_status = "Adhoc"
             if claim['Status'] == 'Rejected' and claim['Employee_No'] == request.session['Employee_No_']:
                 output_json = json.dumps(claim)
                 openClaim.append(json.loads(output_json))
@@ -335,10 +609,136 @@ def TrainingDetail(request, pk):
                             state = 2
     except requests.exceptions.ConnectionError as e:
         print(e)
+    Lines_Res = config.O_DATA.format("/QyTrainingNeedsRequest")
+    try:
+        response = session.get(Lines_Res, timeout=10).json()
+        openLines = []
+        for train in response['value']:
+            if train['Source_Document_No'] == pk and train['Employee_No'] == request.session['Employee_No_']:
+                output_json = json.dumps(train)
+                openLines.append(json.loads(output_json))
+    except requests.exceptions.ConnectionError as e:
+        print(e)
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": res,
-           "Approvers": Approvers, "state": state}
+           "Approvers": Approvers, "state": state,
+           "year": year, "full": fullname,
+           "train_status": train_status, "line": openLines}
     return render(request, 'trainingDetail.html', ctx)
+
+
+def FnAdhocTrainingNeedRequest(request, pk):
+    requestNo = pk
+    no = ""
+    employeeNo = request.session['Employee_No_']
+    trainingName = ""
+    trainingArea = ""
+    trainingObjectives = ""
+    venue = ""
+    provider = ""
+    myAction = "insert"
+    if request.method == 'POST':
+        try:
+            trainingName = request.POST.get('trainingName')
+            trainingArea = request.POST.get('trainingArea')
+            trainingObjectives = request.POST.get('trainingObjectives')
+            venue = request.POST.get('venue')
+            provider = request.POST.get('provider')
+
+        except ValueError as e:
+            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            return redirect('TrainingDetail', pk=pk)
+    try:
+        response = config.CLIENT.service.FnAdhocTrainingNeedRequest(requestNo,
+                                                                    no, employeeNo, trainingName, trainingArea, trainingObjectives, venue, provider, myAction)
+        messages.success(request, "Successfully Added!!")
+        print(response)
+        return redirect('TrainingDetail', pk=pk)
+    except Exception as e:
+        messages.error(request, e)
+        print(e)
+    return redirect('TrainingDetail', pk=pk)
+
+
+def FnAdhocTrainingEdit(request, pk, no):
+    requestNo = pk
+    no = no
+    employeeNo = request.session['Employee_No_']
+    trainingName = ""
+    trainingArea = ""
+    trainingObjectives = ""
+    venue = ""
+    provider = ""
+    myAction = "modify"
+
+    if request.method == 'POST':
+        try:
+            trainingName = request.POST.get('trainingName')
+            trainingArea = request.POST.get('trainingArea')
+            trainingObjectives = request.POST.get('trainingObjectives')
+            venue = request.POST.get('venue')
+            provider = request.POST.get('provider')
+
+        except ValueError as e:
+            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            return redirect('TrainingDetail', pk=pk)
+    try:
+        response = config.CLIENT.service.FnAdhocTrainingNeedRequest(requestNo,
+                                                                    no, employeeNo, trainingName, trainingArea, trainingObjectives, venue, provider, myAction)
+        messages.success(request, "Successfully Edited!!")
+        print(response)
+        return redirect('TrainingDetail', pk=pk)
+    except Exception as e:
+        messages.error(request, e)
+        print(e)
+    return redirect('TrainingDetail', pk=pk)
+
+
+def FnDeleteTrainingRequest(request):
+    requestNo = ""
+    employeeNo = request.session['Employee_No_']
+    usersId = request.session['User_ID']
+
+    if request.method == 'POST':
+        try:
+            requestNo = request.POST.get('requestNo')
+        except ValueError as e:
+            return redirect('training_request')
+
+    try:
+        response = config.CLIENT.service.FnDeleteTrainingRequest(
+            requestNo, employeeNo, usersId)
+        messages.success(request, "Successfully Deleted!!")
+        print(response)
+        return redirect('training_request')
+    except Exception as e:
+        messages.error(request, e)
+        print(e)
+    return redirect('training_request')
+
+
+def FnAdhocLineDelete(request, pk):
+    requestNo = pk
+    needNo = ''
+
+    if request.method == 'POST':
+        try:
+            needNo = request.POST.get('needNo')
+        except ValueError as e:
+            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            return redirect('TrainingDetail', pk=pk)
+    print("requestNo", requestNo)
+    print("needno", needNo)
+    try:
+        response = config.CLIENT.service.FnDeleteAdhocTrainingNeedRequest(
+            requestNo, needNo)
+        messages.success(request, "Successfully Deleted!!")
+        print(response)
+        return redirect('TrainingDetail', pk=pk)
+    except Exception as e:
+        messages.error(request, e)
+        print(e)
+    return redirect('TrainingDetail', pk=pk)
 
 
 def TrainingApproval(request, pk):
@@ -375,6 +775,117 @@ def TrainingCancelApproval(request, pk):
         response = config.CLIENT.service.FnCancelTrainingApproval(
             myUserID, trainingNo)
         messages.success(request, "Cancel Approval Request Successful !!")
+        print(response)
+        return redirect('TrainingDetail', pk=pk)
+    except Exception as e:
+        messages.error(request, e)
+        print(e)
+    return redirect('TrainingDetail', pk=pk)
+
+
+def PNineRequest(request):
+    fullname = request.session['fullname']
+    year = request.session['years']
+    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
+
+    employeeNo = request.session['Employee_No_']
+    filenameFromApp = ""
+    startDate = ""
+    endDate = ""
+    if request.method == 'POST':
+        try:
+            filenameFromApp = request.POST.get('filenameFromApp')
+            startDate = datetime.strptime(
+                request.POST.get('startDate'), '%Y-%m-%d').date()
+            endDate = datetime.strptime(
+                request.POST.get('endDate'), '%Y-%m-%d').date()
+        except ValueError as e:
+            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            return redirect('pNine')
+        filenameFromApp = filenameFromApp + ".pdf"
+        try:
+            response = config.CLIENT.service.FnGeneratePNine(
+                employeeNo, filenameFromApp, startDate, endDate)
+            messages.success(request, "Request Successful !!")
+            print(response)
+            return redirect('pNine')
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+    ctx = {"today": todays_date, "year": year, "full": fullname}
+    return render(request, "p9.html", ctx)
+
+
+def PayslipRequest(request):
+    fullname = request.session['fullname']
+    year = request.session['years']
+    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
+    employeeNo = request.session['Employee_No_']
+    filenameFromApp = ""
+    paymentPeriod = ""
+    if request.method == 'POST':
+        try:
+            filenameFromApp = request.POST.get('filenameFromApp')
+            paymentPeriod = datetime.strptime(
+                request.POST.get('paymentPeriod'), '%Y-%m-%d').date()
+
+        except ValueError as e:
+            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            return redirect('payslip')
+        filenameFromApp = filenameFromApp + ".pdf"
+        try:
+            response = config.CLIENT.service.FnGeneratePayslip(
+                employeeNo, filenameFromApp, paymentPeriod)
+            messages.success(request, "Request Successful !!")
+            print(response)
+            return redirect('payslip')
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+    ctx = {"today": todays_date, "year": year, "full": fullname}
+    return render(request, "payslip.html", ctx)
+# Leave Report
+
+
+def FnGenerateLeaveReport(request, pk):
+    employeeNo = request.session['Employee_No_']
+    filenameFromApp = ''
+    applicationNo = pk
+    if request.method == 'POST':
+        try:
+            filenameFromApp = request.POST.get('filenameFromApp')
+        except ValueError as e:
+            messages.error(request, "Invalid Line number, Try Again!!")
+            return redirect('LeaveDetail', pk=pk)
+    filenameFromApp = filenameFromApp + ".pdf"
+    try:
+        response = config.CLIENT.service.FnGenerateLeaveReport(
+            employeeNo, filenameFromApp, applicationNo)
+        messages.success(request, "Successfully Sent!!")
+        print(response)
+        return redirect('LeaveDetail', pk=pk)
+    except Exception as e:
+        messages.error(request, e)
+        print(e)
+    return redirect('LeaveDetail', pk=pk)
+# Training report
+
+
+def FnGenerateTrainingReport(request, pk):
+    employeeNo = request.session['Employee_No_']
+    filenameFromApp = ''
+    applicationNo = pk
+    if request.method == 'POST':
+        try:
+            filenameFromApp = request.POST.get('filenameFromApp')
+        except ValueError as e:
+            messages.error(request, "Invalid Line number, Try Again!!")
+            return redirect('TrainingDetail', pk=pk)
+    filenameFromApp = filenameFromApp + ".pdf"
+    try:
+        response = config.CLIENT.service.FnGenerateLeaveReport(
+            employeeNo, filenameFromApp, applicationNo)
+        messages.success(request, "Successfully Sent!!")
         print(response)
         return redirect('TrainingDetail', pk=pk)
     except Exception as e:

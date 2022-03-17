@@ -2,11 +2,14 @@
 {% load bootstrap5 %}
 {% load static %}
 {% block main %}
-
 <section class="dash2">
-    <div class="content-wrapper" style="padding-bottom: 5rem;">
+    <div class="content-wrapper">
         <div class="d-xl-flex justify-content-between align-items-start">
             <h2 class="text-dark font-weight-bold mb-2"> Leave Requests
+                {% if state == 3 %}
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#report"> Generate
+                    Report</button>
+                {% endif %}
             </h2>
 
             <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
@@ -40,6 +43,113 @@
         {% endif %}
         {% endfor %}
         {% endif %}
+        <div class="row my-3">
+            <div class="col-md-3">
+                <div class="card l-bg-cherry statCard h-100">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-dollar-sign"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Leave Type</h5>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0" style="text-transform:lowercase;">
+                                    {{res.Leave_Code}} Leave
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card l-bg-blue-dark statCard h-100">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-users"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Leave Status</h5>
+                        </div>
+                        {% if res.Status == "Open" %}
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{res.Status}}
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="progress mt-1 " data-height="8" style="height: 8px;">
+                            <div class="progress-bar l-bg-red" role="progressbar" data-width="50%" aria-valuenow="25"
+                                aria-valuemin="0" aria-valuemax="100"
+                                style="width: 50%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
+                            </div>
+                        </div>
+                        {% elif res.Status == "Pending Approval" %}
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{res.Status}}
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="progress mt-1 " data-height="8" style="height: 8px;">
+                            <div class="progress-bar l-bg-yellow" role="progressbar" data-width="25%" aria-valuenow="25"
+                                aria-valuemin="0" aria-valuemax="100"
+                                style="width: 75%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
+                            </div>
+                        </div>
+                        {% elif res.Status == "Released" %}
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    Approved
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="progress mt-1 " data-height="8" style="height: 8px;">
+                            <div class="progress-bar l-bg-green" role="progressbar" data-width="75%" aria-valuenow="75"
+                                aria-valuemin="0" aria-valuemax="100"
+                                style="width: 100%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card l-bg-green-dark statCard h-100">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-calendar-alt"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Start Date</h5>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{res.Start_Date}}
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card l-bg-orange-dark statCard h-100">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-calendar-times"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Days Applied</h5>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{res.Days_Applied}}
+                                </h2>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="row">
             <div class="col-md-12">
                 <form class="row g-3">
@@ -72,14 +182,6 @@
                         <input type="text" class="form-control" placeholder="{{res.User_ID}}" readonly>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Leave Code</label>
-                        <input type="text" class="form-control" placeholder="{{res.Leave_Code}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Status</label>
-                        <input type="text" class="form-control" placeholder="{{res.Status}}" readonly>
-                    </div>
-                    <div class="col-md-4">
                         <label class="form-label">Planner Start Date</label>
                         <input type="text" class="form-control" placeholder="{{res.Planner_Start_Date}}" readonly>
                     </div>
@@ -88,16 +190,8 @@
                         <input type="text" class="form-control" placeholder="{{res.Return_same_day}}" readonly>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Days Applied</label>
-                        <input type="text" class="form-control" placeholder="{{res.Days_Applied}}" readonly>
-                    </div>
-                    <div class="col-md-4">
                         <label class="form-label">Leave Allowance Payable</label>
                         <input type="text" class="form-control" placeholder="{{res.Leave_Allowance_Payable}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Start Date</label>
-                        <input type="text" class="form-control" placeholder="{{res.Start_Date}}" readonly>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">End Date</label>
@@ -167,7 +261,38 @@
         </div>
         {% endif %}
     </div>
+    <!-- Report -->
+    <div class="modal fade" id="report" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">New Imprest Line
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="myForm needs-validation" id="frm_"
+                        action="{% url 'FnGenerateLeaveReport' res.Application_No%}" method="post" novalidate>
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="form-label">Document Name</label>
+                                <input type="text" class="form-control" name="filenameFromApp"
+                                    placeholder="Enter Document Name">
+                            </div>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
+                    <button type="submit" id="sasa" class="btn btn-primary">Submit</button>
+                </div>
+            </div>
 
+            </form>
+        </div>
+    </div>
+    <!-- End Report -->
 </section>
 <script>
     $(document).ready(function () {

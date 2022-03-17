@@ -3,7 +3,7 @@
 :root {
     --first-color: #144a85;
     --first-color-light: #6c8aaf;
-    --green-color: #25CC88;
+    --green-color: #134326;
     --red-color: #e51e25;
     --sand-tan: #e1b382;
     --dark-color: #444a4a;
@@ -167,7 +167,7 @@ label {
 .login-form .btn:active {
     font-size: 16px;
     font-weight: bold;
-    background: var(--green-color) !important;
+    background: #134326 !important;
     border-radius: 3px;
     border: none;
     min-width: 140px;
@@ -175,7 +175,7 @@ label {
 
 .login-form .btn:hover,
 .login-form .btn:focus {
-    background: var(--green-color) !important;
+    background: #134326 !important;
 }
 
 .login-form a {

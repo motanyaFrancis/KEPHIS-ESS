@@ -12,6 +12,8 @@ from django.contrib import messages
 
 
 def Approve(request):
+    fullname = request.session['fullname']
+    year = request.session['years']
     session = requests.Session()
     session.auth = config.AUTHS
 
@@ -28,11 +30,15 @@ def Approve(request):
         print(e)
 
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-    ctx = {"today": todays_date, "res": open, "count": counts}
+    ctx = {"today": todays_date, "res": open,
+           "year": year, "full": fullname,
+           "count": counts}
     return render(request, 'Approve.html', ctx)
 
 
 def ApproveDetails(request, pk):
+    fullname = request.session['fullname']
+    year = request.session['years']
     session = requests.Session()
     session.auth = config.AUTHS
     res = ''
@@ -50,35 +56,33 @@ def ApproveDetails(request, pk):
     except requests.exceptions.ConnectionError as e:
         print(e)
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-    ctx = {"today": todays_date, "res": res}
+    ctx = {"today": todays_date, "res": res, "full": fullname, "year": year}
     return render(request, 'approveDetails.html', ctx)
 
 
 def All_Approved(request, pk):
     entryNo = ''
     documentNo = pk
-    userID = request.session['User_ID']
+    myUserID = request.session['User_ID']
     approvalComments = ""
     myAction = 'approve'
     if request.method == 'POST':
         try:
-            entryNo = request.POST.get('entryNo')
-            approvalComments = request.POST.get('approvalComments')
+            entryNo = int(request.POST.get('entryNo'))
         except ValueError:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
-            return redirect('IMPDetails', pk=documentNo)
-    try:
-        response = config.CLIENT.service.FnDocumentApproval(
-            entryNo, documentNo, userID, approvalComments, myAction)
-        messages.success(request, "Successfully Added!!")
-        print(response)
-        return redirect('ApproveData', pk=documentNo)
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
+            return redirect('ApproveData', pk=pk)
+        try:
+            response = config.CLIENT.service.FnDocumentApproval(
+                entryNo, documentNo, myUserID, approvalComments, myAction)
+            messages.success(request, "Successfully Approved!!")
+            print(response)
+            return redirect('approve')
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
 
-    print(approvalComments)
-    return redirect('ApproveData', pk=documentNo)
+    return redirect('ApproveData', pk=pk)
 
 
 def Rejected(request, pk):
@@ -89,18 +93,18 @@ def Rejected(request, pk):
     myAction = 'reject'
     if request.method == 'POST':
         try:
-            entryNo = request.POST.get('entryNo')
+            entryNo = int(request.POST.get('entryNo'))
             approvalComments = request.POST.get('approvalComments')
         except ValueError:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
-            return redirect('IMPDetails', pk=documentNo)
-    try:
-        response = config.CLIENT.service.FnDocumentApproval(
-            entryNo, documentNo, userID, approvalComments, myAction)
-        messages.success(request, "Successfully Added!!")
-        print(response)
-        return redirect('ApproveData', pk=documentNo)
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
+            return redirect('ApproveData', pk=pk)
+        try:
+            response = config.CLIENT.service.FnDocumentApproval(
+                entryNo, documentNo, userID, approvalComments, myAction)
+            messages.success(request, "Reject Approval successful!!")
+            print(response)
+            return redirect('approve')
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
     return redirect('ApproveData', pk=documentNo)

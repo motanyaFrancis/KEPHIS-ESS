@@ -5,7 +5,7 @@
     --nav-width: 76px;
     --first-color: #144a85;
     --first-color-light: #6c8aaf;
-    --green-color: #25CC88;
+    --green-color: #134326;
     --red-color: #e51e25;
     --sand-tan: #e1b382;
     --dark-color: #444a4a;
@@ -25,14 +25,14 @@ body {
 
 /* Alerts */
 .alert-warn {
-    background: var(--red-color);
-    border-color: var(--red-color);
+    background: red;
+    border-color: red;
     color: white;
 }
 
 .alert-success {
-    background: var(--green-color);
-    border-color: var(--green-color);
+    background: #134326;
+    border-color: #134326;
     color: white;
 }
 

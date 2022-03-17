@@ -3,14 +3,17 @@
 {% load static %}
 {% block main %}
 <section class="dash2">
-    <div class="content-wrapper" style="padding-bottom: 5rem;">
+    <div class="content-wrapper">
         <div class="d-xl-flex justify-content-between align-items-start">
             <h2 class="text-dark font-weight-bold mb-2"> Repair Request
                 {% if state == 1 %}
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> <i
-                        class="las la-plus"></i> New Repair Request</button>
+                        class="las la-plus"></i> Repair Lines</button>
+                {% elif state == 3 %}
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#report"> Generate
+                    Report</button>
                 {% else %}
-                <button class="btn btn-info"> <i class="las la-plus"></i> {{res.Status}}</button>
+                <button class="btn btn-info"> {{res.Status}}</button>
                 {% endif %}
             </h2>
 
@@ -45,6 +48,113 @@
         {% endif %}
         {% endfor %}
         {% endif %}
+        <div class="row my-3">
+            <div class="col-md-3">
+                <div class="card l-bg-cherry statCard h-100">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-dollar-sign"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Requested By</h5>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{res.Requested_By}}
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card l-bg-blue-dark statCard h-100">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-users"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Repair Status</h5>
+                        </div>
+                        {% if res.Status == "Open" %}
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{res.Status}}
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="progress mt-1 " data-height="8" style="height: 8px;">
+                            <div class="progress-bar l-bg-red" role="progressbar" data-width="50%" aria-valuenow="25"
+                                aria-valuemin="0" aria-valuemax="100"
+                                style="width: 50%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
+                            </div>
+                        </div>
+                        {% elif res.Status == "Pending Approval" %}
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{res.Status}}
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="progress mt-1 " data-height="8" style="height: 8px;">
+                            <div class="progress-bar l-bg-yellow" role="progressbar" data-width="25%" aria-valuenow="25"
+                                aria-valuemin="0" aria-valuemax="100"
+                                style="width: 75%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
+                            </div>
+                        </div>
+                        {% elif res.Status == "Released" %}
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    Approved
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="progress mt-1 " data-height="8" style="height: 8px;">
+                            <div class="progress-bar l-bg-green" role="progressbar" data-width="75%" aria-valuenow="75"
+                                aria-valuemin="0" aria-valuemax="100"
+                                style="width: 100%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card l-bg-green-dark statCard h-100">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-calendar-alt"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Expected Receipt Date</h5>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{res.Expected_Receipt_Date}}
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card l-bg-orange-dark statCard h-100">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-calendar-times"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Order Date</h5>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{res.Order_Date}}
+                                </h2>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="row">
             <div class="col-md-12">
                 <form class="row g-3">
@@ -57,10 +167,6 @@
                         <input type="text" class="form-control" placeholder="{{res.Document_Date}}" readonly>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Order Date</label>
-                        <input type="text" class="form-control" placeholder="{{res.Order_Date}}" readonly>
-                    </div>
-                    <div class="col-md-4">
                         <label class="form-label">Employee No</label>
                         <input type="text" class="form-control" placeholder="{{res.Employee_No}}" readonly>
                     </div>
@@ -68,39 +174,36 @@
                         <label class="form-label">Employee Name</label>
                         <input type="text" class="form-control" placeholder="{{res.Employee_Name}}" readonly>
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Expected Receipt Date</label>
-                        <input type="text" class="form-control" placeholder="{{res.Expected_Receipt_Date}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Requested By</label>
-                        <input type="text" class="form-control" placeholder="{{res.Requested_By}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Status</label>
-                        <input type="text" class="form-control" placeholder="{{res.Status}}" readonly>
-                    </div>
                     <div class="col-md-12">
                         <label class="form-label">Reason Description</label>
                         <textarea class="form-control" placeholder="{{res.Reason_Description}}" readonly></textarea>
                     </div>
                 </form>
                 {% if state == 1 %}
-                <div class="d-grid gap-2 my-3">
-                    <form action="{% url 'RepairApprove' res.No_ %}" method="POST" class="myForm">
+                <div class="myForm my-3">
+                    <form action="{% url 'RepairApprove' res.No_ %}" method="POST" style="display: inline-block;">
                         {% csrf_token %}
                         <div class="mb-3">
-                            <input type="hidden" hidden name="requisitionNo" value="{{res.No_}}">
+                            <input type="hidden" hidden name="requistionNo" value="{{res.No_}}">
                         </div>
                         <button class="btn btn-info" type="submit">Request For Approval</button>
                     </form>
+                    <div class="attach" style="display: inline-block;">
+                        <form action="" method="post">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <input type="hidden" name="trainingNo" value="{{res.Request_No_}}">
+                            </div>
+                            <button class="btn btn-info" type="submit">Add Attachment</button>
+                        </form>
+                    </div>
                 </div>
                 {% elif state == 2 %}
                 <div class="d-grid gap-2 my-3">
                     <form action="{% url 'RepairCancel' res.No_ %}" method="POST" class="myForm" id="approvalForm">
                         {% csrf_token %}
                         <div class="mb-3">
-                            <input type="hidden" hidden name="requisitionNo" value="{{res.No_}}">
+                            <input type="hidden" hidden name="requistionNo" value="{{res.No_}}">
                         </div>
                         <button class="btn btn-info" type="submit">Cancel Request For Approval</button>
                     </form>
@@ -123,6 +226,7 @@
                                     <th>Description</th>
                                     <th>Book Value</th>
                                     <th>Repair No</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -133,6 +237,86 @@
                                     <td>{{res.Description}}</td>
                                     <td>{{res.Book_Value}}</td>
                                     <td>{{res.AuxiliaryIndex1}}</td>
+                                    <td>
+                                        {% if state == 1 %}
+                                        <form action="{% url 'FnDeleteRepairRequisitionLine' res.AuxiliaryIndex1 %}"
+                                            method="post" style="display: inline-block;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="lineNo" value="{{res.AuxiliaryIndex6}}">
+                                            <button type="submit" class="btn btn-danger" data-toggle="tooltip"
+                                                data-placement="top" title="Delete"><i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+                                        <button class="btn btn-primary" data-bs-toggle="modal"
+                                            data-bs-target="#trainedit{{res.Line_No}}" data-toggle="tooltip"
+                                            data-placement="top" title="edit"><i class="fas fa-edit"></i>
+                                        </button>
+                                        <div class="modal fade" id="trainedit{{res.Line_No}}" data-bs-backdrop="static"
+                                            data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                            aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="staticBackdropLabel">Edit Repair
+                                                            Line
+                                                        </h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form class="myForm needs-validation"
+                                                            action="{% url 'RepairLines' res.AuxiliaryIndex1 %}"
+                                                            method="post" novalidate>
+                                                            {% csrf_token %}
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <input type="hidden" name="lineNo"
+                                                                        value="{{res.Line_No}}">
+                                                                    <input type="hidden" name="myAction" value="modify">
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <label class="form-label">Asset</label>
+                                                                    <select class="form-select" name="assetCode"
+                                                                        required>
+                                                                        <option selected disabled value="">Select Asset
+                                                                        </option>
+                                                                        {% for res in asset %}
+                                                                        <option value="{{res.No_}}">{{res.Description}}
+                                                                        </option>
+                                                                        {% endfor %}
+                                                                    </select>
+                                                                    <div class="invalid-feedback">
+                                                                        Please Select a Valid Asset.
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <label class="form-label">Description</label>
+                                                                    <textarea class="form-control" name="description"
+                                                                        rows="3" required></textarea>
+                                                                    <div class="invalid-feedback">
+                                                                        Enter Description.
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-danger"
+                                                            data-bs-dismiss="modal">Discard</button>
+                                                        <button type="submit" id="sasa"
+                                                            class="btn btn-primary">Submit</button>
+                                                    </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% else %}
+                                        No Actions
+                                        {% endif %}
+                                    </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -190,6 +374,12 @@
                         {% csrf_token %}
                         <div class="row">
                             <div class="col-md-12">
+                                <input type="hidden" name="lineNo" value="0">
+                                <input type="hidden" name="myAction" value="insert">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
                                 <label class="form-label">Asset</label>
                                 <select class="form-select" name="assetCode" required>
                                     <option selected disabled value="">Select Asset</option>
@@ -221,5 +411,35 @@
         </div>
     </div>
 </section>
+<div class="modal fade" id="report" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Repair Requisition Report
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="myForm needs-validation" id="frm_" action="{% url 'FnGenerateRepairReport' res.No_ %}"
+                    method="post" novalidate>
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="form-label">Document Name</label>
+                            <input type="text" class="form-control" name="filenameFromApp"
+                                placeholder="Enter Document Name">
+                        </div>
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
+                <button type="submit" id="sasa" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+
+        </form>
+    </div>
+</div>
 
 {% endblock %}

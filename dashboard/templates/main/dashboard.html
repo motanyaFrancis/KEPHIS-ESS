@@ -8,7 +8,7 @@
         <div class="row" id="proBanner">
             <div class="col-md-12">
                 <span class="d-flex align-items-center purchase-popup">
-                    <img src="../../../static/img/logo/scot.png" width="150px" class="img-fluid" alt="" srcset="">
+                    <img src="../../../static/img/logo/fav.png" width="70px" class="img-fluid" alt="" srcset="">
                 </span>
             </div>
         </div>
@@ -108,7 +108,7 @@
         </div>
         <div class="row py-4">
             <div class="col-md-6">
-                <div class="card p-3 h-100" style="background: #FFBF00;">
+                <div class="card p-3 h-100" style="background: #d9e3f0;">
                     <div class="card-title text-dark">
                         <h6>Approved Requests</h6>
                     </div>
@@ -243,7 +243,6 @@
                                                     style="width:100%">
                                                     <thead>
                                                         <tr id="tops">
-                                                            <th id="long">Document No</th>
                                                             <th>Document Type</th>
                                                             <th>Sender</th>
                                                             <th>Action</th>
@@ -252,16 +251,13 @@
                                                     <tbody>
                                                         {% for res in apps %}
                                                         <tr>
-                                                            <td>{{res.Document_No_}}</td>
                                                             <td id="rap">{{res.Document_Type}}</td>
                                                             <td>{{res.Sender_ID}}</td>
                                                             <td>
-                                                                <a type="button"
-                                                                    href="{% url 'ApproveData' res.Document_No_ %}"
-                                                                    class="btn btn-success btn-icon-text"
-                                                                    style="background: #25CC88;">View
-                                                                    <i class="las la-external-link-alt"
-                                                                        style="font-size: 1rem"></i>
+                                                                <a href="{% url 'ApproveData' res.Document_No_ %}"
+                                                                    class="btn btn-success link-btn" type="button"
+                                                                    data-toggle="tooltip" data-placement="top"
+                                                                    title="View"><i class="fa fa-table"></i>
                                                                 </a>
                                                             </td>
                                                         </tr>

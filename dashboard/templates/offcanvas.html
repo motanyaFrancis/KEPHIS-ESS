@@ -7,14 +7,14 @@
     <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
         <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
             <a class="navbar-brand brand-logo" href="{% url 'dashboard' %}"><i class='las la-industry'
-                    style="font-size:22px"></i>S C U</a>
+                    style="font-size:22px"></i>KMPDC</a>
             <a class="navbar-brand brand-logo-mini" href="{% url 'dashboard' %}"><i class='las la-industry'
                     style="font-size:22px"></i></a>
         </div>
         <div class="navbar-menu-wrapper d-flex align-items-stretch">
             <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize"
                 style="outline: none; border: none">
-                <i class="mdi mdi-apps" style="color: #25CC88; font-size: 1.6rem"></i>
+                <i class="mdi mdi-apps" style="color: #134326; font-size: 1.6rem"></i>
             </button>
             <ul class="navbar-nav navbar-nav-right">
                 <li class="nav-item nav-profile dropdown">
@@ -24,7 +24,7 @@
                             <img src="../../static/img/logo/pp.jpeg" alt="image">
                         </div>
                         <div class="nav-profile-text">
-                            <p class="mb-1 text-black">Enock Abere</p>
+                            <p class="mb-1 text-black">{{full}}</p>
                         </div>
                     </a>
                     <div class="dropdown-menu navbar-dropdown dropdown-menu-right p-0 border-0 font-size-sm"
@@ -74,7 +74,7 @@
             </ul>
             <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
                 data-toggle="offcanvas">
-                <i class="mdi mdi-apps" style="color: #25CC88; font-size: 1.6rem"></i>
+                <i class="mdi mdi-apps" style="color: #134326; font-size: 1.6rem"></i>
             </button>
         </div>
     </nav>
@@ -98,11 +98,25 @@
                     </a>
                     <div class="collapse" id="hr">
                         <ul class="nav flex-column sub-menu">
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'LeavePlanner' %}"><i
+                                        class="las la-arrow-right mr-2"></i>
+                                    Leave Planner
+                                </a>
+                            </li>
                             <li class="nav-item"> <a class="nav-link" href="{% url 'leave' %}"><i
                                         class="las la-arrow-right mr-2"></i> Leave Requests</a>
                             </li>
                             <li class="nav-item"> <a class="nav-link" href="{% url 'training_request' %}"><i
                                         class="las la-arrow-right mr-2"></i>Training Requests</a></li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'pNine' %}"><i class="las la-arrow-right mr-2"></i>P9
+                                    Form</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'payslip' %}"><i
+                                        class="las la-arrow-right mr-2"></i>Payslip</a>
+                            </li>
                         </ul>
                     </div>
                 </li>
@@ -168,10 +182,19 @@
         <div class="footer-inner-wraper">
             <div class="d-sm-flex justify-content-center justify-content-sm-between">
                 <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright ©
-                    SCOTT CHRISTIAN UNIVERSITY
-                    2022</span>
-                <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center"> Made By <a href="#"
-                        target="_blank" style="color: black">Kobby Technologies Ltd</a></span>
+                    Kenya Medical Practitioners and Dentists Council
+                    {{year}}</span>
+                <!-- <p class="text-200"> Made with&nbsp;
+                    <svg class="bi bi-suit-heart-fill" xmlns="http://www.w3.org/2000/svg" width="15" height="15"
+                        fill="red" viewBox="0 0 16 16">
+                        <path
+                            d="M4 1c2.21 0 4 1.755 4 3.92C8 2.755 9.79 1 12 1s4 1.755 4 3.92c0 3.263-3.234 4.414-7.608 9.608a.513.513 0 0 1-.784 0C3.234 9.334 0 8.183 0 4.92 0 2.755 1.79 1 4 1z">
+                        </path>
+                    </svg>&nbsp;by&nbsp;<a class="" href="https://www.kobby.co.ke/" target="_blank"
+                        style="text-decoration: none;"> Kobby
+                        Technologies Limited
+                    </a>
+                </p> -->
             </div>
         </div>
     </footer>
