@@ -13,7 +13,6 @@ click==7.1.2
 cloudinary==1.26.0
 colorama==0.4.4
 cryptography==3.4.8
-cupshelpers==1.0
 dbus-python==1.2.16
 defer==1.0.6
 distro==1.5.0
