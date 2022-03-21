@@ -1,3 +1,4 @@
+import base64
 from django.shortcuts import render, redirect
 from datetime import date, datetime
 import requests
@@ -238,6 +239,38 @@ def PurchaseApproval(request, pk):
     return redirect('PurchaseDetail', pk=pk)
 
 
+def UploadPurchaseAttachment(request, pk):
+    docNo = pk
+    response = ""
+    fileName = ""
+    attachment = ""
+    tableID = 52177432
+
+    if request.method == "POST":
+        try:
+            attach = request.FILES.getlist('attachment')
+        except Exception as e:
+            return redirect('PurchaseDetail', pk=pk)
+        for files in attach:
+            fileName = request.FILES['attachment'].name
+            attachment = base64.b64encode(files.read())
+            try:
+                response = config.CLIENT.service.FnUploadAttachedDocument(
+                    docNo, fileName, attachment, tableID)
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+        if response == True:
+            messages.success(request, "Successfully Sent !!")
+
+            return redirect('PurchaseDetail', pk=pk)
+        else:
+            messages.error(request, "Not Sent !!")
+            return redirect('PurchaseDetail', pk=pk)
+
+    return redirect('PurchaseDetail', pk=pk)
+
+
 def FnCancelPurchaseApproval(request, pk):
     myUserID = request.session['User_ID']
     requistionNo = ""
@@ -286,7 +319,7 @@ def FnGeneratePurchaseReport(request, pk):
             return redirect('PurchaseDetail', pk=pk)
     filenameFromApp = filenameFromApp + str(nameChars) + ".pdf"
     try:
-        response = config.CLIENT.service.FnGenerateRepairReport(
+        response = config.CLIENT.service.FnGenerateRequisitionReport(
             reqNo, filenameFromApp)
         messages.success(request, "Successfully Sent!!")
         print(response)
@@ -486,6 +519,38 @@ def RepairApproval(request, pk):
     return redirect('RepairDetail', pk=pk)
 
 
+def UploadRepairAttachment(request, pk):
+    docNo = pk
+    response = ""
+    fileName = ""
+    attachment = ""
+    tableID = 52177432
+
+    if request.method == "POST":
+        try:
+            attach = request.FILES.getlist('attachment')
+        except Exception as e:
+            return redirect('RepairDetail', pk=pk)
+        for files in attach:
+            fileName = request.FILES['attachment'].name
+            attachment = base64.b64encode(files.read())
+            try:
+                response = config.CLIENT.service.FnUploadAttachedDocument(
+                    docNo, fileName, attachment, tableID)
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+        if response == True:
+            messages.success(request, "Successfully Sent !!")
+
+            return redirect('RepairDetail', pk=pk)
+        else:
+            messages.error(request, "Not Sent !!")
+            return redirect('RepairDetail', pk=pk)
+
+    return redirect('RepairDetail', pk=pk)
+
+
 def FnCancelRepairApproval(request, pk):
     myUserID = request.session['User_ID']
     requistionNo = ""
@@ -559,6 +624,7 @@ def FnDeleteRepairRequisitionLine(request, pk):
                 requisitionNo, lineNo)
             messages.success(request, "Successfully Deleted")
             print(response)
+            return redirect('RepairDetail', pk=pk)
         except Exception as e:
             messages.error(request, e)
             print(e)
@@ -875,3 +941,35 @@ def FnGenerateRepairReport(request, pk):
         messages.error(request, e)
         print(e)
     return redirect('RepairDetail', pk=pk)
+
+
+def UploadStoreAttachment(request, pk):
+    docNo = pk
+    response = ""
+    fileName = ""
+    attachment = ""
+    tableID = 52177432
+
+    if request.method == "POST":
+        try:
+            attach = request.FILES.getlist('attachment')
+        except Exception as e:
+            return redirect('StoreDetail', pk=pk)
+        for files in attach:
+            fileName = request.FILES['attachment'].name
+            attachment = base64.b64encode(files.read())
+            try:
+                response = config.CLIENT.service.FnUploadAttachedDocument(
+                    docNo, fileName, attachment, tableID)
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+        if response == True:
+            messages.success(request, "Successfully Sent !!")
+
+            return redirect('StoreDetail', pk=pk)
+        else:
+            messages.error(request, "Not Sent !!")
+            return redirect('StoreDetail', pk=pk)
+
+    return redirect('StoreDetail', pk=pk)

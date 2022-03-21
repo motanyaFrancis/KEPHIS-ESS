@@ -1,3 +1,4 @@
+import base64
 from django.shortcuts import render, redirect
 from datetime import date, datetime
 import requests
@@ -177,6 +178,7 @@ def ImprestDetails(request, pk):
                             state = 2
     except requests.exceptions.ConnectionError as e:
         print(e)
+
     Lines_Res = config.O_DATA.format("/QyImprestLines")
     try:
         response = session.get(Lines_Res, timeout=10).json()
@@ -195,6 +197,38 @@ def ImprestDetails(request, pk):
            "des": destinations, "year": year,
            "full": fullname}
     return render(request, 'imprestDetail.html', ctx)
+
+
+def UploadAttachment(request, pk):
+    docNo = pk
+    response = ""
+    fileName = ""
+    attachment = ""
+    tableID = 52177430
+
+    if request.method == "POST":
+        try:
+            attach = request.FILES.getlist('attachment')
+        except Exception as e:
+            return redirect('IMPDetails', pk=pk)
+        for files in attach:
+            fileName = request.FILES['attachment'].name
+            attachment = base64.b64encode(files.read())
+            try:
+                response = config.CLIENT.service.FnUploadAttachedDocument(
+                    docNo, fileName, attachment, tableID)
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+        if response == True:
+            messages.success(request, "Successfully Sent !!")
+
+            return redirect('IMPDetails', pk=pk)
+        else:
+            messages.error(request, "Not Sent !!")
+            return redirect('IMPDetails', pk=pk)
+
+    return redirect('IMPDetails', pk=pk)
 
 # Delete Imprest Header
 
@@ -340,15 +374,6 @@ def CreateImprestLines(request, pk):
 
     if not amount:
         amount = 0
-    print("lineNo =>", lineNo)
-    print("imprestNo =>", imprestNo)
-    print("imprestType =>", imprestType)
-    print("destination =>", destination)
-    print("travelDate =>", travelDate)
-    print("returnDate =>", returnDate)
-    print("requisitionType =>", requisitionType)
-    print("amount =>", amount)
-    print("myAction =>", myAction)
     try:
         response = config.CLIENT.service.FnImprestLine(
             lineNo, imprestNo, imprestType, destination, travelDate, returnDate, requisitionType, amount, myAction)
@@ -481,6 +506,8 @@ def SurrenderDetails(request, pk):
                         request.session['Imprest_Issue_Doc__No'] = imprest['Imprest_Issue_Doc__No']
                         Imprest_Issue_Doc__No = request.session['Imprest_Issue_Doc__No']
                         res = imprest
+                        if imprest['Status'] == 'Released':
+                            state = 3
             if imprest['Status'] == 'Open' and imprest['User_Id'] == request.session['User_ID']:
                 output_json = json.dumps(imprest)
                 openImp.append(json.loads(output_json))
@@ -530,21 +557,13 @@ def SurrenderDetails(request, pk):
 
 
 def CreateSurrenderLines(request, pk):
-    lineNo = 0
+    lineNo = ""
     surrenderNo = pk
-    expenditureType = ""
-    accountNo = request.session['Customer_No_']
-    genPostingType = ""
-    purpose = ""
     actualSpent = ""
-    surrenderReceiptNo = ''
-    dimension3 = ""
     myAction = ''
     if request.method == 'POST':
         try:
-            expenditureType = request.POST.get('expenditureType')
-            genPostingType = request.POST.get('genPostingType')
-            purpose = request.POST.get('purpose')
+            lineNo = int(request.POST.get('lineNo'))
             actualSpent = float(request.POST.get('actualSpent'))
             myAction = request.POST.get('myAction')
         except ValueError:
@@ -552,7 +571,7 @@ def CreateSurrenderLines(request, pk):
             return redirect('IMPDetails', pk=surrenderNo)
         try:
             response = config.CLIENT.service.FnImprestSurrenderLine(
-                lineNo, surrenderNo, expenditureType, accountNo, genPostingType, purpose, actualSpent, surrenderReceiptNo, dimension3, myAction)
+                lineNo, surrenderNo, actualSpent, myAction)
             messages.success(request, "Successfully Added!!")
             print(response)
             return redirect('IMPSurrender', pk=surrenderNo)
@@ -560,6 +579,60 @@ def CreateSurrenderLines(request, pk):
             messages.error(request, e)
             print(e)
     return redirect('IMPSurrender', pk=surrenderNo)
+
+
+def UploadSurrenderAttachment(request, pk):
+    docNo = pk
+    response = ""
+    fileName = ""
+    attachment = ""
+    tableID = 52177430
+
+    if request.method == "POST":
+        try:
+            attach = request.FILES.getlist('attachment')
+        except Exception as e:
+            return redirect('IMPSurrender', pk=pk)
+        for files in attach:
+            fileName = request.FILES['attachment'].name
+            attachment = base64.b64encode(files.read())
+            try:
+                response = config.CLIENT.service.FnUploadAttachedDocument(
+                    docNo, fileName, attachment, tableID)
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+        if response == True:
+            messages.success(request, "Successfully Sent !!")
+
+            return redirect('IMPSurrender', pk=pk)
+        else:
+            messages.error(request, "Not Sent !!")
+            return redirect('IMPSurrender', pk=pk)
+
+    return redirect('IMPSurrender', pk=pk)
+
+
+def FnGenerateImprestSurrenderReport(request, pk):
+    surrenderNo = pk
+    filenameFromApp = ''
+    if request.method == 'POST':
+        try:
+            filenameFromApp = request.POST.get('filenameFromApp')
+        except ValueError as e:
+            messages.error(request, "Invalid Line number, Try Again!!")
+            return redirect('IMPSurrender', pk=pk)
+    filenameFromApp = filenameFromApp + ".pdf"
+    try:
+        response = config.CLIENT.service.FnGenerateImprestSurrenderReport(
+            surrenderNo, filenameFromApp)
+        messages.success(request, "Successfully Sent!!")
+        print(response)
+        return redirect('IMPSurrender', pk=pk)
+    except Exception as e:
+        messages.error(request, e)
+        print(e)
+    return redirect('IMPSurrender', pk=pk)
 
 
 def SurrenderApproval(request, pk):
@@ -820,6 +893,38 @@ def ClaimApproval(request, pk):
     except Exception as e:
         messages.error(request, e)
         print(e)
+    return redirect('ClaimDetail', pk=pk)
+
+
+def UploadClaimAttachment(request, pk):
+    docNo = pk
+    response = ""
+    fileName = ""
+    attachment = ""
+    tableID = 52177430
+
+    if request.method == "POST":
+        try:
+            attach = request.FILES.getlist('attachment')
+        except Exception as e:
+            return redirect('ClaimDetail', pk=pk)
+        for files in attach:
+            fileName = request.FILES['attachment'].name
+            attachment = base64.b64encode(files.read())
+            try:
+                response = config.CLIENT.service.FnUploadAttachedDocument(
+                    docNo, fileName, attachment, tableID)
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+        if response == True:
+            messages.success(request, "Successfully Sent !!")
+
+            return redirect('ClaimDetail', pk=pk)
+        else:
+            messages.error(request, "Not Sent !!")
+            return redirect('ClaimDetail', pk=pk)
+
     return redirect('ClaimDetail', pk=pk)
 
 

@@ -1,3 +1,4 @@
+import base64
 from curses.ascii import isdigit
 from urllib import request
 from django.shortcuts import render, redirect
@@ -326,10 +327,10 @@ def LeaveDetail(request, pk):
         Approvers = []
         Pending = []
         Ledgers = []
-        for Ledger in res_Ledger['value']:
-            if Ledger['Staff_No_'] == request.session['Employee_No_'] and Ledger['Leave_Period_Code'] == request.session['Leave_Period'] and Ledger['Leave_Type'] == request.session['Leave_Code']:
-                output_json = json.dumps(Ledger)
-                Ledgers.append(json.loads(output_json))
+        # for Ledger in res_Ledger['value']:
+        #     if Ledger['Staff_No_'] == request.session['Employee_No_'] and Ledger['Leave_Period_Code'] == request.session['Leave_Period'] and Ledger['Leave_Type'] == request.session['Leave_Code']:
+        #         output_json = json.dumps(Ledger)
+        #         Ledgers.append(json.loads(output_json))
         for approver in res_approver['value']:
             if approver['Document_No_'] == pk:
                 output_json = json.dumps(approver)
@@ -375,6 +376,38 @@ def LeaveDetail(request, pk):
            "Approvers": Approvers, "state": state,
            "year": year, "full": fullname}
     return render(request, 'leaveDetail.html', ctx)
+
+
+def UploadLeaveAttachment(request, pk):
+    docNo = pk
+    response = ""
+    fileName = ""
+    attachment = ""
+    tableID = 52177494
+
+    if request.method == "POST":
+        try:
+            attach = request.FILES.getlist('attachment')
+        except Exception as e:
+            return redirect('IMPDetails', pk=pk)
+        for files in attach:
+            fileName = request.FILES['attachment'].name
+            attachment = base64.b64encode(files.read())
+            try:
+                response = config.CLIENT.service.FnUploadAttachedDocument(
+                    docNo, fileName, attachment, tableID)
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+        if response == True:
+            messages.success(request, "Successfully Sent !!")
+
+            return redirect('LeaveDetail', pk=pk)
+        else:
+            messages.error(request, "Not Sent !!")
+            return redirect('LeaveDetail', pk=pk)
+
+    return redirect('LeaveDetail', pk=pk)
 
 
 def LeaveApproval(request, pk):
@@ -657,6 +690,38 @@ def FnAdhocTrainingNeedRequest(request, pk):
     except Exception as e:
         messages.error(request, e)
         print(e)
+    return redirect('TrainingDetail', pk=pk)
+
+
+def UploadTrainingAttachment(request, pk):
+    docNo = pk
+    response = ""
+    fileName = ""
+    attachment = ""
+    tableID = 52177501
+
+    if request.method == "POST":
+        try:
+            attach = request.FILES.getlist('attachment')
+        except Exception as e:
+            return redirect('IMPDetails', pk=pk)
+        for files in attach:
+            fileName = request.FILES['attachment'].name
+            attachment = base64.b64encode(files.read())
+            try:
+                response = config.CLIENT.service.FnUploadAttachedDocument(
+                    docNo, fileName, attachment, tableID)
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+        if response == True:
+            messages.success(request, "Successfully Sent !!")
+
+            return redirect('TrainingDetail', pk=pk)
+        else:
+            messages.error(request, "Not Sent !!")
+            return redirect('TrainingDetail', pk=pk)
+
     return redirect('TrainingDetail', pk=pk)
 
 

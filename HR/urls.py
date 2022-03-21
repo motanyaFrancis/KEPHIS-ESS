@@ -21,6 +21,8 @@ urlpatterns = [
          name='FnGenerateLeaveReport'),
     path('FnDeleteLeaveApplication', views.FnDeleteLeaveApplication,
          name="FnDeleteLeaveApplication"),
+    path('UploadLeaveAttachment/<str:pk>', views.UploadLeaveAttachment,
+         name='UploadLeaveAttachment'),
 
 
     path('Training', views.Training_Request, name='training_request'),
@@ -33,6 +35,8 @@ urlpatterns = [
          name='FnDeleteTrainingRequest'),
     path('FnGenerateTraining/<str:pk>', views.FnGenerateTrainingReport,
          name='FnGenerateTrainingReport'),
+    path('UploadTrainingAttachment/<str:pk>', views.UploadTrainingAttachment,
+         name='UploadTrainingAttachment'),
 
     path('FnAdhocTraining/<str:pk>', views.FnAdhocTrainingNeedRequest,
          name='FnAdhocTraining'),

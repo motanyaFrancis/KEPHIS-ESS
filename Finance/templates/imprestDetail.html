@@ -10,6 +10,8 @@
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> <i
                         class="las la-plus"></i> Imprest
                     Lines</button>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Attachment"> <i
+                        class="las la-plus"></i> Upload Attachment</button>
                 {% elif state == 3 %}
                 <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#report"> Generate
                     Report</button>
@@ -574,6 +576,37 @@
         </div>
 
         </form>
+    </div>
+</div>
+<!-- Attachment Modal -->
+<!-- Button trigger modal -->
+
+
+<!-- Modal -->
+<div class="modal fade" id="Attachment" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Upload Attachment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'UploadAttachment' res.No_ %}" method="post" class="myForm"
+                    enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class=" mb-3">
+                        <label class="form-label">Attachments</label>
+                        <input class="form-control" name="attachment" type="file" multiple>
+                    </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+            </form>
+        </div>
     </div>
 </div>
 <!-- End Report -->

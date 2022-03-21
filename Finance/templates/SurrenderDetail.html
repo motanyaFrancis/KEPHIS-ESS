@@ -10,6 +10,11 @@
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> <i
                         class="las la-plus"></i> Surrender
                     Lines</button>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Attachment"> <i
+                        class="las la-plus"></i> Upload Attachment</button>
+                {% elif state == 3 %}
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#report"> Generate
+                    Report</button>
                 {% else %}
                 <button class="btn btn-info"> <i class="las la-plus"></i> {{res.Status}}</button>
                 {% endif %}
@@ -208,15 +213,6 @@
                     </div>
                     <button class="btn btn-info" type="submit">Request For Approval</button>
                 </form>
-                <div class="attach" style="display: inline-block;">
-                    <form action="" method="post">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <input type="hidden" name="trainingNo" value="{{res.Request_No_}}">
-                        </div>
-                        <button class="btn btn-info" type="submit">Add Attachment</button>
-                    </form>
-                </div>
             </div>
             {% elif state == 2 %}
             <div class="d-grid gap-2 my-3">
@@ -267,6 +263,7 @@
                                         <a href="" class="btn btn-primary" data-toggle="tooltip" data-placement="top"
                                             title="Add Amount" data-bs-toggle="modal"
                                             data-bs-target="#trainedit{{res.Line_No}}"><i class="fas fa-plus"></i>
+                                            Amount
                                         </a>
                                         <!-- Modal -->
                                         <div class="modal fade" id="trainedit{{res.Line_No}}" data-bs-backdrop="static"
@@ -289,6 +286,17 @@
                                                                     Imprest Surrender Lines:
                                                                 </span>
                                                                 <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <input type="hidden" name="lineNo" value="0">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <input type="hidden" name="myAction"
+                                                                            value="insert">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
                                                                     <div class="row">
                                                                         <div class="col-md-12">
                                                                             <label class="form-label">Actual
@@ -299,13 +307,6 @@
                                                                             <div class="invalid-feedback">
                                                                                 Enter Actual Spent.
                                                                             </div>
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="row">
-                                                                        <div class="col-md-12">
-                                                                            <input type="hidden" name="myAction"
-                                                                                value="insert">
                                                                         </div>
                                                                     </div>
 
@@ -367,6 +368,69 @@
         </div>
         {% endif %}
     </div>
+    </div>
+    <!-- Attachment Modal -->
+    <!-- Button trigger modal -->
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="Attachment" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Upload Attachment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'UploadSurrenderAttachment' res.No_ %}" method="post" class="myForm"
+                        enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class=" mb-3">
+                            <label class="form-label">Attachments</label>
+                            <input class="form-control" name="attachment" type="file" multiple>
+                        </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report -->
+    <div class="modal fade" id="report" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">New Imprest Line
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="myForm needs-validation" id="frm_"
+                        action="{% url 'FnGenerateImprestSurrenderReport' res.No_%}" method="post" novalidate>
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="form-label">Document Name</label>
+                                <input type="text" class="form-control" name="filenameFromApp"
+                                    placeholder="Enter Document Name">
+                            </div>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
+                    <button type="submit" id="sasa" class="btn btn-primary">Submit</button>
+                </div>
+            </div>
+
+            </form>
+        </div>
     </div>
 
 </section>

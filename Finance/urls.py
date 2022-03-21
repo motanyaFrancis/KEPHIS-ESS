@@ -16,6 +16,8 @@ urlpatterns = [
     path('Imp/<str:pk>', views.ImprestDetails, name='IMPDetails'),
     path('FnDeleteImprestHeader', views.FnDeleteImprestHeader,
          name='FnDeleteImprestHeader'),
+    path('UploadAttachment/<str:pk>',
+         views.UploadAttachment, name='UploadAttachment'),
 
 
     path('ImprestSurrender', views.ImprestSurrender, name='imprestSurr'),
@@ -30,6 +32,10 @@ urlpatterns = [
          views.FnCancelSurrenderApproval, name='CancelSurrenderApproval'),
     path('FnDeleteImprestSurrenderHeader', views.FnDeleteImprestSurrenderHeader,
          name='FnDeleteImprestSurrenderHeader'),
+    path('UploadSurrenderAttachment/<str:pk>',
+         views.UploadSurrenderAttachment, name='UploadSurrenderAttachment'),
+    path('FnGenerateImprestSurrenderReport/<str:pk>',
+         views.FnGenerateImprestSurrenderReport, name='FnGenerateImprestSurrenderReport'),
 
     path('StaffClaim', views.StaffClaim, name='claim'),
     path("NewClaim", views.CreateClaim, name="NewClaim"),
@@ -43,5 +49,7 @@ urlpatterns = [
          name='FnDeleteStaffClaimLine'),
     path('FnGenerateStaffClaimReport/<str:pk>', views.FnGenerateStaffClaimReport,
          name='FnGenerateStaffClaimReport'),
+    path('UploadClaimAttachment/<str:pk>',
+         views.UploadClaimAttachment, name='UploadClaimAttachment'),
 
 ]

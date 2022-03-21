@@ -9,6 +9,8 @@
                 {% if state == 1 %}
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> <i
                         class="las la-plus"></i> Repair Lines</button>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Attachment"> <i
+                        class="las la-plus"></i> Upload Attachment</button>
                 {% elif state == 3 %}
                 <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#report"> Generate
                     Report</button>
@@ -188,15 +190,6 @@
                         </div>
                         <button class="btn btn-info" type="submit">Request For Approval</button>
                     </form>
-                    <div class="attach" style="display: inline-block;">
-                        <form action="" method="post">
-                            {% csrf_token %}
-                            <div class="mb-3">
-                                <input type="hidden" name="trainingNo" value="{{res.Request_No_}}">
-                            </div>
-                            <button class="btn btn-info" type="submit">Add Attachment</button>
-                        </form>
-                    </div>
                 </div>
                 {% elif state == 2 %}
                 <div class="d-grid gap-2 my-3">
@@ -239,19 +232,19 @@
                                     <td>{{res.AuxiliaryIndex1}}</td>
                                     <td>
                                         {% if state == 1 %}
-                                        <form action="{% url 'FnDeleteRepairRequisitionLine' res.AuxiliaryIndex1 %}"
+                                        <form action="{% url 'FnDeleteRepairRequisitionLine' res.Line_No_ %}"
                                             method="post" style="display: inline-block;">
                                             {% csrf_token %}
-                                            <input type="hidden" name="lineNo" value="{{res.AuxiliaryIndex6}}">
+                                            <input type="hidden" name="lineNo" value="{{res.Line_No_}}">
                                             <button type="submit" class="btn btn-danger" data-toggle="tooltip"
                                                 data-placement="top" title="Delete"><i class="fas fa-trash-alt"></i>
                                             </button>
                                         </form>
                                         <button class="btn btn-primary" data-bs-toggle="modal"
-                                            data-bs-target="#trainedit{{res.Line_No}}" data-toggle="tooltip"
+                                            data-bs-target="#trainedit{{res.Line_No_}}" data-toggle="tooltip"
                                             data-placement="top" title="edit"><i class="fas fa-edit"></i>
                                         </button>
-                                        <div class="modal fade" id="trainedit{{res.Line_No}}" data-bs-backdrop="static"
+                                        <div class="modal fade" id="trainedit{{res.Line_No_}}" data-bs-backdrop="static"
                                             data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
                                             aria-hidden="true">
                                             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -271,7 +264,7 @@
                                                             <div class="row">
                                                                 <div class="col-md-12">
                                                                     <input type="hidden" name="lineNo"
-                                                                        value="{{res.Line_No}}">
+                                                                        value="{{res.Line_No_}}">
                                                                     <input type="hidden" name="myAction" value="modify">
                                                                 </div>
                                                             </div>
@@ -421,8 +414,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form class="myForm needs-validation" id="frm_" action="{% url 'FnGenerateRepairReport' res.No_ %}"
-                    method="post" novalidate>
+                <form class="myForm needs-validation" id="frm_" action="" method="post" novalidate>
                     {% csrf_token %}
                     <div class="row">
                         <div class="col-md-12">
@@ -439,6 +431,37 @@
         </div>
 
         </form>
+    </div>
+</div>
+<!-- Attachment Modal -->
+<!-- Button trigger modal -->
+
+
+<!-- Modal -->
+<div class="modal fade" id="Attachment" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Upload Attachment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'UploadRepairAttachment' res.No_ %}" method="post" class="myForm"
+                    enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class=" mb-3">
+                        <label class="form-label">Attachments</label>
+                        <input class="form-control" name="attachment" type="file" multiple>
+                    </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+            </form>
+        </div>
     </div>
 </div>
 

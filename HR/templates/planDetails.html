@@ -191,15 +191,15 @@
                                     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title" id="staticBackdropLabel">Edit Training Line
+                                                <h5 class="modal-title" id="staticBackdropLabel">Edit Training Line No
+                                                    {{res.Line_No_}}
                                                 </h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                     aria-label="Close"></button>
                                             </div>
-                                            <div class="modal-body">
-                                                <form class="myForm needs-validation"
-                                                    action="{% url 'PlannerLine' res.Document_No_ %}" method="post"
-                                                    novalidate>
+                                            <div class="modal-body myForm">
+                                                <form class="" action="{% url 'PlannerLine' res.Document_No_ %}"
+                                                    method="post">
                                                     {% csrf_token %}
                                                     <div class="mb-2">
                                                         <span class="w-name">
@@ -216,10 +216,8 @@
                                                                 <label for="" class="form-label">Start
                                                                     Date:</label>
                                                                 <input type="date" class="form-control" name="startDate"
-                                                                    placeholder="{{res.Start_Date}}" required>
-                                                                <div class="invalid-feedback">
-                                                                    Please select a valid Start Date.
-                                                                </div>
+                                                                    placeholder="{{res.Start_Date}}">
+
                                                             </div>
                                                         </div>
                                                         <div class="row">
@@ -227,10 +225,7 @@
                                                                 <label for="" class="form-label">End
                                                                     Date:</label>
                                                                 <input type="date" class="form-control" name="endDate"
-                                                                    placeholder="{{res.End_Date}}" required>
-                                                                <div class="invalid-feedback">
-                                                                    Please select a valid End Date.
-                                                                </div>
+                                                                    placeholder="{{res.End_Date}}">
                                                             </div>
                                                         </div>
                                                         <div class="row">
@@ -243,7 +238,7 @@
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-danger"
                                                     data-bs-dismiss="modal">Discard</button>
-                                                <button type="submit" id="sasa" class="btn btn-primary">Submit</button>
+                                                <button type="submit" class="btn btn-primary">Submit</button>
                                             </div>
                                             </form>
                                         </div>

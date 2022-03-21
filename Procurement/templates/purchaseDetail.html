@@ -9,6 +9,8 @@
                 {% if state == 1 %}
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> <i
                         class="las la-plus"></i> Requisition Lines</button>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Attachment"> <i
+                        class="las la-plus"></i> Upload Attachment</button>
                 {% elif state == 3 %}
                 <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#report"> Generate
                     Report</button>
@@ -200,15 +202,6 @@
                         </div>
                         <button class="btn btn-info" type="submit">Request For Approval</button>
                     </form>
-                    <div class="attach" style="display: inline-block;">
-                        <form action="" method="post">
-                            {% csrf_token %}
-                            <div class="mb-3">
-                                <input type="hidden" name="trainingNo" value="{{res.Request_No_}}">
-                            </div>
-                            <button class="btn btn-info" type="submit">Add Attachment</button>
-                        </form>
-                    </div>
                 </div>
                 {% elif state == 2 %}
                 <div class="d-grid gap-2 my-3">
@@ -251,22 +244,23 @@
                                         <form action="{% url 'FnDeletePurchaseRequisitionLine' res.AuxiliaryIndex1 %}"
                                             method="post" style="display: inline-block;">
                                             {% csrf_token %}
-                                            <input type="hidden" name="lineNo" value="{{res.AuxiliaryIndex5}}">
+                                            <input type="hidden" name="lineNo" value="{{res.Line_No_}}">
                                             <button type="submit" class="btn btn-danger" data-toggle="tooltip"
                                                 data-placement="top" title="Delete"><i class="fas fa-trash-alt"></i>
                                             </button>
                                         </form>
                                         <button class="btn btn-primary" data-bs-toggle="modal"
-                                            data-bs-target="#trainedit{{res.Line_No}}" data-toggle="tooltip"
+                                            data-bs-target="#trainedit{{res.Line_No_}}" data-toggle="tooltip"
                                             data-placement="top" title="edit"><i class="fas fa-edit"></i>
                                         </button>
-                                        <div class="modal fade" id="{{res.Line_No}}" data-bs-backdrop="static"
+                                        <div class="modal fade" id="trainedit{{res.Line_No_}}" data-bs-backdrop="static"
                                             data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
                                             aria-hidden="true">
                                             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title" id="staticBackdropLabel">Edit Imprest
+                                                        <h5 class="modal-title" id="staticBackdropLabel">Edit Purchase
+                                                            Requisition
                                                             Line
                                                         </h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -274,13 +268,13 @@
                                                     </div>
                                                     <div class="modal-body">
                                                         <form class="myForm needs-validation"
-                                                            action="{% url 'PurchaseLines' res.No_ %}" method="post"
-                                                            novalidate>
+                                                            action="{% url 'PurchaseLines' res.AuxiliaryIndex1 %}"
+                                                            method="post" novalidate>
                                                             {% csrf_token %}
                                                             <div class="row">
                                                                 <div class="col-md-12">
                                                                     <input type="hidden" name="lineNo"
-                                                                        value="{{res.Line_No}}">
+                                                                        value="{{res.Line_No_}}">
                                                                     <input type="hidden" name="myAction" value="modify">
                                                                 </div>
                                                             </div>
@@ -461,7 +455,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <label class="form-label">Item Type</label>
-                                <select class="form-select" id="itemTypes" name="itemTypes" required>
+                                <select class="form-select" id="itemTypess" name="itemTypes" required>
                                     <option selected disabled value="">Select Item Type</option>
                                     <option value="1">G/L</option>
                                     <option value="2">Item</option>
@@ -474,7 +468,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <label class="form-label">Item</label>
-                                <select class="form-select" id="itemNo" name="itemNo" required disabled>
+                                <select class="form-select" id="itemNos" name="itemNo" required disabled>
                                     <option selected disabled value="">Select Item</option>
                                     {% for res in items %}
                                     <option value="{{res.No_}}">{{res.Description}}</option>
@@ -488,7 +482,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <label class="form-label">G/L Accounts</label>
-                                <select class="form-select" id="gl" name="itemNo" required disabled>
+                                <select class="form-select" id="gls" name="itemNo" required disabled>
                                     <option selected disabled value="">Select G/L Account</option>
                                     {% for res in gl %}
                                     <option value="{{res.No_}}">{{res.Name}}</option>
@@ -553,17 +547,60 @@
         </form>
     </div>
 </div>
+<!-- Attachment Modal -->
+<!-- Button trigger modal -->
+
+
+<!-- Modal -->
+<div class="modal fade" id="Attachment" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Upload Attachment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'UploadPurchaseAttachment' res.No_ %}" method="post" class="myForm"
+                    enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class=" mb-3">
+                        <label class="form-label">Attachments</label>
+                        <input class="form-control" name="attachment" type="file" multiple>
+                    </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
 <script>
     document.getElementById('itemTypes').addEventListener('change', function () {
-        if (this.value == 1) {
+        if (this.value == "1") {
             document.getElementById('gl').disabled = false;
             document.getElementById('itemNo').disabled = true;
-        } else if (this.value == 2) {
+        } else if (this.value == "2") {
             document.getElementById('itemNo').disabled = false;
             document.getElementById('gl').disabled = true;
         } else {
             document.getElementById('gl').disabled = true;
             document.getElementById('itemNo').disabled = true;
+        }
+    })
+    document.getElementById('itemTypess').addEventListener('change', function () {
+        if (this.value == "1") {
+            document.getElementById('gls').disabled = false;
+            document.getElementById('itemNos').disabled = true;
+        } else if (this.value == "2") {
+            document.getElementById('itemNos').disabled = false;
+            document.getElementById('gls').disabled = true;
+        } else {
+            document.getElementById('gls').disabled = true;
+            document.getElementById('itemNos').disabled = true;
         }
     })
 </script>
