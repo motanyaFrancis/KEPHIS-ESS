@@ -10,6 +10,8 @@ import datetime as dt
 from django.contrib import messages
 import enum
 import secrets
+from django.http import HttpResponse
+import io as BytesIO
 import string
 
 # Create your views here.
@@ -321,9 +323,15 @@ def FnGeneratePurchaseReport(request, pk):
     try:
         response = config.CLIENT.service.FnGenerateRequisitionReport(
             reqNo, filenameFromApp)
-        messages.success(request, "Successfully Sent!!")
-        print(response)
-        return redirect('PurchaseDetail', pk=pk)
+        buffer = BytesIO.BytesIO()
+        content = base64.b64decode(response)
+        buffer.write(content)
+        responses = HttpResponse(
+            buffer.getvalue(),
+            content_type="application/pdf",
+        )
+        responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
+        return responses
     except Exception as e:
         messages.error(request, e)
         print(e)
@@ -911,9 +919,15 @@ def FnGenerateStoreReport(request, pk):
     try:
         response = config.CLIENT.service.FnGenerateStoreReport(
             reqNo, filenameFromApp)
-        messages.success(request, "Successfully Sent!!")
-        print(response)
-        return redirect('StoreDetail', pk=pk)
+        buffer = BytesIO.BytesIO()
+        content = base64.b64decode(response)
+        buffer.write(content)
+        responses = HttpResponse(
+            buffer.getvalue(),
+            content_type="application/pdf",
+        )
+        responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
+        return responses
     except Exception as e:
         messages.error(request, e)
         print(e)
@@ -934,9 +948,15 @@ def FnGenerateRepairReport(request, pk):
     try:
         response = config.CLIENT.service.FnGenerateRepairReport(
             reqNo, filenameFromApp)
-        messages.success(request, "Successfully Sent!!")
-        print(response)
-        return redirect('RepairDetail', pk=pk)
+        buffer = BytesIO.BytesIO()
+        content = base64.b64decode(response)
+        buffer.write(content)
+        responses = HttpResponse(
+            buffer.getvalue(),
+            content_type="application/pdf",
+        )
+        responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
+        return responses
     except Exception as e:
         messages.error(request, e)
         print(e)

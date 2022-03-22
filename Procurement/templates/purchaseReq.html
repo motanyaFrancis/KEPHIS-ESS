@@ -48,15 +48,15 @@
                     <div class="m-4">
                         <ul class="nav nav-tabs" id="myTab">
                             <li class="nav-item">
-                                <a href="#home" class="nav-link active" data-bs-toggle="tab">Open Purchase Requisitions
+                                <a href="#home" class="nav-link active" data-bs-toggle="tab">Open Purchase Request
                                     ({{count}})</a>
                             </li>
                             <li class="nav-item">
-                                <a href="#profile" class="nav-link" data-bs-toggle="tab">Approved Purchase Requisitions
+                                <a href="#profile" class="nav-link" data-bs-toggle="tab">Approved Purchase Request
                                     ({{counter}})</a>
                             </li>
                             <li class="nav-item">
-                                <a href="#reject" class="nav-link" data-bs-toggle="tab">Rejected Purchase Requisitions
+                                <a href="#reject" class="nav-link" data-bs-toggle="tab">Rejected Purchase Request
                                     ({{reject}})</a>
                             </li>
                             <li class="nav-item">
@@ -72,19 +72,16 @@
                                         class="display table table-striped table-bordered dt-responsive table-responsive-lg"
                                         style="width:100%">
                                         <thead>
-                                            <tr id="tops">
-                                                <th id="long">Requisition No</th>
-                                                <th>Order Date</th>
-                                                <th>Procurement Plan</th>
-                                                <th>Expected Receipt Date</th>
-                                                <th>Requested By</th>
-                                                <th>Action</th>
+                                            <th>Order Date</th>
+                                            <th>Procurement Plan</th>
+                                            <th>Expected Receipt Date</th>
+                                            <th>Requested By</th>
+                                            <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {% for res in res %}
                                             <tr>
-                                                <td>{{res.No_}}</td>
                                                 <td>{{res.Order_Date}}</td>
                                                 <td>{{res.Procurement_Plan}}</td>
                                                 <td>{{res.Expected_Receipt_Date}}</td>
@@ -226,7 +223,6 @@
                                         style="width:100%">
                                         <thead>
                                             <tr id="tops">
-                                                <th id="long">Requisition No</th>
                                                 <th>Order Date</th>
                                                 <th>Procurement Plan</th>
                                                 <th>Expected Receipt Date</th>
@@ -237,7 +233,6 @@
                                         <tbody>
                                             {% for res in response %}
                                             <tr>
-                                                <td>{{res.No_}}</td>
                                                 <td>{{res.Order_Date}}</td>
                                                 <td>{{res.Procurement_Plan}}</td>
                                                 <td>{{res.Expected_Receipt_Date}}</td>
@@ -262,7 +257,6 @@
                                         style="width:100%">
                                         <thead>
                                             <tr id="tops">
-                                                <th id="long">Requisition No</th>
                                                 <th>Order Date</th>
                                                 <th>Procurement Plan</th>
                                                 <th>Expected Receipt Date</th>
@@ -272,18 +266,16 @@
                                         </thead>
                                         <tbody>
                                             {% for res in rej %}
-                                            <tr>
-                                                <td>{{res.No_}}</td>
-                                                <td>{{res.Order_Date}}</td>
-                                                <td>{{res.Procurement_Plan}}</td>
-                                                <td>{{res.Expected_Receipt_Date}}</td>
-                                                <td>{{res.Requested_By}}</td>
-                                                <td>
-                                                    <a href="{% url 'PurchaseDetail' res.No_ %} "
-                                                        class="btn btn-success btn-icon-text" type="button"
-                                                        data-toggle="tooltip" data-placement="top" title="View"
-                                                        style="background: #25CC88;"><i class="fa fa-table"></i></a>
-                                                </td>
+                                            <td>{{res.Order_Date}}</td>
+                                            <td>{{res.Procurement_Plan}}</td>
+                                            <td>{{res.Expected_Receipt_Date}}</td>
+                                            <td>{{res.Requested_By}}</td>
+                                            <td>
+                                                <a href="{% url 'PurchaseDetail' res.No_ %} "
+                                                    class="btn btn-success btn-icon-text" type="button"
+                                                    data-toggle="tooltip" data-placement="top" title="View"
+                                                    style="background: #25CC88;"><i class="fa fa-table"></i></a>
+                                            </td>
                                             </tr>
                                             {% endfor %}
                                         </tbody>
@@ -298,7 +290,6 @@
                                         style="width:100%">
                                         <thead>
                                             <tr id="tops">
-                                                <th id="long">Requisition No</th>
                                                 <th>Order Date</th>
                                                 <th>Procurement Plan</th>
                                                 <th>Expected Receipt Date</th>
@@ -309,7 +300,6 @@
                                         <tbody>
                                             {% for res in pending %}
                                             <tr>
-                                                <td>{{res.No_}}</td>
                                                 <td>{{res.Order_Date}}</td>
                                                 <td>{{res.Procurement_Plan}}</td>
                                                 <td>{{res.Expected_Receipt_Date}}</td>

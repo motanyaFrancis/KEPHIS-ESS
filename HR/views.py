@@ -11,6 +11,10 @@ import json
 from django.conf import settings as config
 import datetime as dt
 from django.contrib import messages
+from django.http import HttpResponse
+import io as BytesIO
+import secrets
+import string
 
 # Create your views here.
 
@@ -849,6 +853,8 @@ def TrainingCancelApproval(request, pk):
 
 
 def PNineRequest(request):
+    nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
+                        for i in range(5))
     fullname = request.session['fullname']
     year = request.session['years']
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
@@ -867,13 +873,19 @@ def PNineRequest(request):
         except ValueError as e:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('pNine')
-        filenameFromApp = filenameFromApp + ".pdf"
+        filenameFromApp = filenameFromApp + str(nameChars) + ".pdf"
         try:
             response = config.CLIENT.service.FnGeneratePNine(
                 employeeNo, filenameFromApp, startDate, endDate)
-            messages.success(request, "Request Successful !!")
-            print(response)
-            return redirect('pNine')
+            buffer = BytesIO.BytesIO()
+            content = base64.b64decode(response)
+            buffer.write(content)
+            responses = HttpResponse(
+                buffer.getvalue(),
+                content_type="application/pdf",
+            )
+            responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
+            return responses
         except Exception as e:
             messages.error(request, e)
             print(e)
@@ -882,6 +894,8 @@ def PNineRequest(request):
 
 
 def PayslipRequest(request):
+    nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
+                        for i in range(5))
     fullname = request.session['fullname']
     year = request.session['years']
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
@@ -897,13 +911,19 @@ def PayslipRequest(request):
         except ValueError as e:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('payslip')
-        filenameFromApp = filenameFromApp + ".pdf"
+        filenameFromApp = filenameFromApp + str(nameChars) + ".pdf"
         try:
             response = config.CLIENT.service.FnGeneratePayslip(
                 employeeNo, filenameFromApp, paymentPeriod)
-            messages.success(request, "Request Successful !!")
-            print(response)
-            return redirect('payslip')
+            buffer = BytesIO.BytesIO()
+            content = base64.b64decode(response)
+            buffer.write(content)
+            responses = HttpResponse(
+                buffer.getvalue(),
+                content_type="application/pdf",
+            )
+            responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
+            return responses
         except Exception as e:
             messages.error(request, e)
             print(e)
@@ -913,6 +933,8 @@ def PayslipRequest(request):
 
 
 def FnGenerateLeaveReport(request, pk):
+    nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
+                        for i in range(5))
     employeeNo = request.session['Employee_No_']
     filenameFromApp = ''
     applicationNo = pk
@@ -922,13 +944,19 @@ def FnGenerateLeaveReport(request, pk):
         except ValueError as e:
             messages.error(request, "Invalid Line number, Try Again!!")
             return redirect('LeaveDetail', pk=pk)
-    filenameFromApp = filenameFromApp + ".pdf"
+    filenameFromApp = filenameFromApp + str(nameChars) + ".pdf"
     try:
         response = config.CLIENT.service.FnGenerateLeaveReport(
             employeeNo, filenameFromApp, applicationNo)
-        messages.success(request, "Successfully Sent!!")
-        print(response)
-        return redirect('LeaveDetail', pk=pk)
+        buffer = BytesIO.BytesIO()
+        content = base64.b64decode(response)
+        buffer.write(content)
+        responses = HttpResponse(
+            buffer.getvalue(),
+            content_type="application/pdf",
+        )
+        responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
+        return responses
     except Exception as e:
         messages.error(request, e)
         print(e)
@@ -937,6 +965,8 @@ def FnGenerateLeaveReport(request, pk):
 
 
 def FnGenerateTrainingReport(request, pk):
+    nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
+                        for i in range(5))
     employeeNo = request.session['Employee_No_']
     filenameFromApp = ''
     applicationNo = pk
@@ -946,13 +976,19 @@ def FnGenerateTrainingReport(request, pk):
         except ValueError as e:
             messages.error(request, "Invalid Line number, Try Again!!")
             return redirect('TrainingDetail', pk=pk)
-    filenameFromApp = filenameFromApp + ".pdf"
+    filenameFromApp = filenameFromApp + str(nameChars) + ".pdf"
     try:
         response = config.CLIENT.service.FnGenerateLeaveReport(
             employeeNo, filenameFromApp, applicationNo)
-        messages.success(request, "Successfully Sent!!")
-        print(response)
-        return redirect('TrainingDetail', pk=pk)
+        buffer = BytesIO.BytesIO()
+        content = base64.b64decode(response)
+        buffer.write(content)
+        responses = HttpResponse(
+            buffer.getvalue(),
+            content_type="application/pdf",
+        )
+        responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
+        return responses
     except Exception as e:
         messages.error(request, e)
         print(e)

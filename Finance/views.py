@@ -1,4 +1,5 @@
 import base64
+import imp
 from django.shortcuts import render, redirect
 from datetime import date, datetime
 import requests
@@ -11,6 +12,9 @@ from django.contrib import messages
 import enum
 import secrets
 import string
+from django.http import HttpResponse
+import io as BytesIO
+from django.template.response import TemplateResponse
 
 
 # Create your views here.
@@ -276,6 +280,8 @@ def FnDeleteImprestLine(request, pk):
 
 
 def FnGenerateImprestReport(request, pk):
+    nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
+                        for i in range(5))
     employeeNo = request.session['Employee_No_']
     filenameFromApp = ''
     imprestNo = pk
@@ -285,14 +291,20 @@ def FnGenerateImprestReport(request, pk):
         except ValueError as e:
             messages.error(request, "Invalid Line number, Try Again!!")
             return redirect('IMPDetails', pk=pk)
-    filenameFromApp = filenameFromApp + ".pdf"
+    filenameFromApp = filenameFromApp + str(nameChars) + ".pdf"
     print(filenameFromApp)
     try:
         response = config.CLIENT.service.FnGenerateImprestReport(
             employeeNo, filenameFromApp, imprestNo)
-        messages.success(request, "Successfully Sent!!")
-        print(response)
-        return redirect('IMPDetails', pk=pk)
+        buffer = BytesIO.BytesIO()
+        content = base64.b64decode(response)
+        buffer.write(content)
+        responses = HttpResponse(
+            buffer.getvalue(),
+            content_type="application/pdf",
+        )
+        responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
+        return responses
     except Exception as e:
         messages.error(request, e)
         print(e)
@@ -614,6 +626,8 @@ def UploadSurrenderAttachment(request, pk):
 
 
 def FnGenerateImprestSurrenderReport(request, pk):
+    nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
+                        for i in range(5))
     surrenderNo = pk
     filenameFromApp = ''
     if request.method == 'POST':
@@ -622,13 +636,19 @@ def FnGenerateImprestSurrenderReport(request, pk):
         except ValueError as e:
             messages.error(request, "Invalid Line number, Try Again!!")
             return redirect('IMPSurrender', pk=pk)
-    filenameFromApp = filenameFromApp + ".pdf"
+    filenameFromApp = filenameFromApp + str(nameChars) + ".pdf"
     try:
         response = config.CLIENT.service.FnGenerateImprestSurrenderReport(
             surrenderNo, filenameFromApp)
-        messages.success(request, "Successfully Sent!!")
-        print(response)
-        return redirect('IMPSurrender', pk=pk)
+        buffer = BytesIO.BytesIO()
+        content = base64.b64decode(response)
+        buffer.write(content)
+        responses = HttpResponse(
+            buffer.getvalue(),
+            content_type="application/pdf",
+        )
+        responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
+        return responses
     except Exception as e:
         messages.error(request, e)
         print(e)
@@ -998,13 +1018,19 @@ def FnGenerateStaffClaimReport(request, pk):
         except ValueError as e:
             return redirect('ClaimDetail', pk=pk)
     filenameFromApp = filenameFromApp + str(nameChars) + ".pdf"
-    print(filenameFromApp)
     try:
         response = config.CLIENT.service.FnGenerateStaffClaimReport(
             employeeNo, filenameFromApp, claimNo)
         messages.success(request, "Successfully Sent!!")
-        print(response)
-        return redirect('ClaimDetail', pk=pk)
+        buffer = BytesIO.BytesIO()
+        content = base64.b64decode(response)
+        buffer.write(content)
+        responses = HttpResponse(
+            buffer.getvalue(),
+            content_type="application/pdf",
+        )
+        responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
+        return responses
     except Exception as e:
         messages.error(request, e)
         print(e)
