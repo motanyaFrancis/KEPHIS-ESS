@@ -582,7 +582,7 @@ def FnCancelRepairApproval(request, pk):
 
 def CreateRepairLines(request, pk):
     requisitionNo = pk
-    lineNo = 0
+    lineNo = ""
     assetCode = ''
     description = ''
     myAction = ''
@@ -595,6 +595,11 @@ def CreateRepairLines(request, pk):
         except ValueError:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('RepairDetail', pk=requisitionNo)
+        print("requisitionNo", requisitionNo)
+        print("lineNo", lineNo)
+        print("assetCode", assetCode)
+        print("description", description)
+        print("myAction", myAction)
         try:
             response = config.CLIENT.service.FnRepairRequisitionLine(
                 requisitionNo, lineNo, assetCode, description, myAction)
@@ -627,12 +632,12 @@ def FnDeleteRepairRequisitionLine(request, pk):
     lineNo = ""
     if request.method == 'POST':
         lineNo = int(request.POST.get('lineNo'))
+        print(requisitionNo, lineNo)
         try:
             response = config.CLIENT.service.FnDeleteRepairRequisitionLine(
                 requisitionNo, lineNo)
             messages.success(request, "Successfully Deleted")
             print(response)
-            return redirect('RepairDetail', pk=pk)
         except Exception as e:
             messages.error(request, e)
             print(e)

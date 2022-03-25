@@ -133,7 +133,15 @@ def ImprestDetails(request, pk):
         BizGroup = []
         Approvers = []
         Pending = []
-        destinations = res_dest['value']
+        Local = []
+        ForegnDest = []
+        for dest in res_dest['value']:
+            if dest['Destination_Type'] == "Local":
+                output_json = json.dumps(dest)
+                Local.append(json.loads(output_json))
+            if dest['Destination_Type'] == "Foreign":
+                output_json = json.dumps(dest)
+                ForegnDest.append(json.loads(output_json))
         for approver in res_approver['value']:
             if approver['Document_No_'] == pk:
                 output_json = json.dumps(approver)
@@ -166,6 +174,10 @@ def ImprestDetails(request, pk):
                         res = imprest
                         if imprest['Status'] == 'Open':
                             state = 1
+                        if imprest['Travel_Type'] == 'Local':
+                            destination = "Local"
+                        if imprest['Travel_Type'] == 'Foreign':
+                            destination = "Foreign"
             if imprest['Status'] == 'Rejected' and imprest['User_Id'] == request.session['User_ID']:
                 output_json = json.dumps(imprest)
                 openImp.append(json.loads(output_json))
@@ -198,8 +210,8 @@ def ImprestDetails(request, pk):
            "line": openLines, "state": state,
            "Approvers": Approvers, "type": res_type,
            "area": Area, "biz": BizGroup,
-           "des": destinations, "year": year,
-           "full": fullname}
+           "Local": Local, "year": year,
+           "full": fullname, "Foreign": ForegnDest, "dest": destination}
     return render(request, 'imprestDetail.html', ctx)
 
 
@@ -490,6 +502,7 @@ def SurrenderDetails(request, pk):
     session.auth = config.AUTHS
     state = ''
     res = ''
+    Imprest_Issue_Doc__No = ""
     Access_Point = config.O_DATA.format("/QyImprestSurrenders")
     Imprest_Type = config.O_DATA.format("/QyReceiptsAndPaymentTypes")
     Approver = config.O_DATA.format("/QyApprovalEntries")
@@ -550,12 +563,12 @@ def SurrenderDetails(request, pk):
                             state = 2
     except requests.exceptions.ConnectionError as e:
         print(e)
-    Lines_Res = config.O_DATA.format("/QyImprestLines")
+    Lines_Res = config.O_DATA.format("/QyImprestSurrenderLines")
     try:
         ress = session.get(Lines_Res, timeout=10).json()
         openLines = []
         for imprest in ress['value']:
-            if imprest['AuxiliaryIndex1'] == Imprest_Issue_Doc__No:
+            if imprest['No'] == pk:
                 output_json = json.dumps(imprest)
                 openLines.append(json.loads(output_json))
     except requests.exceptions.ConnectionError as e:
@@ -572,18 +585,16 @@ def CreateSurrenderLines(request, pk):
     lineNo = ""
     surrenderNo = pk
     actualSpent = ""
-    myAction = ''
     if request.method == 'POST':
         try:
             lineNo = int(request.POST.get('lineNo'))
             actualSpent = float(request.POST.get('actualSpent'))
-            myAction = request.POST.get('myAction')
         except ValueError:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('IMPDetails', pk=surrenderNo)
         try:
             response = config.CLIENT.service.FnImprestSurrenderLine(
-                lineNo, surrenderNo, actualSpent, myAction)
+                lineNo, surrenderNo, actualSpent)
             messages.success(request, "Successfully Added!!")
             print(response)
             return redirect('IMPSurrender', pk=surrenderNo)

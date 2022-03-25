@@ -209,15 +209,6 @@
                             <button class="btn btn-info" type="submit">Request For Approval</button>
                         </form>
                     </div>
-                    <div class="attach" style="display: inline-block;">
-                        <form action="" method="post">
-                            {% csrf_token %}
-                            <div class="mb-3">
-                                <input type="hidden" name="trainingNo" value="{{res.Request_No_}}">
-                            </div>
-                            <button class="btn btn-info" type="submit">Add Attachment</button>
-                        </form>
-                    </div>
                 </div>
                 {% elif state == 2 %}
                 <div class="d-grid gap-2 my-3">

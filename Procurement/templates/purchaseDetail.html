@@ -2,6 +2,7 @@
 {% load bootstrap5 %}
 {% load static %}
 {% block main %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <section class="dash2">
     <div class="content-wrapper">
         <div class="d-xl-flex justify-content-between align-items-start">
@@ -56,7 +57,7 @@
                     <div class="card-statistic-3 p-4">
                         <div class="card-icon card-icon-large"><i class="fas fa-dollar-sign"></i></div>
                         <div class="mb-4">
-                            <h5 class="card-title mb-0">Procurement Plan</h5>
+                            <h5 class="card-title mb-0" id="yesa">Procurement Plan</h5>
                         </div>
                         <div class="row align-items-center mb-2 d-flex">
                             <div class="col-md-12">
@@ -261,7 +262,7 @@
                                                     <div class="modal-header">
                                                         <h5 class="modal-title" id="staticBackdropLabel">Edit Purchase
                                                             Requisition
-                                                            Line
+                                                            Line {{res.Line_No_}}
                                                         </h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                             aria-label="Close"></button>
@@ -579,29 +580,31 @@
     </div>
 </div>
 <script>
-    document.getElementById('itemTypes').addEventListener('change', function () {
-        if (this.value == "1") {
-            document.getElementById('gl').disabled = false;
-            document.getElementById('itemNo').disabled = true;
-        } else if (this.value == "2") {
-            document.getElementById('itemNo').disabled = false;
-            document.getElementById('gl').disabled = true;
-        } else {
-            document.getElementById('gl').disabled = true;
-            document.getElementById('itemNo').disabled = true;
-        }
-    })
-    document.getElementById('itemTypess').addEventListener('change', function () {
-        if (this.value == "1") {
-            document.getElementById('gls').disabled = false;
-            document.getElementById('itemNos').disabled = true;
-        } else if (this.value == "2") {
-            document.getElementById('itemNos').disabled = false;
-            document.getElementById('gls').disabled = true;
-        } else {
-            document.getElementById('gls').disabled = true;
-            document.getElementById('itemNos').disabled = true;
-        }
+    $(document).ready(function () {
+        $('#itemTypess').on('change', function () {
+            if (this.value == "1") {
+                $('#gls').prop('disabled', false);
+                $('#itemNos').prop('disabled', true);
+            } else if (this.value == "2") {
+                $('#itemNos').prop('disabled', false);
+                $('#gls').prop('disabled', true);
+            } else {
+                $('#gls').prop('disabled', true);
+                $('#itemNos').prop('disabled', true);
+            }
+        });
+        $('#itemTypes').on('change', function () {
+            if (this.value == "1") {
+                $('#gl').prop('disabled', false);
+                $('#itemNo').prop('disabled', true);
+            } else if (this.value == "2") {
+                $('#itemNo').prop('disabled', false);
+                $('#gl').prop('disabled', true);
+            } else {
+                $('#gl').prop('disabled', true);
+                $('#itemNo').prop('disabled', true);
+            }
+        });
     })
 </script>
 {% endblock %}

@@ -78,7 +78,6 @@
                                                 <th>Planner Start Date</th>
                                                 <th>Return same day</th>
                                                 <th>Days Applied</th>
-                                                <th>Start Date</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -90,7 +89,6 @@
                                                 <td>{{res.Planner_Start_Date}}</td>
                                                 <td>{{res.Return_same_day}}</td>
                                                 <td>{{res.Days_Applied}}</td>
-                                                <td>{{res.Start_Date}}</td>
                                                 <td>
                                                     <form action="{% url 'FnDeleteLeaveApplication' %}" method="post"
                                                         style="display: inline-block;">
@@ -104,8 +102,7 @@
                                                     </form>
                                                     <button class="btn btn-primary" data-toggle="tooltip"
                                                         data-placement="top" title="edit" data-bs-toggle="modal"
-                                                        data-bs-target="#edit{{res.Application_No}}"><i
-                                                            class="fas fa-edit"></i>
+                                                        data-bs-target="#editLeave"><i class="fas fa-edit"></i>
                                                     </button>
                                                     <a href="{% url 'LeaveDetail' res.Application_No %} "
                                                         class="btn btn-success btn-icon-text" type="button"
@@ -113,8 +110,8 @@
                                                             class="fa fa-table"></i>
                                                     </a>
                                                     <!-- Modal Edit Leave -->
-                                                    <div class="modal fade" id="edit{{res.Application_No}}"
-                                                        data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                                    <div class="modal fade" id="editLeave" data-bs-backdrop="static"
+                                                        data-bs-keyboard="false" tabindex="-1"
                                                         aria-labelledby="staticBackdropLabel" aria-hidden="true">
                                                         <div
                                                             class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -122,7 +119,7 @@
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title" id="staticBackdropLabel">
                                                                         Edit Leave
-                                                                        Request
+                                                                        Request NO {{res.Application_No}}
                                                                     </h5>
                                                                     <button type="button" class="btn-close"
                                                                         data-bs-dismiss="modal"
@@ -263,7 +260,6 @@
                                                 <th>Planner Start Date</th>
                                                 <th>Return same day</th>
                                                 <th>Days Applied</th>
-                                                <th>Start Date</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -275,7 +271,6 @@
                                                 <td>{{res.Planner_Start_Date}}</td>
                                                 <td>{{res.Return_same_day}}</td>
                                                 <td>{{res.Days_Applied}}</td>
-                                                <td>{{res.Start_Date}}</td>
                                                 <td>
                                                     <a href="{% url 'LeaveDetail' res.Application_No %} "
                                                         class="btn btn-success btn-icon-text" type="button"
@@ -301,7 +296,6 @@
                                                 <th>Planner Start Date</th>
                                                 <th>Return same day</th>
                                                 <th>Days Applied</th>
-                                                <th>Start Date</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -313,7 +307,6 @@
                                                 <td>{{res.Planner_Start_Date}}</td>
                                                 <td>{{res.Return_same_day}}</td>
                                                 <td>{{res.Days_Applied}}</td>
-                                                <td>{{res.Start_Date}}</td>
                                                 <td>
                                                     <a href="{% url 'LeaveDetail' res.Application_No %} "
                                                         class="btn btn-success btn-icon-text" type="button"
@@ -339,7 +332,6 @@
                                                 <th>Planner Start Date</th>
                                                 <th>Return same day</th>
                                                 <th>Days Applied</th>
-                                                <th>Start Date</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -351,7 +343,6 @@
                                                 <td>{{res.Planner_Start_Date}}</td>
                                                 <td>{{res.Return_same_day}}</td>
                                                 <td>{{res.Days_Applied}}</td>
-                                                <td>{{res.Start_Date}}</td>
                                                 <td>
                                                     <a href="{% url 'LeaveDetail' res.Application_No %} "
                                                         class="btn btn-success btn-icon-text" type="button"

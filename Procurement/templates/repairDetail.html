@@ -232,7 +232,7 @@
                                     <td>{{res.AuxiliaryIndex1}}</td>
                                     <td>
                                         {% if state == 1 %}
-                                        <form action="{% url 'FnDeleteRepairRequisitionLine' res.Line_No_ %}"
+                                        <form action="{% url 'FnDeleteRepairRequisitionLine' res.AuxiliaryIndex1 %}"
                                             method="post" style="display: inline-block;">
                                             {% csrf_token %}
                                             <input type="hidden" name="lineNo" value="{{res.Line_No_}}">
@@ -251,7 +251,7 @@
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                         <h5 class="modal-title" id="staticBackdropLabel">Edit Repair
-                                                            Line
+                                                            Line {{res.Line_No_}}
                                                         </h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                             aria-label="Close"></button>

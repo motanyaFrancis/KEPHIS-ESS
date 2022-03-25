@@ -944,22 +944,24 @@ def FnGenerateLeaveReport(request, pk):
         except ValueError as e:
             messages.error(request, "Invalid Line number, Try Again!!")
             return redirect('LeaveDetail', pk=pk)
-    filenameFromApp = filenameFromApp + str(nameChars) + ".pdf"
-    try:
-        response = config.CLIENT.service.FnGenerateLeaveReport(
-            employeeNo, filenameFromApp, applicationNo)
-        buffer = BytesIO.BytesIO()
-        content = base64.b64decode(response)
-        buffer.write(content)
-        responses = HttpResponse(
-            buffer.getvalue(),
-            content_type="application/pdf",
-        )
-        responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
-        return responses
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
+        filenameFromApp = filenameFromApp + str(nameChars) + ".pdf"
+        print("filenameFromApp", filenameFromApp)
+        print("applicationNo", applicationNo)
+        try:
+            response = config.CLIENT.service.FnGenerateLeaveReport(
+                employeeNo, filenameFromApp, applicationNo)
+            buffer = BytesIO.BytesIO()
+            content = base64.b64decode(response)
+            buffer.write(content)
+            responses = HttpResponse(
+                buffer.getvalue(),
+                content_type="application/pdf",
+            )
+            responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
+            return responses
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
     return redirect('LeaveDetail', pk=pk)
 # Training report
 

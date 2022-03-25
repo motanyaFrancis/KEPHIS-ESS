@@ -178,24 +178,25 @@
                         <input type="text" class="form-control" placeholder="{{res.Status}}" readonly>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Responsibility Center</label>
-                        <input type="text" class="form-control" placeholder="{{res.Responsibility_Center}}" readonly>
+                        <label class="form-label">Travel Type</label>
+                        <input type="text" class="form-control" placeholder="{{res.Travel_Type}}" readonly>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Account_Type</label>
+                        <input type="text" class="form-control" placeholder="{{res.Account_Type}}" readonly>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Payee</label>
-                        <input type="text" class="form-control" placeholder="{{res.Payee}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">User</label>
-                        <input type="text" class="form-control" placeholder="{{res.User_Id}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">ID/ Passport</label>
-                        <input type="text" class="form-control" placeholder="{{res.ID_Passport}}" readonly>
+                        <label class="form-label">Imprest Amount</label>
+                        <input type="text" class="form-control" placeholder="{{res.Imprest_Amount}}" readonly>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Imprest</label>
                         <input type="text" class="form-control" placeholder="{{res.Imprest}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">DSA</label>
+                        <input type="text" class="form-control" placeholder="{{res.DSA}}" readonly>
                     </div>
                     <div class="col-12">
                         <label for="inputAddress" class="form-label">purpose</label>
@@ -309,10 +310,17 @@
                                                             <select class="form-select" name="destination" required>
                                                                 <option selected disabled value="">Select Destination
                                                                 </option>
-                                                                {% for res in des %}
+                                                                {% if dest == 'Local' %}
+                                                                {% for res in Local %}
                                                                 <option value="{{res.Destination_Code}}">
                                                                     {{res.Destination_Code}}</option>
                                                                 {% endfor %}
+                                                                {% elif dest == 'Foreign' %}
+                                                                {% for res in Foreign %}
+                                                                <option value="{{res.Destination_Code}}">
+                                                                    {{res.Destination_Code}}</option>
+                                                                {% endfor %}
+                                                                {% endif %}
                                                             </select>
                                                             <div class="invalid-feedback">
                                                                 Please Select Valid Destination.
@@ -464,9 +472,17 @@
 
                                 <select class="form-select" name="destination" required>
                                     <option selected disabled value="">Select Destination</option>
-                                    {% for res in des %}
-                                    <option value="{{res.Destination_Code}}">{{res.Destination_Code}}</option>
+                                    {% if dest == 'Local' %}
+                                    {% for res in Local %}
+                                    <option value="{{res.Destination_Code}}">
+                                        {{res.Destination_Code}}</option>
                                     {% endfor %}
+                                    {% elif dest == 'Foreign' %}
+                                    {% for res in Foreign %}
+                                    <option value="{{res.Destination_Code}}">
+                                        {{res.Destination_Code}}</option>
+                                    {% endfor %}
+                                    {% endif %}
                                 </select>
                                 <div class="invalid-feedback">
                                     Please Select Valid Destination.

@@ -7,9 +7,6 @@
         <div class="d-xl-flex justify-content-between align-items-start">
             <h2 class="text-dark font-weight-bold mb-2"> Imprest Surrender
                 {% if state == 1 %}
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> <i
-                        class="las la-plus"></i> Surrender
-                    Lines</button>
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Attachment"> <i
                         class="las la-plus"></i> Upload Attachment</button>
                 {% elif state == 3 %}
@@ -237,11 +234,11 @@
                             style="width:100%">
                             <thead>
                                 <tr id="tops">
-                                    <th id="long">Destination</th>
+                                    <th id="long">Expenditure Type</th>
+                                    <th>Gen Posting Type</th>
                                     <th>Description</th>
-                                    <th>Account No</th>
-                                    <th>No of Days</th>
-                                    <th>Daily Rate</th>
+                                    <th>Actual Spent</th>
+                                    <th>Remaining Amount</th>
                                     <th>Amount</th>
                                     <th>Action</th>
                                 </tr>
@@ -249,49 +246,46 @@
                             <tbody>
                                 {% for res in line %}
                                 <tr>
-                                    <td>{{res.Destination}}</td>
+                                    <td>{{res.Expenditure_Type}}</td>
+                                    <td>{{res.Gen__Posting_Type}}</td>
                                     <td>{{res.Description}}</td>
-                                    <td>{{res.Account_No}}</td>
-                                    <td>{{res.No_of_Days}}</td>
-                                    <td>{{res.Daily_Rate}}</td>
+                                    <td>{{res.Actual_Spent}}</td>
+                                    <td>{{res.Remaining_Amount}}</td>
                                     <td>{{res.Amount}}</td>
                                     <td>
                                         {% if state == 1 %}
 
                                         <a href="" class="btn btn-primary" data-toggle="tooltip" data-placement="top"
                                             title="Add Amount" data-bs-toggle="modal"
-                                            data-bs-target="#trainedit{{res.Line_No}}"><i class="fas fa-plus"></i>
+                                            data-bs-target="#trainedit{{res.AuxiliaryIndex2}}"><i
+                                                class="fas fa-plus"></i>
                                             Amount
                                         </a>
                                         <!-- Modal -->
-                                        <div class="modal fade" id="trainedit{{res.Line_No}}" data-bs-backdrop="static"
-                                            data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
-                                            aria-hidden="true">
+                                        <div class="modal fade" id="trainedit{{res.AuxiliaryIndex2}}"
+                                            data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                            aria-labelledby="staticBackdropLabel" aria-hidden="true">
                                             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                         <h5 class="modal-title" id="staticBackdropLabel">Raise Imprest
-                                                            Surrender
+                                                            Surrender {{res.AuxiliaryIndex2}}
                                                         </h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                             aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
-                                                        <form class="myForm needs-validation" action="" method="post"
-                                                            novalidate>
+                                                        <form class="myForm needs-validation"
+                                                            action="{% url 'CreateSurrenderLines' res.No %}"
+                                                            method="post" novalidate>
                                                             {% csrf_token %}
                                                             <div class="mb-2"> <span class="w-name">
                                                                     Imprest Surrender Lines:
                                                                 </span>
                                                                 <div class="row">
                                                                     <div class="col-md-12">
-                                                                        <input type="hidden" name="lineNo" value="0">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row">
-                                                                    <div class="col-md-12">
-                                                                        <input type="hidden" name="myAction"
-                                                                            value="insert">
+                                                                        <input type="hidden" name="lineNo"
+                                                                            value="{{res.AuxiliaryIndex2}}">
                                                                     </div>
                                                                 </div>
                                                                 <div class="row">
