@@ -24,7 +24,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="card h-100 summ-cards">
                     <div class="card-title">
                         Human Resource Summary
@@ -69,37 +69,42 @@
                             <div class="col-md-4">
                                 <div class="c-content">
                                     <h6>Staff Claim</h6>
-                                    <small>3</small>
+                                    <small>{{open_claim}}</small>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card h-100 summ-cards2">
+            <div class="col-md-4">
+                <div class="card h-100 summ-cards3">
                     <div class="card-title">
                         Procurement Summary
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="c-content c1">
-                                    <h6>Store Requests</h6>
-                                    <small>3</small>
+                                    <h6>Purchase Requests</h6>
+                                    <small>{{open_purchase}}</small>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
+                                <div class="c-content c2">
+                                    <h6>Repair Request</h6>
+                                    <small>{{open_repair}}</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
                                 <div class="c-content">
-                                    <h6>Purchase Requests</h6>
-                                    <small>3</small>
+                                    <h6>Store Requests</h6>
+                                    <small>{{open_store}}</small>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
         <div class="row py-4">
             <div class="col-md-6">
@@ -116,25 +121,29 @@
                             'Training',
                             'Imprest Requisition',
                             'Imprest Surrender',
-                            'Purchase',
-                            'Repair',
-                            'Imprest Requisition',
-                            'Store',
-                            "Staff Claim"
+                            'Staff Claim',
+                            'Purchase Requests',
+                            'Repair Requests',
+                            'Store Requests',
                         ];
                         var Approved_Leave = '{{leave_app}}'
                         var App_Train = '{{app_train}}'
                         var APP_Imprest = '{{imprest_app}}'
-                        var App_imprest = 3
+                        var App_Claim = '{{app_claim}}'
                         var App_surrender = '{{surrender_app}}'
+                        var APP_Purchase = '{{app_purchase}}'
+                        var APP_Repair = '{{app_repair}}'
+                        var App_Store = '{{app_store}}'
                         const data = {
                             labels: labels,
                             datasets: [{
                                 label: 'All Approved Requests',
                                 backgroundColor: 'rgb(255, 99, 132)',
                                 borderColor: 'rgb(255, 99, 132)',
-                                data: [Approved_Leave, App_Train, APP_Imprest, App_surrender, 20, 30, 45,
-                                    App_imprest, 3, 3
+                                data: [Approved_Leave, App_Train, APP_Imprest, App_surrender, App_Claim,
+                                    APP_Purchase,
+                                    APP_Repair,
+                                    App_Store
                                 ],
                             }]
                         };
@@ -167,18 +176,20 @@
                             'Training',
                             'Imprest Requisition',
                             'Imprest Surrender',
-                            'Purchase',
-                            'Repair',
-                            'Imprest Requisition',
-                            'Store',
-                            "Staff Claim"
+                            'Staff Claim',
+                            'Purchase ',
+                            'Repair Requests',
+                            'Store Requests',
                         ];
 
                         var Rejected_Leave = '{{leave_rej}}'
                         var Rej_Train = '{{rej_train}}'
                         var Rej_Imprest = '{{imprest_rej}}'
-                        var Rej_imprest = 3
+                        var Rej_Claim = '{{rej_claim}}'
                         var Rej_surrender = '{{surrender_rej}}'
+                        var Rej_Purchase = '{{rej_purchase}}'
+                        var Rej_Repair = '{{rej_repair}}'
+                        var Rej_Store = '{{rej_store}}'
                         const data2 = {
                             labels: newlabel,
                             datasets: [{
@@ -189,12 +200,12 @@
                                     '#8076a3',
                                     '#FFBF00',
                                     '#9FE2BF',
-                                    '#40E0D0',
                                 ],
                                 borderColor: 'rgb(255, 99, 132)',
-                                data: [Rejected_Leave, Rej_Train, Rej_Imprest, Rej_surrender, 20, 8, 5,
-                                    Rej_imprest,
-                                    3, 3
+                                data: [Rejected_Leave, Rej_Train, Rej_Imprest, Rej_surrender, Rej_Claim,
+                                    Rej_Purchase,
+                                    Rej_Repair,
+                                    Rej_Store
                                 ],
                             }]
                         };
@@ -215,108 +226,104 @@
             </div>
         </div>
         <div class="row pb-3">
-            <div class="col-md-8">
-                <div class="card h-100">
-                    <div class="row my-2 ">
-                        <div class="col-md-12">
-                            <div class="card h-100 px-2" id="d-card">
-                                <div class="m-4">
-                                    <ul class="nav nav-tabs" id="myTab">
-                                        <li class="nav-item">
-                                            <a href="#home" class="nav-link active" data-bs-toggle="tab">Documents
-                                                Pending
-                                                Your
-                                                Approval
-                                                ({{countsAPP}})</a>
-                                        </li>
-                                    </ul>
-                                    <div class="tab-content">
-                                        <div class="tab-pane fade show active" id="home">
-                                            <h4 class="mt-2 text-dark">Documents Pending Your Approval</h4>
-                                            <div class="card-body">
-                                                <table id="example"
-                                                    class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                                                    style="width:100%">
-                                                    <thead>
-                                                        <tr id="tops">
-                                                            <th>Document Type</th>
-                                                            <th>Sender</th>
-                                                            <th>Action</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {% for res in apps %}
-                                                        <tr>
-                                                            <td id="rap">{{res.Document_Type}}</td>
-                                                            <td>{{res.Sender_ID}}</td>
-                                                            <td>
-                                                                <a href="{% url 'ApproveData' res.Document_No_ %}"
-                                                                    class="btn btn-success link-btn" type="button"
-                                                                    data-toggle="tooltip" data-placement="top"
-                                                                    title="View"><i class="fa fa-table"></i>
-                                                                </a>
-                                                            </td>
-                                                        </tr>
-                                                        {% endfor %}
-                                                    </tbody>
-                                                </table>
+            <div class="col-md-12">
+                <div class="row my-2 ">
+                    <div class="col-md-12">
+                        <div class="card h-100 px-2" id="d-card">
+                            <div class="m-4">
+                                <ul class="nav nav-tabs" id="myTab">
+                                    <li class="nav-item">
+                                        <a href="#home" class="nav-link active" data-bs-toggle="tab"> My Profile</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#profile" class="nav-link" data-bs-toggle="tab">Documents
+                                            Pending
+                                            Your
+                                            Approval
+                                            ({{countsAPP}})</a>
+                                    </li>
+
+                                </ul>
+                                <div class="tab-content">
+                                    <div class="tab-pane fade" id="profile">
+                                        <h4 class="mt-2 text-dark">Documents Pending Your Approval</h4>
+                                        <div class="card-body">
+                                            <table id="example"
+                                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                                style="width:100%">
+                                                <thead>
+                                                    <tr id="tops">
+                                                        <th>Document Type</th>
+                                                        <th>Sender</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for res in apps %}
+                                                    <tr>
+                                                        <td id="rap">{{res.Document_Type}}</td>
+                                                        <td>{{res.Sender_ID}}</td>
+                                                        <td>
+                                                            <a href="{% url 'ApproveData' res.Document_No_ %}"
+                                                                class="btn btn-success link-btn" type="button"
+                                                                data-toggle="tooltip" data-placement="top"
+                                                                title="View"><i class="fa fa-table"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade show active" id="home">
+                                        <div class="card-body">
+                                            <div class="muck-up" style="border-radius: 4px;">
+                                                <div class="overlay"></div>
+                                                <div class="top">
+                                                    <div class="navs">
+                                                        <span class="ion-android-menu"></span>
+                                                        <p>My Profile</p>
+                                                    </div>
+                                                    <div class="user-profile">
+                                                        <img src="../../../static/img/logo/2.png">
+                                                        <div class="user-details">
+                                                            <h4>{{full}}</h4>
+                                                            <p>{{Responsibility}}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="bottom">
+                                                    <div class="title">
+                                                        <small>Profile Information</small>
+                                                    </div>
+                                                    <form class="row">
+                                                        <div class="mb-3 col-md-6">
+                                                            <label for="exampleInputEmail1" class="form-label">Employee
+                                                                Number</label>
+                                                            <input type="text" class="form-control"
+                                                                placeholder="{{Employee_No_}}" disabled>
+                                                        </div>
+                                                        <div class="mb-3 col-md-6">
+                                                            <label for="exampleInputEmail1" class="form-label">Account
+                                                                Number</label>
+                                                            <input type="text" class="form-control"
+                                                                placeholder="{{Customer_No_}}" disabled>
+                                                        </div>
+                                                        <div class="mb-3 col-md-12">
+                                                            <label for="exampleInputEmail1"
+                                                                class="form-label">EMail</label>
+                                                            <input type="text" class="form-control"
+                                                                placeholder="{{E_Mail}}" disabled>
+                                                        </div>
+                                                    </form>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="muck-up" style="border-radius: 4px;">
-                    <div class="overlay"></div>
-                    <div class="top">
-                        <div class="navs">
-                            <span class="ion-android-menu"></span>
-                            <p>My Profile</p>
-                        </div>
-                        <div class="user-profile">
-                            <img src="../../../static/img/logo/2.png">
-                            <div class="user-details">
-                                <h4>{{full}}</h4>
-                                <p>{{Responsibility}}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bottom">
-                        <div class="title">
-                            <h3>My Profile</h3>
-                            <small>Profile Information</small>
-                        </div>
-                        <ul class="tasks">
-                            <li class="one red">
-                                <span class="task-title">Employee Number</span>
-                                <span class="task-time"><i class="las la-user-circle"></i></span>
-                                <span class="task-cat">{{Employee_No_}}</span>
-
-                            </li>
-                            <li class="one red">
-                                <span class="task-title">Account Number</span>
-                                <span class="task-time"><i class="las la-lock"></i></span>
-                                <span class="task-cat">{{Customer_No_}}</span>
-
-                            </li>
-                            <li class="two green">
-                                <span class="task-title">Email</span>
-                                <span class="task-time"><i class="las la-envelope"></i></span>
-                                {% if E_Mail %}
-                                <span class="task-cat">{{E_Mail}}</span>
-                                {% else %}
-                                <span class="task-cat">No Email</span>
-                                {% endif %}
-                            </li>
-                            </li>
-
-
-                        </ul>
                     </div>
                 </div>
             </div>

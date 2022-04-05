@@ -159,7 +159,7 @@ button:hover {
 }
 
 .overlay {
-    background: url(../img/bg/1.jpg) no-repeat top /contain;
+    background: linear-gradient(to right, #134326, #144a85) !important;
     position: absolute;
     left: 0;
     top: 0;
@@ -228,7 +228,7 @@ button:hover {
 }
 
 .muck-up .bottom {
-    background-color: #fff;
+    background: linear-gradient(to right, #444a4a, #e51e25) !important;
     height: auto;
     z-index: 1;
     padding: 35px;
@@ -240,8 +240,8 @@ button:hover {
 .bottom:after {
     content: '';
     position: absolute;
-    top: -46px;
-    background: #fff;
+    top: -36px;
+    background: linear-gradient(to right, #444a4a, #8b373a) !important;
     left: -12px;
     right: 0;
     height: 100px;
