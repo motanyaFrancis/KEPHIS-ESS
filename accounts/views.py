@@ -22,6 +22,7 @@ def login_request(request):
     if request.method == 'POST':
         username = request.POST.get('username').upper().strip()
         password = request.POST.get('password').strip()
+        print(username, password)
         user = Session()
         user.auth = HTTPBasicAuth(username, password)
         Access_Point = config.O_DATA.format("/QyEmployees")
