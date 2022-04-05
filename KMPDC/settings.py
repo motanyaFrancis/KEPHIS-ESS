@@ -22,6 +22,7 @@ from zeep import Client
 from zeep.transports import Transport
 from requests.auth import HTTPBasicAuth
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -67,6 +68,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -80,7 +82,16 @@ INSTALLED_APPS = [
     'Procurement',
     'Approvals',
     'accounts',
+
 ]
+
+ASGI_APPLICATION = "KMPDC.asgi.application"
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

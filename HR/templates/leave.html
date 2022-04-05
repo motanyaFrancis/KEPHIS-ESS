@@ -192,11 +192,11 @@
                                                                             </div>
                                                                             <div class="row">
                                                                                 <div class="col-md-12">
-                                                                                    <label for="isReturnSameDay"
+                                                                                    <label for="ReturnSameDay"
                                                                                         class="form-label"> Return Same
                                                                                         Day</label>
                                                                                     <select class="form-select"
-                                                                                        id="isReturnSameDay"
+                                                                                        id="ReturnSameDay"
                                                                                         name="isReturnSameDay" required>
                                                                                         <option selected value="">Select
                                                                                         </option>
@@ -213,18 +213,15 @@
                                                                             </div>
                                                                             <div class="row">
                                                                                 <div class="col-md-12">
-                                                                                    <label for="daysApplied"
+                                                                                    <label for="dayApplied"
                                                                                         class="form-label">Days
                                                                                         Applied</label>
                                                                                     <input type="number"
                                                                                         class="form-control"
-                                                                                        id="daysApplied"
+                                                                                        id="dayApplied"
                                                                                         name="daysApplied"
                                                                                         placeholder="{{res.Days_Applied}}"
-                                                                                        required>
-                                                                                    <div class="invalid-feedback">
-                                                                                        Please provide input.
-                                                                                    </div>
+                                                                                        disabled>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -433,10 +430,7 @@
                                 <div class="col-md-12">
                                     <label for="daysApplied" class="form-label">Days Applied</label>
                                     <input type="number" class="form-control" id="daysApplied" name="daysApplied"
-                                        required>
-                                    <div class="invalid-feedback">
-                                        Please provide input.
-                                    </div>
+                                        disabled>
                                 </div>
                             </div>
                         </div>
@@ -454,5 +448,26 @@
     $(function () {
         $('[data-toggle="tooltip"]').tooltip();
     });
+    $(document).ready(function () {
+        $('#isReturnSameDay').on('change', function () {
+            if (this.value == "True") {
+                $('#daysApplied').prop('disabled', true);
+            } else if (this.value == "False") {
+                $('#daysApplied').prop('disabled', false);
+            } else {
+                $('#daysApplied').prop('disabled', true);
+            }
+        });
+        $('#ReturnSameDay').on('change', function () {
+            if (this.value == "True") {
+                $('#dayApplied').prop('disabled', true);
+            } else if (this.value == "False") {
+                $('#dayApplied').prop('disabled', false);
+            } else {
+                $('#dayApplied').prop('disabled', true);
+            }
+        });
+    })
 </script>
+
 {% endblock %}

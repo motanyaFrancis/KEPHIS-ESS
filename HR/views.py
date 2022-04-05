@@ -255,28 +255,29 @@ def CreateLeave(request):
     isReturnSameDay = ''
     myAction = ''
     if request.method == 'POST':
+
+        applicationNo = request.POST.get('applicationNo')
+        leaveType = request.POST.get('leaveType')
+        plannerStartDate = datetime.strptime(
+            (request.POST.get('plannerStartDate')), '%Y-%m-%d').date()
+        daysApplied = request.POST.get('daysApplied')
+        isReturnSameDay = eval(request.POST.get('isReturnSameDay'))
+        myAction = request.POST.get('myAction')
+
+        if not applicationNo:
+            applicationNo = " "
+        if not daysApplied:
+            daysApplied = 0
+
         try:
-            applicationNo = request.POST.get('applicationNo')
-            leaveType = request.POST.get('leaveType')
-            plannerStartDate = datetime.strptime(
-                (request.POST.get('plannerStartDate')), '%Y-%m-%d').date()
-            daysApplied = int(request.POST.get('daysApplied'))
-            isReturnSameDay = eval(request.POST.get('isReturnSameDay'))
-            myAction = request.POST.get('myAction')
-        except ValueError as e:
-            messages.error(request, "Not sent. Invalid Input, Try Again!!")
-            return redirect('leave')
-    if not applicationNo:
-        applicationNo = " "
-    print(applicationNo)
-    try:
-        response = config.CLIENT.service.FnLeaveApplication(
-            applicationNo, employeeNo, usersId, dimension3, leaveType, plannerStartDate, daysApplied, isReturnSameDay, myAction)
-        messages.success(request, "You have successfully  Added!!")
-        print(response)
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
+            response = config.CLIENT.service.FnLeaveApplication(
+                applicationNo, employeeNo, usersId, dimension3, leaveType, plannerStartDate, int(daysApplied), isReturnSameDay, myAction)
+            messages.success(request, "You have successfully  Added!!")
+            print(response)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+
     return redirect('leave')
 
 

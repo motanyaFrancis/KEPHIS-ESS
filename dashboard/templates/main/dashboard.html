@@ -242,40 +242,13 @@
                                             Approval
                                             ({{countsAPP}})</a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a href="#channel" class="nav-link" data-bs-toggle="tab">Sockets</a>
+                                    </li>
 
                                 </ul>
                                 <div class="tab-content">
-                                    <div class="tab-pane fade" id="profile">
-                                        <h4 class="mt-2 text-dark">Documents Pending Your Approval</h4>
-                                        <div class="card-body">
-                                            <table id="example"
-                                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                                                style="width:100%">
-                                                <thead>
-                                                    <tr id="tops">
-                                                        <th>Document Type</th>
-                                                        <th>Sender</th>
-                                                        <th>Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {% for res in apps %}
-                                                    <tr>
-                                                        <td id="rap">{{res.Document_Type}}</td>
-                                                        <td>{{res.Sender_ID}}</td>
-                                                        <td>
-                                                            <a href="{% url 'ApproveData' res.Document_No_ %}"
-                                                                class="btn btn-success link-btn" type="button"
-                                                                data-toggle="tooltip" data-placement="top"
-                                                                title="View"><i class="fa fa-table"></i>
-                                                            </a>
-                                                        </td>
-                                                    </tr>
-                                                    {% endfor %}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
+
                                     <div class="tab-pane fade show active" id="home">
                                         <div class="card-body">
                                             <div class="muck-up" style="border-radius: 4px;">
@@ -321,6 +294,54 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="tab-pane fade" id="profile">
+                                        <h4 class="mt-2 text-dark">Documents Pending Your Approval</h4>
+                                        <div class="card-body">
+                                            <table id="example"
+                                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                                style="width:100%">
+                                                <thead>
+                                                    <tr id="tops">
+                                                        <th>Document Type</th>
+                                                        <th>Sender</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for res in apps %}
+                                                    <tr>
+                                                        <td id="rap">{{res.Document_Type}}</td>
+                                                        <td>{{res.Sender_ID}}</td>
+                                                        <td>
+                                                            <a href="{% url 'ApproveData' res.Document_No_ %}"
+                                                                class="btn btn-success link-btn" type="button"
+                                                                data-toggle="tooltip" data-placement="top"
+                                                                title="View"><i class="fa fa-table"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <!-- <div class="tab-pane fade" id="channel">
+                                        <h4 class="mt-2 text-dark">Try</h4>
+                                        <div class="card-body">
+                                            <div id="messages"></div>
+                                            <form id="form">
+                                                <div class="mb-3">
+                                                    <label for="exampleInputEmail1" class="form-label">Email
+                                                        address</label>
+                                                    <input type="text" class="form-control" id="message" name="message">
+                                                    <div id="emailHelp" class="form-text">We'll never share your email
+                                                        with anyone else.</div>
+                                                </div>
+
+                                                <button type="submit" class="btn btn-primary">Submit</button>
+                                            </form>
+                                        </div>
+                                    </div> -->
                                 </div>
                             </div>
                         </div>
@@ -330,4 +351,34 @@
         </div>
     </div>
 </section>
+
+<script>
+    let url = `ws://${window.location.host}/ws/socket-server/`
+    const chatSocket = new WebSocket(url)
+
+    chatSocket.onmessage = function (e) {
+        let data = JSON.parse(e.data)
+        console.log('Data:', data)
+
+        if (data.type === 'chat') {
+            let message = document.getElementById('messages')
+
+            message.insertAdjacentHTML('beforeend', `<div>
+                <p>${data.message}</p></div>`)
+        }
+    }
+
+    let form = document.getElementById('form')
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault()
+        let message = e.target.message.value;
+
+        chatSocket.send(JSON.stringify({
+            'message': message
+        }))
+        form.reset()
+    })
+</script>
+
 {% endblock %}

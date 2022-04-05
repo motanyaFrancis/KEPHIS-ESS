@@ -107,15 +107,16 @@ CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
 # response = CLIENT.service.FnRequestInternalRequestApproval(myUserID,
 #                                                            applicationNo)
 # print(response)
-requisitionNo = ''
-employeeNo = "AH"
-issuingStore = "BLUE"
-reason = "test"
-expectedReceiptDate = datetime.strptime('2022-10-01', '%Y-%m-%d').date()
-myUserId = "WINNIE"
+applicationNo = ''
+employeeNo = "EMP-00001"
+usersId = 'WINNIE'
+dimension3 = ''
+leaveType = 'ANNUAL'
+plannerStartDate = '2022-04-06'
+daysApplied = 3
+isReturnSameDay = False
 myAction = 'insert'
 
-
-response = CLIENT.service.FnStoreRequisitionHeader(
-    requisitionNo, employeeNo, issuingStore, reason, expectedReceiptDate, myUserId, myAction)
+response = CLIENT.service.FnLeaveApplication(
+    applicationNo, employeeNo, usersId, dimension3, leaveType, plannerStartDate, daysApplied, isReturnSameDay, myAction)
 print(response)
