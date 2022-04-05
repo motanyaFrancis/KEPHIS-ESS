@@ -16,10 +16,12 @@ def dashboard(request):
     Access_Imprest = config.O_DATA.format("/Imprests")
     Access_Leave = config.O_DATA.format("/QyLeaveApplications")
     Access_Train = config.O_DATA.format("/QyTrainingRequests")
+    Access_Surrender = config.O_DATA.format("/QyImprestSurrenders")
     try:
         Imprest = session.get(Access_Imprest, timeout=10).json()
         Leave = session.get(Access_Leave, timeout=10).json()
         Training = session.get(Access_Train, timeout=10).json()
+        Surrender = session.get(Access_Surrender, timeout=10).json()
 
         openLeave = []
         AppLeave = []
@@ -32,6 +34,10 @@ def dashboard(request):
         openImprest = []
         AppImprest = []
         RejImprest = []
+
+        openSurrender = []
+        AppSurrender = []
+        RejSurrender = []
 
         for Leave in Leave['value']:
             if Leave['Status'] == 'Open' and Leave['User_ID'] == request.session['User_ID']:
@@ -65,10 +71,24 @@ def dashboard(request):
             if imprest['Status'] == 'Rejected' and imprest['User_Id'] == request.session['User_ID']:
                 output_json = json.dumps(imprest)
                 RejImprest.append(json.loads(output_json))
+        for Surrender in Surrender['value']:
+            if Surrender['Status'] == 'Open' and Surrender['User_Id'] == request.session['User_ID']:
+                output_json = json.dumps(imprest)
+                openSurrender.append(json.loads(output_json))
+            if Surrender['Status'] == 'Released' and Surrender['User_Id'] == request.session['User_ID']:
+                output_json = json.dumps(imprest)
+                AppSurrender.append(json.loads(output_json))
+            if Surrender['Status'] == 'Rejected' and Surrender['User_Id'] == request.session['User_ID']:
+                output_json = json.dumps(imprest)
+                RejSurrender.append(json.loads(output_json))
 
         imprest_open = len(openImprest)
         imprest_app = len(AppImprest)
         imprest_rej = len(RejImprest)
+
+        surrender_open = len(openSurrender)
+        surrender_app = len(AppSurrender)
+        surrender_rej = len(RejSurrender)
 
         leave_open = len(openLeave)
         leave_App = len(AppLeave)
@@ -109,7 +129,8 @@ def dashboard(request):
            "leave_rej": leave_rej, "open_train": train_open,
            "app_train": train_app, "rej_train": train_rej,
            "imprest_open": imprest_open, "imprest_app": imprest_app,
-           "imprest_rej": imprest_rej
+           "imprest_rej": imprest_rej, "surrender_open": surrender_open,
+           "surrender_app": surrender_app, "surrender_rej": surrender_rej
            }
     return render(request, 'main/dashboard.html', ctx)
 

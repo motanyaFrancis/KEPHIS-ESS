@@ -63,7 +63,7 @@
                             <div class="col-md-4">
                                 <div class="c-content c2">
                                     <h6>Imprest Surrender</h6>
-                                    <small>3</small>
+                                    <small>{{surrender_open}}</small>
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -115,26 +115,26 @@
                             'Leave',
                             'Training',
                             'Imprest Requisition',
-                            'Store',
+                            'Imprest Surrender',
                             'Purchase',
                             'Repair',
                             'Imprest Requisition',
-                            'Imprest Surrender',
+                            'Store',
                             "Staff Claim"
                         ];
                         var Approved_Leave = '{{leave_app}}'
                         var App_Train = '{{app_train}}'
                         var APP_Imprest = '{{imprest_app}}'
                         var App_imprest = 3
-                        var App_surrender = 3
+                        var App_surrender = '{{surrender_app}}'
                         const data = {
                             labels: labels,
                             datasets: [{
                                 label: 'All Approved Requests',
                                 backgroundColor: 'rgb(255, 99, 132)',
                                 borderColor: 'rgb(255, 99, 132)',
-                                data: [Approved_Leave, App_Train, APP_Imprest, 3, 20, 30, 45,
-                                    App_imprest, App_surrender, 3
+                                data: [Approved_Leave, App_Train, APP_Imprest, App_surrender, 20, 30, 45,
+                                    App_imprest, 3, 3
                                 ],
                             }]
                         };
@@ -166,11 +166,11 @@
                             'Leave',
                             'Training',
                             'Imprest Requisition',
-                            'Store',
+                            'Imprest Surrender',
                             'Purchase',
                             'Repair',
                             'Imprest Requisition',
-                            'Imprest Surrender',
+                            'Store',
                             "Staff Claim"
                         ];
 
@@ -178,7 +178,7 @@
                         var Rej_Train = '{{rej_train}}'
                         var Rej_Imprest = '{{imprest_rej}}'
                         var Rej_imprest = 3
-                        var Rej_surrender = 3
+                        var Rej_surrender = '{{surrender_rej}}'
                         const data2 = {
                             labels: newlabel,
                             datasets: [{
@@ -192,8 +192,9 @@
                                     '#40E0D0',
                                 ],
                                 borderColor: 'rgb(255, 99, 132)',
-                                data: [Rejected_Leave, Rej_Train, Rej_Imprest, 2, 20, 8, 5, Rej_imprest,
-                                    Rej_surrender, 3
+                                data: [Rejected_Leave, Rej_Train, Rej_Imprest, Rej_surrender, 20, 8, 5,
+                                    Rej_imprest,
+                                    3, 3
                                 ],
                             }]
                         };
