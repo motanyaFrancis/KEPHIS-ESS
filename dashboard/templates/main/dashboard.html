@@ -47,7 +47,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-5">
                 <div class="card h-100 summ-cards3">
                     <div class="card-title">
                         Finance Summary
@@ -57,7 +57,7 @@
                             <div class="col-md-4">
                                 <div class="c-content c1">
                                     <h6>Imprest Requisition</h6>
-                                    <small>3</small>
+                                    <small>{{imprest_open}}</small>
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -76,7 +76,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="card h-100 summ-cards2">
                     <div class="card-title">
                         Procurement Summary
@@ -114,7 +114,7 @@
                         const labels = [
                             'Leave',
                             'Training',
-                            'Loan',
+                            'Imprest Requisition',
                             'Store',
                             'Purchase',
                             'Repair',
@@ -124,7 +124,7 @@
                         ];
                         var Approved_Leave = '{{leave_app}}'
                         var App_Train = '{{app_train}}'
-                        var APP_Loan = 3
+                        var APP_Imprest = '{{imprest_app}}'
                         var App_imprest = 3
                         var App_surrender = 3
                         const data = {
@@ -133,7 +133,7 @@
                                 label: 'All Approved Requests',
                                 backgroundColor: 'rgb(255, 99, 132)',
                                 borderColor: 'rgb(255, 99, 132)',
-                                data: [Approved_Leave, App_Train, APP_Loan, 3, 20, 30, 45,
+                                data: [Approved_Leave, App_Train, APP_Imprest, 3, 20, 30, 45,
                                     App_imprest, App_surrender, 3
                                 ],
                             }]
@@ -165,7 +165,7 @@
                         const newlabel = [
                             'Leave',
                             'Training',
-                            'Loan',
+                            'Imprest Requisition',
                             'Store',
                             'Purchase',
                             'Repair',
@@ -176,7 +176,7 @@
 
                         var Rejected_Leave = '{{leave_rej}}'
                         var Rej_Train = '{{rej_train}}'
-                        var Rej_Loan = 3
+                        var Rej_Imprest = '{{imprest_rej}}'
                         var Rej_imprest = 3
                         var Rej_surrender = 3
                         const data2 = {
@@ -192,7 +192,7 @@
                                     '#40E0D0',
                                 ],
                                 borderColor: 'rgb(255, 99, 132)',
-                                data: [Rejected_Leave, Rej_Train, Rej_Loan, 2, 20, 8, 5, Rej_imprest,
+                                data: [Rejected_Leave, Rej_Train, Rej_Imprest, 2, 20, 8, 5, Rej_imprest,
                                     Rej_surrender, 3
                                 ],
                             }]

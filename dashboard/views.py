@@ -58,16 +58,17 @@ def dashboard(request):
         for imprest in Imprest['value']:
             if imprest['Status'] == 'Open' and imprest['User_Id'] == request.session['User_ID']:
                 output_json = json.dumps(imprest)
-                open.append(json.loads(output_json))
+                openImprest.append(json.loads(output_json))
             if imprest['Status'] == 'Released' and imprest['User_Id'] == request.session['User_ID']:
                 output_json = json.dumps(imprest)
-                Approved.append(json.loads(output_json))
+                AppImprest.append(json.loads(output_json))
             if imprest['Status'] == 'Rejected' and imprest['User_Id'] == request.session['User_ID']:
                 output_json = json.dumps(imprest)
-                Rejected.append(json.loads(output_json))
+                RejImprest.append(json.loads(output_json))
 
-        counts = len(Open)
-        counter = len(Approved)
+        imprest_open = len(openImprest)
+        imprest_app = len(AppImprest)
+        imprest_rej = len(RejImprest)
 
         leave_open = len(openLeave)
         leave_App = len(AppLeave)
@@ -100,14 +101,15 @@ def dashboard(request):
     todays_date = datetime.datetime.now().strftime("%b. %d, %Y %A")
 
     ctx = {"today": todays_date,
-           "res": open, "count": counts,
-           "response": Approved, "counter": counter,
-           "full": fullname, "Responsibility": Responsibility,
-           "E_Mail": E_Mail, "Employee_No_": Employee_No_,
-           "Customer_No_": Customer_No_, "apps": Approve, "countsAPP": countsAPP,
+           "res": open, "full": fullname,
+           "Responsibility": Responsibility, "E_Mail": E_Mail,
+           "Employee_No_": Employee_No_, "Customer_No_": Customer_No_,
+           "apps": Approve, "countsAPP": countsAPP,
            "leave_open": leave_open, "leave_app": leave_App,
            "leave_rej": leave_rej, "open_train": train_open,
-           "app_train": train_app, "rej_train": train_rej
+           "app_train": train_app, "rej_train": train_rej,
+           "imprest_open": imprest_open, "imprest_app": imprest_app,
+           "imprest_rej": imprest_rej
            }
     return render(request, 'main/dashboard.html', ctx)
 
