@@ -15,11 +15,10 @@ from django.http import HttpResponse
 import io as BytesIO
 import secrets
 import string
-from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
-@login_required(login_url='auth')
+
 def Leave_Planner(request):
     fullname = request.session['fullname']
     year = request.session['years']
@@ -63,7 +62,7 @@ def CreatePlanner(request):
         print(e)
     return redirect('LeavePlanner')
 
-@login_required(login_url='auth')
+
 def PlanDetail(request, pk):
     fullname = request.session['fullname']
     year = request.session['years']
@@ -186,7 +185,7 @@ def FnDeleteLeavePlannerLine(request, pk):
         print(e)
     return redirect('PlanDetail', pk=pk)
 
-@login_required(login_url='auth')
+
 def Leave_Request(request):
     fullname = request.session['fullname']
     year = request.session['years']
@@ -314,7 +313,7 @@ def FnDeleteLeaveApplication(request):
             print(e)
     return redirect('leave')
 
-@login_required(login_url='auth')
+
 def LeaveDetail(request, pk):
     fullname = request.session['fullname']
     year = request.session['years']
@@ -457,7 +456,7 @@ def LeaveCancelApproval(request, pk):
         print(e)
     return redirect('LeaveDetail', pk=pk)
 
-@login_required(login_url='auth')
+
 def Training_Request(request):
     fullname = request.session['fullname']
     year = request.session['years']
@@ -591,7 +590,7 @@ def EditTrainingRequest(request):
         print(e)
     return redirect('training_request')
 
-@login_required(login_url='auth')
+
 def TrainingDetail(request, pk):
     fullname = request.session['fullname']
     year = request.session['years']
@@ -853,7 +852,7 @@ def TrainingCancelApproval(request, pk):
         print(e)
     return redirect('TrainingDetail', pk=pk)
 
-@login_required(login_url='auth')
+
 def PNineRequest(request):
     nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
                         for i in range(5))
@@ -894,7 +893,7 @@ def PNineRequest(request):
     ctx = {"today": todays_date, "year": year, "full": fullname}
     return render(request, "p9.html", ctx)
 
-@login_required(login_url='auth')
+
 def PayslipRequest(request):
     nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
                         for i in range(5))

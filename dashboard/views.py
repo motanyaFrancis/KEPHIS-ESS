@@ -6,10 +6,9 @@ import json
 from django.conf import settings as config
 import datetime
 from django.contrib.sessions.models import Session
-from django.contrib.auth.decorators import login_required
 # Create your views here.
 
-@login_required(login_url='auth')
+
 def dashboard(request):
     session = requests.Session()
     session.auth = config.AUTHS
@@ -222,14 +221,14 @@ def dashboard(request):
            }
     return render(request, 'main/dashboard.html', ctx)
 
-@login_required(login_url='auth')
+
 def details(request, pk):
 
     todays_date = datetime.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date}
     return render(request, "main/details.html", ctx)
 
-@login_required(login_url='auth')
+
 def Canvas(request):
 
     fullname = request.session['fullname']

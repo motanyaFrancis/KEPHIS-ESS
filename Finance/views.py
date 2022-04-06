@@ -15,12 +15,11 @@ import string
 from django.http import HttpResponse
 import io as BytesIO
 from django.template.response import TemplateResponse
-from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
 
-@login_required(login_url='auth')
+
 def ImprestRequisition(request):
     fullname = request.session['fullname']
     year = request.session['years']
@@ -107,7 +106,7 @@ def CreateImprest(request):
         print(e)
     return redirect('imprestReq')
 
-@login_required(login_url='auth')
+
 def ImprestDetails(request, pk):
     fullname = request.session['fullname']
     year = request.session['years']
@@ -410,7 +409,7 @@ def CreateImprestLines(request, pk):
         print(e)
     return redirect('IMPDetails', pk=imprestNo)
 
-@login_required(login_url='auth')
+
 def ImprestSurrender(request):
     fullname = request.session['fullname']
     year = request.session['years']
@@ -495,7 +494,7 @@ def CreateSurrender(request):
         print(e)
     return redirect('imprestSurr')
 
-@login_required(login_url='auth')
+
 def SurrenderDetails(request, pk):
     fullname = request.session['fullname']
     year = request.session['years']
@@ -708,7 +707,7 @@ def FnCancelSurrenderApproval(request, pk):
         print(e)
     return redirect('IMPSurrender', pk=pk)
 
-@login_required(login_url='auth')
+
 def StaffClaim(request):
     fullname = request.session['fullname']
     year = request.session['years']
@@ -791,7 +790,7 @@ def CreateClaim(request):
             print(e)
     return redirect('claim')
 
-@login_required(login_url='auth')
+
 def ClaimDetails(request, pk):
     fullname = request.session['fullname']
     year = request.session['years']
