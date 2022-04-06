@@ -13,10 +13,11 @@ import secrets
 from django.http import HttpResponse
 import io as BytesIO
 import string
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
-
+@login_required(login_url='auth')
 def PurchaseRequisition(request):
     fullname = request.session['fullname']
     year = request.session['years']
@@ -94,7 +95,7 @@ def CreatePurchaseRequisition(request):
             print(e)
     return redirect('purchase')
 
-
+@login_required(login_url='auth')
 def PurchaseRequestDetails(request, pk):
     session = requests.Session()
     session.auth = config.AUTHS
@@ -353,7 +354,7 @@ def FnDeletePurchaseRequisitionLine(request, pk):
             print(e)
     return redirect('PurchaseDetail', pk=pk)
 
-
+@login_required(login_url='auth')
 def RepairRequest(request):
     fullname = request.session['fullname']
     year = request.session['years']
@@ -430,7 +431,7 @@ def CreateRepairRequest(request):
             print(e)
     return redirect('repair')
 
-
+@login_required(login_url='auth')
 def RepairRequestDetails(request, pk):
     fullname = request.session['fullname']
     year = request.session['years']
@@ -643,7 +644,7 @@ def FnDeleteRepairRequisitionLine(request, pk):
             print(e)
     return redirect('RepairDetail', pk=pk)
 
-
+@login_required(login_url='auth')
 def StoreRequest(request):
     fullname = request.session['fullname']
     year = request.session['years']
@@ -722,7 +723,7 @@ def CreateStoreRequisition(request):
             print(e)
     return redirect('store')
 
-
+@login_required(login_url='auth')
 def StoreRequestDetails(request, pk):
     fullname = request.session['fullname']
     year = request.session['years']

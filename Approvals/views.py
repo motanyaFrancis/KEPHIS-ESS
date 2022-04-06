@@ -7,10 +7,11 @@ import json
 from django.conf import settings as config
 import datetime as dt
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
-
+@login_required(login_url='auth')
 def Approve(request):
     fullname = request.session['fullname']
     year = request.session['years']
