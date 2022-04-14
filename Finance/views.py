@@ -248,27 +248,6 @@ def UploadAttachment(request, pk):
 
 # Delete Imprest Header
 
-
-def FnDeleteImprestHeader(request):
-    imprestNo = ''
-    usersId = request.session['User_ID']
-    if request.method == 'POST':
-        try:
-            imprestNo = request.POST.get('imprestNo')
-        except ValueError as e:
-            return redirect('imprestReq')
-    try:
-        response = config.CLIENT.service.FnDeleteImprestHeader(
-            imprestNo, usersId)
-        messages.success(request, "Successfully Deleted!!")
-        print(response)
-        return redirect('imprestReq')
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
-    return redirect('imprestReq')
-
-
 def FnDeleteImprestLine(request, pk):
     lineNo = ''
     imprestNo = pk
@@ -979,27 +958,6 @@ def FnCancelClaimApproval(request, pk):
         print(e)
     return redirect('ClaimDetail', pk=pk)
 
-
-def FnDeleteStaffClaimHeader(request):
-    claimNo = ''
-    staffNo = request.session['Employee_No_']
-    if request.method == 'POST':
-        try:
-            claimNo = request.POST.get('claimNo')
-        except ValueError as e:
-            return redirect('claim')
-    try:
-        response = config.CLIENT.service.FnDeleteStaffClaimHeader(
-            claimNo, staffNo)
-        messages.success(request, "Successfully Deleted!!")
-        print(response)
-        return redirect('claim')
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
-    return redirect('claim')
-
-
 def FnDeleteStaffClaimLine(request, pk):
     lineNo = ""
     requisitionNo = pk
@@ -1046,23 +1004,3 @@ def FnGenerateStaffClaimReport(request, pk):
         messages.error(request, e)
         print(e)
     return redirect('ClaimDetail', pk=pk)
-
-
-def FnDeleteImprestSurrenderHeader(request):
-    surrenderNo = ''
-    staffNo = request.session['Employee_No_']
-    if request.method == 'POST':
-        try:
-            surrenderNo = request.POST.get('surrenderNo')
-        except ValueError as e:
-            return redirect('imprestSurr')
-    try:
-        response = config.CLIENT.service.FnDeleteImprestSurrenderHeader(
-            surrenderNo, staffNo)
-        messages.success(request, "Successfully Deleted!!")
-        print(response)
-        return redirect('imprestSurr')
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
-    return redirect('imprestSurr')

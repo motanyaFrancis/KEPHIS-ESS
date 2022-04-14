@@ -117,23 +117,6 @@ def FnSubmitLeavePlanner(request, pk):
 
 # Delete leave Planner Header
 
-
-def FnDeleteLeavePlannerHeader(request):
-    plannerNo = ""
-    employeeNo = request.session['Employee_No_']
-    if request.method == 'POST':
-        plannerNo = request.POST.get('plannerNo')
-        try:
-            response = config.CLIENT.service.FnDeleteLeavePlannerHeader(
-                plannerNo, employeeNo)
-            messages.success(request, "Successfully Deleted")
-            print(response)
-        except Exception as e:
-            messages.error(request, e)
-            print(e)
-    return redirect('LeavePlanner')
-
-
 def CreatePlannerLine(request, pk):
     lineNo = ""
     plannerNo = pk
@@ -279,40 +262,6 @@ def CreateLeave(request):
             print(e)
 
     return redirect('leave')
-
-
-def FnDeleteLeavePlannerHeader(request):
-    plannerNo = ""
-    employeeNo = request.session['Employee_No_']
-    if request.method == 'POST':
-        plannerNo = request.POST.get('plannerNo')
-        try:
-            response = config.CLIENT.service.FnDeleteLeavePlannerHeader(
-                plannerNo, employeeNo)
-            messages.success(request, "Successfully Deleted")
-            print(response)
-        except Exception as e:
-            messages.error(request, e)
-            print(e)
-    return redirect('LeavePlanner')
-
-
-def FnDeleteLeaveApplication(request):
-    employeeNo = request.session['Employee_No_']
-    applicationNo = ""
-
-    if request.method == 'POST':
-        applicationNo = request.POST.get('applicationNo')
-        try:
-            response = config.CLIENT.service.FnDeleteLeaveApplication(
-                employeeNo, applicationNo)
-            messages.success(request, "Successfully Deleted")
-            print(response)
-        except Exception as e:
-            messages.error(request, e)
-            print(e)
-    return redirect('leave')
-
 
 def LeaveDetail(request, pk):
     fullname = request.session['fullname']
@@ -762,30 +711,6 @@ def FnAdhocTrainingEdit(request, pk, no):
         messages.error(request, e)
         print(e)
     return redirect('TrainingDetail', pk=pk)
-
-
-def FnDeleteTrainingRequest(request):
-    requestNo = ""
-    employeeNo = request.session['Employee_No_']
-    usersId = request.session['User_ID']
-
-    if request.method == 'POST':
-        try:
-            requestNo = request.POST.get('requestNo')
-        except ValueError as e:
-            return redirect('training_request')
-
-    try:
-        response = config.CLIENT.service.FnDeleteTrainingRequest(
-            requestNo, employeeNo, usersId)
-        messages.success(request, "Successfully Deleted!!")
-        print(response)
-        return redirect('training_request')
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
-    return redirect('training_request')
-
 
 def FnAdhocLineDelete(request, pk):
     requestNo = pk

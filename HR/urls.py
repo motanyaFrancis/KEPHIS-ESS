@@ -9,8 +9,6 @@ urlpatterns = [
     path('PlannerLine/<str:pk>', views.CreatePlannerLine, name='PlannerLine'),
     path('FnDeleteLeavePlannerLine/<str:pk>',
          views.FnDeleteLeavePlannerLine, name='FnDeleteLeavePlannerLine'),
-    path('FnDeleteLeavePlanner', views.FnDeleteLeavePlannerHeader,
-         name='FnDeleteLeavePlannerHeader'),
 
     path('LeaveRequest', views.Leave_Request, name="leave"),
     path('CreateLeave', views.CreateLeave, name="CreateLeave"),
@@ -19,8 +17,6 @@ urlpatterns = [
     path('LeaveCancel/<str:pk>', views.LeaveCancelApproval, name='LeaveCancel'),
     path('FnGenerateLeave/<str:pk>', views.FnGenerateLeaveReport,
          name='FnGenerateLeaveReport'),
-    path('FnDeleteLeaveApplication', views.FnDeleteLeaveApplication,
-         name="FnDeleteLeaveApplication"),
     path('UploadLeaveAttachment/<str:pk>', views.UploadLeaveAttachment,
          name='UploadLeaveAttachment'),
 
@@ -31,8 +27,6 @@ urlpatterns = [
     path('TrainCancel/<str:pk>', views.TrainingCancelApproval, name='TrainCancel'),
     path('TrainingRequest', views.CreateTrainingRequest,
          name='CreateTrainingRequest'),
-    path('FnDeleteTraining', views.FnDeleteTrainingRequest,
-         name='FnDeleteTrainingRequest'),
     path('FnGenerateTraining/<str:pk>', views.FnGenerateTrainingReport,
          name='FnGenerateTrainingReport'),
     path('UploadTrainingAttachment/<str:pk>', views.UploadTrainingAttachment,

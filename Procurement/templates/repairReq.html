@@ -90,15 +90,6 @@
                                                 <td>{{res.Status}}</td>
                                                 <td>{{res.Requested_By}}</td>
                                                 <td>
-                                                    <form action="{% url 'FnDeleteRepairRequisitionHeader' %}"
-                                                        method="post" style="display: inline-block;">
-                                                        {% csrf_token %}
-                                                        <input type="hidden" name="requisitionNo" value="{{res.No_}}">
-                                                        <button type="submit" class="btn btn-danger"
-                                                            data-toggle="tooltip" data-placement="top" title="Delete"><i
-                                                                class="fas fa-trash-alt"></i>
-                                                        </button>
-                                                    </form>
                                                     <button class="btn btn-primary" data-bs-toggle="modal"
                                                         data-bs-target="#trainedit{{res.No_}}" data-toggle="tooltip"
                                                         data-placement="top" title="edit"><i class="fas fa-edit"></i>

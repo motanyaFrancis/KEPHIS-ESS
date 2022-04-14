@@ -81,15 +81,7 @@
                                                 <td>{{res.Date}}</td>
                                                 <td>{{res.Days_Planned}}</td>
                                                 <td>
-                                                    <form action="{% url 'FnDeleteLeavePlannerHeader' %}" method="post"
-                                                        style="display: inline-block;">
-                                                        {% csrf_token %}
-                                                        <input type="hidden" name="plannerNo" value="{{res.No_}}">
-                                                        <button type="submit" class="btn btn-danger"
-                                                            data-toggle="tooltip" data-placement="top" title="Delete"><i
-                                                                class="fas fa-trash-alt"></i>
-                                                        </button>
-                                                    </form>
+
                                                     <a href="{% url 'PlanDetail' res.No_ %}"
                                                         class="btn btn-success btn-icon-text" type="button"
                                                         data-toggle="tooltip" data-placement="top" title="View"><i

@@ -293,22 +293,6 @@ def FnCancelPurchaseApproval(request, pk):
         print(e)
     return redirect('PurchaseDetail', pk=pk)
 
-
-def FnDeletePurchaseRequisitionHeader(request):
-    requisitionNo = ""
-    if request.method == 'POST':
-        requisitionNo = request.POST.get('requisitionNo')
-        try:
-            response = config.CLIENT.service.FnDeletePurchaseRequisitionHeader(
-                requisitionNo)
-            messages.success(request, "Successfully Deleted")
-            print(response)
-        except Exception as e:
-            messages.error(request, e)
-            print(e)
-    return redirect('purchase')
-
-
 def FnGeneratePurchaseReport(request, pk):
     nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
                         for i in range(5))
@@ -611,22 +595,6 @@ def CreateRepairLines(request, pk):
             print(e)
     return redirect('RepairDetail', pk=requisitionNo)
 
-
-def FnDeleteRepairRequisitionHeader(request):
-    requisitionNo = ""
-    if request.method == 'POST':
-        requisitionNo = request.POST.get('requisitionNo')
-        try:
-            response = config.CLIENT.service.FnDeleteRepairRequisitionHeader(
-                requisitionNo)
-            messages.success(request, "Successfully Deleted")
-            print(response)
-        except Exception as e:
-            messages.error(request, e)
-            print(e)
-    return redirect('repair')
-
-
 def FnDeleteRepairRequisitionLine(request, pk):
     requisitionNo = pk
     lineNo = ""
@@ -877,22 +845,6 @@ def CreateStoreLines(request, pk):
     return redirect('StoreDetail', pk=requisitionNo)
 
 # Delete Store Header
-
-
-def FnDeleteStoreRequisitionHeader(request):
-    requisitionNo = ""
-    if request.method == 'POST':
-        requisitionNo = request.POST.get('requisitionNo')
-        try:
-            response = config.CLIENT.service.FnDeleteStoreRequisitionHeader(
-                requisitionNo)
-            messages.success(request, "Successfully Deleted")
-            print(response)
-        except Exception as e:
-            messages.error(request, e)
-            print(e)
-    return redirect('store')
-
 
 def FnDeleteStoreRequisitionLine(request, pk):
     requisitionNo = pk

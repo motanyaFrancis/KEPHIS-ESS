@@ -93,16 +93,6 @@
                                                 <td>{{res.Planned_End_Date}}</td>
                                                 <td>{{res.No__Of_Days}}</td>
                                                 <td>
-                                                    <form action="{% url 'FnDeleteTrainingRequest' %}" method="post"
-                                                        style="display: inline-block;">
-                                                        {% csrf_token %}
-                                                        <input type="hidden" name="requestNo"
-                                                            value="{{res.Request_No_}}">
-                                                        <button type="submit" class="btn btn-danger"
-                                                            data-toggle="tooltip" data-placement="top" title="Delete"><i
-                                                                class="fas fa-trash-alt"></i>
-                                                        </button>
-                                                    </form>
 
                                                     <button class="btn btn-primary" data-toggle="tooltip"
                                                         data-placement="top" title="edit" data-bs-toggle="modal"

@@ -92,15 +92,6 @@
                                                 <td>{{res.User_Id}}</td>
                                                 <td>{{res.Status}}</td>
                                                 <td>
-                                                    <form action="{% url 'FnDeleteImprestHeader' %}" method="post"
-                                                        style="display: inline-block;">
-                                                        {% csrf_token %}
-                                                        <input type="hidden" name="imprestNo" value="{{res.No_}}">
-                                                        <button type="submit" class="btn btn-danger"
-                                                            data-toggle="tooltip" data-placement="top" title="Delete"><i
-                                                                class="fas fa-trash-alt"></i>
-                                                        </button>
-                                                    </form>
                                                     <button class="btn btn-primary" data-bs-toggle="modal"
                                                         data-bs-target="#trainedit{{res.No_}}" data-toggle="tooltip"
                                                         data-placement="top" title="edit"><i class="fas fa-edit"></i>

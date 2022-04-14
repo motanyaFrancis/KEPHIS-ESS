@@ -90,16 +90,6 @@
                                                 <td>{{res.Return_same_day}}</td>
                                                 <td>{{res.Days_Applied}}</td>
                                                 <td>
-                                                    <form action="{% url 'FnDeleteLeaveApplication' %}" method="post"
-                                                        style="display: inline-block;">
-                                                        {% csrf_token %}
-                                                        <input type="hidden" name="applicationNo"
-                                                            value="{{res.Application_No}}">
-                                                        <button type="submit" class="btn btn-danger"
-                                                            data-toggle="tooltip" data-placement="top" title="Delete"><i
-                                                                class="fas fa-trash-alt"></i>
-                                                        </button>
-                                                    </form>
                                                     <button class="btn btn-primary" data-toggle="tooltip"
                                                         data-placement="top" title="edit" data-bs-toggle="modal"
                                                         data-bs-target="#editLeave"><i class="fas fa-edit"></i>
