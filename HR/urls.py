@@ -40,4 +40,8 @@ urlpatterns = [
          views.FnAdhocLineDelete, name='FnAdhocLineDelete'),
     path('p9', views.PNineRequest, name='pNine'),
     path('payslip', views.PayslipRequest, name='payslip'),
+    
+    path('disciplinary',views.Disciplinary,name="disciplinary"),
+    path('DiscipleDetails/<str:pk>', views.DisciplineDetail,
+         name='DisciplineDetail'),
 ]

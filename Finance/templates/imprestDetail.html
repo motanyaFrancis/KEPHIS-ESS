@@ -13,8 +13,11 @@
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Attachment"> <i
                         class="las la-plus"></i> Upload Attachment</button>
                 {% elif state == 3 %}
-                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#report"> Generate
-                    Report</button>
+                <form action="{% url 'FnGenerateImprestReport' res.No_%}" method="post" style="display:inline-block">
+                    {% csrf_token %}
+                    <button class="btn btn-success" type="submit"> Generate
+                        Report</button>
+                </form>
                 {% else %}
                 <button class="btn btn-info"> {{res.Status}}</button>
                 {% endif %}
@@ -269,132 +272,8 @@
                                                 data-placement="top" title="Delete"><i class="fas fa-trash-alt"></i>
                                             </button>
                                         </form>
-
-                                        <button class="btn btn-primary" data-toggle="tooltip" data-placement="top"
-                                            title="edit" data-bs-toggle="modal"
-                                            data-bs-target="#trainedit{{res.Line_No}}"><i class="fas fa-edit"></i>
-                                        </button>
                                     </td>
                                 </tr>
-                                <!-- Modal to Edit Training Lines -->
-                                <div class="modal fade" id="trainedit{{res.Line_No}}" data-bs-backdrop="static"
-                                    data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
-                                    aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="staticBackdropLabel">Edit Training Line
-                                                </h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <form class="myForm needs-validation" id="frm_"
-                                                    action="{% url 'CreateImpLines' res.AuxiliaryIndex1%}" method="post"
-                                                    novalidate>
-                                                    {% csrf_token %}
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            <input type="hidden" name="lineNo" value="{{res.Line_No}}">
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            <input type="hidden" name="myAction" value="modify">
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            <label class="form-label">Destination</label>
-
-                                                            <select class="form-select" name="destination" required>
-                                                                <option selected disabled value="">Select Destination
-                                                                </option>
-                                                                {% if dest == 'Local' %}
-                                                                {% for res in Local %}
-                                                                <option value="{{res.Destination_Code}}">
-                                                                    {{res.Destination_Code}}</option>
-                                                                {% endfor %}
-                                                                {% elif dest == 'Foreign' %}
-                                                                {% for res in Foreign %}
-                                                                <option value="{{res.Destination_Code}}">
-                                                                    {{res.Destination_Code}}</option>
-                                                                {% endfor %}
-                                                                {% endif %}
-                                                            </select>
-                                                            <div class="invalid-feedback">
-                                                                Please Select Valid Destination.
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            <label for="" class="form-label">Imprest Type</label>
-                                                            <select class="form-select" name="imprestType" required>
-                                                                <option selected disabled value="">Select Imprest Type
-                                                                </option>
-                                                                <option value="1">Imprest</option>
-                                                                <option value="2">DSA</option>
-                                                                <option value="3">Allowance</option>
-                                                            </select>
-                                                            <div class="invalid-feedback">
-                                                                Please Select Valid Imprest Type.
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <label for="" class="form-label">Travel Date</label>
-                                                            <input type="date" class="form-control" name="travel"
-                                                                required>
-                                                            <div class="invalid-feedback">
-                                                                Please Select Valid Travel Date.
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <label for="" class="form-label">Return Date</label>
-                                                            <input type="date" id="to" class="form-control"
-                                                                name="returnDate" required>
-                                                            <div class="invalid-feedback">
-                                                                Please Select Valid Return Date.
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            <label for="" class="form-label">Requisition Type</label>
-                                                            <select name="requisitionType" class="form-select"
-                                                                onchange="getRep()" required>
-                                                                <option value='' selected='selected'>Select</option>
-                                                                {% for res in type %}
-                                                                <option value='{{res.Code}}'
-                                                                    ren='{{res.Based_On_a_Table}}'>{{res.Description}}
-                                                                </option>
-                                                                {% endfor %}
-                                                            </select>
-                                                            <div class="invalid-feedback">
-                                                                Please Select Valid Requisition Type.
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            <label class="form-label">Amount</label>
-                                                            <input type="number" class="form-control" id="tableAmount"
-                                                                disabled name="amount">
-                                                        </div>
-                                                    </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-danger"
-                                                    data-bs-dismiss="modal">Discard</button>
-                                                <button type="submit" id="sasa" class="btn btn-primary">Submit</button>
-                                            </div>
-                                        </div>
-
-                                        </form>
-                                    </div>
-                                </div>
                     </div>
                     {% else %}
                     No action
@@ -552,41 +431,6 @@
     </div>
     </div>
 </section>
-<!-- Report -->
-<div class="modal fade" id="report" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">New Imprest Line
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form class="myForm needs-validation" id="frm_" action="{% url 'FnGenerateImprestReport' res.No_%}"
-                    method="post" novalidate>
-                    {% csrf_token %}
-                    <div class="row">
-                        <div class="col-md-12">
-                            <label class="form-label">Document Name</label>
-                            <input type="text" class="form-control" name="filenameFromApp"
-                                placeholder="Enter Document Name">
-                        </div>
-                    </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
-                <button type="submit" id="sasa" class="btn btn-primary">Submit</button>
-            </div>
-        </div>
-
-        </form>
-    </div>
-</div>
-<!-- Attachment Modal -->
-<!-- Button trigger modal -->
-
-
 <!-- Modal -->
 <div class="modal fade" id="Attachment" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">

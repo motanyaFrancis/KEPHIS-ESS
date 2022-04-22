@@ -300,7 +300,7 @@ def FnGeneratePurchaseReport(request, pk):
     filenameFromApp = ''
     if request.method == 'POST':
         try:
-            filenameFromApp = request.POST.get('filenameFromApp')
+            filenameFromApp = pk
         except ValueError as e:
             return redirect('PurchaseDetail', pk=pk)
     filenameFromApp = filenameFromApp + str(nameChars) + ".pdf"
@@ -869,7 +869,7 @@ def FnGenerateStoreReport(request, pk):
     filenameFromApp = ''
     if request.method == 'POST':
         try:
-            filenameFromApp = request.POST.get('filenameFromApp')
+            filenameFromApp = pk
         except ValueError as e:
             return redirect('StoreDetail', pk=pk)
     filenameFromApp = filenameFromApp + str(nameChars) + ".pdf"
@@ -898,7 +898,7 @@ def FnGenerateRepairReport(request, pk):
     filenameFromApp = ''
     if request.method == 'POST':
         try:
-            filenameFromApp = request.POST.get('filenameFromApp')
+            filenameFromApp = pk
         except ValueError as e:
             return redirect('RepairDetail', pk=pk)
     filenameFromApp = filenameFromApp + str(nameChars) + ".pdf"

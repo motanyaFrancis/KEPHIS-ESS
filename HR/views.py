@@ -251,7 +251,6 @@ def CreateLeave(request):
             applicationNo = " "
         if not daysApplied:
             daysApplied = 0
-
         try:
             response = config.CLIENT.service.FnLeaveApplication(
                 applicationNo, employeeNo, usersId, dimension3, leaveType, plannerStartDate, int(daysApplied), isReturnSameDay, myAction)
@@ -260,7 +259,6 @@ def CreateLeave(request):
         except Exception as e:
             messages.error(request, e)
             print(e)
-
     return redirect('leave')
 
 def LeaveDetail(request, pk):
@@ -866,7 +864,7 @@ def FnGenerateLeaveReport(request, pk):
     applicationNo = pk
     if request.method == 'POST':
         try:
-            filenameFromApp = request.POST.get('filenameFromApp')
+            filenameFromApp = pk
         except ValueError as e:
             messages.error(request, "Invalid Line number, Try Again!!")
             return redirect('LeaveDetail', pk=pk)
@@ -900,13 +898,13 @@ def FnGenerateTrainingReport(request, pk):
     applicationNo = pk
     if request.method == 'POST':
         try:
-            filenameFromApp = request.POST.get('filenameFromApp')
+            filenameFromApp = pk
         except ValueError as e:
             messages.error(request, "Invalid Line number, Try Again!!")
             return redirect('TrainingDetail', pk=pk)
     filenameFromApp = filenameFromApp + str(nameChars) + ".pdf"
     try:
-        response = config.CLIENT.service.FnGenerateLeaveReport(
+        response = config.CLIENT.service.FnGenerateTrainingReport(
             employeeNo, filenameFromApp, applicationNo)
         buffer = BytesIO.BytesIO()
         content = base64.b64decode(response)
@@ -921,3 +919,49 @@ def FnGenerateTrainingReport(request, pk):
         messages.error(request, e)
         print(e)
     return redirect('TrainingDetail', pk=pk)
+def Disciplinary(request):
+    fullname = request.session['fullname']
+    year = request.session['years']
+    session = requests.Session()
+    session.auth = config.AUTHS
+
+    Access_Point = config.O_DATA.format("/QyApprovalEntries")
+    try:
+        response = session.get(Access_Point, timeout=10).json()
+        open = []
+        for approve in response['value']:
+            if approve['Status'] == 'Open' and approve['Approver_ID'] == request.session['User_ID']:
+                output_json = json.dumps(approve)
+                open.append(json.loads(output_json))
+        counts = len(open)
+    except requests.exceptions.ConnectionError as e:
+        print(e)
+
+    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
+    ctx = {"today": todays_date, "res": open,
+           "year": year, "full": fullname,
+           "count": counts}
+    return render(request,'disciplinary.html',ctx)
+
+def DisciplineDetail(request,pk):
+    fullname = request.session['fullname']
+    year = request.session['years']
+    session = requests.Session()
+    session.auth = config.AUTHS
+    res = ''
+    Access_Point = config.O_DATA.format("/QyApprovalEntries")
+    try:
+        response = session.get(Access_Point, timeout=10).json()
+        Approves = []
+        for approve in response['value']:
+            if approve['Status'] == 'Open' and approve['Approver_ID'] == request.session['User_ID']:
+                output_json = json.dumps(approve)
+                Approves.append(json.loads(output_json))
+                for claim in Approves:
+                    if claim['Document_No_'] == pk:
+                        res = claim
+    except requests.exceptions.ConnectionError as e:
+        print(e)
+    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
+    ctx = {"today": todays_date, "res": res, "full": fullname, "year": year}
+    return render (request, 'disciplineDetail.html',ctx)

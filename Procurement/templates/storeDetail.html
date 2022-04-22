@@ -12,8 +12,11 @@
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Attachment"> <i
                         class="las la-plus"></i> Upload Attachment</button>
                 {% elif state == 3 %}
-                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#report"> Generate
-                    Report</button>
+                <form action="{% url 'FnGenerateStoreReport' res.No_ %}" method="post" style="display:inline-block">
+                    {% csrf_token %}
+                    <button class="btn btn-success" type="submit"> Generate
+                        Report</button>
+                </form>
                 {% else %}
                 <button class="btn btn-info"> {{res.Status}}</button>
                 {% endif %}
@@ -398,7 +401,7 @@
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">New Store Requisition Line
+                    <h5 class="modal-title" id="staticBackdropLabel">New Store Request Line
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -470,41 +473,6 @@
         </div>
     </div>
 </section>
-<div class="modal fade" id="report" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">Store Requisition Report
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form class="myForm needs-validation" id="frm_" action="{% url 'FnGenerateStoreReport' res.No_ %}"
-                    method="post" novalidate>
-                    {% csrf_token %}
-                    <div class="row">
-                        <div class="col-md-12">
-                            <label class="form-label">Document Name</label>
-                            <input type="text" class="form-control" name="filenameFromApp"
-                                placeholder="Enter Document Name">
-                        </div>
-                    </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
-                <button type="submit" id="sasa" class="btn btn-primary">Submit</button>
-            </div>
-        </div>
-
-        </form>
-    </div>
-</div>
-
-<!-- Attachment Modal -->
-<!-- Button trigger modal -->
-
-
 <!-- Modal -->
 <div class="modal fade" id="Attachment" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">

@@ -206,6 +206,8 @@ def ImprestDetails(request, pk):
     except requests.exceptions.ConnectionError as e:
         print(e)
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
+                
+    print(ForegnDest)
     ctx = {"today": todays_date, "res": res,
            "line": openLines, "state": state,
            "Approvers": Approvers, "type": res_type,
@@ -278,7 +280,7 @@ def FnGenerateImprestReport(request, pk):
     imprestNo = pk
     if request.method == 'POST':
         try:
-            filenameFromApp = request.POST.get('filenameFromApp')
+            filenameFromApp = pk
         except ValueError as e:
             messages.error(request, "Invalid Line number, Try Again!!")
             return redirect('IMPDetails', pk=pk)
@@ -622,7 +624,7 @@ def FnGenerateImprestSurrenderReport(request, pk):
     filenameFromApp = ''
     if request.method == 'POST':
         try:
-            filenameFromApp = request.POST.get('filenameFromApp')
+            filenameFromApp = pk
         except ValueError as e:
             messages.error(request, "Invalid Line number, Try Again!!")
             return redirect('IMPSurrender', pk=pk)
@@ -983,7 +985,7 @@ def FnGenerateStaffClaimReport(request, pk):
     claimNo = pk
     if request.method == 'POST':
         try:
-            filenameFromApp = request.POST.get('filenameFromApp')
+            filenameFromApp = pk
         except ValueError as e:
             return redirect('ClaimDetail', pk=pk)
     filenameFromApp = filenameFromApp + str(nameChars) + ".pdf"

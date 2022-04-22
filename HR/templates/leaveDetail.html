@@ -10,8 +10,12 @@
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Attachment"> <i
                         class="las la-plus"></i> Upload Attachment</button>
                 {% elif state == 3 %}
-                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#report"> Generate
-                    Report</button>
+                <form action="{% url 'FnGenerateLeaveReport' res.Application_No%}" method="post"
+                    style="display:inline-block">
+                    {% csrf_token %}
+                    <button class="btn btn-success" type="submit"> Generate
+                        Report</button>
+                </form>
                 {% endif %}
             </h2>
 
@@ -265,12 +269,12 @@
         {% endif %}
     </div>
     <!-- Report -->
-    <div class="modal fade" id="report" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    <!-- <div class="modal fade" id="report" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">New Imprest Line
+                    <h5 class="modal-title" id="staticBackdropLabel">Generate Leave Report
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -294,7 +298,7 @@
 
             </form>
         </div>
-    </div>
+    </div> -->
     <!-- End Report -->
     <!-- Attachment Modal -->
     <!-- Button trigger modal -->
