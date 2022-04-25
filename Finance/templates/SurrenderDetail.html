@@ -239,7 +239,6 @@
                             <thead>
                                 <tr id="tops">
                                     <th id="long">Expenditure Type</th>
-                                    <th>Gen Posting Type</th>
                                     <th>Description</th>
                                     <th>Actual Spent</th>
                                     <th>Remaining Amount</th>
@@ -251,29 +250,27 @@
                                 {% for res in line %}
                                 <tr>
                                     <td>{{res.Expenditure_Type}}</td>
-                                    <td>{{res.Gen__Posting_Type}}</td>
                                     <td>{{res.Description}}</td>
                                     <td>{{res.Actual_Spent}}</td>
                                     <td>{{res.Remaining_Amount}}</td>
                                     <td>{{res.Amount}}</td>
                                     <td>
                                         {% if state == 1 %}
-
                                         <a href="" class="btn btn-primary" data-toggle="tooltip" data-placement="top"
                                             title="Add Amount" data-bs-toggle="modal"
-                                            data-bs-target="#trainedit{{res.AuxiliaryIndex2}}"><i
+                                            data-bs-target="#trainedit"><i
                                                 class="fas fa-plus"></i>
-                                            Amount
+                                            Add / Edit Amount
                                         </a>
+
                                         <!-- Modal -->
-                                        <div class="modal fade" id="trainedit{{res.AuxiliaryIndex2}}"
+                                        <div class="modal fade" id="trainedit"
                                             data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
                                             aria-labelledby="staticBackdropLabel" aria-hidden="true">
                                             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title" id="staticBackdropLabel">Raise Imprest
-                                                            Surrender {{res.AuxiliaryIndex2}}
+                                                        <h5 class="modal-title" id="staticBackdropLabel">Surrender Amount{{res.AuxiliaryIndex2}}
                                                         </h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                             aria-label="Close"></button>
@@ -284,7 +281,7 @@
                                                             method="post" novalidate>
                                                             {% csrf_token %}
                                                             <div class="mb-2"> <span class="w-name">
-                                                                    Imprest Surrender Lines:
+                                                                    Imprest Surrender Amount:
                                                                 </span>
                                                                 <div class="row">
                                                                     <div class="col-md-12">

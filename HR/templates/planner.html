@@ -19,7 +19,7 @@
                 </div>
             </div>
         </div>
-        <form action="{% url 'CreatePlanner' %}" method="post" class="my-3">
+        <form action="{% url 'CreatePlanner' %}" method="post" class="my-3" style="display:inline-block;">
             {% csrf_token %}
             <input type="hidden" name="myAction" value="insert">
             <button type="submit" class="btn btn-primary"> <i class="las la-plus"></i> New Leave

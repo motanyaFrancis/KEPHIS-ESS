@@ -45,48 +45,52 @@
             <div class="col-md-12">
                 <form class="row g-3">
                     <div class="col-md-4">
-                        <label class="form-label">Document No</label>
-                        <input type="text" class="form-control" placeholder="{{res.Document_No_}}" readonly>
+                        <label class="form-label">Case No</label>
+                        <input type="text" class="form-control" placeholder="{{res.Disciplinary_Nos}}" readonly>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Document Type</label>
-                        <input type="text" class="form-control" placeholder="{{res.Document_Type}}" readonly>
+                        <label class="form-label">Employee Name</label>
+                        <input type="text" class="form-control" placeholder="{{res.Employee_Name}}" readonly>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Sender</label>
-                        <input type="text" class="form-control" placeholder="{{res.Sender_ID}}" readonly>
+                        <label class="form-label">Employee No</label>
+                        <input type="text" class="form-control" placeholder="{{res.Employee_No}}" readonly>
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Approver</label>
-                        <input type="text" class="form-control" placeholder="{{res.Approver_ID}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Status</label>
-                        <input type="text" class="form-control" placeholder="{{res.Status}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Last Date Time Modified</label>
-                        <input type="text" class="form-control" placeholder="{{res.Last_Date_Time_Modified}}" readonly>
-                    </div>
-
                 </form>
             </div>
         </div>
-        <div class="row my-3">
-            <div class="d-grid gap-2 d-md-block">
-                <div style="display: inline-block;">
-                    <form id="myForm" action="{% url 'All_Approved' res.Document_No_ %} " method="post">
-                        {% csrf_token %}
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="col-md-12 my-2">
-                                    <input type="hidden" class="form-control" name="entryNo" value="{{res.Entry_No_}}">
-                                </div>
-                            </div>
-                        </div>
-                        <button class="btn btn-primary" type="submit">Submit Case Response</button>
-                    </form>
-
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card" id="d-card">
+                    <h4 class="mt-2 mx-2 text-dark"> {{res.Disciplinary_Nos}} Lines </h4>
+                    <div class="card-body">
+                        <table id="example"
+                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                            style="width:100%">
+                            <thead>
+                                <tr id="tops">
+                                    <th id="long">Case Description</th>
+                                    <th>Witness Type</th>
+                                    <th>Witness 1</th>
+                                    <th>Witness 2</th>
+                                    <th>Recommended Action</th>
+                                    <th>Action Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for res in line %}
+                                <tr>
+                                    <td>{{res.Case_Description}}</td>
+                                    <td>{{res.Witness_Type}}</td>
+                                    <td>{{res.Witness__1}}</td>
+                                    <td>{{res.Witness__2}}</td>
+                                    <td>{{res.Recommended_Action}}</td>
+                                    <td>{{res.Action_Description}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -102,7 +106,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="myForm" action="{% url 'Rejected' res.Document_No_ %}" method="post">
+                    <form id="myForm" action="" method="post">
                         {% csrf_token %}
                         <div class="row">
                             <div class="col-md-12 my-2">
@@ -134,15 +138,15 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Upload Attachment</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Submit Case Response</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="" method="post" class="myForm" enctype="multipart/form-data">
+                <form action="{% url 'DisciplineResponse' res.Disciplinary_Nos %}" method="post" class="myForm" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class=" mb-3">
                         <label class="form-label">Response</label>
-                        <textarea class="form-control" rows="3"></textarea>
+                        <textarea class="form-control" rows="3" name="myResponse"></textarea>
                     </div>
 
             </div>

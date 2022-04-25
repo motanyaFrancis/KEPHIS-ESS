@@ -59,24 +59,20 @@
                                         style="width:100%">
                                         <thead>
                                             <tr id="tops">
-                                                <th id="long">Document No</th>
-                                                <th>Document Type</th>
-                                                <th>Sender</th>
-                                                <th>Status</th>
-                                                <th>Due_Date</th>
+                                                <th id="long">Disciplinary NO.</th>
+                                                <th>Employee Name</th>
+                                                <th>Gender</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {% for res in res %}
                                             <tr>
-                                                <td>{{res.Document_No_}}</td>
-                                                <td id="rap">{{res.Document_Type}}</td>
-                                                <td>{{res.Sender_ID}}</td>
-                                                <td>{{res.Status}}</td>
-                                                <td>{{res.Due_Date}}</td>
+                                                <td>{{res.Disciplinary_Nos}}</td>
+                                                <td id="rap">{{res.Employee_Name}}</td>
+                                                <td>{{res.Gender}}</td>
                                                 <td>
-                                                    <a href="{% url 'DisciplineDetail' res.Document_No_ %}"
+                                                    <a href="{% url 'DisciplineDetail' res.Disciplinary_Nos %}"
                                                         class="btn btn-success btn-icon-text" type="button"
                                                         data-toggle="tooltip" data-placement="top" title="View"
                                                         style="background: #25CC88;"><i class="fa fa-table"></i>
@@ -91,86 +87,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-    <!-- Modal -->
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">New Imprest Requisition
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="myForm" action="{% url 'create' %}" method="post">
-                        {% csrf_token %}
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="mb-2">
-                                    <label class="form-label">Travel Type</label>
-                                    <select class="form-select" name="travelType" aria-label="Default select example">
-                                        <option selected>Travel Type</option>
-                                        <option value="1">Local</option>
-                                        <option value="2">Foreign</option>
-                                    </select>
-                                </div>
-
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-2">
-                                    <label for="idPassport" class="col-form-label">ID/Passport</label>
-                                    <input type="text" class="form-control" name="idPassport" placeholder="">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-2">
-                                    <label for="payee" class="col-form-label">Payee</label>
-                                    <input type="text" class="form-control" name="payee">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-2">
-                                    <label class="form-label">isImprest</label>
-                                    <select class="form-select" aria-label="Default select example" name="isImprest">
-                                        <option selected>Select isImprest</option>
-                                        <option value="True">True</option>
-                                        <option value=" ">False</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-2">
-                                    <label class="form-label">isDsa</label>
-                                    <select class="form-select" aria-label="Default select example" name="isDsa">
-                                        <option selected>isDsa</option>
-                                        <option value="True">True</option>
-                                        <option value=" ">False</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="mb-2">
-                                    <label for="purpose" class="form-label">Purpose</label>
-                                    <textarea class="form-control" name="purpose" rows="3"></textarea>
-                                </div>
-                            </div>
-                        </div>
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
-                    <button type="submit" id="sasa" class="btn btn-primary">Submit</button>
-                </div>
-                </form>
             </div>
         </div>
     </div>

@@ -44,27 +44,16 @@
                 <form class="myForm needs-validation" action="{% url 'pNine' %}" method="post" novalidate>
                     {% csrf_token %}
                     <div class="row">
-                        <div class="col-md-4">
-                            <label class="form-label">Document Name</label>
-                            <input type="text" class="form-control" name="filenameFromApp"
-                                placeholder="Enter Document Name">
-                        </div>
-                        <div class="col-md-4">
-                            <label for="" class="form-label">Start
-                                Date:</label>
-                            <input type="date" class="form-control" name="startDate" placeholder="{{res.Start_Date}}"
-                                required>
+                        <div class="col-md-12">
+                            <label  class="form-label">Payment Period</label>
+                            <select class="form-select"  name="startDate" required>
+                                <option selected disabled value="">Select Payment Period</option>
+                                {% for res in res %}
+                                <option value="{{res.Starting_Date}}">{{res.Starting_Date|slice:"4" }}</option>
+                                {% endfor %}
+                            </select>
                             <div class="invalid-feedback">
-                                Please select a valid Start Date.
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="" class="form-label">End
-                                Date:</label>
-                            <input type="date" class="form-control" name="endDate" placeholder="{{res.End_Date}}"
-                                required>
-                            <div class="invalid-feedback">
-                                Please select a valid End Date.
+                                Please select a valid Payment Period.
                             </div>
                         </div>
                     </div>

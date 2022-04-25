@@ -52,14 +52,15 @@ def CreatePlanner(request):
         except ValueError as e:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('LeavePlanner')
-    try:
-        response = config.CLIENT.service.FnLeavePlannerHeader(
-            plannerNo, employeeNo, myAction)
-        messages.success(request, "You have successfully  Added!!")
-        print(response)
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
+        try:
+            response = config.CLIENT.service.FnLeavePlannerHeader(
+                plannerNo, employeeNo, myAction)
+            messages.success(request, "You have successfully  Added!!")
+            print(response)
+        
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
     return redirect('LeavePlanner')
 
 
@@ -782,38 +783,49 @@ def PNineRequest(request):
     fullname = request.session['fullname']
     year = request.session['years']
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-
+    session = requests.Session()
+    session.auth = config.AUTHS
+    
+    Access_Point = config.O_DATA.format("/QyPayrollPeriods")
+    
+    try:
+        response = session.get(Access_Point, timeout=10).json()
+        res = response['value']
+    except requests.exceptions.ConnectionError as e:
+        print(e)
     employeeNo = request.session['Employee_No_']
     filenameFromApp = ""
     startDate = ""
-    endDate = ""
+    year = ''
     if request.method == 'POST':
         try:
-            filenameFromApp = request.POST.get('filenameFromApp')
-            startDate = datetime.strptime(
-                request.POST.get('startDate'), '%Y-%m-%d').date()
-            endDate = datetime.strptime(
-                request.POST.get('endDate'), '%Y-%m-%d').date()
+            startDate = request.POST.get('startDate')[0:4]
         except ValueError as e:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('pNine')
-        filenameFromApp = filenameFromApp + str(nameChars) + ".pdf"
+        filenameFromApp = "P9_For_" + str(nameChars) + year + ".pdf"
+        year = int(startDate)
         try:
             response = config.CLIENT.service.FnGeneratePNine(
-                employeeNo, filenameFromApp, startDate, endDate)
-            buffer = BytesIO.BytesIO()
-            content = base64.b64decode(response)
-            buffer.write(content)
-            responses = HttpResponse(
-                buffer.getvalue(),
-                content_type="application/pdf",
-            )
-            responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
-            return responses
+                employeeNo, filenameFromApp, year)
+            try:
+                buffer = BytesIO.BytesIO()
+                content = base64.b64decode(response)
+                buffer.write(content)
+                responses = HttpResponse(
+                    buffer.getvalue(),
+                    content_type="application/pdf",
+                )
+                responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
+                return responses
+            except:
+                messages.error(request, "Payslip not found for the selected period")
+                return redirect('pNine')
         except Exception as e:
             messages.error(request, e)
             print(e)
-    ctx = {"today": todays_date, "year": year, "full": fullname}
+            return redirect('pNine')
+    ctx = {"today": todays_date, "year": year, "full": fullname,"res":res}
     return render(request, "p9.html", ctx)
 
 
@@ -822,36 +834,49 @@ def PayslipRequest(request):
                         for i in range(5))
     fullname = request.session['fullname']
     year = request.session['years']
+    session = requests.Session()
+    session.auth = config.AUTHS
+    
+    Access_Point = config.O_DATA.format("/QyPayrollPeriods")
+    try:
+        response = session.get(Access_Point, timeout=10).json()
+        res = response['value']
+    except requests.exceptions.ConnectionError as e:
+        print(e)
+    
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
     employeeNo = request.session['Employee_No_']
     filenameFromApp = ""
     paymentPeriod = ""
     if request.method == 'POST':
         try:
-            filenameFromApp = request.POST.get('filenameFromApp')
             paymentPeriod = datetime.strptime(
                 request.POST.get('paymentPeriod'), '%Y-%m-%d').date()
 
         except ValueError as e:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('payslip')
-        filenameFromApp = filenameFromApp + str(nameChars) + ".pdf"
+        filenameFromApp = "Payslip" + str(paymentPeriod) + str(nameChars) + ".pdf"
         try:
             response = config.CLIENT.service.FnGeneratePayslip(
                 employeeNo, filenameFromApp, paymentPeriod)
-            buffer = BytesIO.BytesIO()
-            content = base64.b64decode(response)
-            buffer.write(content)
-            responses = HttpResponse(
-                buffer.getvalue(),
-                content_type="application/pdf",
-            )
-            responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
-            return responses
+            try:
+                buffer = BytesIO.BytesIO()
+                content = base64.b64decode(response)
+                buffer.write(content)
+                responses = HttpResponse(
+                    buffer.getvalue(),
+                    content_type="application/pdf",
+                )
+                responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
+                return responses
+            except:
+                messages.error(request, "Payslip not found for the selected period")
+                return redirect('payslip')
         except Exception as e:
             messages.error(request, e)
             print(e)
-    ctx = {"today": todays_date, "year": year, "full": fullname}
+    ctx = {"today": todays_date, "year": year, "full": fullname,"res":res}
     return render(request, "payslip.html", ctx)
 # Leave Report
 
@@ -925,20 +950,21 @@ def Disciplinary(request):
     session = requests.Session()
     session.auth = config.AUTHS
 
-    Access_Point = config.O_DATA.format("/QyApprovalEntries")
+    Access_Point = config.O_DATA.format("/QyEmployeeDisciplinaryCases")
     try:
         response = session.get(Access_Point, timeout=10).json()
-        open = []
-        for approve in response['value']:
-            if approve['Status'] == 'Open' and approve['Approver_ID'] == request.session['User_ID']:
-                output_json = json.dumps(approve)
-                open.append(json.loads(output_json))
-        counts = len(open)
+        openCase = []
+        for case in response['value']:
+            if case['Employee_No'] == request.session['Employee_No_'] and case['Posted'] == False and case['Sent_to_employee'] == True and case['Submit'] == False:
+                output_json = json.dumps(case)
+                openCase.append(json.loads(output_json))
+        counts = len(openCase)
+        print(counts)
     except requests.exceptions.ConnectionError as e:
         print(e)
 
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-    ctx = {"today": todays_date, "res": open,
+    ctx = {"today": todays_date, "res": openCase,
            "year": year, "full": fullname,
            "count": counts}
     return render(request,'disciplinary.html',ctx)
@@ -949,19 +975,52 @@ def DisciplineDetail(request,pk):
     session = requests.Session()
     session.auth = config.AUTHS
     res = ''
-    Access_Point = config.O_DATA.format("/QyApprovalEntries")
+    Access_Point = config.O_DATA.format("/QyEmployeeDisciplinaryCases")
     try:
         response = session.get(Access_Point, timeout=10).json()
-        Approves = []
-        for approve in response['value']:
-            if approve['Status'] == 'Open' and approve['Approver_ID'] == request.session['User_ID']:
-                output_json = json.dumps(approve)
-                Approves.append(json.loads(output_json))
-                for claim in Approves:
-                    if claim['Document_No_'] == pk:
-                        res = claim
+        Case = []
+        for case in response['value']:
+            if case['Employee_No'] == request.session['Employee_No_'] and case['Posted'] == False and case['Sent_to_employee'] == True and case['Submit'] == False:
+                output_json = json.dumps(case)
+                Case.append(json.loads(output_json))
+                for case in Case:
+                    if case['Disciplinary_Nos'] == pk:
+                        res = case
+    except requests.exceptions.ConnectionError as e:
+        print(e)
+    Lines_Res = config.O_DATA.format("/QyEmployeeDisciplinaryLines")
+    try:
+        responses = session.get(Lines_Res, timeout=10).json()
+        openLines = []
+        for cases in responses['value']:
+            if cases['Refference_No'] == pk and cases['Employee_No'] == request.session['Employee_No_']:
+                output_json = json.dumps(cases)
+                openLines.append(json.loads(output_json))
     except requests.exceptions.ConnectionError as e:
         print(e)
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-    ctx = {"today": todays_date, "res": res, "full": fullname, "year": year}
+    ctx = {"today": todays_date, "res": res, "full": fullname, "year": year,"line": openLines}
     return render (request, 'disciplineDetail.html',ctx)
+
+def DisciplinaryResponse(request, pk):
+
+    employeeNo = request.session['Employee_No_']
+    caseNo = pk
+    myResponse = ''
+    
+    if request.method == 'POST':
+        try:
+            myResponse = request.POST.get('myResponse')
+        except ValueError as e:
+            messages.error(request, "Invalid, Try Again!!")
+            return redirect('DisciplineDetail', pk=pk)
+    try:
+        response = config.CLIENT.service.FnEmployeeDisciplinaryResponse(
+            employeeNo, caseNo, myResponse)
+        messages.success(request, "Response Successful Sent!!")
+        print(response)
+        return redirect('DisciplineDetail', pk=pk)
+    except Exception as e:
+        messages.error(request, e)
+        print(e)
+    return redirect('DisciplineDetail', pk=pk)

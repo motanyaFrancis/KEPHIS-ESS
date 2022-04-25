@@ -42,6 +42,8 @@ urlpatterns = [
     path('payslip', views.PayslipRequest, name='payslip'),
     
     path('disciplinary',views.Disciplinary,name="disciplinary"),
-    path('DiscipleDetails/<str:pk>', views.DisciplineDetail,
+    path('DisciplineDetails/<str:pk>', views.DisciplineDetail,
          name='DisciplineDetail'),
+    path('DisciplineResponse/<str:pk>', views.DisciplinaryResponse,
+         name='DisciplineResponse'),
 ]

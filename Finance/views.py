@@ -381,7 +381,7 @@ def CreateImprestLines(request, pk):
         amount = 0
     try:
         response = config.CLIENT.service.FnImprestLine(
-            lineNo, imprestNo, imprestType, destination, travelDate, returnDate, requisitionType, amount, myAction)
+            lineNo, imprestNo, imprestType, destination, travelDate, returnDate, requisitionType, float(amount), myAction)
         messages.success(request, "Successfully Added!!")
         print(response)
         return redirect('IMPDetails', pk=imprestNo)
@@ -421,9 +421,10 @@ def ImprestSurrender(request):
                 output_json = json.dumps(imprest)
                 Pending.append(json.loads(output_json))
         for imprest in Released['value']:
-            if imprest['Status'] == 'Released' and imprest['User_Id'] == request.session['User_ID'] and imprest['DSA'] == False:
+            if imprest['Status'] == 'Released' and imprest['User_Id'] == request.session['User_ID'] and imprest['DSA'] == False and imprest['Surrendered'] == False and imprest['Posted'] == True:
                 output_json = json.dumps(imprest)
                 APPImp.append(json.loads(output_json))
+        
         counts = len(open)
 
         counter = len(Approved)
@@ -431,7 +432,6 @@ def ImprestSurrender(request):
         Rejects = len(Reject)
 
         pend = len(Pending)
-
     except requests.exceptions.ConnectionError as e:
         print(e)
 

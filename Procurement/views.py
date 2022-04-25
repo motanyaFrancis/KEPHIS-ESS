@@ -327,6 +327,8 @@ def FnDeletePurchaseRequisitionLine(request, pk):
     lineNo = ""
     if request.method == 'POST':
         lineNo = int(request.POST.get('lineNo'))
+        print(lineNo)
+        print(requisitionNo)
         try:
             response = config.CLIENT.service.FnDeletePurchaseRequisitionLine(
                 requisitionNo, lineNo)
