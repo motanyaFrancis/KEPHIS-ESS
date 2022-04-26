@@ -74,7 +74,7 @@ def CreateImprest(request):
     imprestNo = ""
     accountNo = request.session['Customer_No_']
     responsibilityCenter = request.session['User_Responsibility_Center']
-    travelType = ''
+    travelType = 0
     purpose = ''
     usersId = request.session['User_ID']
     personalNo = request.session['No_']
@@ -84,7 +84,6 @@ def CreateImprest(request):
     if request.method == 'POST':
         try:
             imprestNo = request.POST.get('imprestNo')
-            travelType = int(request.POST.get('travelType'))
             purpose = request.POST.get('purpose')
             isImprest = eval(request.POST.get('isImprest'))
             isDsa = eval(request.POST.get('isDsa'))

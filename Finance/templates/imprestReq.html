@@ -118,26 +118,6 @@
                                                                         {% csrf_token %}
                                                                         <div class="mb-2 myForm">
                                                                             <div class="row">
-                                                                                <div class="col-md-12">
-                                                                                    <label class="form-label">Travel
-                                                                                        Type</label>
-                                                                                    <select class="form-select"
-                                                                                        name="travelType" required>
-                                                                                        <option selected disabled
-                                                                                            value="">
-                                                                                            choose.. </option>
-                                                                                        <option value="0">Local
-                                                                                        </option>
-                                                                                        <option value="1">Foreign
-                                                                                        </option>
-                                                                                    </select>
-                                                                                    <div class="invalid-feedback">
-                                                                                        Please select a valid Travel
-                                                                                        Type.
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="row">
                                                                                 <div class="col-md-6">
                                                                                     <label
                                                                                         class="form-label">isImprest</label>
@@ -366,19 +346,6 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <input type="hidden" name="imprestNo" value="">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <label class="form-label">Travel Type</label>
-                                    <select class="form-select" name="travelType" required>
-                                        <option selected disabled value="">Travel Type</option>
-                                        <option value="0">Local</option>
-                                        <option value="1">Foreign</option>
-                                    </select>
-                                    <div class="invalid-feedback">
-                                        Please select a valid Travel Type.
-                                    </div>
                                 </div>
                             </div>
                             <div class="row">
