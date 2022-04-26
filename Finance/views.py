@@ -245,7 +245,6 @@ def UploadAttachment(request, pk):
         else:
             messages.error(request, "Not Sent !!")
             return redirect('IMPDetails', pk=pk)
-
     return redirect('IMPDetails', pk=pk)
 
 # Delete Imprest Header
