@@ -450,6 +450,7 @@ def RepairRequestDetails(request, pk):
                         if document['Status'] == 'Open':
                             state = 1
             if document['Status'] == 'Released' and document['Requested_By'] == request.session['User_ID']:
+                output_json = json.dumps(document)
                 openImp.append(json.loads(output_json))
                 for document in openImp:
                     if document['No_'] == pk:
@@ -891,36 +892,6 @@ def FnGenerateStoreReport(request, pk):
         messages.error(request, e)
         print(e)
     return redirect('StoreDetail', pk=pk)
-
-
-def FnGenerateRepairReport(request, pk):
-    nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
-                        for i in range(5))
-    reqNo = pk
-    filenameFromApp = ''
-    if request.method == 'POST':
-        try:
-            filenameFromApp = pk
-        except ValueError as e:
-            return redirect('RepairDetail', pk=pk)
-    filenameFromApp = filenameFromApp + str(nameChars) + ".pdf"
-    try:
-        response = config.CLIENT.service.FnGenerateRepairReport(
-            reqNo, filenameFromApp)
-        buffer = BytesIO.BytesIO()
-        content = base64.b64decode(response)
-        buffer.write(content)
-        responses = HttpResponse(
-            buffer.getvalue(),
-            content_type="application/pdf",
-        )
-        responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
-        return responses
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
-    return redirect('RepairDetail', pk=pk)
-
 
 def UploadStoreAttachment(request, pk):
     docNo = pk
