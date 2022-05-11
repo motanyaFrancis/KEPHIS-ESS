@@ -61,6 +61,7 @@ def login_request(request):
                     User_Responsibility_Center = request.session['User_Responsibility_Center']
                     print('User_Responsibility_Center:',
                           User_Responsibility_Center)
+                    print(request.session['User_ID'])
             return redirect('dashboard')
         except:
             messages.error(request, "Invalid username or password!!")
