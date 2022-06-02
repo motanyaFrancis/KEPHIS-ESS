@@ -68,3 +68,13 @@ def login_request(request):
             return redirect('auth')
     ctx = {"year": year}
     return render(request, 'auth.html', ctx)
+def logout(request):
+    try:
+        del request.session['User_ID']
+        del request.session['Employee_No_']
+        del request.session['Customer_No_']
+        del request.session['User_Responsibility_Center']
+        messages.success(request,"Logged out successfully")
+    except KeyError:
+        print(False)
+    return redirect('auth')
