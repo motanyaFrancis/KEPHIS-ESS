@@ -197,27 +197,6 @@
                         <textarea class="form-control" placeholder="{{res.Reason_Description}}" readonly></textarea>
                     </div>
                 </form>
-                {% if state == 1 %}
-                <div class="myForm my-3">
-                    <form action="{% url 'PurchaseApprove' res.No_ %}" method="POST" style="display: inline-block;">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <input type="hidden" name="requistionNo" value="{{res.No_}}">
-                        </div>
-                        <button class="btn btn-info" type="submit">Request For Approval</button>
-                    </form>
-                </div>
-                {% elif state == 2 %}
-                <div class="d-grid gap-2 my-3">
-                    <form action="{% url 'PurchaseCancel' res.No_ %}" method="POST" class="myForm" id="approvalForm">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <input type="hidden" hidden name="requistionNo" value="{{res.No_}}">
-                        </div>
-                        <button class="btn btn-info" type="submit">Cancel Request For Approval</button>
-                    </form>
-                </div>
-                {% endif %}
             </div>
         </div>
         <div class="row mt-4">
@@ -387,6 +366,31 @@
                         </table>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                {% if state == 1 %}
+                <div class="myForm my-3">
+                    <form action="{% url 'PurchaseApprove' res.No_ %}" method="POST" style="display: inline-block;">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <input type="hidden" name="requistionNo" value="{{res.No_}}">
+                        </div>
+                        <button class="btn btn-info" type="submit">Request For Approval</button>
+                    </form>
+                </div>
+                {% elif state == 2 %}
+                <div class="d-grid gap-2 my-3">
+                    <form action="{% url 'PurchaseCancel' res.No_ %}" method="POST" class="myForm" id="approvalForm">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <input type="hidden" hidden name="requistionNo" value="{{res.No_}}">
+                        </div>
+                        <button class="btn btn-info" type="submit">Cancel Request For Approval</button>
+                    </form>
+                </div>
+                {% endif %}
             </div>
         </div>
         {% if state == 2 %}
