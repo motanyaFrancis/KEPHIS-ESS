@@ -202,29 +202,6 @@
                         <textarea class="form-control" placeholder="{{res.Description}}" readonly></textarea>
                     </div>
                 </form>
-                {% if state == 1 %}
-                <div class=" my-3 myForm">
-                    <div style="display: inline-block;">
-                        <form action="{% url 'TrainApprove' res.Request_No_ %}" method="post">
-                            {% csrf_token %}
-                            <div class="mb-3">
-                                <input type="hidden" name="trainingNo" value="{{res.Request_No_}}">
-                            </div>
-                            <button class="btn btn-info" type="submit">Request For Approval</button>
-                        </form>
-                    </div>
-                </div>
-                {% elif state == 2 %}
-                <div class="d-grid gap-2 my-3">
-                    <form action="{% url 'TrainCancel' res.Request_No_ %}" method="post" class="myForm">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <input type="hidden" name="trainingNo" value="{{res.Request_No_}}">
-                        </div>
-                        <button class="btn btn-info" type="submit">Cancel Request For Approval</button>
-                    </form>
-                </div>
-                {% endif %}
             </div>
         </div>
         {% if train_status == "Adhoc" %}
@@ -357,6 +334,33 @@
             </div>
         </div>
         {% endif %}
+        <div class="row">
+            <div class="col-md-12">
+                {% if state == 1 %}
+                <div class=" my-3 myForm">
+                    <div style="display: inline-block;">
+                        <form action="{% url 'TrainApprove' res.Request_No_ %}" method="post">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <input type="hidden" name="trainingNo" value="{{res.Request_No_}}">
+                            </div>
+                            <button class="btn btn-info" type="submit">Request For Approval</button>
+                        </form>
+                    </div>
+                </div>
+                {% elif state == 2 %}
+                <div class="d-grid gap-2 my-3">
+                    <form action="{% url 'TrainCancel' res.Request_No_ %}" method="post" class="myForm">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <input type="hidden" name="trainingNo" value="{{res.Request_No_}}">
+                        </div>
+                        <button class="btn btn-info" type="submit">Cancel Request For Approval</button>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+        </div>
         {% if state == 2 %}
         <div class="row mt-4">
             <div class="col-md-12">
