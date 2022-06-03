@@ -4,16 +4,15 @@
 {% block main %}
 <section class="dash2">
     <div class="content-wrapper">
-        <div class="d-xl-flex justify-content-between align-items-start">
-            <h2 class="text-dark font-weight-bold mb-2"> Payslip
-            </h2>
-            <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
-                <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
-                    <button class="btn bg-white dropdown-toggle p-3 d-flex align-items-center" type="button"
-                        id="dropdownMenuButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i
-                            class="mdi mdi-calendar mr-1"></i>{{today}}
-                    </button>
-                </div>
+        <div class="row" id="proBanner">
+            <div class="col-12">
+                <span class="d-flex align-items-center purchase-popup">
+                    <img src="../../../static/img/logo/fav.png" width="70px" class="img-fluid" alt="" srcset="">
+                    <h2 class="text-dark font-weight-bold ml-3"> Payslip </h2>
+                    <button class="btn btn-success align-items-center p-3"
+                        style="margin-left: auto;margin-right:0;outline: none;border: none;">{{today}}</button>
+                </span>
+
             </div>
         </div>
         <!--alert -->
@@ -44,11 +43,12 @@
                     {% csrf_token %}
                     <div class="row">
                         <div class="col-md-12">
-                            <label  class="form-label">Payment Period</label>
-                            <select class="form-select"  name="paymentPeriod" required>
+                            <label class="form-label">Payment Period</label>
+                            <select class="form-select" name="paymentPeriod" required>
                                 <option selected disabled value="">Select Payment Period</option>
                                 {% for res in res %}
-                                <option value="{{res.Starting_Date}}">{{res.Starting_Date|slice:"4" }} - {{res.Name}}</option>
+                                <option value="{{res.Starting_Date}}">{{res.Starting_Date|slice:"4" }} - {{res.Name}}
+                                </option>
                                 {% endfor %}
                             </select>
                             <div class="invalid-feedback">
