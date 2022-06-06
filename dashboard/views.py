@@ -221,8 +221,8 @@ def dashboard(request):
             "rej_repair": repair_rej, "open_store": store_open,
             "app_store": store_app, "rej_store": store_rej
             }
-    except KeyError:
-        messages.success(request,"Session Expired, Log in Again")
+    except KeyError as e:
+        messages.success(request,e)
         return redirect('auth')
     return render(request, 'main/dashboard.html', ctx)
 

@@ -183,12 +183,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTHS = Session()
 
-WEB_SERVICE_PWD = 'Password@123'
+WEB_SERVICE_PWD = 'kMPDC@2021*#'
 
-O_DATA = "http://20.121.189.145:7048/KMPDC/ODataV4/Company('KMPDC'){}"
-BASE_URL = 'http://20.121.189.145:7047/KMPDC/WS/KMPDC/Codeunit/WebPortal'
-AUTHS.auth = HTTPBasicAuth('WINNIE', WEB_SERVICE_PWD)
+O_DATA = "http://192.168.123.156:1030/KMPDC/ODataV4/Company('TRAINING'){}"
+BASE_URL = 'http://192.168.123.156:1020/KMPDC/WS/TRAINING/Codeunit/WebPortal'
+AUTHS.auth = HTTPBasicAuth('NAVADMIN', WEB_SERVICE_PWD)
 
 CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
-AUTHS = HTTPBasicAuth('WINNIE', WEB_SERVICE_PWD)
+AUTHS = HTTPBasicAuth('NAVADMIN', WEB_SERVICE_PWD)
 django_heroku.settings(locals())
+
+# live Company Name = KMPDC LIVE
