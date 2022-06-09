@@ -222,7 +222,7 @@ def dashboard(request):
             "app_store": store_app, "rej_store": store_rej
             }
     except KeyError as e:
-        messages.success(request,e)
+        messages.success(request, "Session Expired. Please Login")
         return redirect('auth')
     return render(request, 'main/dashboard.html', ctx)
 

@@ -47,7 +47,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="l-text mx-auto text-center">
-                                
+
                                 <p>
                                     To regulate the training, practice and licensing of medicine & dentistry and
                                     healthcare
@@ -79,6 +79,9 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-text">
+                                <div class="pr-3" style="margin-right: 2rem !important;">
+                                    {% include 'alerts.html' %}
+                                </div>
                                 <h3>Sign In</h3>
                             </div>
                         </div>
@@ -104,32 +107,6 @@
                                                 style="text-decoration:none;color:white;text-shadow: 0 1px 0 #134326;">Login</button>
                                         </div>
                                     </form>
-                                    <!--alert -->
-                                    {% if messages %}
-                                    {% for message in messages %}
-                                    {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
-                                    <div class="alert alert-success d-flex align-items-center alert-dismissible alert-success"
-                                        role="alert">
-                                        <i class="las la-check-double" style="color: white;font-size: 2rem"></i>
-                                        <div class="a-icon mx-2">
-                                            {{message}}
-                                        </div>
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                            aria-label="Close"></button>
-                                    </div>
-                                    {% elif message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
-                                    <div class="alert alert-danger d-flex align-items-center alert-dismissible alert-warn"
-                                        role="alert">
-                                        <i class="las la-exclamation-triangle" style="color: white;font-size: 2rem"></i>
-                                        <div class="a-icon mx-2">
-                                            {{message}}
-                                        </div>
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                            aria-label="Close"></button>
-                                    </div>
-                                    {% endif %}
-                                    {% endfor %}
-                                    {% endif %}
                                 </div>
                             </div>
                         </div>
