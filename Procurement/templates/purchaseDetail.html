@@ -449,15 +449,12 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <label class="form-label">Procurement Plan Item</label>
-                                <select class="form-select" name="procPlanItem" required>
+                                <select class="form-select" name="procPlanItem">
                                     <option selected disabled value="">Select Procurement Plan Item</option>
                                     {% for res in plans %}
                                     <option value="{{res.Plan_Item_No}}">{{res.Item_Description}}</option>
                                     {% endfor %}
                                 </select>
-                                <div class="invalid-feedback">
-                                    Please Select Valid Procurement Plan Item.
-                                </div>
                             </div>
                         </div>
                         <div class="row">
@@ -558,9 +555,11 @@
             if (this.value == "1") {
                 $('#gls').prop('disabled', false);
                 $('#itemNos').prop('disabled', true);
+                $("#gls").attr("hidden",false);
             } else if (this.value == "2") {
                 $('#itemNos').prop('disabled', false);
                 $('#gls').prop('disabled', true);
+                $("#itemNos").attr("hidden",false);
             } else {
                 $('#gls').prop('disabled', true);
                 $('#itemNos').prop('disabled', true);

@@ -67,8 +67,6 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -194,3 +192,5 @@ AUTHS.auth = HTTPBasicAuth('WINNIE', WEB_SERVICE_PWD)
 CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
 AUTHS = HTTPBasicAuth('WINNIE', WEB_SERVICE_PWD)
 django_heroku.settings(locals())
+
+# live Company Name = KMPDC LIVE
