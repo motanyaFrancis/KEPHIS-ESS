@@ -61,3 +61,6 @@ def logout(request):
     except KeyError:
         print(False)
     return redirect('auth')
+
+def profile(request):
+    return render(request,"profile.html")

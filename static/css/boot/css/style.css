@@ -4823,7 +4823,7 @@ a.close.disabled {
 }
 
 .bg-primary {
-  background-color: #0062ff !important;
+  background-color: #144a85 !important;
 }
 
 a.bg-primary:hover,
@@ -13203,16 +13203,16 @@ dl li {
 }
 
 .sidebar .nav .nav-item.documentation-link {
-  margin: 2.5rem 0 !important;
+  margin: 2rem 0 !important;
 }
 
 .sidebar .nav .nav-item.documentation-link .nav-link {
   background: #0062ff;
-  color: #ffffff;
+  color: white !important;
   border-radius: 2px;
   padding: .875rem 0;
-  font-size: 1.125rem;
   font-weight: bold;
+  cursor: none;
 }
 
 .sidebar .nav .nav-item.documentation-link .nav-link .icon-bg {
@@ -13223,6 +13223,8 @@ dl li {
   margin: auto;
   background: transparent !important;
   color: #ffffff !important;
+  font-size: 0.8rem !important;
+
 }
 
 .sidebar .nav .nav-item.sidebar-user-actions {

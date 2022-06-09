@@ -16,6 +16,11 @@
     --primary-font: 'Gelasio', serif;
     --normal-font: 'Titillium Web', sans-serif;
 }
+@media (max-width: 442px) {
+   .timer{
+      display: none !important;
+    }
+  }
 
 body {
     background: #181824;
