@@ -176,60 +176,64 @@ def FnDeleteLeavePlannerLine(request, pk):
 
 
 def Leave_Request(request):
-    fullname = request.session['User_ID']
-    year = request.session['years']
-    session = requests.Session()
-    session.auth = config.AUTHS
-
-    Access_Point = config.O_DATA.format("/QyLeaveApplications")
-    LeaveTypes = config.O_DATA.format("/QyLeaveTypes")
-    LeavePlanner = config.O_DATA.format("/QyLeavePlannerLines")
     try:
-        response = session.get(Access_Point, timeout=10).json()
-        res_types = session.get(LeaveTypes, timeout=10).json()
-        res_planner = session.get(LeavePlanner, timeout=10).json()
-        open = []
-        Approved = []
-        Rejected = []
-        Pending = []
-        Plan = []
-        Leave = res_types['value']
-        for planner in res_planner['value']:
-            if planner['Employee_No_'] == request.session['Employee_No_']:
-                output_json = json.dumps(planner)
-                Plan.append(json.loads(output_json))
-        for imprest in response['value']:
-            if imprest['Status'] == 'Open' and imprest['User_ID'] == request.session['User_ID']:
-                output_json = json.dumps(imprest)
-                open.append(json.loads(output_json))
-            if imprest['Status'] == 'Released' and imprest['User_ID'] == request.session['User_ID']:
-                output_json = json.dumps(imprest)
-                Approved.append(json.loads(output_json))
-            if imprest['Status'] == 'Rejected' and imprest['User_ID'] == request.session['User_ID']:
-                output_json = json.dumps(imprest)
-                Rejected.append(json.loads(output_json))
-            if imprest['Status'] == "Pending Approval" and imprest['User_ID'] == request.session['User_ID']:
-                output_json = json.dumps(imprest)
-                Pending.append(json.loads(output_json))
-        counts = len(open)
-        pend = len(Pending)
-        print(request.session['User_ID'])
+        fullname = request.session['User_ID']
+        year = request.session['years']
+        session = requests.Session()
+        session.auth = config.AUTHS
 
-        counter = len(Approved)
+        Access_Point = config.O_DATA.format("/QyLeaveApplications")
+        LeaveTypes = config.O_DATA.format("/QyLeaveTypes")
+        LeavePlanner = config.O_DATA.format("/QyLeavePlannerLines")
+        try:
+            response = session.get(Access_Point, timeout=10).json()
+            res_types = session.get(LeaveTypes, timeout=10).json()
+            res_planner = session.get(LeavePlanner, timeout=10).json()
+            open = []
+            Approved = []
+            Rejected = []
+            Pending = []
+            Plan = []
+            Leave = res_types['value']
+            for planner in res_planner['value']:
+                if planner['Employee_No_'] == request.session['Employee_No_']:
+                    output_json = json.dumps(planner)
+                    Plan.append(json.loads(output_json))
+            for imprest in response['value']:
+                if imprest['Status'] == 'Open' and imprest['User_ID'] == request.session['User_ID']:
+                    output_json = json.dumps(imprest)
+                    open.append(json.loads(output_json))
+                if imprest['Status'] == 'Released' and imprest['User_ID'] == request.session['User_ID']:
+                    output_json = json.dumps(imprest)
+                    Approved.append(json.loads(output_json))
+                if imprest['Status'] == 'Rejected' and imprest['User_ID'] == request.session['User_ID']:
+                    output_json = json.dumps(imprest)
+                    Rejected.append(json.loads(output_json))
+                if imprest['Status'] == "Pending Approval" and imprest['User_ID'] == request.session['User_ID']:
+                    output_json = json.dumps(imprest)
+                    Pending.append(json.loads(output_json))
+            counts = len(open)
+            pend = len(Pending)
+            print(request.session['User_ID'])
 
-        reject = len(Rejected)
+            counter = len(Approved)
 
-    except requests.exceptions.ConnectionError as e:
-        print(e)
+            reject = len(Rejected)
 
-    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-    ctx = {"today": todays_date, "res": open,
-           "count": counts, "response": Approved,
-           "counter": counter, "rej": Rejected,
-           'reject': reject, 'leave': Leave,
-           "plan": Plan, "pend": pend,
-           "pending": Pending, "year": year,
-           "full": fullname}
+        except requests.exceptions.ConnectionError as e:
+            print(e)
+
+        todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
+        ctx = {"today": todays_date, "res": open,
+            "count": counts, "response": Approved,
+            "counter": counter, "rej": Rejected,
+            'reject': reject, 'leave': Leave,
+            "plan": Plan, "pend": pend,
+            "pending": Pending, "year": year,
+            "full": fullname}
+    except KeyError:
+        messages.info(request, "Session Expired. Please Login")
+        return redirect('auth')
     return render(request, 'leave.html', ctx)
 
 
@@ -247,8 +251,7 @@ def CreateLeave(request):
 
         applicationNo = request.POST.get('applicationNo')
         leaveType = request.POST.get('leaveType')
-        plannerStartDate = datetime.strptime(
-            (request.POST.get('plannerStartDate')), '%Y-%m-%d').date()
+        plannerStartDate = request.POST.get('plannerStartDate')
         daysApplied = request.POST.get('daysApplied')
         isReturnSameDay = eval(request.POST.get('isReturnSameDay'))
         myAction = request.POST.get('myAction')
@@ -257,6 +260,8 @@ def CreateLeave(request):
             applicationNo = " "
         if not daysApplied:
             daysApplied = 0
+        if not plannerStartDate:
+            plannerStartDate = None
         try:
             response = config.CLIENT.service.FnLeaveApplication(
                 applicationNo, employeeNo, usersId, dimension3, leaveType, plannerStartDate, int(daysApplied), isReturnSameDay, myAction)

@@ -530,8 +530,14 @@ fieldset:disabled a.btn {
 }
 .btn-successs{
   color: #fff;
+  font-size: 15px !important;
   background-color: #46c35f !important;
   border-color: #46c35f !important;
+}
+.btn-successs:hover{
+  color: #fff;
+  background-color: #144a85 !important;
+  border-color: #144a85 !important;
 }
 
 .btn-primary {
