@@ -18,7 +18,8 @@ import string
 
 
 def PurchaseRequisition(request):
-    fullname = request.session['fullname']
+    fullname = request.session['User_ID']
+    print( request.session['Employee_No_'])
     year = request.session['years']
     session = requests.Session()
     session.auth = config.AUTHS
@@ -46,6 +47,7 @@ def PurchaseRequisition(request):
         counter = len(Approved)
         reject = len(Rejected)
         pend = len(Pending)
+        print(request.session['Employee_No_'])
     except requests.exceptions.ConnectionError as e:
         print(e)
 
@@ -208,6 +210,9 @@ def CreatePurchaseLines(request, pk):
         class Data(enum.Enum):
             values = itemTypes
         itemType = (Data.values).value
+
+        if not procPlanItem:
+            procPlanItem = ""
         try:
             response = config.CLIENT.service.FnPurchaseRequisitionLine(
                 requisitionNo, lineNo, procPlanItem, itemType, itemNo, specification, quantity, myUserId, myAction)
@@ -341,7 +346,7 @@ def FnDeletePurchaseRequisitionLine(request, pk):
 
 
 def RepairRequest(request):
-    fullname = request.session['fullname']
+    fullname = request.session['User_ID']
     year = request.session['years']
     session = requests.Session()
     session.auth = config.AUTHS
@@ -418,7 +423,7 @@ def CreateRepairRequest(request):
 
 
 def RepairRequestDetails(request, pk):
-    fullname = request.session['fullname']
+    fullname = request.session['User_ID']
     year = request.session['years']
     session = requests.Session()
     session.auth = config.AUTHS
@@ -616,7 +621,7 @@ def FnDeleteRepairRequisitionLine(request, pk):
 
 
 def StoreRequest(request):
-    fullname = request.session['fullname']
+    fullname = request.session['User_ID']
     year = request.session['years']
     session = requests.Session()
     session.auth = config.AUTHS
@@ -695,7 +700,7 @@ def CreateStoreRequisition(request):
 
 
 def StoreRequestDetails(request, pk):
-    fullname = request.session['fullname']
+    fullname = request.session['User_ID']
     year = request.session['years']
     session = requests.Session()
     session.auth = config.AUTHS

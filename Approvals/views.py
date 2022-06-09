@@ -12,7 +12,7 @@ from django.contrib import messages
 
 
 def Approve(request):
-    fullname = request.session['fullname']
+    fullname = request.session['User_ID']
     year = request.session['years']
     session = requests.Session()
     session.auth = config.AUTHS
@@ -37,7 +37,7 @@ def Approve(request):
 
 
 def ApproveDetails(request, pk):
-    fullname = request.session['fullname']
+    fullname = request.session['User_ID']
     year = request.session['years']
     session = requests.Session()
     session.auth = config.AUTHS

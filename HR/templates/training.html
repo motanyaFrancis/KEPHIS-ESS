@@ -132,7 +132,7 @@
                                                                                     <label for="isAdhoc"
                                                                                         class="form-label">Adhoc</label>
                                                                                     <select class="form-select"
-                                                                                        id="isAdhoc" name="isAdhoc"
+                                                                                        id="isAdhocTT" name="isAdhoc"
                                                                                         required>
                                                                                         <option selected disabled
                                                                                             value="">
@@ -178,21 +178,16 @@
                                                                                         Date:</label>
                                                                                     <input type="date"
                                                                                         class="form-control"
-                                                                                        name="startDate" required>
-                                                                                    <div class="invalid-feedback">
-                                                                                        Please select a valid Start
-                                                                                        Date.
-                                                                                    </div>
+                                                                                        name="startDate"
+                                                                                        id="startDateTT" disabled>
                                                                                 </div>
                                                                                 <div class="col-md-6">
                                                                                     <label for="" class="form-label">End
                                                                                         Date:</label>
                                                                                     <input type="date"
                                                                                         class="form-control"
-                                                                                        name="endDate" required>
-                                                                                    <div class="invalid-feedback">
-                                                                                        Please select a valid End Date.
-                                                                                    </div>
+                                                                                        name="endDate" id="endDateTT"
+                                                                                        disabled>
                                                                                 </div>
                                                                             </div>
                                                                             <div class="row">
@@ -200,8 +195,8 @@
                                                                                     <label for="destination"
                                                                                         class="form-label">Destination</label>
                                                                                     <select class="form-select"
-                                                                                        id="destination"
-                                                                                        name="destination" required>
+                                                                                        id="destinationTT"
+                                                                                        name="destination" disabled>
                                                                                         <option selected disabled
                                                                                             value="">
                                                                                             Select Destination</option>
@@ -212,10 +207,6 @@
                                                                                         </option>
                                                                                         {% endfor %}
                                                                                     </select>'
-                                                                                    <div class="invalid-feedback">
-                                                                                        Please select a valid
-                                                                                        Destination.
-                                                                                    </div>
                                                                                 </div>
                                                                             </div>
                                                                             <div class="row">
@@ -223,11 +214,9 @@
                                                                                     <label for="description"
                                                                                         class="form-label">Description</label>
                                                                                     <textarea class="form-control"
-                                                                                        name="description" rows="3"
-                                                                                        required></textarea>
-                                                                                    <div class="invalid-feedback">
-                                                                                        Description can't be empty .
-                                                                                    </div>
+                                                                                        name="description"
+                                                                                        id="descriptionTT" rows="3"
+                                                                                        disabled></textarea>
                                                                                 </div>
                                                                             </div>
                                                                             <div class="row">
@@ -403,8 +392,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="myForm needs-validation" action="{% url 'CreateTrainingRequest' %}" method="post"
-                        novalidate>
+                    <form class="myForm" action="{% url 'CreateTrainingRequest' %}" method="post">
                         {% csrf_token %}
                         <div class="mb-2"> <span class="w-name">
                                 Training Request Header:
@@ -417,10 +405,10 @@
                             <div class="row mt-3">
                                 <div class="col-md-12">
                                     <label for="isAdhoc" class="form-label">Adhoc</label>
-                                    <select class="form-select" id="isAdhoc" name="isAdhoc" required>
+                                    <select class="form-select" id="isAdhocT" name="isAdhoc" required>
                                         <option selected disabled value="">Select </option>
-                                        <option value="True">True</option>
-                                        <option value="False">False</option>
+                                        <option value="True">Yes</option>
+                                        <option value="False">No</option>
                                     </select>
                                     <div class="invalid-feedback">
                                         Please select a valid option.
@@ -445,14 +433,14 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <label for="" class="form-label">Start Date:</label>
-                                    <input type="date" class="form-control" name="startDate" required>
+                                    <input type="date" class="form-control" name="startDate" id="startDateT" disabled>
                                     <div class="invalid-feedback">
                                         Please select a valid Start Date.
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="" class="form-label">End Date:</label>
-                                    <input type="date" class="form-control" name="endDate" required>
+                                    <input type="date" class="form-control" name="endDate" id="endDateT" disabled>
                                     <div class="invalid-feedback">
                                         Please select a valid End Date.
                                     </div>
@@ -461,7 +449,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <label for="destination" class="form-label">Destination</label>
-                                    <select class="form-select" id="destination" name="destination" required>
+                                    <select class="form-select" id="destinationT" name="destination" disabled>
                                         <option selected disabled value="">Select Destination</option>
                                         {% for res in des %}
                                         <option value="{{res.Destination_Code}}">{{res.Destination_Code}}</option>
@@ -475,7 +463,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <label for="currency" class="form-label">Currency</label>
-                                    <select class="form-select" id="currency" name="currency" required>
+                                    <select class="form-select" id="currencyT" name="currency" disabled>
                                         <option selected disabled value="">Select </option>
                                         {% for res in cur %}
                                         <option value="{{res.Code}}">{{res.Description}} ({{res.Code}})</option>
@@ -489,7 +477,8 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <label for="description" class="form-label">Description</label>
-                                    <textarea class="form-control" name="description" rows="3" required></textarea>
+                                    <textarea class="form-control" id="descriptionT" name="description" rows="3"
+                                        disabled></textarea>
                                     <div class="invalid-feedback">
                                         Description can't be empty .
                                     </div>
@@ -507,5 +496,40 @@
         </div>
     </div>
 </section>
-
+<script>
+    $(document).ready(function () {
+        $('#isAdhocT').on('change', function () {
+            if (this.value == "True") {
+                $('#startDateT').prop('disabled', false);
+                $('#endDateT').prop('disabled', false);
+                $('#destinationT').prop('disabled', false);
+                $('#currencyT').prop('disabled', false);
+                $('#descriptionT').prop('disabled', false);
+            } else {
+                $('#startDateT').prop('disabled', true);
+                $('#endDateT').prop('disabled', true);
+                $('#destinationT').prop('disabled', true);
+                $('#currencyT').prop('disabled', true);
+                $('#descriptionT').prop('disabled', true);
+            }
+        });
+    })
+    $(document).ready(function () {
+        $('#isAdhocTT').on('change', function () {
+            if (this.value == "True") {
+                $('#startDateTT').prop('disabled', false);
+                $('#endDateTT').prop('disabled', false);
+                $('#destinationTT').prop('disabled', false);
+                $('#currencyTT').prop('disabled', false);
+                $('#descriptionTT').prop('disabled', false);
+            } else {
+                $('#startDateTT').prop('disabled', true);
+                $('#endDateTT').prop('disabled', true);
+                $('#destinationTT').prop('disabled', true);
+                $('#currencyTT').prop('disabled', true);
+                $('#descriptionTT').prop('disabled', true);
+            }
+        });
+    })
+</script>
 {% endblock %}

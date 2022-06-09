@@ -20,7 +20,7 @@ import string
 
 
 def Leave_Planner(request):
-    fullname = request.session['fullname']
+    fullname = request.session['User_ID']
     year = request.session['years']
     session = requests.Session()
     session.auth = config.AUTHS
@@ -65,7 +65,7 @@ def CreatePlanner(request):
 
 
 def PlanDetail(request, pk):
-    fullname = request.session['fullname']
+    fullname = request.session['User_ID']
     year = request.session['years']
     session = requests.Session()
     session.auth = config.AUTHS
@@ -171,7 +171,7 @@ def FnDeleteLeavePlannerLine(request, pk):
 
 
 def Leave_Request(request):
-    fullname = request.session['fullname']
+    fullname = request.session['User_ID']
     year = request.session['years']
     session = requests.Session()
     session.auth = config.AUTHS
@@ -263,7 +263,7 @@ def CreateLeave(request):
     return redirect('leave')
 
 def LeaveDetail(request, pk):
-    fullname = request.session['fullname']
+    fullname = request.session['User_ID']
     year = request.session['years']
     session = requests.Session()
     session.auth = config.AUTHS
@@ -406,7 +406,7 @@ def LeaveCancelApproval(request, pk):
 
 
 def Training_Request(request):
-    fullname = request.session['fullname']
+    fullname = request.session['User_ID']
     year = request.session['years']
 
     session = requests.Session()
@@ -479,19 +479,25 @@ def CreateTrainingRequest(request):
             requestNo = request.POST.get('requestNo')
             isAdhoc = eval(request.POST.get('isAdhoc'))
             description = request.POST.get('description')
-            startDate = datetime.strptime(
-                request.POST.get('startDate'), '%Y-%m-%d').date()
+            startDate = request.POST.get('startDate')
             trainingNeed = request.POST.get('trainingNeed')
             destination = request.POST.get('destination')
-            endDate = datetime.strptime(
-                request.POST.get('endDate'), '%Y-%m-%d').date()
+            endDate = request.POST.get('endDate')
             myAction = request.POST.get('myAction')
         except ValueError:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('training_request')
-    if not requestNo:
-        requestNo = " s"
-    print(requestNo)
+        if not requestNo:
+            requestNo = ""
+        if not destination:
+            destination = ""
+        if not endDate:
+            endDate = '2000-10-10'
+        if not startDate:
+            startDate = '2000-10-10'
+        if not description:
+            description = ''
+        print(endDate)
     try:
         response = config.CLIENT.service.FnTrainingRequest(
             requestNo, employeeNo, usersId, designation, isAdhoc, trainingNeed, description, startDate, endDate, destination, myAction)
@@ -540,7 +546,7 @@ def EditTrainingRequest(request):
 
 
 def TrainingDetail(request, pk):
-    fullname = request.session['fullname']
+    fullname = request.session['User_ID']
     year = request.session['years']
 
     session = requests.Session()
@@ -780,7 +786,7 @@ def TrainingCancelApproval(request, pk):
 def PNineRequest(request):
     nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
                         for i in range(5))
-    fullname = request.session['fullname']
+    fullname = request.session['User_ID']
     year = request.session['years']
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
     session = requests.Session()
@@ -832,7 +838,7 @@ def PNineRequest(request):
 def PayslipRequest(request):
     nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
                         for i in range(5))
-    fullname = request.session['fullname']
+    fullname = request.session['User_ID']
     year = request.session['years']
     session = requests.Session()
     session.auth = config.AUTHS
@@ -945,7 +951,7 @@ def FnGenerateTrainingReport(request, pk):
         print(e)
     return redirect('TrainingDetail', pk=pk)
 def Disciplinary(request):
-    fullname = request.session['fullname']
+    fullname = request.session['User_ID']
     year = request.session['years']
     session = requests.Session()
     session.auth = config.AUTHS
@@ -970,7 +976,7 @@ def Disciplinary(request):
     return render(request,'disciplinary.html',ctx)
 
 def DisciplineDetail(request,pk):
-    fullname = request.session['fullname']
+    fullname = request.session['User_ID']
     year = request.session['years']
     session = requests.Session()
     session.auth = config.AUTHS

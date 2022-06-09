@@ -185,8 +185,8 @@ AUTHS = Session()
 
 WEB_SERVICE_PWD = 'kMPDC@2021*#'
 
-O_DATA = "http://192.168.123.156:1030/KMPDC/ODataV4/Company('TRAINING'){}"
-BASE_URL = 'http://192.168.123.156:1020/KMPDC/WS/TRAINING/Codeunit/WebPortal'
+O_DATA = "http://192.168.123.156:1030/KMPDC/ODataV4/Company('PORTAL'){}"
+BASE_URL = 'http://192.168.123.156:1020/KMPDC/WS/PORTAL/Codeunit/WebPortal'
 AUTHS.auth = HTTPBasicAuth('NAVADMIN', WEB_SERVICE_PWD)
 
 CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))

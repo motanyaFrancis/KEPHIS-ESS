@@ -21,7 +21,7 @@ from django.template.response import TemplateResponse
 
 
 def ImprestRequisition(request):
-    fullname = request.session['fullname']
+    fullname =  request.session['User_ID']
     year = request.session['years']
     session = requests.Session()
     session.auth = config.AUTHS
@@ -77,7 +77,7 @@ def CreateImprest(request):
     travelType = 0
     purpose = ''
     usersId = request.session['User_ID']
-    personalNo = request.session['No_']
+    personalNo = request.session['Employee_No_']
     isImprest = ''
     isDsa = ''
     myAction = ''
@@ -107,7 +107,7 @@ def CreateImprest(request):
 
 
 def ImprestDetails(request, pk):
-    fullname = request.session['fullname']
+    fullname = request.session['User_ID']
     year = request.session['years']
 
     session = requests.Session()
@@ -390,7 +390,7 @@ def CreateImprestLines(request, pk):
 
 
 def ImprestSurrender(request):
-    fullname = request.session['fullname']
+    fullname = request.session['User_ID']
     year = request.session['years']
     session = requests.Session()
     session.auth = config.AUTHS
@@ -475,7 +475,7 @@ def CreateSurrender(request):
 
 
 def SurrenderDetails(request, pk):
-    fullname = request.session['fullname']
+    fullname = request.session['User_ID']
     year = request.session['years']
     session = requests.Session()
     session.auth = config.AUTHS
@@ -688,7 +688,7 @@ def FnCancelSurrenderApproval(request, pk):
 
 
 def StaffClaim(request):
-    fullname = request.session['fullname']
+    fullname = request.session['User_ID']
     year = request.session['years']
 
     session = requests.Session()
@@ -758,6 +758,8 @@ def CreateClaim(request):
         myAction = request.POST.get('myAction')
         if not claimNo:
             claimNo = " "
+        if not imprestSurrDocNo:
+            imprestSurrDocNo = " "
         try:
             response = config.CLIENT.service.FnStaffClaimHeader(
                 claimNo, claimType, accountNo, purpose, usersId, staffNo, imprestSurrDocNo, myAction)
@@ -771,7 +773,7 @@ def CreateClaim(request):
 
 
 def ClaimDetails(request, pk):
-    fullname = request.session['fullname']
+    fullname = request.session['User_ID']
     year = request.session['years']
 
     session = requests.Session()
