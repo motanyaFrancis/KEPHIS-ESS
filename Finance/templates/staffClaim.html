@@ -368,15 +368,12 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <label class="form-label">Imprest Surrender No</label>
-                                <select class="form-select" name="imprestSurrDocNo" required>
+                                <select class="form-select" name="imprestSurrDocNo">
                                     <option selected disabled value="">Select Imprest Surrender No</option>
                                     {% for res in my_claim %}
                                     <option value="{{res.No_}}">{{res.No_}} - {{res.Payment_Narration}}</option>
                                     {% endfor %}
                                 </select>
-                                <div class="invalid-feedback">
-                                    Please Select a Valid Imprest Surrender No.
-                                </div>
                             </div>
                         </div>
                         <div class="row">

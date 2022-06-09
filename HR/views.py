@@ -159,14 +159,15 @@ def FnDeleteLeavePlannerLine(request, pk):
         except ValueError as e:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('PlanDetail', pk=pk)
-    try:
-        response = config.CLIENT.service.FnDeleteLeavePlannerLine(plannerNo,
-                                                                  lineNo)
-        messages.success(request, "Successfully  Deleted!!")
-        print(response)
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
+        print(plannerNo,lineNo)
+        try:
+            response = config.CLIENT.service.FnDeleteLeavePlannerLine(plannerNo,
+                                                                    lineNo)
+            messages.success(request, "Successfully  Deleted!!")
+            print(response)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
     return redirect('PlanDetail', pk=pk)
 
 
@@ -475,31 +476,33 @@ def CreateTrainingRequest(request):
     destination = ''
     myAction = ''
     if request.method == 'POST':
+        requestNo = request.POST.get('requestNo')
+        isAdhoc = eval(request.POST.get('isAdhoc'))
+        description = request.POST.get('description')
+        startDate = request.POST.get('startDate')
+        trainingNeed = request.POST.get('trainingNeed')
+        destination = request.POST.get('destination')
+        endDate = request.POST.get('endDate')
+        myAction = request.POST.get('myAction')
+        if not requestNo:
+            requestNo = ""
+        if not description:
+            description = ""
+        if not startDate:
+            startDate = ""
+        if not destination:
+            destination = ""
+        if not endDate:
+            endDate = ""
+        print(startDate)
         try:
-            requestNo = request.POST.get('requestNo')
-            isAdhoc = eval(request.POST.get('isAdhoc'))
-            description = request.POST.get('description')
-            startDate = datetime.strptime(
-                request.POST.get('startDate'), '%Y-%m-%d').date()
-            trainingNeed = request.POST.get('trainingNeed')
-            destination = request.POST.get('destination')
-            endDate = datetime.strptime(
-                request.POST.get('endDate'), '%Y-%m-%d').date()
-            myAction = request.POST.get('myAction')
-        except ValueError:
-            messages.error(request, "Not sent. Invalid Input, Try Again!!")
-            return redirect('training_request')
-    if not requestNo:
-        requestNo = " s"
-    print(requestNo)
-    try:
-        response = config.CLIENT.service.FnTrainingRequest(
-            requestNo, employeeNo, usersId, designation, isAdhoc, trainingNeed, description, startDate, endDate, destination, myAction)
-        messages.success(request, "Successfully Added!!")
-        print(response)
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
+            response = config.CLIENT.service.FnTrainingRequest(
+                requestNo, employeeNo, usersId, designation, isAdhoc, trainingNeed, description, startDate, endDate, destination, myAction)
+            messages.success(request, "Successfully Added!!")
+            print(response)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
     return redirect('training_request')
 
 
