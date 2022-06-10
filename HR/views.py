@@ -535,6 +535,7 @@ def CreateTrainingRequest(request):
     except Exception as e:
         messages.error(request, e)
         print(e)
+        return redirect('training_request')
     return redirect('training_request')
 
 
