@@ -273,71 +273,73 @@ def CreateLeave(request):
     return redirect('leave')
 
 def LeaveDetail(request, pk):
-    fullname = request.session['User_ID']
-    year = request.session['years']
-    session = requests.Session()
-    session.auth = config.AUTHS
-    res = ''
-    state = ''
-    Access_Point = config.O_DATA.format("/QyLeaveApplications")
-    Approver = config.O_DATA.format("/QyApprovalEntries")
-    Ledger = config.O_DATA.format("/QyLeaveLedgerEntries")
     try:
-        response = session.get(Access_Point, timeout=10).json()
-        res_approver = session.get(Approver, timeout=10).json()
-        res_Ledger = session.get(Ledger, timeout=10).json()
-        openClaim = []
-        Approvers = []
-        Pending = []
-        Ledgers = []
-        # for Ledger in res_Ledger['value']:
-        #     if Ledger['Staff_No_'] == request.session['Employee_No_'] and Ledger['Leave_Period_Code'] == request.session['Leave_Period'] and Ledger['Leave_Type'] == request.session['Leave_Code']:
-        #         output_json = json.dumps(Ledger)
-        #         Ledgers.append(json.loads(output_json))
-        for approver in res_approver['value']:
-            if approver['Document_No_'] == pk:
-                output_json = json.dumps(approver)
-                Approvers.append(json.loads(output_json))
-        for claim in response['value']:
-            if claim['Status'] == 'Released' and claim['User_ID'] == request.session['User_ID']:
-                output_json = json.dumps(claim)
-                openClaim.append(json.loads(output_json))
-                for claim in openClaim:
-                    if claim['Application_No'] == pk:
-                        res = claim
-                        if claim['Status'] == 'Released':
-                            state = 3
-            if claim['Status'] == 'Open' and claim['User_ID'] == request.session['User_ID']:
-                output_json = json.dumps(claim)
-                openClaim.append(json.loads(output_json))
-                for claim in openClaim:
-                    if claim['Application_No'] == pk:
-                        request.session['Leave_Period'] = claim['Leave_Period']
-                        request.session['Leave_Code'] = claim['Leave_Code']
-                        res = claim
-                        if claim['Status'] == 'Open':
-                            state = 1
-            if claim['Status'] == 'Rejected' and claim['User_ID'] == request.session['User_ID']:
-                output_json = json.dumps(claim)
-                openClaim.append(json.loads(output_json))
-                for claim in openClaim:
-                    if claim['Application_No'] == pk:
-                        res = claim
-            if claim['Status'] == "Pending Approval" and claim['User_ID'] == request.session['User_ID']:
-                output_json = json.dumps(claim)
-                Pending.append(json.loads(output_json))
-                for claim in Pending:
-                    if claim['Application_No'] == pk:
-                        res = claim
-                        if claim['Status'] == 'Pending Approval':
-                            state = 2
-    except requests.exceptions.ConnectionError as e:
-        print(e)
+        fullname = request.session['User_ID']
+        year = request.session['years']
+        session = requests.Session()
+        session.auth = config.AUTHS
+        res = ''
+        state = ''
+        Access_Point = config.O_DATA.format("/QyLeaveApplications")
+        Approver = config.O_DATA.format("/QyApprovalEntries")
+        Ledger = config.O_DATA.format("/QyLeaveLedgerEntries")
+        try:
+            response = session.get(Access_Point, timeout=10).json()
+            res_approver = session.get(Approver, timeout=10).json()
+            res_Ledger = session.get(Ledger, timeout=10).json()
+            openClaim = []
+            Approvers = []
+            Pending = []
+            Ledgers = []
+            for approver in res_approver['value']:
+                if approver['Document_No_'] == pk:
+                    output_json = json.dumps(approver)
+                    Approvers.append(json.loads(output_json))
+            for claim in response['value']:
+                if claim['Status'] == 'Released' and claim['User_ID'] == request.session['User_ID']:
+                    output_json = json.dumps(claim)
+                    openClaim.append(json.loads(output_json))
+                    for claim in openClaim:
+                        if claim['Application_No'] == pk:
+                            res = claim
+                            if claim['Status'] == 'Released':
+                                state = 3
+                if claim['Status'] == 'Open' and claim['User_ID'] == request.session['User_ID']:
+                    output_json = json.dumps(claim)
+                    openClaim.append(json.loads(output_json))
+                    for claim in openClaim:
+                        if claim['Application_No'] == pk:
+                            request.session['Leave_Period'] = claim['Leave_Period']
+                            request.session['Leave_Code'] = claim['Leave_Code']
+                            res = claim
+                            if claim['Status'] == 'Open':
+                                state = 1
+                if claim['Status'] == 'Rejected' and claim['User_ID'] == request.session['User_ID']:
+                    output_json = json.dumps(claim)
+                    openClaim.append(json.loads(output_json))
+                    for claim in openClaim:
+                        if claim['Application_No'] == pk:
+                            res = claim
+                if claim['Status'] == "Pending Approval" and claim['User_ID'] == request.session['User_ID']:
+                    output_json = json.dumps(claim)
+                    Pending.append(json.loads(output_json))
+                    for claim in Pending:
+                        if claim['Application_No'] == pk:
+                            res = claim
+                            if claim['Status'] == 'Pending Approval':
+                                state = 2
+        except requests.exceptions.ConnectionError as e:
+            print(e)
+            messages.error(request,"500 Server Error, Try Again in a few")
+            return redirect('leave')
 
-    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-    ctx = {"today": todays_date, "res": res,
-           "Approvers": Approvers, "state": state,
-           "year": year, "full": fullname}
+        todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
+        ctx = {"today": todays_date, "res": res,
+            "Approvers": Approvers, "state": state,
+            "year": year, "full": fullname}
+    except KeyError:
+        messages.info(request, "Session Expired. Please Login")
+        return redirect('auth')
     return render(request, 'leaveDetail.html', ctx)
 
 
@@ -416,59 +418,65 @@ def LeaveCancelApproval(request, pk):
 
 
 def Training_Request(request):
-    fullname = request.session['User_ID']
-    year = request.session['years']
-
-    session = requests.Session()
-    session.auth = config.AUTHS
-
-    Access_Point = config.O_DATA.format("/QyTrainingRequests")
-    currency = config.O_DATA.format("/QyCurrencies")
-    trainingNeed = config.O_DATA.format("/QyTrainingNeeds")
-    destination = config.O_DATA.format("/QyDestinations")
     try:
-        response = session.get(Access_Point, timeout=10).json()
-        res_currency = session.get(currency, timeout=10).json()
-        res_train = session.get(trainingNeed, timeout=10).json()
-        res_dest = session.get(destination, timeout=10).json()
-        open = []
-        Approved = []
-        Rejected = []
-        Pending = []
-        cur = res_currency['value']
-        trains = res_train['value']
-        destinations = res_dest['value']
-        for imprest in response['value']:
-            if imprest['Status'] == 'Open' and imprest['Employee_No'] == request.session['Employee_No_']:
-                output_json = json.dumps(imprest)
-                open.append(json.loads(output_json))
-            if imprest['Status'] == 'Released' and imprest['Employee_No'] == request.session['Employee_No_']:
-                output_json = json.dumps(imprest)
-                Approved.append(json.loads(output_json))
-            if imprest['Status'] == 'Rejected' and imprest['Employee_No'] == request.session['Employee_No_']:
-                output_json = json.dumps(imprest)
-                Rejected.append(json.loads(output_json))
-            if imprest['Status'] == 'Pending Approval' and imprest['Employee_No'] == request.session['Employee_No_']:
-                output_json = json.dumps(imprest)
-                Pending.append(json.loads(output_json))
-        counts = len(open)
+        fullname = request.session['User_ID']
+        year = request.session['years']
 
-        counter = len(Approved)
+        session = requests.Session()
+        session.auth = config.AUTHS
 
-        reject = len(Rejected)
+        Access_Point = config.O_DATA.format("/QyTrainingRequests")
+        currency = config.O_DATA.format("/QyCurrencies")
+        trainingNeed = config.O_DATA.format("/QyTrainingNeeds")
+        destination = config.O_DATA.format("/QyDestinations")
+        try:
+            response = session.get(Access_Point, timeout=10).json()
+            res_currency = session.get(currency, timeout=10).json()
+            res_train = session.get(trainingNeed, timeout=10).json()
+            res_dest = session.get(destination, timeout=10).json()
+            open = []
+            Approved = []
+            Rejected = []
+            Pending = []
+            cur = res_currency['value']
+            trains = res_train['value']
+            destinations = res_dest['value']
+            for imprest in response['value']:
+                if imprest['Status'] == 'Open' and imprest['Employee_No'] == request.session['Employee_No_']:
+                    output_json = json.dumps(imprest)
+                    open.append(json.loads(output_json))
+                if imprest['Status'] == 'Released' and imprest['Employee_No'] == request.session['Employee_No_']:
+                    output_json = json.dumps(imprest)
+                    Approved.append(json.loads(output_json))
+                if imprest['Status'] == 'Rejected' and imprest['Employee_No'] == request.session['Employee_No_']:
+                    output_json = json.dumps(imprest)
+                    Rejected.append(json.loads(output_json))
+                if imprest['Status'] == 'Pending Approval' and imprest['Employee_No'] == request.session['Employee_No_']:
+                    output_json = json.dumps(imprest)
+                    Pending.append(json.loads(output_json))
+            counts = len(open)
 
-        pend = len(Pending)
-    except requests.exceptions.ConnectionError as e:
-        print(e)
+            counter = len(Approved)
 
-    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-    ctx = {"today": todays_date, "res": open,
-           "count": counts, "response": Approved,
-           "counter": counter, "rej": Rejected,
-           'reject': reject, 'cur': cur,
-           "train": trains, "des": destinations,
-           "pend": pend, "pending": Pending,
-           "year": year, "full": fullname}
+            reject = len(Rejected)
+
+            pend = len(Pending)
+        except requests.exceptions.ConnectionError as e:
+            print(e)
+            messages.error(request,"500 Server Error, Try Again in a few")
+            return redirect('dashboard')
+
+        todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
+        ctx = {"today": todays_date, "res": open,
+            "count": counts, "response": Approved,
+            "counter": counter, "rej": Rejected,
+            'reject': reject, 'cur': cur,
+            "train": trains, "des": destinations,
+            "pend": pend, "pending": Pending,
+            "year": year, "full": fullname}
+    except KeyError:
+        messages.info(request, "Session Expired. Please Login")
+        return redirect('auth')
     return render(request, 'training.html', ctx)
 
 
@@ -576,76 +584,82 @@ def EditTrainingRequest(request):
 
 
 def TrainingDetail(request, pk):
-    fullname = request.session['User_ID']
-    year = request.session['years']
+    try:
+        fullname = request.session['User_ID']
+        year = request.session['years']
 
-    session = requests.Session()
-    session.auth = config.AUTHS
-    res = ''
-    state = ""
-    train_status = ""
-    Access_Point = config.O_DATA.format("/QyTrainingRequests")
-    Approver = config.O_DATA.format("/QyApprovalEntries")
-    try:
-        response = session.get(Access_Point, timeout=10).json()
-        res_approver = session.get(Approver, timeout=10).json()
-        openClaim = []
-        Approvers = []
-        Pending = []
-        for approver in res_approver['value']:
-            if approver['Document_No_'] == pk:
-                output_json = json.dumps(approver)
-                Approvers.append(json.loads(output_json))
-        for claim in response['value']:
-            if claim['Status'] == 'Released' and claim['Employee_No'] == request.session['Employee_No_']:
-                output_json = json.dumps(claim)
-                openClaim.append(json.loads(output_json))
-                for claim in openClaim:
-                    if claim['Request_No_'] == pk:
-                        res = claim
-                        if claim['Status'] == 'Released':
-                            state = 3
-            if claim['Status'] == 'Open' and claim['Employee_No'] == request.session['Employee_No_']:
-                output_json = json.dumps(claim)
-                openClaim.append(json.loads(output_json))
-                for claim in openClaim:
-                    if claim['Request_No_'] == pk:
-                        res = claim
-                        if claim['Status'] == 'Open':
-                            state = 1
-                        if claim['Adhoc'] == True:
-                            train_status = "Adhoc"
-            if claim['Status'] == 'Rejected' and claim['Employee_No'] == request.session['Employee_No_']:
-                output_json = json.dumps(claim)
-                openClaim.append(json.loads(output_json))
-                for claim in openClaim:
-                    if claim['Request_No_'] == pk:
-                        res = claim
-            if claim['Status'] == 'Pending Approval' and claim['Employee_No'] == request.session['Employee_No_']:
-                output_json = json.dumps(claim)
-                Pending.append(json.loads(output_json))
-                for claim in Pending:
-                    if claim['Request_No_'] == pk:
-                        res = claim
-                        if claim['Status'] == 'Pending Approval':
-                            state = 2
-    except requests.exceptions.ConnectionError as e:
-        print(e)
-    Lines_Res = config.O_DATA.format("/QyTrainingNeedsRequest")
-    try:
-        response = session.get(Lines_Res, timeout=10).json()
-        openLines = []
-        for train in response['value']:
-            if train['Source_Document_No'] == pk and train['Employee_No'] == request.session['Employee_No_']:
-                output_json = json.dumps(train)
-                openLines.append(json.loads(output_json))
-    except requests.exceptions.ConnectionError as e:
-        print(e)
-    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-    ctx = {"today": todays_date, "res": res,
-           "Approvers": Approvers, "state": state,
-           "year": year, "full": fullname,
-           "train_status": train_status, "line": openLines}
+        session = requests.Session()
+        session.auth = config.AUTHS
+        res = ''
+        state = ""
+        train_status = ""
+        Access_Point = config.O_DATA.format("/QyTrainingRequests")
+        Approver = config.O_DATA.format("/QyApprovalEntries")
+        try:
+            response = session.get(Access_Point, timeout=10).json()
+            res_approver = session.get(Approver, timeout=10).json()
+            openClaim = []
+            Approvers = []
+            Pending = []
+            for approver in res_approver['value']:
+                if approver['Document_No_'] == pk:
+                    output_json = json.dumps(approver)
+                    Approvers.append(json.loads(output_json))
+            for claim in response['value']:
+                if claim['Status'] == 'Released' and claim['Employee_No'] == request.session['Employee_No_']:
+                    output_json = json.dumps(claim)
+                    openClaim.append(json.loads(output_json))
+                    for claim in openClaim:
+                        if claim['Request_No_'] == pk:
+                            res = claim
+                            if claim['Status'] == 'Released':
+                                state = 3
+                if claim['Status'] == 'Open' and claim['Employee_No'] == request.session['Employee_No_']:
+                    output_json = json.dumps(claim)
+                    openClaim.append(json.loads(output_json))
+                    for claim in openClaim:
+                        if claim['Request_No_'] == pk:
+                            res = claim
+                            if claim['Status'] == 'Open':
+                                state = 1
+                            if claim['Adhoc'] == True:
+                                train_status = "Adhoc"
+                if claim['Status'] == 'Rejected' and claim['Employee_No'] == request.session['Employee_No_']:
+                    output_json = json.dumps(claim)
+                    openClaim.append(json.loads(output_json))
+                    for claim in openClaim:
+                        if claim['Request_No_'] == pk:
+                            res = claim
+                if claim['Status'] == 'Pending Approval' and claim['Employee_No'] == request.session['Employee_No_']:
+                    output_json = json.dumps(claim)
+                    Pending.append(json.loads(output_json))
+                    for claim in Pending:
+                        if claim['Request_No_'] == pk:
+                            res = claim
+                            if claim['Status'] == 'Pending Approval':
+                                state = 2
+        except requests.exceptions.ConnectionError as e:
+            print(e)
+            messages.error(request,"500 Server Error, Try Again in a few")
+            return redirect('training_request')
+        Lines_Res = config.O_DATA.format("/QyTrainingNeedsRequest")
+        try:
+            response = session.get(Lines_Res, timeout=10).json()
+            openLines = []
+            for train in response['value']:
+                if train['Source_Document_No'] == pk and train['Employee_No'] == request.session['Employee_No_']:
+                    output_json = json.dumps(train)
+                    openLines.append(json.loads(output_json))
+        except requests.exceptions.ConnectionError as e:
+            messages.error(request,"500 Server Error, Try Again in a few")
+            return redirect('training_request')
+        todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
+        ctx = {"today": todays_date, "res": res,
+            "Approvers": Approvers, "state": state,
+            "year": year, "full": fullname,
+            "train_status": train_status, "line": openLines}
+    except KeyError:
+        pass
     return render(request, 'trainingDetail.html', ctx)
 
 
@@ -814,105 +828,113 @@ def TrainingCancelApproval(request, pk):
 
 
 def PNineRequest(request):
-    nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
-                        for i in range(5))
-    fullname = request.session['User_ID']
-    year = request.session['years']
-    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-    session = requests.Session()
-    session.auth = config.AUTHS
-    
-    Access_Point = config.O_DATA.format("/QyPayrollPeriods")
-    
     try:
-        response = session.get(Access_Point, timeout=10).json()
-        res = response['value']
-    except requests.exceptions.ConnectionError as e:
-        print(e)
-    employeeNo = request.session['Employee_No_']
-    filenameFromApp = ""
-    startDate = ""
-    year = ''
-    if request.method == 'POST':
+        nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
+                        for i in range(5))
+        fullname = request.session['User_ID']
+        year = request.session['years']
+        todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
+        session = requests.Session()
+        session.auth = config.AUTHS
+        
+        Access_Point = config.O_DATA.format("/QyPayrollPeriods")
+        
         try:
-            startDate = request.POST.get('startDate')[0:4]
-        except ValueError as e:
-            messages.error(request, "Not sent. Invalid Input, Try Again!!")
-            return redirect('pNine')
-        filenameFromApp = "P9_For_" + str(nameChars) + year + ".pdf"
-        year = int(startDate)
-        try:
-            response = config.CLIENT.service.FnGeneratePNine(
-                employeeNo, filenameFromApp, year)
-            try:
-                buffer = BytesIO.BytesIO()
-                content = base64.b64decode(response)
-                buffer.write(content)
-                responses = HttpResponse(
-                    buffer.getvalue(),
-                    content_type="application/pdf",
-                )
-                responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
-                return responses
-            except:
-                messages.error(request, "Payslip not found for the selected period")
-                return redirect('pNine')
-        except Exception as e:
-            messages.error(request, e)
+            response = session.get(Access_Point, timeout=10).json()
+            res = response['value']
+        except requests.exceptions.ConnectionError as e:
             print(e)
-            return redirect('pNine')
-    ctx = {"today": todays_date, "year": year, "full": fullname,"res":res}
+        employeeNo = request.session['Employee_No_']
+        filenameFromApp = ""
+        startDate = ""
+        year = ''
+        if request.method == 'POST':
+            try:
+                startDate = request.POST.get('startDate')[0:4]
+            except ValueError as e:
+                messages.error(request, "Not sent. Invalid Input, Try Again!!")
+                return redirect('pNine')
+            filenameFromApp = "P9_For_" + str(nameChars) + year + ".pdf"
+            year = int(startDate)
+            try:
+                response = config.CLIENT.service.FnGeneratePNine(
+                    employeeNo, filenameFromApp, year)
+                try:
+                    buffer = BytesIO.BytesIO()
+                    content = base64.b64decode(response)
+                    buffer.write(content)
+                    responses = HttpResponse(
+                        buffer.getvalue(),
+                        content_type="application/pdf",
+                    )
+                    responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
+                    return responses
+                except:
+                    messages.error(request, "Payslip not found for the selected period")
+                    return redirect('pNine')
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+                return redirect('pNine')
+        ctx = {"today": todays_date, "year": year, "full": fullname,"res":res}
+    except KeyError:
+        messages.info(request, "Session Expired. Please Login")
+        return redirect('auth')
     return render(request, "p9.html", ctx)
 
 
 def PayslipRequest(request):
-    nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
-                        for i in range(5))
-    fullname = request.session['User_ID']
-    year = request.session['years']
-    session = requests.Session()
-    session.auth = config.AUTHS
-    
-    Access_Point = config.O_DATA.format("/QyPayrollPeriods")
     try:
-        response = session.get(Access_Point, timeout=10).json()
-        res = response['value']
-    except requests.exceptions.ConnectionError as e:
-        print(e)
-    
-    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-    employeeNo = request.session['Employee_No_']
-    filenameFromApp = ""
-    paymentPeriod = ""
-    if request.method == 'POST':
+        nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
+                        for i in range(5))
+        fullname = request.session['User_ID']
+        year = request.session['years']
+        session = requests.Session()
+        session.auth = config.AUTHS
+        
+        Access_Point = config.O_DATA.format("/QyPayrollPeriods")
         try:
-            paymentPeriod = datetime.strptime(
-                request.POST.get('paymentPeriod'), '%Y-%m-%d').date()
-
-        except ValueError as e:
-            messages.error(request, "Not sent. Invalid Input, Try Again!!")
-            return redirect('payslip')
-        filenameFromApp = "Payslip" + str(paymentPeriod) + str(nameChars) + ".pdf"
-        try:
-            response = config.CLIENT.service.FnGeneratePayslip(
-                employeeNo, filenameFromApp, paymentPeriod)
-            try:
-                buffer = BytesIO.BytesIO()
-                content = base64.b64decode(response)
-                buffer.write(content)
-                responses = HttpResponse(
-                    buffer.getvalue(),
-                    content_type="application/pdf",
-                )
-                responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
-                return responses
-            except:
-                messages.error(request, "Payslip not found for the selected period")
-                return redirect('payslip')
-        except Exception as e:
-            messages.error(request, e)
+            response = session.get(Access_Point, timeout=10).json()
+            res = response['value']
+        except requests.exceptions.ConnectionError as e:
             print(e)
-    ctx = {"today": todays_date, "year": year, "full": fullname,"res":res}
+            
+        todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
+        employeeNo = request.session['Employee_No_']
+        filenameFromApp = ""
+        paymentPeriod = ""
+        if request.method == 'POST':
+            try:
+                paymentPeriod = datetime.strptime(
+                    request.POST.get('paymentPeriod'), '%Y-%m-%d').date()
+
+            except ValueError as e:
+                messages.error(request, "Not sent. Invalid Input, Try Again!!")
+                return redirect('payslip')
+            filenameFromApp = "Payslip" + str(paymentPeriod) + str(nameChars) + ".pdf"
+            try:
+                response = config.CLIENT.service.FnGeneratePayslip(
+                    employeeNo, filenameFromApp, paymentPeriod)
+                try:
+                    buffer = BytesIO.BytesIO()
+                    content = base64.b64decode(response)
+                    buffer.write(content)
+                    responses = HttpResponse(
+                        buffer.getvalue(),
+                        content_type="application/pdf",
+                    )
+                    responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
+                    return responses
+                except:
+                    messages.error(request, "Payslip not found for the selected period")
+                    return redirect('payslip')
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+        ctx = {"today": todays_date, "year": year, "full": fullname,"res":res}
+    except KeyError:
+        messages.info(request, "Session Expired. Please Login")
+        return redirect('auth')
     return render(request, "payslip.html", ctx)
 # Leave Report
 
