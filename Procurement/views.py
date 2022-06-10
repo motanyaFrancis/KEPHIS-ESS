@@ -18,47 +18,50 @@ import string
 
 
 def PurchaseRequisition(request):
-    fullname = request.session['User_ID']
-    print( request.session['Employee_No_'])
-    year = request.session['years']
-    session = requests.Session()
-    session.auth = config.AUTHS
-    Access_Point = config.O_DATA.format("/QyPurchaseRequisitionHeaders")
     try:
-        response = session.get(Access_Point, timeout=10).json()
-        open = []
-        Approved = []
-        Rejected = []
-        Pending = []
-        for document in response['value']:
-            if document['Status'] == 'Open' and document['Employee_No_'] == request.session['Employee_No_']:
-                output_json = json.dumps(document)
-                open.append(json.loads(output_json))
-            if document['Status'] == 'Released' and document['Employee_No_'] == request.session['Employee_No_']:
-                output_json = json.dumps(document)
-                Approved.append(json.loads(output_json))
-            if document['Status'] == 'Rejected' and document['Employee_No_'] == request.session['Employee_No_']:
-                output_json = json.dumps(document)
-                Rejected.append(json.loads(output_json))
-            if document['Status'] == "Pending Approval" and document['Employee_No_'] == request.session['Employee_No_']:
-                output_json = json.dumps(document)
-                Pending.append(json.loads(output_json))
-        counts = len(open)
-        counter = len(Approved)
-        reject = len(Rejected)
-        pend = len(Pending)
-        print(request.session['Employee_No_'])
-    except requests.exceptions.ConnectionError as e:
-        print(e)
+        fullname = request.session['User_ID']
+        year = request.session['years']
+        session = requests.Session()
+        session.auth = config.AUTHS
+        Access_Point = config.O_DATA.format("/QyPurchaseRequisitionHeaders")
+        try:
+            response = session.get(Access_Point, timeout=10).json()
+            open = []
+            Approved = []
+            Rejected = []
+            Pending = []
+            for document in response['value']:
+                if document['Status'] == 'Open' and document['Employee_No_'] == request.session['Employee_No_']:
+                    output_json = json.dumps(document)
+                    open.append(json.loads(output_json))
+                if document['Status'] == 'Released' and document['Employee_No_'] == request.session['Employee_No_']:
+                    output_json = json.dumps(document)
+                    Approved.append(json.loads(output_json))
+                if document['Status'] == 'Rejected' and document['Employee_No_'] == request.session['Employee_No_']:
+                    output_json = json.dumps(document)
+                    Rejected.append(json.loads(output_json))
+                if document['Status'] == "Pending Approval" and document['Employee_No_'] == request.session['Employee_No_']:
+                    output_json = json.dumps(document)
+                    Pending.append(json.loads(output_json))
+            counts = len(open)
+            counter = len(Approved)
+            reject = len(Rejected)
+            pend = len(Pending)
+            print(request.session['Employee_No_'])
+        except requests.exceptions.ConnectionError as e:
+            print(e)
 
-    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
+        todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
 
-    ctx = {"today": todays_date, "res": open,
-           "count": counts, "response": Approved,
-           "counter": counter, "rej": Rejected,
-           'reject': reject, "pend": pend,
-           "pending": Pending, "year": year,
-           "full": fullname}
+        ctx = {"today": todays_date, "res": open,
+            "count": counts, "response": Approved,
+            "counter": counter, "rej": Rejected,
+            'reject': reject, "pend": pend,
+            "pending": Pending, "year": year,
+            "full": fullname}
+    except KeyError:
+        messages.info(request, "Session Expired. Please Login")
+        return redirect('auth')
     return render(request, 'purchaseReq.html', ctx)
 
 
@@ -98,92 +101,91 @@ def CreatePurchaseRequisition(request):
 
 
 def PurchaseRequestDetails(request, pk):
-    session = requests.Session()
-    session.auth = config.AUTHS
-    state = ''
-    res = ''
-    Current_Year = date.today()
-    Access_Point = config.O_DATA.format("/QyPurchaseRequisitionHeaders")
-    Approver = config.O_DATA.format("/QyApprovalEntries")
-    ProcPlan = config.O_DATA.format("/QyProcurementPlans")
-    itemNo = config.O_DATA.format("/QyItems")
-    GL_Acc = config.O_DATA.format("/QyGLAccounts")
     try:
-        response = session.get(Access_Point, timeout=10).json()
-        res_approver = session.get(Approver, timeout=10).json()
-        Res_Proc = session.get(ProcPlan, timeout=10).json()
-        Res_itemNo = session.get(itemNo, timeout=10).json()
-        Res_GL = session.get(GL_Acc, timeout=10).json()
-        openImp = []
-        res_type = []
-        Pending = []
-        Approvers = []
-        Proc = []
-        Items = Res_itemNo['value']
-        Gl_Accounts = Res_GL['value']
-        planitem = Res_Proc['value']
-        # for planitem in Res_Proc['value']:
-        #     if planitem['Plan_Year'] == Current_Year.year:
-        #         output_json = json.dumps(planitem)
-        #         Proc.append(json.loads(output_json))
-        for approver in res_approver['value']:
-            if approver['Document_No_'] == pk:
-                output_json = json.dumps(approver)
-                Approvers.append(json.loads(output_json))
-        for document in response['value']:
-            if document['Status'] == 'Released' and document['Employee_No_'] == request.session['Employee_No_']:
-                output_json = json.dumps(document)
-                openImp.append(json.loads(output_json))
-                for document in openImp:
-                    if document['No_'] == pk:
-                        res = document
-            if document['Status'] == 'Open' and document['Employee_No_'] == request.session['Employee_No_']:
-                output_json = json.dumps(document)
-                openImp.append(json.loads(output_json))
-                for document in openImp:
-                    if document['No_'] == pk:
-                        res = document
-                        if document['Status'] == 'Open':
-                            state = 1
-            if document['Status'] == 'Released' and document['Employee_No_'] == request.session['Employee_No_']:
-                output_json = json.dumps(document)
-                openImp.append(json.loads(output_json))
-                for document in openImp:
-                    if document['No_'] == pk:
-                        res = document
-                        if document['Status'] == 'Released':
-                            state = 3
-            if document['Status'] == "Pending Approval" and document['Employee_No_'] == request.session['Employee_No_']:
-                output_json = json.dumps(document)
-                Pending.append(json.loads(output_json))
-                for document in Pending:
-                    if document['No_'] == pk:
-                        res = document
-                        if document['Status'] == 'Pending Approval':
-                            state = 2
-    except requests.exceptions.ConnectionError as e:
-        print(e)
-    Lines_Res = config.O_DATA.format("/QyPurchaseRequisitionLines")
-    try:
-        response_Lines = session.get(Lines_Res, timeout=10).json()
-        openLines = []
-        for document in response_Lines['value']:
-            if document['AuxiliaryIndex1'] == pk:
-                output_json = json.dumps(document)
-                openLines.append(json.loads(output_json))
-    except requests.exceptions.ConnectionError as e:
-        print(e)
-    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-    ctx = {"today": todays_date, "res": res,
-           "state": state, "line": openLines,
-           "type": res_type, "Approvers": Approvers,
-           "plans": planitem, "items": Items,
-           "gl": Gl_Accounts}
+        session = requests.Session()
+        session.auth = config.AUTHS
+        state = ''
+        res = ''
+        Current_Year = date.today()
+        Access_Point = config.O_DATA.format("/QyPurchaseRequisitionHeaders")
+        Approver = config.O_DATA.format("/QyApprovalEntries")
+        ProcPlan = config.O_DATA.format("/QyProcurementPlans")
+        itemNo = config.O_DATA.format("/QyItems")
+        GL_Acc = config.O_DATA.format("/QyGLAccounts")
+        try:
+            response = session.get(Access_Point, timeout=10).json()
+            res_approver = session.get(Approver, timeout=10).json()
+            Res_Proc = session.get(ProcPlan, timeout=10).json()
+            Res_itemNo = session.get(itemNo, timeout=10).json()
+            Res_GL = session.get(GL_Acc, timeout=10).json()
+            openImp = []
+            res_type = []
+            Pending = []
+            Approvers = []
+            Proc = []
+            Items = Res_itemNo['value']
+            Gl_Accounts = Res_GL['value']
+            planitem = Res_Proc['value']
+            for approver in res_approver['value']:
+                if approver['Document_No_'] == pk:
+                    output_json = json.dumps(approver)
+                    Approvers.append(json.loads(output_json))
+            for document in response['value']:
+                if document['Status'] == 'Released' and document['Employee_No_'] == request.session['Employee_No_']:
+                    output_json = json.dumps(document)
+                    openImp.append(json.loads(output_json))
+                    for document in openImp:
+                        if document['No_'] == pk:
+                            res = document
+                if document['Status'] == 'Open' and document['Employee_No_'] == request.session['Employee_No_']:
+                    output_json = json.dumps(document)
+                    openImp.append(json.loads(output_json))
+                    for document in openImp:
+                        if document['No_'] == pk:
+                            res = document
+                            if document['Status'] == 'Open':
+                                state = 1
+                if document['Status'] == 'Released' and document['Employee_No_'] == request.session['Employee_No_']:
+                    output_json = json.dumps(document)
+                    openImp.append(json.loads(output_json))
+                    for document in openImp:
+                        if document['No_'] == pk:
+                            res = document
+                            if document['Status'] == 'Released':
+                                state = 3
+                if document['Status'] == "Pending Approval" and document['Employee_No_'] == request.session['Employee_No_']:
+                    output_json = json.dumps(document)
+                    Pending.append(json.loads(output_json))
+                    for document in Pending:
+                        if document['No_'] == pk:
+                            res = document
+                            if document['Status'] == 'Pending Approval':
+                                state = 2
+        except requests.exceptions.ConnectionError as e:
+            print(e)
+        Lines_Res = config.O_DATA.format("/QyPurchaseRequisitionLines")
+        try:
+            response_Lines = session.get(Lines_Res, timeout=10).json()
+            openLines = []
+            for document in response_Lines['value']:
+                if document['AuxiliaryIndex1'] == pk:
+                    output_json = json.dumps(document)
+                    openLines.append(json.loads(output_json))
+        except requests.exceptions.ConnectionError as e:
+            print(e)
+        todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
+        ctx = {"today": todays_date, "res": res,
+            "state": state, "line": openLines,
+            "type": res_type, "Approvers": Approvers,
+            "plans": planitem, "items": Items,
+            "gl": Gl_Accounts}
+    except KeyError:
+        messages.info(request, "Session Expired. Please Login")
+        return redirect('auth')
     return render(request, 'purchaseDetail.html', ctx)
 
 
 def CreatePurchaseLines(request, pk):
-    # Create Enum For itemType which is 'Item'
     requisitionNo = pk
     lineNo = ""
     procPlanItem = ''
@@ -346,46 +348,50 @@ def FnDeletePurchaseRequisitionLine(request, pk):
 
 
 def RepairRequest(request):
-    fullname = request.session['User_ID']
-    year = request.session['years']
-    session = requests.Session()
-    session.auth = config.AUTHS
-
-    Access_Point = config.O_DATA.format("/QyRepairRequisitionHeaders")
     try:
-        response = session.get(Access_Point, timeout=10).json()
-        open = []
-        Approved = []
-        Rejected = []
-        Pending = []
-        for document in response['value']:
-            if document['Status'] == 'Open' and document['Requested_By'] == request.session['User_ID']:
-                output_json = json.dumps(document)
-                open.append(json.loads(output_json))
-            if document['Status'] == 'Released' and document['Requested_By'] == request.session['User_ID']:
-                output_json = json.dumps(document)
-                Approved.append(json.loads(output_json))
-            if document['Status'] == 'Rejected' and document['Requested_By'] == request.session['User_ID']:
-                output_json = json.dumps(document)
-                Rejected.append(json.loads(output_json))
-            if document['Status'] == "Pending Approval" and document['Requested_By'] == request.session['User_ID']:
-                output_json = json.dumps(document)
-                Pending.append(json.loads(output_json))
-        counts = len(open)
-        counter = len(Approved)
-        reject = len(Rejected)
-        pend = len(Pending)
-    except requests.exceptions.ConnectionError as e:
-        print(e)
+        fullname = request.session['User_ID']
+        year = request.session['years']
+        session = requests.Session()
+        session.auth = config.AUTHS
 
-    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-    ctx = {"today": todays_date, "res": open,
-           "count": counts, "response": Approved,
-           "counter": counter, "rej": Rejected,
-           'reject': reject, "pend": pend,
-           "year": year, "full": fullname,
-           "pending": Pending
-           }
+        Access_Point = config.O_DATA.format("/QyRepairRequisitionHeaders")
+        try:
+            response = session.get(Access_Point, timeout=10).json()
+            open = []
+            Approved = []
+            Rejected = []
+            Pending = []
+            for document in response['value']:
+                if document['Status'] == 'Open' and document['Requested_By'] == request.session['User_ID']:
+                    output_json = json.dumps(document)
+                    open.append(json.loads(output_json))
+                if document['Status'] == 'Released' and document['Requested_By'] == request.session['User_ID']:
+                    output_json = json.dumps(document)
+                    Approved.append(json.loads(output_json))
+                if document['Status'] == 'Rejected' and document['Requested_By'] == request.session['User_ID']:
+                    output_json = json.dumps(document)
+                    Rejected.append(json.loads(output_json))
+                if document['Status'] == "Pending Approval" and document['Requested_By'] == request.session['User_ID']:
+                    output_json = json.dumps(document)
+                    Pending.append(json.loads(output_json))
+            counts = len(open)
+            counter = len(Approved)
+            reject = len(Rejected)
+            pend = len(Pending)
+        except requests.exceptions.ConnectionError as e:
+            print(e)
+
+        todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
+        ctx = {"today": todays_date, "res": open,
+            "count": counts, "response": Approved,
+            "counter": counter, "rej": Rejected,
+            'reject': reject, "pend": pend,
+            "year": year, "full": fullname,
+            "pending": Pending
+            }
+    except KeyError:
+        messages.info(request, "Session Expired. Please Login")
+        return redirect('auth')
     return render(request, 'repairReq.html', ctx)
 
 
@@ -423,78 +429,82 @@ def CreateRepairRequest(request):
 
 
 def RepairRequestDetails(request, pk):
-    fullname = request.session['User_ID']
-    year = request.session['years']
-    session = requests.Session()
-    session.auth = config.AUTHS
-    state = ''
-    res = ''
-    output_json = ''
-    Access_Point = config.O_DATA.format("/QyRepairRequisitionHeaders")
-    Assets = config.O_DATA.format("/QyFixedAssets")
-    Approver = config.O_DATA.format("/QyApprovalEntries")
     try:
-        response = session.get(Access_Point, timeout=10).json()
-        Assest_res = session.get(Assets, timeout=10).json()
-        res_approver = session.get(Approver, timeout=10).json()
-        openImp = []
-        res_type = []
-        Approvers = []
-        my_asset = Assest_res['value']
-        for approver in res_approver['value']:
-            if approver['Document_No_'] == pk:
-                output_json = json.dumps(approver)
-                Approvers.append(json.loads(output_json))
-        for document in response['value']:
-            if document['Status'] == 'Open' and document['Requested_By'] == request.session['User_ID']:
-                output_json = json.dumps(document)
-                openImp.append(json.loads(output_json))
-                for document in openImp:
-                    if document['No_'] == pk:
-                        res = document
-                        if document['Status'] == 'Open':
-                            state = 1
-            if document['Status'] == 'Released' and document['Requested_By'] == request.session['User_ID']:
-                output_json = json.dumps(document)
-                openImp.append(json.loads(output_json))
-                for document in openImp:
-                    if document['No_'] == pk:
-                        res = document
-                        if document['Status'] == 'Released':
-                            state = 3
+        fullname = request.session['User_ID']
+        year = request.session['years']
+        session = requests.Session()
+        session.auth = config.AUTHS
+        state = ''
+        res = ''
+        output_json = ''
+        Access_Point = config.O_DATA.format("/QyRepairRequisitionHeaders")
+        Assets = config.O_DATA.format("/QyFixedAssets")
+        Approver = config.O_DATA.format("/QyApprovalEntries")
+        try:
+            response = session.get(Access_Point, timeout=10).json()
+            Assest_res = session.get(Assets, timeout=10).json()
+            res_approver = session.get(Approver, timeout=10).json()
+            openImp = []
+            res_type = []
+            Approvers = []
+            my_asset = Assest_res['value']
+            for approver in res_approver['value']:
+                if approver['Document_No_'] == pk:
+                    output_json = json.dumps(approver)
+                    Approvers.append(json.loads(output_json))
+            for document in response['value']:
+                if document['Status'] == 'Open' and document['Requested_By'] == request.session['User_ID']:
+                    output_json = json.dumps(document)
+                    openImp.append(json.loads(output_json))
+                    for document in openImp:
+                        if document['No_'] == pk:
+                            res = document
+                            if document['Status'] == 'Open':
+                                state = 1
+                if document['Status'] == 'Released' and document['Requested_By'] == request.session['User_ID']:
+                    output_json = json.dumps(document)
+                    openImp.append(json.loads(output_json))
+                    for document in openImp:
+                        if document['No_'] == pk:
+                            res = document
+                            if document['Status'] == 'Released':
+                                state = 3
 
-            if document['Status'] == 'Rejected' and document['Requested_By'] == request.session['User_ID']:
-                output_json = json.dumps(document)
-                openImp.append(json.loads(output_json))
-                for document in openImp:
-                    if document['No_'] == pk:
-                        res = document
-            if document['Status'] == "Pending Approval" and document['Requested_By'] == request.session['User_ID']:
-                output_json = json.dumps(document)
-                openImp.append(json.loads(output_json))
-                for document in openImp:
-                    if document['No_'] == pk:
-                        res = document
-                        if document['Status'] == 'Pending Approval':
-                            state = 2
-    except requests.exceptions.ConnectionError as e:
-        print(e)
-    Lines_Res = config.O_DATA.format("/QyRepairRequisitionLines")
-    try:
-        response_Lines = session.get(Lines_Res, timeout=10).json()
-        openLines = []
-        for document in response_Lines['value']:
-            if document['AuxiliaryIndex1'] == pk:
-                output_json = json.dumps(document)
-                openLines.append(json.loads(output_json))
-    except requests.exceptions.ConnectionError as e:
-        print(e)
-    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-    ctx = {"today": todays_date, "res": res,
-           "state": state, "line": openLines,
-           "type": res_type, "Approvers": Approvers,
-           "asset": my_asset, "full": fullname,
-           "year": year}
+                if document['Status'] == 'Rejected' and document['Requested_By'] == request.session['User_ID']:
+                    output_json = json.dumps(document)
+                    openImp.append(json.loads(output_json))
+                    for document in openImp:
+                        if document['No_'] == pk:
+                            res = document
+                if document['Status'] == "Pending Approval" and document['Requested_By'] == request.session['User_ID']:
+                    output_json = json.dumps(document)
+                    openImp.append(json.loads(output_json))
+                    for document in openImp:
+                        if document['No_'] == pk:
+                            res = document
+                            if document['Status'] == 'Pending Approval':
+                                state = 2
+        except requests.exceptions.ConnectionError as e:
+            print(e)
+        Lines_Res = config.O_DATA.format("/QyRepairRequisitionLines")
+        try:
+            response_Lines = session.get(Lines_Res, timeout=10).json()
+            openLines = []
+            for document in response_Lines['value']:
+                if document['AuxiliaryIndex1'] == pk:
+                    output_json = json.dumps(document)
+                    openLines.append(json.loads(output_json))
+        except requests.exceptions.ConnectionError as e:
+            print(e)
+        todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
+        ctx = {"today": todays_date, "res": res,
+            "state": state, "line": openLines,
+            "type": res_type, "Approvers": Approvers,
+            "asset": my_asset, "full": fullname,
+            "year": year}
+    except KeyError:
+        messages.info(request, "Session Expired. Please Login")
+        return redirect('auth')
     return render(request, 'repairDetail.html', ctx)
 
 
@@ -507,15 +517,15 @@ def RepairApproval(request, pk):
         except ValueError as e:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('RepairDetail', pk=pk)
-    try:
-        response = config.CLIENT.service.FnRequestInternalRequestApproval(
-            myUserID, requistionNo)
-        messages.success(request, "Approval Request Successfully Sent!!")
-        print(response)
-        return redirect('RepairDetail', pk=pk)
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
+        try:
+            response = config.CLIENT.service.FnRequestInternalRequestApproval(
+                myUserID, requistionNo)
+            messages.success(request, "Approval Request Successfully Sent!!")
+            print(response)
+            return redirect('RepairDetail', pk=pk)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
     return redirect('RepairDetail', pk=pk)
 
 
@@ -560,15 +570,15 @@ def FnCancelRepairApproval(request, pk):
         except ValueError as e:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('RepairDetail', pk=pk)
-    try:
-        response = config.CLIENT.service.FnCancelInternalRequestApproval(
-            myUserID, requistionNo)
-        messages.success(request, "Cancel Approval Successful !!")
-        print(response)
-        return redirect('RepairDetail', pk=pk)
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
+        try:
+            response = config.CLIENT.service.FnCancelInternalRequestApproval(
+                myUserID, requistionNo)
+            messages.success(request, "Cancel Approval Successful !!")
+            print(response)
+            return redirect('RepairDetail', pk=pk)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
     return redirect('RepairDetail', pk=pk)
 
 
@@ -621,48 +631,52 @@ def FnDeleteRepairRequisitionLine(request, pk):
 
 
 def StoreRequest(request):
-    fullname = request.session['User_ID']
-    year = request.session['years']
-    session = requests.Session()
-    session.auth = config.AUTHS
-
-    Access_Point = config.O_DATA.format("/QyStoreRequisitionHeaders")
-    QYStore = config.O_DATA.format("/QyLocations")
     try:
-        response = session.get(Access_Point, timeout=10).json()
-        Store_res = session.get(QYStore, timeout=10).json()
-        open = []
-        Approved = []
-        Rejected = []
-        Pending = []
-        Stores = Store_res['value']
-        for document in response['value']:
-            if document['Status'] == 'Open' and document['Requested_By'] == request.session['User_ID']:
-                output_json = json.dumps(document)
-                open.append(json.loads(output_json))
-            if document['Status'] == 'Released' and document['Requested_By'] == request.session['User_ID']:
-                output_json = json.dumps(document)
-                Approved.append(json.loads(output_json))
-            if document['Status'] == 'Rejected' and document['Requested_By'] == request.session['User_ID']:
-                output_json = json.dumps(document)
-                Rejected.append(json.loads(output_json))
-            if document['Status'] == "Pending Approval" and document['Requested_By'] == request.session['User_ID']:
-                output_json = json.dumps(document)
-                Pending.append(json.loads(output_json))
-        counts = len(open)
-        counter = len(Approved)
-        reject = len(Rejected)
-        pend = len(Pending)
-    except requests.exceptions.ConnectionError as e:
-        print(e)
+        fullname = request.session['User_ID']
+        year = request.session['years']
+        session = requests.Session()
+        session.auth = config.AUTHS
 
-    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-    ctx = {"today": todays_date, "res": open,
-           "count": counts, "response": Approved,
-           "counter": counter, "rej": Rejected,
-           'reject': reject, "store": Stores,
-           "pend": pend, "pending": Pending,
-           "full": fullname, "year": year}
+        Access_Point = config.O_DATA.format("/QyStoreRequisitionHeaders")
+        QYStore = config.O_DATA.format("/QyLocations")
+        try:
+            response = session.get(Access_Point, timeout=10).json()
+            Store_res = session.get(QYStore, timeout=10).json()
+            open = []
+            Approved = []
+            Rejected = []
+            Pending = []
+            Stores = Store_res['value']
+            for document in response['value']:
+                if document['Status'] == 'Open' and document['Requested_By'] == request.session['User_ID']:
+                    output_json = json.dumps(document)
+                    open.append(json.loads(output_json))
+                if document['Status'] == 'Released' and document['Requested_By'] == request.session['User_ID']:
+                    output_json = json.dumps(document)
+                    Approved.append(json.loads(output_json))
+                if document['Status'] == 'Rejected' and document['Requested_By'] == request.session['User_ID']:
+                    output_json = json.dumps(document)
+                    Rejected.append(json.loads(output_json))
+                if document['Status'] == "Pending Approval" and document['Requested_By'] == request.session['User_ID']:
+                    output_json = json.dumps(document)
+                    Pending.append(json.loads(output_json))
+            counts = len(open)
+            counter = len(Approved)
+            reject = len(Rejected)
+            pend = len(Pending)
+        except requests.exceptions.ConnectionError as e:
+            print(e)
+
+        todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
+        ctx = {"today": todays_date, "res": open,
+            "count": counts, "response": Approved,
+            "counter": counter, "rej": Rejected,
+            'reject': reject, "store": Stores,
+            "pend": pend, "pending": Pending,
+            "full": fullname, "year": year}
+    except KeyError:
+        messages.info(request, "Session Expired. Please Login")
+        return redirect('auth')
     return render(request, 'storeReq.html', ctx)
 
 
@@ -700,83 +714,87 @@ def CreateStoreRequisition(request):
 
 
 def StoreRequestDetails(request, pk):
-    fullname = request.session['User_ID']
-    year = request.session['years']
-    session = requests.Session()
-    session.auth = config.AUTHS
-    state = ''
-    res = ''
-    Access_Point = config.O_DATA.format("/QyStoreRequisitionHeaders")
-    Item = config.O_DATA.format("/QyItems")
-    Location = config.O_DATA.format("/QyLocations")
-    Approver = config.O_DATA.format("/QyApprovalEntries")
-    Measure = config.O_DATA.format("/QyUnitsOfMeasure")
     try:
-        response = session.get(Access_Point, timeout=10).json()
-        Item_res = session.get(Item, timeout=10).json()
-        Loc_res = session.get(Location, timeout=10).json()
-        res_approver = session.get(Approver, timeout=10).json()
-        res_Measure = session.get(Measure, timeout=10).json()
-        openImp = []
-        res_type = []
-        Approvers = []
-        items = Item_res['value']
-        Location = Loc_res['value']
-        unit = res_Measure['value']
-        for approver in res_approver['value']:
-            if approver['Document_No_'] == pk:
-                output_json = json.dumps(approver)
-                Approvers.append(json.loads(output_json))
-        for document in response['value']:
-            if document['Status'] == 'Released' and document['Requested_By'] == request.session['User_ID']:
-                output_json = json.dumps(document)
-                openImp.append(json.loads(output_json))
-                for document in openImp:
-                    if document['No_'] == pk:
-                        res = document
-                        if document['Status'] == 'Released':
-                            state = 3
-            if document['Status'] == 'Open' and document['Requested_By'] == request.session['User_ID']:
-                output_json = json.dumps(document)
-                openImp.append(json.loads(output_json))
-                for document in openImp:
-                    if document['No_'] == pk:
-                        res = document
-                        if document['Status'] == 'Open':
-                            state = 1
-            if document['Status'] == 'Rejected' and document['Requested_By'] == request.session['User_ID']:
-                output_json = json.dumps(document)
-                openImp.append(json.loads(output_json))
-                for document in openImp:
-                    if document['No_'] == pk:
-                        res = document
-            if document['Status'] == "Pending Approval" and document['Requested_By'] == request.session['User_ID']:
-                output_json = json.dumps(document)
-                openImp.append(json.loads(output_json))
-                for document in openImp:
-                    if document['No_'] == pk:
-                        res = document
-                        if document['Status'] == 'Pending Approval':
-                            state = 2
-    except requests.exceptions.ConnectionError as e:
-        print(e)
-    Lines_Res = config.O_DATA.format("/QyStoreRequisitionLines")
-    try:
-        response_Lines = session.get(Lines_Res, timeout=10).json()
-        openLines = []
-        for document in response_Lines['value']:
-            if document['AuxiliaryIndex1'] == pk:
-                output_json = json.dumps(document)
-                openLines.append(json.loads(output_json))
-    except requests.exceptions.ConnectionError as e:
-        print(e)
-    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-    ctx = {"today": todays_date, "res": res,
-           "state": state, "line": openLines,
-           "type": res_type, "items": items,
-           "Approvers": Approvers, "loc": Location,
-           "year": year, "full": fullname,
-           "unit": unit}
+        fullname = request.session['User_ID']
+        year = request.session['years']
+        session = requests.Session()
+        session.auth = config.AUTHS
+        state = ''
+        res = ''
+        Access_Point = config.O_DATA.format("/QyStoreRequisitionHeaders")
+        Item = config.O_DATA.format("/QyItems")
+        Location = config.O_DATA.format("/QyLocations")
+        Approver = config.O_DATA.format("/QyApprovalEntries")
+        Measure = config.O_DATA.format("/QyUnitsOfMeasure")
+        try:
+            response = session.get(Access_Point, timeout=10).json()
+            Item_res = session.get(Item, timeout=10).json()
+            Loc_res = session.get(Location, timeout=10).json()
+            res_approver = session.get(Approver, timeout=10).json()
+            res_Measure = session.get(Measure, timeout=10).json()
+            openImp = []
+            res_type = []
+            Approvers = []
+            items = Item_res['value']
+            Location = Loc_res['value']
+            unit = res_Measure['value']
+            for approver in res_approver['value']:
+                if approver['Document_No_'] == pk:
+                    output_json = json.dumps(approver)
+                    Approvers.append(json.loads(output_json))
+            for document in response['value']:
+                if document['Status'] == 'Released' and document['Requested_By'] == request.session['User_ID']:
+                    output_json = json.dumps(document)
+                    openImp.append(json.loads(output_json))
+                    for document in openImp:
+                        if document['No_'] == pk:
+                            res = document
+                            if document['Status'] == 'Released':
+                                state = 3
+                if document['Status'] == 'Open' and document['Requested_By'] == request.session['User_ID']:
+                    output_json = json.dumps(document)
+                    openImp.append(json.loads(output_json))
+                    for document in openImp:
+                        if document['No_'] == pk:
+                            res = document
+                            if document['Status'] == 'Open':
+                                state = 1
+                if document['Status'] == 'Rejected' and document['Requested_By'] == request.session['User_ID']:
+                    output_json = json.dumps(document)
+                    openImp.append(json.loads(output_json))
+                    for document in openImp:
+                        if document['No_'] == pk:
+                            res = document
+                if document['Status'] == "Pending Approval" and document['Requested_By'] == request.session['User_ID']:
+                    output_json = json.dumps(document)
+                    openImp.append(json.loads(output_json))
+                    for document in openImp:
+                        if document['No_'] == pk:
+                            res = document
+                            if document['Status'] == 'Pending Approval':
+                                state = 2
+        except requests.exceptions.ConnectionError as e:
+            print(e)
+        Lines_Res = config.O_DATA.format("/QyStoreRequisitionLines")
+        try:
+            response_Lines = session.get(Lines_Res, timeout=10).json()
+            openLines = []
+            for document in response_Lines['value']:
+                if document['AuxiliaryIndex1'] == pk:
+                    output_json = json.dumps(document)
+                    openLines.append(json.loads(output_json))
+        except requests.exceptions.ConnectionError as e:
+            print(e)
+        todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
+        ctx = {"today": todays_date, "res": res,
+            "state": state, "line": openLines,
+            "type": res_type, "items": items,
+            "Approvers": Approvers, "loc": Location,
+            "year": year, "full": fullname,
+            "unit": unit}
+    except KeyError:
+        messages.info(request, "Session Expired. Please Login")
+        return redirect('auth')
     return render(request, 'storeDetail.html', ctx)
 
 
@@ -789,15 +807,15 @@ def StoreApproval(request, pk):
         except ValueError as e:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('StoreDetail', pk=pk)
-    try:
-        response = config.CLIENT.service.FnRequestInternalRequestApproval(
-            myUserID, requistionNo)
-        messages.success(request, "Approval Request Successfully Sent!!")
-        print(response)
-        return redirect('StoreDetail', pk=pk)
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
+        try:
+            response = config.CLIENT.service.FnRequestInternalRequestApproval(
+                myUserID, requistionNo)
+            messages.success(request, "Approval Request Successfully Sent!!")
+            print(response)
+            return redirect('StoreDetail', pk=pk)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
     return redirect('StoreDetail', pk=pk)
 
 
@@ -810,15 +828,15 @@ def FnCancelStoreApproval(request, pk):
         except ValueError as e:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('StoreDetail', pk=pk)
-    try:
-        response = config.CLIENT.service.FnCancelInternalRequestApproval(
-            myUserID, requistionNo)
-        messages.success(request, "Cancel Approval Successful !!")
-        print(response)
-        return redirect('StoreDetail', pk=pk)
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
+        try:
+            response = config.CLIENT.service.FnCancelInternalRequestApproval(
+                myUserID, requistionNo)
+            messages.success(request, "Cancel Approval Successful !!")
+            print(response)
+            return redirect('StoreDetail', pk=pk)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
     return redirect('StoreDetail', pk=pk)
 
 
@@ -841,15 +859,15 @@ def CreateStoreLines(request, pk):
         except ValueError:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('StoreDetail', pk=requisitionNo)
-    try:
-        response = config.CLIENT.service.FnStoreRequisitionLine(
-            requisitionNo, lineNo, itemCode, location, quantity, unitOfMeasure, myAction)
-        messages.success(request, "Successfully Added!!")
-        print(response)
-        return redirect('StoreDetail', pk=requisitionNo)
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
+        try:
+            response = config.CLIENT.service.FnStoreRequisitionLine(
+                requisitionNo, lineNo, itemCode, location, quantity, unitOfMeasure, myAction)
+            messages.success(request, "Successfully Added!!")
+            print(response)
+            return redirect('StoreDetail', pk=requisitionNo)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
     return redirect('StoreDetail', pk=requisitionNo)
 
 # Delete Store Header
@@ -880,22 +898,22 @@ def FnGenerateStoreReport(request, pk):
             filenameFromApp = pk
         except ValueError as e:
             return redirect('StoreDetail', pk=pk)
-    filenameFromApp = filenameFromApp + str(nameChars) + ".pdf"
-    try:
-        response = config.CLIENT.service.FnGenerateStoreReport(
-            reqNo, filenameFromApp)
-        buffer = BytesIO.BytesIO()
-        content = base64.b64decode(response)
-        buffer.write(content)
-        responses = HttpResponse(
-            buffer.getvalue(),
-            content_type="application/pdf",
-        )
-        responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
-        return responses
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
+        filenameFromApp = filenameFromApp + str(nameChars) + ".pdf"
+        try:
+            response = config.CLIENT.service.FnGenerateStoreReport(
+                reqNo, filenameFromApp)
+            buffer = BytesIO.BytesIO()
+            content = base64.b64decode(response)
+            buffer.write(content)
+            responses = HttpResponse(
+                buffer.getvalue(),
+                content_type="application/pdf",
+            )
+            responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
+            return responses
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
     return redirect('StoreDetail', pk=pk)
 
 def UploadStoreAttachment(request, pk):

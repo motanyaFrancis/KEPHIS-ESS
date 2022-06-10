@@ -6,30 +6,27 @@
     <div class="content-wrapper" style="padding-bottom: 5rem;">
         <div class="d-xl-flex justify-content-between align-items-start">
             <h2 class="text-dark font-weight-bold mb-2"> Staff Claim
-                {% if state == 1 %}
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> <i
-                        class="las la-plus"></i> Add Claim
-                    Lines</button>
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Attachment"> <i
-                        class="las la-plus"></i> Upload Attachment</button>
-                {% elif state == 3 %}
+
+                <!-- <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Attachment"> <i
+                        class="las la-plus"></i> Upload Attachment</button> -->
+                {% if state == 3 %}
                 <form action="{% url 'FnGenerateStaffClaimReport' res.No_ %}" method="post"
                     style="display:inline-block">
                     {% csrf_token %}
                     <button class="btn btn-success" type="submit"> Generate
                         Report</button>
                 </form>
-                {% else %}
-                <button class="btn btn-info">{{res.Status}}</button>
                 {% endif %}
             </h2>
 
             <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
                 <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
-                    <button class="btn bg-white dropdown-toggle p-3 d-flex align-items-center" type="button"
-                        id="dropdownMenuButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i
-                            class="mdi mdi-calendar mr-1"></i>{{today}}
+                    {% if state == 1 %}
+                    <button class="btn btn-successs p-3 d-flex align-items-center" type="button" data-bs-toggle="modal"
+                        data-bs-target="#staticBackdrop"> <i class="las la-plus"></i> Add Claim
+                        Lines
                     </button>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -444,13 +441,19 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <label for="" class="form-label">Expenditure Date:</label>
-                                <input type="date" class="form-control" name="expenditureDate" required>
+                                <input type="date" class="form-control" id="Expenditure" min="1980-01-01" max=""
+                                    name="expenditureDate" required>
                                 <div class="invalid-feedback">
                                     Please Select Expenditure Date.
                                 </div>
                             </div>
                         </div>
-
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="" class="form-label">Attachment:</label>
+                                <input type="file" class="form-control" name="" required>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col-md-12">
                                 <label for="" class="form-label">Expenditure Description</label>
@@ -498,5 +501,12 @@
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function () {
+        var utc = new Date().toJSON().slice(0, 10).replace(/-/g, '-');
+        var x = document.getElementById("Expenditure").max = utc;
+        var text = document.getElementById("Expenditure").getAttribute("max");
+    })
+</script>
 
 {% endblock %}

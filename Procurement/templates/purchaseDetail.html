@@ -8,27 +8,27 @@
         <div class="d-xl-flex justify-content-between align-items-start">
             <h2 class="text-dark font-weight-bold mb-2"> Purchase Requisition
                 {% if state == 1 %}
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> <i
-                        class="las la-plus"></i> Requisition Lines</button>
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Attachment"> <i
                         class="las la-plus"></i> Upload Attachment</button>
-                {% elif state == 3 %}
-                <form action="{% url 'FnGeneratePurchaseReport' res.No_ %}" method="post" style="display:inline-block">
-                    {% csrf_token %}
-                    <button class="btn btn-success" type="submit"> Generate
-                        Report</button>
-                </form>
-                {% else %}
-                <button class="btn btn-info"> {{res.Status}}</button>
                 {% endif %}
             </h2>
 
             <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
                 <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
-                    <button class="btn bg-white dropdown-toggle p-3 d-flex align-items-center" type="button"
-                        id="dropdownMenuButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i
-                            class="mdi mdi-calendar mr-1"></i>{{today}}
+                    {% if state == 1 %}
+                    <button class="btn btn-successs p-3 d-flex align-items-center" data-bs-toggle="modal"
+                        data-bs-target="#staticBackdrop" type="button"> <i class="las la-plus text-white"
+                            style="font-size:15px;"></i> Add Requisition
+                        Lines
                     </button>
+                    {% elif state == 3 %}
+                    <form action="{% url 'FnGeneratePurchaseReport' res.No_ %}" method="post"
+                        style="display:inline-block">
+                        {% csrf_token %}
+                        <button class="btn btn-successs" type="submit"> Preview
+                            Report</button>
+                    </form>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -470,32 +470,26 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row" id="itemNosRow" style="display: none;">
                             <div class="col-md-12">
                                 <label class="form-label">Item</label>
-                                <select class="form-select" id="itemNos" name="itemNo" required disabled>
+                                <select class="form-select" id="itemNos" name="itemNo" disabled>
                                     <option selected disabled value="">Select Item</option>
                                     {% for res in items %}
                                     <option value="{{res.No_}}">{{res.Description}}</option>
                                     {% endfor %}
                                 </select>
-                                <div class="invalid-feedback">
-                                    Please Select Valid Item.
-                                </div>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row" id="glsRow" style="display: none;">
                             <div class="col-md-12">
                                 <label class="form-label">G/L Accounts</label>
-                                <select class="form-select" id="gls" name="itemNo" required disabled>
+                                <select class="form-select" id="gls" name="itemNo" disabled>
                                     <option selected disabled value="">Select G/L Account</option>
                                     {% for res in gl %}
                                     <option value="{{res.No_}}">{{res.Name}}</option>
                                     {% endfor %}
                                 </select>
-                                <div class="invalid-feedback">
-                                    Please Select Valid G/L Account.
-                                </div>
                             </div>
                         </div>
                         <div class="row">
@@ -553,14 +547,18 @@
     $(document).ready(function () {
         $('#itemTypess').on('change', function () {
             if (this.value == "1") {
+                $('#itemNosRow').hide();
+                $('#glsRow').show(1000);
                 $('#gls').prop('disabled', false);
                 $('#itemNos').prop('disabled', true);
-                $("#gls").attr("hidden",false);
             } else if (this.value == "2") {
+                $('#itemNosRow').show(1000);
+                $('#glsRow').hide(1000);
                 $('#itemNos').prop('disabled', false);
                 $('#gls').prop('disabled', true);
-                $("#itemNos").attr("hidden",false);
             } else {
+                $('#itemNosRow').hide();
+                $('#glsRow').hide();
                 $('#gls').prop('disabled', true);
                 $('#itemNos').prop('disabled', true);
             }
