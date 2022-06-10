@@ -3,7 +3,7 @@ from . import views
 
 
 urlpatterns = [
-    path('ImprestRequisition', views.ImprestRequisition, name='imprestReq'),
+    path('imprest/requisition', views.ImprestRequisition, name='imprestReq'),
     path('CreateImp', views.CreateImprest, name='create'),
     path('CreateImpLines/<str:pk>',
          views.CreateImprestLines, name='CreateImpLines'),
