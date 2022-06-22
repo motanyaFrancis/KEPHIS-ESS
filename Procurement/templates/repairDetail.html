@@ -212,72 +212,6 @@
                                                 data-placement="top" title="Delete"><i class="fas fa-trash-alt"></i>
                                             </button>
                                         </form>
-                                        <button class="btn btn-primary" data-bs-toggle="modal"
-                                            data-bs-target="#trainedit{{res.Line_No_}}" data-toggle="tooltip"
-                                            data-placement="top" title="edit"><i class="fas fa-edit"></i>
-                                        </button>
-                                        <div class="modal fade" id="trainedit{{res.Line_No_}}" data-bs-backdrop="static"
-                                            data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
-                                            aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="staticBackdropLabel">Edit Repair
-                                                            Line {{res.Line_No_}}
-                                                        </h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                            aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <form class="myForm needs-validation"
-                                                            action="{% url 'RepairLines' res.AuxiliaryIndex1 %}"
-                                                            method="post" novalidate>
-                                                            {% csrf_token %}
-                                                            <div class="row">
-                                                                <div class="col-md-12">
-                                                                    <input type="hidden" name="lineNo"
-                                                                        value="{{res.Line_No_}}">
-                                                                    <input type="hidden" name="myAction" value="modify">
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-12">
-                                                                    <label class="form-label">Asset</label>
-                                                                    <select class="form-select" name="assetCode"
-                                                                        required>
-                                                                        <option selected disabled value="">Select Asset
-                                                                        </option>
-                                                                        {% for res in asset %}
-                                                                        <option value="{{res.No_}}">{{res.Description}}
-                                                                        </option>
-                                                                        {% endfor %}
-                                                                    </select>
-                                                                    <div class="invalid-feedback">
-                                                                        Please Select a Valid Asset.
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-12">
-                                                                    <label class="form-label">Description</label>
-                                                                    <textarea class="form-control" name="description"
-                                                                        rows="3" required></textarea>
-                                                                    <div class="invalid-feedback">
-                                                                        Enter Description.
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-danger"
-                                                            data-bs-dismiss="modal">Discard</button>
-                                                        <button type="submit" id="sasa"
-                                                            class="btn btn-primary">Submit</button>
-                                                    </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
                                         {% else %}
                                         No Actions
                                         {% endif %}
@@ -360,7 +294,7 @@
                 </div>
                 <div class="modal-body">
                     <form class="myForm needs-validation" action="{% url 'RepairLines' res.No_ %}" method="post"
-                        novalidate>
+                        enctype="multipart/form-data" novalidate>
                         {% csrf_token %}
                         <div class="row">
                             <div class="col-md-12">
@@ -385,7 +319,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <label class="form-label">Attachments</label>
-                                <input class="form-control" name="attachment" type="file" multiple>
+                                <input class="form-control" name="attachment" type="file" multiple required>
                             </div>
                         </div>
                         <div class="row">
@@ -407,32 +341,6 @@
         </div>
     </div>
 </section>
-<!-- Modal -->
-<div class="modal fade" id="Attachment" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Upload Attachment</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form action="{% url 'UploadRepairAttachment' res.No_ %}" method="post" class="myForm"
-                    enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <div class=" mb-3">
-                        <label class="form-label">Attachments</label>
-                        <input class="form-control" name="attachment" type="file" multiple>
-                    </div>
 
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </div>
-            </form>
-        </div>
-    </div>
-</div>
 
 {% endblock %}

@@ -22,18 +22,28 @@ def Approve(request):
         try:
             response = session.get(Access_Point, timeout=10).json()
             open = []
+            approved = []
+            rejected = []
             for approve in response['value']:
                 if approve['Status'] == 'Open' and approve['Approver_ID'] == request.session['User_ID']:
                     output_json = json.dumps(approve)
                     open.append(json.loads(output_json))
+                if approve['Status'] == 'Released' and approve['Approver_ID'] == request.session['User_ID']:
+                    output_json = json.dumps(approve)
+                    approved.append(json.loads(output_json))
+                if approve['Status'] == 'Rejected' and approve['Approver_ID'] == request.session['User_ID']:
+                    output_json = json.dumps(approve)
+                    rejected.append(json.loads(output_json))
             counts = len(open)
+            countApproved = len(approved)
+            countReject = len(rejected)
         except requests.exceptions.ConnectionError as e:
             print(e)
 
         todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
         ctx = {"today": todays_date, "res": open,
             "year": year, "full": fullname,
-            "count": counts}
+            "count": counts,"countApproved":countApproved}
     except KeyError:
         messages.info(request, "Session Expired. Please Login")
         return redirect('auth')       

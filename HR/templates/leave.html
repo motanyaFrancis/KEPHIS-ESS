@@ -51,6 +51,10 @@
                                     ({{count}})</a>
                             </li>
                             <li class="nav-item">
+                                <a href="#pending" class="nav-link" data-bs-toggle="tab">Pending Approval
+                                    ({{pend}})</a>
+                            </li>
+                            <li class="nav-item">
                                 <a href="#profile" class="nav-link" data-bs-toggle="tab">Approved
                                     ({{counter}})</a>
                             </li>
@@ -58,10 +62,7 @@
                                 <a href="#reject" class="nav-link" data-bs-toggle="tab">Rejected
                                     ({{reject}})</a>
                             </li>
-                            <li class="nav-item">
-                                <a href="#pending" class="nav-link" data-bs-toggle="tab">Pending Approval
-                                    ({{pend}})</a>
-                            </li>
+
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane fade show active" id="home">
@@ -137,9 +138,9 @@
                                                                                 <div class="col-md-12">
                                                                                     <label class="form-label">
                                                                                         Leave Type</label>
-                                                                                    <select class="form-select"
-                                                                                        name="leaveType"
-                                                                                        id="EditLeaveType" required>
+                                                                                    <select
+                                                                                        class="form-select EditLeaveType"
+                                                                                        name="leaveType" required>
                                                                                         <option selected
                                                                                             value="{{res.Leave_Code}}">
                                                                                             {{res.Leave_Code}}</option>
@@ -148,21 +149,16 @@
                                                                                             {{res.Description}}</option>
                                                                                         {% endfor %}
                                                                                     </select>
-                                                                                    <div class="invalid-feedback">
-                                                                                        Please select a valid Leave
-                                                                                        Type.
-                                                                                    </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="row mt-3"
-                                                                                id="EditPlannerStartDateRow"
+                                                                            <div class="row mt-3 EditPlannerStartDateRow"
                                                                                 style="display:none">
                                                                                 <div class="col-md-12">
                                                                                     <label class="form-label">
                                                                                         Planner Start Date</label>
-                                                                                    <select class="form-select"
+                                                                                    <select
+                                                                                        class="form-select EditPlannerStartDate"
                                                                                         name="plannerStartDate"
-                                                                                        id="EditPlannerStartDate"
                                                                                         disabled>
                                                                                         <option selected disabled
                                                                                             value="">
@@ -175,35 +171,42 @@
                                                                                     </select>
                                                                                 </div>
                                                                             </div>
+                                                                            <div class="row EditLeaveStartDateRow"
+                                                                                style="display:none">
+                                                                                <div class="col-md-12">
+                                                                                    <label for=""
+                                                                                        class="form-label">Leave Start
+                                                                                        Date:</label>
+                                                                                    <input type="date"
+                                                                                        class="form-control EditLeaveStartDate"
+                                                                                        name="plannerStartDate"
+                                                                                        disabled>
+                                                                                </div>
+                                                                            </div>
                                                                             <div class="row">
                                                                                 <div class="col-md-12">
                                                                                     <label class="form-label"> Return
                                                                                         Same
                                                                                         Day </label>
-                                                                                    <select class="form-select"
-                                                                                        id="EditReturnSameDay"
+                                                                                    <select
+                                                                                        class="form-select EditReturnSameDay"
                                                                                         name="isReturnSameDay" required>
                                                                                         <option selected value="">Select
                                                                                         </option>
-                                                                                        <option value="True">True
+                                                                                        <option value="True">Yes
                                                                                         </option>
-                                                                                        <option value="False">False
+                                                                                        <option value="False">No
                                                                                         </option>
                                                                                     </select>
-                                                                                    <div class="invalid-feedback">
-                                                                                        Please Select valid Option
-                                                                                    </div>
-
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="row" id="EditdayAppliedRow"
+                                                                            <div class="row EditdayAppliedRow"
                                                                                 style="display: none;">
                                                                                 <div class="col-md-12">
                                                                                     <label class="form-label">Days
                                                                                         Applied</label>
                                                                                     <input type="number"
-                                                                                        class="form-control"
-                                                                                        id="EditdayApplied"
+                                                                                        class="form-control EditdayApplied"
                                                                                         name="daysApplied"
                                                                                         placeholder="{{res.Days_Applied}}"
                                                                                         disabled>
@@ -376,9 +379,6 @@
                                         <option value="{{res.Code}}">{{res.Description}}</option>
                                         {% endfor %}
                                     </select>
-                                    <div class="invalid-feedback">
-                                        Please select a valid Leave Type.
-                                    </div>
                                 </div>
                             </div>
                             <div class="row mt-3" id="plannerStartDateRow" style="display:none;">
@@ -390,8 +390,15 @@
                                         <option value="{{res.Start_Date}}">{{res.Start_Date}}</option>
                                         {% endfor %}
                                     </select>
-                                    <div class="form-text small">Select your annual leave plan start date (Optional)
+                                    <div class="form-text small">Select your annual leave plan start date
                                     </div>
+                                </div>
+                            </div>
+                            <div class="row" id="LeaveStartDateRow" style="display:none">
+                                <div class="col-md-12">
+                                    <label for="" class="form-label">Leave Start Date:</label>
+                                    <input type="date" class="form-control" name="plannerStartDate" id="LeaveStartDate"
+                                        disabled>
                                 </div>
                             </div>
                             <div class="row">
@@ -402,10 +409,6 @@
                                         <option value="True">Yes</option>
                                         <option value="False">No</option>
                                     </select>
-                                    <div class="invalid-feedback">
-                                        Please Select valid Option
-                                    </div>
-
                                 </div>
                             </div>
                             <div class="row" id="daysAppliedRow" style="display:none;">
@@ -441,13 +444,13 @@
                 $('#daysAppliedRow').hide(1000)
             }
         });
-        $('#EditReturnSameDay').on('change', function () {
+        $('.EditReturnSameDay').on('change', function () {
             if (this.value == "False") {
-                $('#EditdayAppliedRow').show(1000)
-                $('#EditdayApplied').prop('disabled', false);
+                $('.EditdayAppliedRow').show(1000)
+                $('.EditdayApplied').prop('disabled', false);
             } else if (this.value == "True") {
-                $('#EditdayApplied').prop('disabled', true);
-                $('#EditdayAppliedRow').hide(1000)
+                $('.EditdayApplied').prop('disabled', true);
+                $('.EditdayAppliedRow').hide(1000)
             }
         });
         // Leave type on change to display and hide planner start date
@@ -455,18 +458,26 @@
             if (this.value == "ANNUAL") {
                 $('#plannerStartDateRow').show(1000)
                 $('#plannerStartDate').prop('disabled', false);
+                $('#LeaveStartDateRow').hide(1300)
+                $('#LeaveStartDate').prop('disabled', true);
             } else {
                 $('#plannerStartDate').prop('disabled', true);
-                $('#plannerStartDateRow').hide(1000)
+                $('#plannerStartDateRow').hide(1000);
+                $('#LeaveStartDateRow').show(1300)
+                $('#LeaveStartDate').prop('disabled', false);
             }
         });
-        $('#EditLeaveType').on('change', function () {
+        $('.EditLeaveType').on('change', function () {
             if (this.value == "ANNUAL") {
-                $('#EditPlannerStartDateRow').show(1000)
-                $('#EditPlannerStartDate').prop('disabled', false);
+                $('.EditPlannerStartDateRow').show(1000)
+                $('.EditPlannerStartDate').prop('disabled', false);
+                $('.EditLeaveStartDateRow').hide(1300)
+                $('.EditLeaveStartDate').prop('disabled', true);
             } else {
-                $('#EditPlannerStartDate').prop('disabled', true);
-                $('#EditPlannerStartDateRow').hide(1000)
+                $('.EditPlannerStartDate').prop('disabled', true);
+                $('.EditPlannerStartDateRow').hide(1000);
+                $('.EditLeaveStartDateRow').show(1300)
+                $('.EditLeaveStartDate').prop('disabled', false);
             }
         });
     })

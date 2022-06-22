@@ -96,17 +96,17 @@ def CreateImprest(request):
         except ValueError:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('imprestReq')
-    if not imprestNo:
-        imprestNo = " "
-    print("imprestNo", imprestNo)
-    try:
-        response = config.CLIENT.service.FnImprestHeader(
-            imprestNo, accountNo, responsibilityCenter, travelType, purpose, usersId, personalNo, isImprest, isDsa, myAction)
-        messages.success(request, "Successfully Added!!")
-        print(response)
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
+        if not imprestNo:
+            imprestNo = " "
+        print("Myaction", myAction)
+        try:
+            response = config.CLIENT.service.FnImprestHeader(
+                imprestNo, accountNo, responsibilityCenter, travelType, purpose, usersId, personalNo, isImprest, isDsa, myAction)
+            messages.success(request, "Successfully Added!!")
+            print(response)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
     return redirect('imprestReq')
 
 
@@ -894,7 +894,9 @@ def CreateClaimLines(request, pk):
             expenditureDate = datetime.strptime(
                 request.POST.get('expenditureDate'), '%Y-%m-%d').date()
             expenditureDescription = request.POST.get('expenditureDescription')
+            attach = request.FILES.getlist('attachment')
             myAction = request.POST.get('myAction')
+            tableID = 52177431
         except Exception as e:
             messages.error(request, "Invalid Input.")
             return redirect('ClaimDetail', pk=claimNo)
@@ -902,9 +904,24 @@ def CreateClaimLines(request, pk):
         try:
             response = config.CLIENT.service.FnStaffClaimLine(
                 lineNo, claimNo, claimType, accountNo, amount, claimReceiptNo, dimension3, expenditureDate, expenditureDescription, myAction)
-            messages.success(request, "Successfully Added!!")
             print(response)
-            return redirect('ClaimDetail', pk=claimNo)
+            if response != 0:
+                for files in attach:
+                    fileName = request.FILES['attachment'].name
+                    attachment = base64.b64encode(files.read())
+                    try:
+                        responses = config.CLIENT.service.FnUploadAttachedDocument(
+                            pk +'#'+str(response), fileName, attachment, tableID)
+                        if responses == True:
+                            messages.success(request, "Request Successful")
+                            return redirect('ClaimDetail', pk=pk)
+                        else:
+                            messages.error(request, "Not Sent !!")
+                            return redirect('ClaimDetail', pk=pk)
+                    except Exception as e:
+                        messages.error(request, e)
+                        print(e)
+
         except Exception as e:
             messages.error(request, e)
             print(e)
@@ -930,39 +947,6 @@ def ClaimApproval(request, pk):
             messages.error(request, e)
             print(e)
     return redirect('ClaimDetail', pk=pk)
-
-
-def UploadClaimAttachment(request, pk):
-    docNo = pk
-    response = ""
-    fileName = ""
-    attachment = ""
-    tableID = 52177430
-
-    if request.method == "POST":
-        try:
-            attach = request.FILES.getlist('attachment')
-        except Exception as e:
-            return redirect('ClaimDetail', pk=pk)
-        for files in attach:
-            fileName = request.FILES['attachment'].name
-            attachment = base64.b64encode(files.read())
-            try:
-                response = config.CLIENT.service.FnUploadAttachedDocument(
-                    docNo, fileName, attachment, tableID)
-            except Exception as e:
-                messages.error(request, e)
-                print(e)
-        if response == True:
-            messages.success(request, "Successfully Sent !!")
-
-            return redirect('ClaimDetail', pk=pk)
-        else:
-            messages.error(request, "Not Sent !!")
-            return redirect('ClaimDetail', pk=pk)
-
-    return redirect('ClaimDetail', pk=pk)
-
 
 def FnCancelClaimApproval(request, pk):
     employeeNo = request.session['Employee_No_']

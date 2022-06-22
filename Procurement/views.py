@@ -1,4 +1,5 @@
 import base64
+from urllib.parse import parse_qs
 from django.shortcuts import render, redirect
 from datetime import date, datetime
 import requests
@@ -69,9 +70,7 @@ def CreatePurchaseRequisition(request):
     requisitionNo = ''
     orderDate = ''
     employeeNo = request.session['Employee_No_']
-    reason = ""
     expectedReceiptDate = ''
-    isConsumable = ""
     myUserId = request.session['User_ID']
     myAction = ' '
     if request.method == 'POST':
@@ -79,10 +78,8 @@ def CreatePurchaseRequisition(request):
             requisitionNo = request.POST.get('requisitionNo')
             orderDate = datetime.strptime(
                 request.POST.get('orderDate'), '%Y-%m-%d').date()
-            reason = request.POST.get('reason')
             expectedReceiptDate = datetime.strptime(
                 request.POST.get('expectedReceiptDate'), '%Y-%m-%d').date()
-            isConsumable = eval(request.POST.get('isConsumable'))
             myAction = request.POST.get('myAction')
         except ValueError:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
@@ -91,7 +88,7 @@ def CreatePurchaseRequisition(request):
             requisitionNo = " "
         try:
             response = config.CLIENT.service.FnPurchaseRequisitionHeader(
-                requisitionNo, orderDate, employeeNo, reason, expectedReceiptDate, isConsumable, myUserId, myAction)
+                requisitionNo, orderDate, employeeNo, expectedReceiptDate, myUserId, myAction)
             messages.success(request, "Successfully Added!!")
             print(response)
         except Exception as e:
@@ -125,7 +122,11 @@ def PurchaseRequestDetails(request, pk):
             Proc = []
             Items = Res_itemNo['value']
             Gl_Accounts = Res_GL['value']
-            planitem = Res_Proc['value']
+            planitem = []
+            for plans in Res_Proc['value']:
+                if plans['Shortcut_Dimension_2_Code'] == request.session['Department']:
+                    output_json = json.dumps(plans)
+                    planitem.append(json.loads(output_json))
             for approver in res_approver['value']:
                 if approver['Document_No_'] == pk:
                     output_json = json.dumps(approver)
@@ -447,7 +448,12 @@ def RepairRequestDetails(request, pk):
             openImp = []
             res_type = []
             Approvers = []
-            my_asset = Assest_res['value']
+            my_asset =[]
+
+            for assest in Assest_res['value']:
+                if assest['Responsible_Employee'] == request.session['Employee_No_']:
+                    output_json = json.dumps(assest)
+                    my_asset.append(json.loads(output_json))
             for approver in res_approver['value']:
                 if approver['Document_No_'] == pk:
                     output_json = json.dumps(approver)
@@ -528,39 +534,6 @@ def RepairApproval(request, pk):
             print(e)
     return redirect('RepairDetail', pk=pk)
 
-
-def UploadRepairAttachment(request, pk):
-    docNo = pk
-    response = ""
-    fileName = ""
-    attachment = ""
-    tableID = 52177432
-
-    if request.method == "POST":
-        try:
-            attach = request.FILES.getlist('attachment')
-        except Exception as e:
-            return redirect('RepairDetail', pk=pk)
-        for files in attach:
-            fileName = request.FILES['attachment'].name
-            attachment = base64.b64encode(files.read())
-            try:
-                response = config.CLIENT.service.FnUploadAttachedDocument(
-                    docNo, fileName, attachment, tableID)
-            except Exception as e:
-                messages.error(request, e)
-                print(e)
-        if response == True:
-            messages.success(request, "Successfully Sent !!")
-
-            return redirect('RepairDetail', pk=pk)
-        else:
-            messages.error(request, "Not Sent !!")
-            return redirect('RepairDetail', pk=pk)
-
-    return redirect('RepairDetail', pk=pk)
-
-
 def FnCancelRepairApproval(request, pk):
     myUserID = request.session['User_ID']
     requistionNo = ""
@@ -593,25 +566,37 @@ def CreateRepairLines(request, pk):
             lineNo = int(request.POST.get('lineNo'))
             assetCode = request.POST.get('assetCode')
             description = request.POST.get('description')
+            attach = request.FILES.getlist('attachment')
             myAction = request.POST.get('myAction')
+            tableID = 52177433
         except ValueError:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('RepairDetail', pk=requisitionNo)
-        print("requisitionNo", requisitionNo)
-        print("lineNo", lineNo)
-        print("assetCode", assetCode)
-        print("description", description)
-        print("myAction", myAction)
+
         try:
             response = config.CLIENT.service.FnRepairRequisitionLine(
                 requisitionNo, lineNo, assetCode, description, myAction)
-            messages.success(request, "Successfully Added!!")
             print(response)
-            return redirect('RepairDetail', pk=requisitionNo)
+            if response != 0:
+                for files in attach:
+                    fileName = request.FILES['attachment'].name
+                    attachment = base64.b64encode(files.read())
+                    try:
+                        responses = config.CLIENT.service.FnUploadAttachedDocument(
+                            pk +'#'+str(response), fileName, attachment, tableID)
+                        if responses == True:
+                            messages.success(request, "Request Successful")
+                            return redirect('RepairDetail', pk=pk)
+                        else:
+                            messages.error(request, "Not Sent !!")
+                            return redirect('RepairDetail', pk=pk)
+                    except Exception as e:
+                        messages.error(request, e)
+                        print(e)
         except Exception as e:
             messages.error(request, e)
             print(e)
-    return redirect('RepairDetail', pk=requisitionNo)
+    return redirect('RepairDetail', pk=pk)
 
 def FnDeleteRepairRequisitionLine(request, pk):
     requisitionNo = pk

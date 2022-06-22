@@ -228,106 +228,6 @@
                                                 data-placement="top" title="Delete"><i class="fas fa-trash-alt"></i>
                                             </button>
                                         </form>
-                                        <button class="btn btn-primary" data-toggle="tooltip" data-placement="top"
-                                            title="edit" data-bs-toggle="modal"
-                                            data-bs-target="#trainedit{{res.Line_No_}}"><i class="fas fa-edit"></i>
-                                        </button>
-                                        <div class="modal fade" id="trainedit{{res.Line_No_}}" data-bs-backdrop="static"
-                                            data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
-                                            aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="staticBackdropLabel">Edit Store
-                                                            Requisition
-                                                            Line
-                                                        </h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                            aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <form class="myForm needs-validation"
-                                                            action="{% url 'CreateStoreLine' res.AuxiliaryIndex1 %}"
-                                                            method="post" novalidate>
-                                                            {% csrf_token %}
-                                                            <div class="row">
-                                                                <div class="col-md-12">
-                                                                    <input type="hidden" name="lineNo"
-                                                                        value="{{res.Line_No_}}">
-                                                                    <input type="hidden" name="myAction" value="modify">
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-12">
-                                                                    <label class="form-label">Item</label>
-                                                                    <select class="form-select" name="itemCode"
-                                                                        required>
-                                                                        <option selected disabled value="">Select Item
-                                                                        </option>
-                                                                        {% for res in items %}
-                                                                        <option value="{{res.No_}}">{{res.Description}}
-                                                                        </option>
-                                                                        {% endfor %}
-                                                                    </select>
-                                                                    <div class="invalid-feedback">
-                                                                        Please Select a Valid Item.
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-12">
-                                                                    <label for="recipient-name"
-                                                                        class="col-form-label">Location</label>
-                                                                    <select class="form-select" name="location"
-                                                                        required>
-                                                                        <option selected disabled value="">Select
-                                                                            Location</option>
-                                                                        {% for res in loc %}
-                                                                        <option value="{{res.Code}}">{{res.Name}}
-                                                                        </option>
-                                                                        {% endfor %}
-                                                                    </select>
-                                                                    <div class="invalid-feedback">
-                                                                        Please Select a Valid Location.
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-12">
-                                                                    <label class="form-label">Quantity</label>
-                                                                    <input type="number" class="form-control"
-                                                                        name="quantity" required>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-12">
-                                                                    <label for="recipient-name"
-                                                                        class="col-form-label">Unit Of Measure</label>
-                                                                    <select class="form-select" name="unitOfMeasure"
-                                                                        required>
-                                                                        <option selected disabled value="">Choose
-                                                                        </option>
-                                                                        {% for res in unit %}
-                                                                        <option value="{{res.Code}}">{{res.Description}}
-                                                                        </option>
-                                                                        {% endfor %}
-                                                                    </select>
-                                                                    <div class="invalid-feedback">
-                                                                        Please Select a Valid Option.
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-danger"
-                                                            data-bs-dismiss="modal">Discard</button>
-                                                        <button type="submit" id="sasa"
-                                                            class="btn btn-primary">Submit</button>
-                                                    </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
                                         {% else %}
                                         No Action
                                         {% endif %}
@@ -424,7 +324,11 @@
                                 <select class="form-select" name="itemCode" required>
                                     <option selected disabled value="">Select Item</option>
                                     {% for res in items %}
-                                    <option value="{{res.No_}}">{{res.Description}}</option>
+                                    <option value="{{res.No_}}">{{res.Description}} <span
+                                            class="text-muted avail">({{res.Inventory}}
+                                            -
+                                            Available)</span>
+                                    </option>
                                     {% endfor %}
                                 </select>
                                 <div class="invalid-feedback">

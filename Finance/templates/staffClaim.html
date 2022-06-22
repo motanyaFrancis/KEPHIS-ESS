@@ -50,6 +50,10 @@
                                 <a href="#home" class="nav-link active" data-bs-toggle="tab">Open
                                     ({{count}})</a>
                             </li>
+                            <li class="reject">
+                                <a href="#pending" class="nav-link" data-bs-toggle="tab">Pending Approval
+                                    ({{pend}})</a>
+                            </li>
                             <li class="nav-item">
                                 <a href="#c-approve" class="nav-link" data-bs-toggle="tab">Appproved
                                     ({{claim}})</a>
@@ -58,10 +62,7 @@
                                 <a href="#c-reject" class="nav-link" data-bs-toggle="tab">Rejected
                                     ({{rej}})</a>
                             </li>
-                            <li class="reject">
-                                <a href="#pending" class="nav-link" data-bs-toggle="tab">Pending Approval
-                                    ({{pend}})</a>
-                            </li>
+
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane fade show active" id="home">
@@ -74,9 +75,7 @@
                                             <tr id="tops">
                                                 <th id="long">Claim No</th>
                                                 <th>Date Created</th>
-                                                <th>Apply on behalf</th>
                                                 <th>Claim Type</th>
-                                                <th>Due Date</th>
                                                 <th>Status</th>
                                                 <th>Action</th>
                                             </tr>
@@ -86,9 +85,7 @@
                                             <tr>
                                                 <td>{{res.No_}}</td>
                                                 <td id="rap">{{res.Time_Inserted}}</td>
-                                                <td>{{res.Apply_on_behalf}}</td>
                                                 <td>{{res.Claim_Type}}</td>
-                                                <td>{{res.Due_Date}}</td>
                                                 <td>{{res.Status}}</td>
                                                 <td>
                                                     <button class="btn btn-primary" data-bs-toggle="modal"
@@ -111,7 +108,7 @@
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title" id="staticBackdropLabel">
                                                                         Edit
-                                                                        Imprest Requisition {{res.No_}}
+                                                                        Staff Claim {{res.No_}}
                                                                     </h5>
                                                                     <button type="button" class="btn-close"
                                                                         data-bs-dismiss="modal" aria-label="Close">
@@ -137,7 +134,8 @@
                                                                         <div class="row">
                                                                             <div class="col-md-12">
                                                                                 <label class="form-label">Claim
-                                                                                    Type</label>
+                                                                                    Type <span
+                                                                                        class="text-danger">*</span></label>
                                                                                 <select class="form-select"
                                                                                     name="claimType" required>
                                                                                     <option selected disabled value="">
@@ -149,10 +147,7 @@
                                                                                     <option value="3">Imprest Claim
                                                                                     </option>
                                                                                 </select>
-                                                                                <div class="invalid-feedback">
-                                                                                    Please Select a Valid Claim
-                                                                                    Type.
-                                                                                </div>
+
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
@@ -160,7 +155,7 @@
                                                                                 <label class="form-label">Imprest
                                                                                     Surrender No</label>
                                                                                 <select class="form-select"
-                                                                                    name="imprestSurrDocNo" required>
+                                                                                    name="imprestSurrDocNo">
                                                                                     <option selected disabled value="">
                                                                                         Select Imprest Surrender No
                                                                                     </option>
@@ -171,22 +166,17 @@
                                                                                     </option>
                                                                                     {% endfor %}
                                                                                 </select>
-                                                                                <div class="invalid-feedback">
-                                                                                    Please Select a Valid Imprest
-                                                                                    Surrender No.
-                                                                                </div>
+
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <label for="purpose"
-                                                                                    class="form-label">Purpose</label>
+                                                                                <label class="form-label">Purpose <span
+                                                                                        class="text-danger">*</span></label>
                                                                                 <textarea class="form-control"
                                                                                     name="purpose" rows="3"
                                                                                     required></textarea>
-                                                                                <div class="invalid-feedback">
-                                                                                    Purpose Can't be Empty.
-                                                                                </div>
+
                                                                             </div>
                                                                         </div>
 
@@ -218,9 +208,6 @@
                                             <tr id="tops">
                                                 <th id="long">Claim No</th>
                                                 <th>Claim Type</th>
-                                                <th>Apply on behalf</th>
-                                                <th>Staff</th>
-                                                <th>staffNo</th>
                                                 <th>Status</th>
                                                 <th>Action</th>
                                             </tr>
@@ -230,9 +217,6 @@
                                             <tr>
                                                 <td>{{res.No_}}</td>
                                                 <td>{{res.Claim_Type}}</td>
-                                                <td>{{res.Apply_on_behalf}}</td>
-                                                <td>{{res.User_Id}}</td>
-                                                <td>{{res.Staff_No_}}</td>
                                                 <td>{{res.Status}}</td>
                                                 <td>
                                                     <a href="{% url 'ClaimDetail' res.No_%}"
@@ -257,9 +241,6 @@
                                             <tr id="tops">
                                                 <th id="long">Claim No</th>
                                                 <th>Claim Type</th>
-                                                <th>Apply on behalf</th>
-                                                <th>Staff</th>
-                                                <th>staffNo</th>
                                                 <th>Status</th>
                                                 <th>Action</th>
                                             </tr>
@@ -269,9 +250,6 @@
                                             <tr>
                                                 <td>{{res.No_}}</td>
                                                 <td>{{res.Claim_Type}}</td>
-                                                <td>{{res.Apply_on_behalf}}</td>
-                                                <td>{{res.User_Id}}</td>
-                                                <td>{{res.Staff_No_}}</td>
                                                 <td>{{res.Status}}</td>
                                                 <td>
                                                     <a href="{% url 'ClaimDetail' res.No_%}"
@@ -296,10 +274,7 @@
                                             <tr id="tops">
                                                 <th id="long">Claim No</th>
                                                 <th>Claim Type</th>
-                                                <th>Apply on behalf</th>
                                                 <th>Staff</th>
-                                                <th>staffNo</th>
-                                                <th>Status</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -308,9 +283,6 @@
                                             <tr>
                                                 <td>{{res.No_}}</td>
                                                 <td>{{res.Claim_Type}}</td>
-                                                <td>{{res.Apply_on_behalf}}</td>
-                                                <td>{{res.User_Id}}</td>
-                                                <td>{{res.Staff_No_}}</td>
                                                 <td>{{res.Status}}</td>
                                                 <td>
                                                     <a href="{% url 'ClaimDetail' res.No_%}"
@@ -356,16 +328,13 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <label class="form-label">Claim Type</label>
+                                <label class="form-label">Claim Type <span class="text-danger">*</span></label>
                                 <select class="form-select" name="claimType" required>
                                     <option selected disabled value="">Select Claim Type</option>
                                     <option value="1">General Claim</option>
                                     <option value="2">Medical Claim</option>
                                     <option value="3">Imprest Claim</option>
                                 </select>
-                                <div class="invalid-feedback">
-                                    Please Select a Valid Claim Type.
-                                </div>
                             </div>
                         </div>
                         <div class="row">
@@ -377,16 +346,14 @@
                                     <option value="{{res.No_}}">{{res.No_}} - {{res.Payment_Narration}}</option>
                                     {% endfor %}
                                 </select>
-                                <div class="form-text small">Optional</div>
+
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <label for="purpose" class="form-label">Purpose</label>
+                                <label for="purpose" class="form-label">Purpose <span
+                                        class="text-danger">*</span></label>
                                 <textarea class="form-control" name="purpose" rows="3" required></textarea>
-                                <div class="invalid-feedback">
-                                    Purpose Can't be Empty.
-                                </div>
                             </div>
                         </div>
 

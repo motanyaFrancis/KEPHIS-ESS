@@ -59,7 +59,7 @@ def CreatePlanner(request):
         try:
             response = config.CLIENT.service.FnLeavePlannerHeader(
                 plannerNo, employeeNo, myAction)
-            messages.success(request, "You have successfully  Added!!")
+            messages.success(request, "Request Successful")
             print(response)
         
         except Exception as e:
@@ -113,7 +113,7 @@ def FnSubmitLeavePlanner(request, pk):
         try:
             response = config.CLIENT.service.FnSubmitLeavePlanner(
                 plannerNo, employeeNo)
-            messages.success(request, "You have successfully  Added!!")
+            messages.success(request, "Request Successful")
             print(response)
         except Exception as e:
             messages.error(request, e)
@@ -145,7 +145,7 @@ def CreatePlannerLine(request, pk):
     try:
         response = config.CLIENT.service.FnLeavePlannerLine(
             lineNo, plannerNo, startDate, endDate, myAction)
-        messages.success(request, "You have successfully  Added!!")
+        messages.success(request, "Request Successful")
         print(response)
     except Exception as e:
         messages.error(request, e)
@@ -248,7 +248,6 @@ def CreateLeave(request):
     isReturnSameDay = ''
     myAction = ''
     if request.method == 'POST':
-
         applicationNo = request.POST.get('applicationNo')
         leaveType = request.POST.get('leaveType')
         plannerStartDate = request.POST.get('plannerStartDate')
@@ -260,12 +259,11 @@ def CreateLeave(request):
             applicationNo = " "
         if not daysApplied:
             daysApplied = 0
-        if not plannerStartDate:
-            plannerStartDate = None
+        plannerStartDate =  datetime.strptime(plannerStartDate, '%Y-%m-%d').date()
         try:
             response = config.CLIENT.service.FnLeaveApplication(
                 applicationNo, employeeNo, usersId, dimension3, leaveType, plannerStartDate, int(daysApplied), isReturnSameDay, myAction)
-            messages.success(request, "You have successfully  Added!!")
+            messages.success(request, "Request Successful")
             print(response)
         except Exception as e:
             messages.error(request, e)
@@ -428,25 +426,19 @@ def Training_Request(request):
         Access_Point = config.O_DATA.format("/QyTrainingRequests")
         currency = config.O_DATA.format("/QyCurrencies")
         trainingNeed = config.O_DATA.format("/QyTrainingNeeds")
-        destination = config.O_DATA.format("/QyDestinations")
+       
         try:
             response = session.get(Access_Point, timeout=10).json()
             res_currency = session.get(currency, timeout=10).json()
             res_train = session.get(trainingNeed, timeout=10).json()
-            res_dest = session.get(destination, timeout=10).json()
+            
             open = []
             Approved = []
             Rejected = []
             Pending = []
-            Local = []
-            Foreign = []
             cur = res_currency['value']
             trains = res_train['value']
-            destinations = res_dest['value']
-            for destinations in res_dest['value']:
-                if destinations['Destination_Type'] == 'Local':
-                    output_json = json.dumps(destinations)
-                    Local.append(json.loads(output_json))
+
             for imprest in response['value']:
                 if imprest['Status'] == 'Open' and imprest['Employee_No'] == request.session['Employee_No_']:
                     output_json = json.dumps(imprest)
@@ -477,7 +469,7 @@ def Training_Request(request):
             "count": counts, "response": Approved,
             "counter": counter, "rej": Rejected,
             'reject': reject, 'cur': cur,
-            "train": trains, "local": Local,
+            "train": trains,
             "pend": pend, "pending": Pending,
             "year": year, "full": fullname}
     except KeyError:
@@ -492,49 +484,24 @@ def CreateTrainingRequest(request):
     usersId = request.session['User_ID']
     isAdhoc = ""
     trainingNeed = ""
-    description = ""
-    startDate = ''
-    endDate = ''
-    destination = ''
     myAction = ''
     if request.method == 'POST':
         try:
             requestNo = request.POST.get('requestNo')
             isAdhoc = eval(request.POST.get('isAdhoc'))
-            description = request.POST.get('description')
-            startDate = request.POST.get('startDate')
             trainingNeed = request.POST.get('trainingNeed')
-            destination = request.POST.get('destination')
-            venue = request.POST.get('venue')
-            VenueName = request.POST.get('VenueName')
-            endDate = request.POST.get('endDate')
-            sponsor = request.POST.get('sponsor')
             myAction = request.POST.get('myAction')
         except ValueError:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('training_request')
-        if venue == '1':
-            venue = VenueName
-        if venue == '2':
-            venue  == 'Online'
         if not requestNo:
             requestNo = ""
-        if not destination:
-            destination = ""
-        if not endDate:
-            endDate = '2000-10-10'
-        if not startDate:
-            startDate = '2000-10-10'
-        if not description:
-            description = ''
-        if not sponsor:
-            sponsor = 0
-        sponsor = int(sponsor)
-        print("venue",venue)
-        print("sponsor",sponsor)
+        
+        if not trainingNeed:
+            trainingNeed = ''
         try:
             response = config.CLIENT.service.FnTrainingRequest(
-                requestNo, employeeNo, usersId, isAdhoc, trainingNeed, description, startDate, endDate, destination, myAction,venue,sponsor)
+                requestNo, employeeNo, usersId, isAdhoc, trainingNeed, myAction)
             messages.success(request, "Successfully Added!!")
             print(response)
         except Exception as e:
@@ -545,82 +512,94 @@ def CreateTrainingRequest(request):
 
 
 def TrainingDetail(request, pk):
+    session = requests.Session()
+    session.auth = config.AUTHS
+    res = ''
+    state = ""
+    train_status = ""
+    Access_Point = config.O_DATA.format("/QyTrainingRequests")
+    Approver = config.O_DATA.format("/QyApprovalEntries")
+    destination = config.O_DATA.format("/QyDestinations")
     try:
         fullname = request.session['User_ID']
         year = request.session['years']
-
-        session = requests.Session()
-        session.auth = config.AUTHS
-        res = ''
-        state = ""
-        train_status = ""
-        Access_Point = config.O_DATA.format("/QyTrainingRequests")
-        Approver = config.O_DATA.format("/QyApprovalEntries")
-        try:
-            response = session.get(Access_Point, timeout=10).json()
-            res_approver = session.get(Approver, timeout=10).json()
-            openClaim = []
-            Approvers = []
-            Pending = []
-            for approver in res_approver['value']:
-                if approver['Document_No_'] == pk:
-                    output_json = json.dumps(approver)
-                    Approvers.append(json.loads(output_json))
-            for claim in response['value']:
-                if claim['Status'] == 'Released' and claim['Employee_No'] == request.session['Employee_No_']:
-                    output_json = json.dumps(claim)
-                    openClaim.append(json.loads(output_json))
-                    for claim in openClaim:
-                        if claim['Request_No_'] == pk:
-                            res = claim
-                            if claim['Status'] == 'Released':
-                                state = 3
-                if claim['Status'] == 'Open' and claim['Employee_No'] == request.session['Employee_No_']:
-                    output_json = json.dumps(claim)
-                    openClaim.append(json.loads(output_json))
-                    for claim in openClaim:
-                        if claim['Request_No_'] == pk:
-                            res = claim
-                            if claim['Status'] == 'Open':
-                                state = 1
-                            if claim['Adhoc'] == True:
-                                train_status = "Adhoc"
-                if claim['Status'] == 'Rejected' and claim['Employee_No'] == request.session['Employee_No_']:
-                    output_json = json.dumps(claim)
-                    openClaim.append(json.loads(output_json))
-                    for claim in openClaim:
-                        if claim['Request_No_'] == pk:
-                            res = claim
-                if claim['Status'] == 'Pending Approval' and claim['Employee_No'] == request.session['Employee_No_']:
-                    output_json = json.dumps(claim)
-                    Pending.append(json.loads(output_json))
-                    for claim in Pending:
-                        if claim['Request_No_'] == pk:
-                            res = claim
-                            if claim['Status'] == 'Pending Approval':
-                                state = 2
-        except requests.exceptions.ConnectionError as e:
-            print(e)
-            messages.error(request,"500 Server Error, Try Again in a few")
-            return redirect('training_request')
-        Lines_Res = config.O_DATA.format("/QyTrainingNeedsRequest")
-        try:
-            response = session.get(Lines_Res, timeout=10).json()
-            openLines = []
-            for train in response['value']:
-                if train['Source_Document_No'] == pk and train['Employee_No'] == request.session['Employee_No_']:
-                    output_json = json.dumps(train)
-                    openLines.append(json.loads(output_json))
-        except requests.exceptions.ConnectionError as e:
-            messages.error(request,"500 Server Error, Try Again in a few")
-            return redirect('training_request')
-        todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-        ctx = {"today": todays_date, "res": res,
-            "Approvers": Approvers, "state": state,
-            "year": year, "full": fullname,
-            "train_status": train_status, "line": openLines}
+        response = session.get(Access_Point, timeout=10).json()
+        res_approver = session.get(Approver, timeout=10).json()
+        res_destination = session.get(destination, timeout=10).json()
+        openClaim = []
+        Approvers = []
+        Pending = []
+        Local = []
+        Foreign = []
+        for destinations in res_destination['value']:
+            if destinations['Destination_Type'] == 'Local':
+                output_json = json.dumps(destinations)
+                Local.append(json.loads(output_json))
+            if destinations['Destination_Type'] == 'Foreign':
+                output_json = json.dumps(destinations)
+                Foreign.append(json.loads(output_json))
+        for approver in res_approver['value']:
+            if approver['Document_No_'] == pk:
+                output_json = json.dumps(approver)
+                Approvers.append(json.loads(output_json))
+        for claim in response['value']:
+            if claim['Status'] == 'Released' and claim['Employee_No'] == request.session['Employee_No_']:
+                output_json = json.dumps(claim)
+                openClaim.append(json.loads(output_json))
+                for claim in openClaim:
+                    if claim['Request_No_'] == pk:
+                        res = claim
+                        if claim['Status'] == 'Released':
+                            state = 3
+            if claim['Status'] == 'Open' and claim['Employee_No'] == request.session['Employee_No_']:
+                output_json = json.dumps(claim)
+                openClaim.append(json.loads(output_json))
+                for claim in openClaim:
+                    if claim['Request_No_'] == pk:
+                        res = claim
+                        if claim['Status'] == 'Open':
+                            state = 1
+                        if claim['Adhoc'] == True:
+                            train_status = "Adhoc"
+            if claim['Status'] == 'Rejected' and claim['Employee_No'] == request.session['Employee_No_']:
+                output_json = json.dumps(claim)
+                openClaim.append(json.loads(output_json))
+                for claim in openClaim:
+                    if claim['Request_No_'] == pk:
+                        res = claim
+            if claim['Status'] == 'Pending Approval' and claim['Employee_No'] == request.session['Employee_No_']:
+                output_json = json.dumps(claim)
+                Pending.append(json.loads(output_json))
+                for claim in Pending:
+                    if claim['Request_No_'] == pk:
+                        res = claim
+                        if claim['Status'] == 'Pending Approval':
+                            state = 2
+    except requests.exceptions.ConnectionError as e:
+        print(e)
+        messages.error(request,"500 Server Error, Try Again in a few")
+        return redirect('training_request')
     except KeyError:
-        pass
+        messages.info(request, "Session Expired. Please Login")
+        return redirect('auth')
+    Lines_Res = config.O_DATA.format("/QyTrainingNeedsRequest")
+    try:
+        responseNeeds = session.get(Lines_Res, timeout=10).json()
+        openLines = []
+        for train in responseNeeds['value']:
+            if train['Source_Document_No'] == pk and train['Employee_No'] == request.session['Employee_No_']:
+                output_json = json.dumps(train)
+                openLines.append(json.loads(output_json))
+    except requests.exceptions.ConnectionError as e:
+        messages.error(request,"500 Server Error, Try Again in a few")
+        return redirect('training_request')
+
+    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
+    ctx = {"today": todays_date, "res": res,
+        "Approvers": Approvers, "state": state,
+        "year": year, "full": fullname,
+        "train_status": train_status, "line": openLines,
+        "local":Local,"foreign":Foreign}
     return render(request, 'trainingDetail.html', ctx)
 
 
@@ -637,23 +616,36 @@ def FnAdhocTrainingNeedRequest(request, pk):
     if request.method == 'POST':
         try:
             trainingName = request.POST.get('trainingName')
+            startDate = request.POST.get('startDate')
+            endDate = request.POST.get('endDate')
             trainingArea = request.POST.get('trainingArea')
             trainingObjectives = request.POST.get('trainingObjectives')
             venue = request.POST.get('venue')
+            sponsor = request.POST.get('sponsor')
+            destination = request.POST.get('destination')
             provider = request.POST.get('provider')
 
         except ValueError as e:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('TrainingDetail', pk=pk)
-    try:
-        response = config.CLIENT.service.FnAdhocTrainingNeedRequest(requestNo,
-                                                                    no, employeeNo, trainingName, trainingArea, trainingObjectives, venue, provider, myAction)
-        messages.success(request, "Successfully Added!!")
-        print(response)
-        return redirect('TrainingDetail', pk=pk)
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
+        if not sponsor:
+            sponsor = 0
+        sponsor = int(sponsor)
+
+        if not destination:
+            destination = 'none'
+        
+        if not venue:
+            venue = "Online"
+        try:
+            response = config.CLIENT.service.FnAdhocTrainingNeedRequest(requestNo,
+                                                                        no, employeeNo, trainingName, trainingArea, trainingObjectives, venue, provider, myAction,sponsor,startDate,endDate,destination)
+            messages.success(request, "Successfully Added!!")
+            print(response)
+            return redirect('TrainingDetail', pk=pk)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
     return redirect('TrainingDetail', pk=pk)
 
 
@@ -725,24 +717,23 @@ def FnAdhocTrainingEdit(request, pk, no):
 def FnAdhocLineDelete(request, pk):
     requestNo = pk
     needNo = ''
-
     if request.method == 'POST':
         try:
             needNo = request.POST.get('needNo')
         except ValueError as e:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('TrainingDetail', pk=pk)
-    print("requestNo", requestNo)
-    print("needno", needNo)
-    try:
-        response = config.CLIENT.service.FnDeleteAdhocTrainingNeedRequest(
-            requestNo, needNo)
-        messages.success(request, "Successfully Deleted!!")
-        print(response)
-        return redirect('TrainingDetail', pk=pk)
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
+        print("requestNo", requestNo)
+        print("needno", needNo)
+        try:
+            response = config.CLIENT.service.FnDeleteAdhocTrainingNeedRequest(
+                needNo,requestNo)
+            messages.success(request, "Successfully Deleted!!")
+            print(response)
+            return redirect('TrainingDetail', pk=pk)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
     return redirect('TrainingDetail', pk=pk)
 
 

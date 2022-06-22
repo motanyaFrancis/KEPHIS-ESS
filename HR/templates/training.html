@@ -51,6 +51,10 @@
                                     ({{count}})</a>
                             </li>
                             <li class="nav-item">
+                                <a href="#pending" class="nav-link" data-bs-toggle="tab">Pending Approval
+                                    ({{pend}})</a>
+                            </li>
+                            <li class="nav-item">
                                 <a href="#profile" class="nav-link" data-bs-toggle="tab">Approved
                                     ({{counter}})</a>
                             </li>
@@ -58,10 +62,7 @@
                                 <a href="#reject" class="nav-link" data-bs-toggle="tab">Rejected
                                     ({{reject}})</a>
                             </li>
-                            <li class="nav-item">
-                                <a href="#pending" class="nav-link" data-bs-toggle="tab">Pending Approval
-                                    ({{pend}})</a>
-                            </li>
+
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane fade show active" id="home">
@@ -87,9 +88,21 @@
                                                 <td>{{res.Request_No_}}</td>
                                                 <td id="rap">{{res.Request_Date}}</td>
                                                 <td>{{res.Adhoc}}</td>
-                                                <td>{{res.Planned_Start_Date}}</td>
-                                                <td>{{res.Planned_End_Date}}</td>
-                                                <td>{{res.No__Of_Days}}</td>
+                                                <td>
+                                                    {% if res.Adhoc == False %}
+                                                    {{res.Planned_Start_Date}}
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if res.Adhoc == False %}
+                                                    {{res.Planned_End_Date}}
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if res.Adhoc == False %}
+                                                    {{res.No__Of_Days}}
+                                                    {% endif %}
+                                                </td>
                                                 <td>
 
                                                     <button class="btn btn-primary" data-toggle="tooltip"
@@ -112,7 +125,7 @@
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title" id="staticBackdropLabel">
                                                                         Edit
-                                                                        Training Request
+                                                                        Training Request {{res.Request_No_}}
                                                                     </h5>
                                                                     <button type="button" class="btn-close"
                                                                         data-bs-dismiss="modal"
@@ -123,22 +136,21 @@
                                                                         action="{% url 'CreateTrainingRequest' %}"
                                                                         method="post" novalidate>
                                                                         {% csrf_token %}
-                                                                        <div class="mb-2"> <span class="w-name">
-                                                                                Training Request Header:
-                                                                            </span>
+                                                                        <div class="mb-2">
                                                                             <div class="row mt-3">
                                                                                 <div class="col-md-12">
-                                                                                    <label for="isAdhoc"
+                                                                                    <label
                                                                                         class="form-label">Adhoc</label>
-                                                                                    <select class="form-select"
-                                                                                        id="isAdhocTT" name="isAdhoc"
-                                                                                        required>
+                                                                                    <select
+                                                                                        class="form-select EditAdhoc"
+                                                                                        name="isAdhoc" required>
                                                                                         <option selected disabled
                                                                                             value="">
-                                                                                            Select </option>
-                                                                                        <option value="True">True
+                                                                                            Select
                                                                                         </option>
-                                                                                        <option value="False">False
+                                                                                        <option value="True">Yes
+                                                                                        </option>
+                                                                                        <option value="False">No
                                                                                         </option>
                                                                                     </select>
                                                                                     <div class="invalid-feedback">
@@ -146,14 +158,14 @@
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="row">
+                                                                            <div class="row trainingNeedTTRow"
+                                                                                style="display: none;">
                                                                                 <div class="col-md-12">
-                                                                                    <label for="trainingNeed"
-                                                                                        class="form-label">Training
+                                                                                    <label class="form-label">Training
                                                                                         Need</label>
-                                                                                    <select class="form-select"
-                                                                                        id="trainingNeed"
-                                                                                        name="trainingNeed" required>
+                                                                                    <select
+                                                                                        class="form-select trainingNeedTT"
+                                                                                        name="trainingNeed">
                                                                                         <option selected disabled
                                                                                             value="">
                                                                                             Select Training Need
@@ -163,61 +175,9 @@
                                                                                             {{res.Description}}</option>
                                                                                         {% endfor %}
                                                                                     </select>
-                                                                                    <div class="invalid-feedback">
-                                                                                        Please select a valid Training
-                                                                                        Need.
-                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
 
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="row">
-                                                                                <div class="col-md-6">
-                                                                                    <label for=""
-                                                                                        class="form-label">Start
-                                                                                        Date:</label>
-                                                                                    <input type="date"
-                                                                                        class="form-control"
-                                                                                        name="startDate"
-                                                                                        id="startDateTT" disabled>
-                                                                                </div>
-                                                                                <div class="col-md-6">
-                                                                                    <label for="" class="form-label">End
-                                                                                        Date:</label>
-                                                                                    <input type="date"
-                                                                                        class="form-control"
-                                                                                        name="endDate" id="endDateTT"
-                                                                                        disabled>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="row">
-                                                                                <div class="col-md-12">
-                                                                                    <label for="destination"
-                                                                                        class="form-label">Destination</label>
-                                                                                    <select class="form-select"
-                                                                                        id="destinationTT"
-                                                                                        name="destination" disabled>
-                                                                                        <option selected disabled
-                                                                                            value="">
-                                                                                            Select Destination</option>
-                                                                                        {% for res in des %}
-                                                                                        <option
-                                                                                            value="{{res.Destination_Code}}">
-                                                                                            {{res.Destination_Code}}
-                                                                                        </option>
-                                                                                        {% endfor %}
-                                                                                    </select>'
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="row">
-                                                                                <div class="col-md-12">
-                                                                                    <label for="description"
-                                                                                        class="form-label">Description</label>
-                                                                                    <textarea class="form-control"
-                                                                                        name="description"
-                                                                                        id="descriptionTT" rows="3"
-                                                                                        disabled></textarea>
-                                                                                </div>
-                                                                            </div>
                                                                             <div class="row">
                                                                                 <div class="col-md-12">
                                                                                     <input type="hidden" name="myAction"
@@ -265,7 +225,6 @@
                                                 <th>Start Date</th>
                                                 <th>End Date</th>
                                                 <th>No Of Days</th>
-                                                <th>Destination</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -275,10 +234,21 @@
                                                 <td>{{res.Request_No_}}</td>
                                                 <td id="rap">{{res.Request_Date}}</td>
                                                 <td>{{res.Adhoc}}</td>
-                                                <td>{{res.Planned_Start_Date}}</td>
-                                                <td>{{res.Planned_End_Date}}</td>
-                                                <td>{{res.No__Of_Days}}</td>
-                                                <td>{{res.Destination}}</td>
+                                                <td>
+                                                    {% if res.Adhoc == False %}
+                                                    {{res.Planned_Start_Date}}
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if res.Adhoc == False %}
+                                                    {{res.Planned_End_Date}}
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if res.Adhoc == False %}
+                                                    {{res.No__Of_Days}}
+                                                    {% endif %}
+                                                </td>
                                                 <td>
                                                     <a href="{% url 'TrainingDetail' res.Request_No_ %}"
                                                         class="btn btn-success btn-icon-text" type="button"
@@ -306,7 +276,6 @@
                                                 <th>Start Date</th>
                                                 <th>End Date</th>
                                                 <th>No Of Days</th>
-                                                <th>Destination</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -316,10 +285,21 @@
                                                 <td>{{res.Request_No_}}</td>
                                                 <td id="rap">{{res.Request_Date}}</td>
                                                 <td>{{res.Adhoc}}</td>
-                                                <td>{{res.Planned_Start_Date}}</td>
-                                                <td>{{res.Planned_End_Date}}</td>
-                                                <td>{{res.No__Of_Days}}</td>
-                                                <td>{{res.Destination}}</td>
+                                                <td>
+                                                    {% if res.Adhoc == False %}
+                                                    {{res.Planned_Start_Date}}
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if res.Adhoc == False %}
+                                                    {{res.Planned_End_Date}}
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if res.Adhoc == False %}
+                                                    {{res.No__Of_Days}}
+                                                    {% endif %}
+                                                </td>
                                                 <td>
                                                     <a href="{% url 'TrainingDetail' res.Request_No_ %}"
                                                         class="btn btn-success btn-icon-text" type="button"
@@ -347,7 +327,6 @@
                                                 <th>Start Date</th>
                                                 <th>End Date</th>
                                                 <th>No Of Days</th>
-                                                <th>Destination</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -357,10 +336,21 @@
                                                 <td>{{res.Request_No_}}</td>
                                                 <td id="rap">{{res.Request_Date}}</td>
                                                 <td>{{res.Adhoc}}</td>
-                                                <td>{{res.Planned_Start_Date}}</td>
-                                                <td>{{res.Planned_End_Date}}</td>
-                                                <td>{{res.No__Of_Days}}</td>
-                                                <td>{{res.Destination}}</td>
+                                                <td>
+                                                    {% if res.Adhoc == False %}
+                                                    {{res.Planned_Start_Date}}
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if res.Adhoc == False %}
+                                                    {{res.Planned_End_Date}}
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if res.Adhoc == False %}
+                                                    {{res.No__Of_Days}}
+                                                    {% endif %}
+                                                </td>
                                                 <td>
                                                     <a href="{% url 'TrainingDetail' res.Request_No_ %}"
                                                         class="btn btn-success btn-icon-text" type="button"
@@ -412,10 +402,10 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row" id="trainingNeedRow" style="display: none;">
                                 <div class="col-md-12">
-                                    <label for="trainingNeed" class="form-label">Training Need</label>
-                                    <select class="form-select" id="trainingNeed" name="trainingNeed" required>
+                                    <label class="form-label">Training Need</label>
+                                    <select class="form-select" id="trainingNeed" name="trainingNeed" disabled>
                                         <option selected disabled value="">Select Training Need </option>
                                         {% for res in train %}
                                         <option value="{{res.Code}}">{{res.Description}}</option>
@@ -425,72 +415,6 @@
                                         Please select a valid Training Need.
                                     </div>
 
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <label class="form-label">Destination Type</label>
-                                    <select class="form-select" id="DestType" name="">
-                                        <option selected disabled value="">Select Type </option>
-                                        <option value="1">Local</option>
-                                        <option value="">Foregn</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row" id="TrainingDates" style="display: none;">
-                                <div class="col-md-6">
-                                    <label for="" class="form-label">Start Date:</label>
-                                    <input type="date" class="form-control" name="startDate" id="startDateT" disabled>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="" class="form-label">End Date:</label>
-                                    <input type="date" class="form-control" name="endDate" id="endDateT" disabled>
-                                </div>
-                            </div>
-
-                            <div class="row" id="DestinationLocal" style="display: none;">
-                                <div class="col-md-12">
-                                    <label for="destination" class="form-label">Local Destination</label>
-                                    <select class="form-select" id="destinationT" name="destination" disabled>
-                                        <option selected disabled value="">Select Destination</option>
-                                        {% for res in local %}
-                                        <option value="{{res.Destination_Code}}">{{res.Destination_Code}}</option>
-                                        {% endfor %}
-                                    </select>'
-                                </div>
-                            </div>
-                            <div class="row" id="venueRow" style="display: none;">
-                                <div class="col-md-12">
-                                    <label class="form-label">Venue</label>
-                                    <select class="form-select" id="venueT" name="venue" disabled>
-                                        <option selected disabled value="">Select </option>
-                                        <option value="1">Physical</option>
-                                        <option value="2">Virtual</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row" id="VenueNameRow" style="display: none;">
-                                <div class="col-md-12">
-                                    <label class="form-label">Venue</label>
-                                    <input class="form-control" id="VenueName" name="VenueName" disabled>
-
-                                </div>
-                            </div>
-                            <div class="row" id="sponsorRow" style="display: none;">
-                                <div class="col-md-12">
-                                    <label class="form-label">Sponsor Type</label>
-                                    <select class="form-select" id="sponsor" name="sponsor" disabled>
-                                        <option selected disabled value="">Select </option>
-                                        <option value="1">Self Sponsored</option>
-                                        <option value="2">Organization Sponsored</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row" id="descriptionRow" style="display:none">
-                                <div class="col-md-12">
-                                    <label class="form-label">Description</label>
-                                    <textarea class="form-control" id="descriptionT" name="description" rows="3"
-                                        disabled></textarea>
                                 </div>
                             </div>
 
@@ -509,64 +433,24 @@
     $(document).ready(function () {
         $('#isAdhocT').on('change', function () {
             if (this.value == "True") {
-                $("#TrainingDates").show(1000);
-                $("#venueRow").show(1200);
-                $("#descriptionRow").show(1300);
-                $('#startDateT').prop('disabled', false);
-                $('#endDateT').prop('disabled', false);
-                $('#venueT').prop('disabled', false);
-                $('#descriptionT').prop('disabled', false);
-                $('#sponsorRow').show(1500)
-                $('#sponsor').prop('disabled', false);
+                $("#trainingNeedRow").hide(1000);
+                $('#trainingNeed').prop('disabled', true)
             } else {
-                $("#TrainingDates").hide(1000);
-                $("#descriptionRow").hide(1300);
-                $("#venueRow").hide(1500);
-                $('#startDateT').prop('disabled', true);
-                $('#endDateT').prop('disabled', true);
-                $('#venueT').prop('disabled', true);
-                $('#descriptionT').prop('disabled', true);
-                $('#sponsorRow').hide(1500)
-                $('#sponsor').prop('disabled', true);
+                $("#trainingNeedRow").show(1000);
+                $('#trainingNeed').prop('disabled', false)
             }
         });
-        $('#venueT').on('change', function () {
-            if (this.value == "1") {
-                $('#VenueNameRow').show(1000);
-                $('#VenueName').prop('disabled', false)
-            } else {
-                $("#VenueNameRow").hide(1000);
-                $('#VenueName').prop('disabled', true)
-            }
-        });
-        $('#DestType').on('change', function () {
-            if (this.value == "1") {
-                $('#DestinationLocal').show(1000);
-                $('#destinationT').prop('disabled', false)
-            } else {
-                $('#DestinationLocal').hide(1000);
-                $('#destinationT').prop('disabled', true)
-                $("#VenueNameRow").hide(1000);
-                $('#VenueName').prop('disabled', true)
-            }
-        });
-    })
-    $(document).ready(function () {
-        $('#isAdhocTT').on('change', function () {
+        // Edit Training
+        $('.EditAdhoc').on('change', function () {
             if (this.value == "True") {
-                $('#startDateTT').prop('disabled', false);
-                $('#endDateTT').prop('disabled', false);
-                $('#destinationTT').prop('disabled', false);
-                $('#currencyTT').prop('disabled', false);
-                $('#descriptionTT').prop('disabled', false);
+                $('.trainingNeedTTRow').hide(1000);
+                $('.trainingNeedTT').prop('disabled', true);
             } else {
-                $('#startDateTT').prop('disabled', true);
-                $('#endDateTT').prop('disabled', true);
-                $('#destinationTT').prop('disabled', true);
-                $('#currencyTT').prop('disabled', true);
-                $('#descriptionTT').prop('disabled', true);
+                $(".trainingNeedTTRow").show(1000);
+                $('.trainingNeedTT').prop('disabled', false)
             }
         });
+
     })
 </script>
 {% endblock %}

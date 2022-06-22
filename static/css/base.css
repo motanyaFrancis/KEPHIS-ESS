@@ -21,6 +21,9 @@
       display: none !important;
     }
   }
+.avail{
+    color: red !important;
+}
 
 body {
     background: #181824;
