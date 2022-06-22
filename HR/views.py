@@ -438,9 +438,15 @@ def Training_Request(request):
             Approved = []
             Rejected = []
             Pending = []
+            Local = []
+            Foreign = []
             cur = res_currency['value']
             trains = res_train['value']
             destinations = res_dest['value']
+            for destinations in res_dest['value']:
+                if destinations['Destination_Type'] == 'Local':
+                    output_json = json.dumps(destinations)
+                    Local.append(json.loads(output_json))
             for imprest in response['value']:
                 if imprest['Status'] == 'Open' and imprest['Employee_No'] == request.session['Employee_No_']:
                     output_json = json.dumps(imprest)
@@ -471,7 +477,7 @@ def Training_Request(request):
             "count": counts, "response": Approved,
             "counter": counter, "rej": Rejected,
             'reject': reject, 'cur': cur,
-            "train": trains, "des": destinations,
+            "train": trains, "local": Local,
             "pend": pend, "pending": Pending,
             "year": year, "full": fullname}
     except KeyError:
@@ -484,7 +490,6 @@ def CreateTrainingRequest(request):
     requestNo = ''
     employeeNo = request.session['Employee_No_']
     usersId = request.session['User_ID']
-    designation = request.session['User_Responsibility_Center']
     isAdhoc = ""
     trainingNeed = ""
     description = ""
@@ -493,25 +498,6 @@ def CreateTrainingRequest(request):
     destination = ''
     myAction = ''
     if request.method == 'POST':
-        requestNo = request.POST.get('requestNo')
-        isAdhoc = eval(request.POST.get('isAdhoc'))
-        description = request.POST.get('description')
-        startDate = request.POST.get('startDate')
-        trainingNeed = request.POST.get('trainingNeed')
-        destination = request.POST.get('destination')
-        endDate = request.POST.get('endDate')
-        myAction = request.POST.get('myAction')
-        if not requestNo:
-            requestNo = ""
-        if not description:
-            description = ""
-        if not startDate:
-            startDate = ""
-        if not destination:
-            destination = ""
-        if not endDate:
-            endDate = ""
-        print(startDate)
         try:
             requestNo = request.POST.get('requestNo')
             isAdhoc = eval(request.POST.get('isAdhoc'))
@@ -519,11 +505,18 @@ def CreateTrainingRequest(request):
             startDate = request.POST.get('startDate')
             trainingNeed = request.POST.get('trainingNeed')
             destination = request.POST.get('destination')
+            venue = request.POST.get('venue')
+            VenueName = request.POST.get('VenueName')
             endDate = request.POST.get('endDate')
+            sponsor = request.POST.get('sponsor')
             myAction = request.POST.get('myAction')
         except ValueError:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('training_request')
+        if venue == '1':
+            venue = VenueName
+        if venue == '2':
+            venue  == 'Online'
         if not requestNo:
             requestNo = ""
         if not destination:
@@ -534,52 +527,20 @@ def CreateTrainingRequest(request):
             startDate = '2000-10-10'
         if not description:
             description = ''
-        print(endDate)
-    try:
-        response = config.CLIENT.service.FnTrainingRequest(
-            requestNo, employeeNo, usersId, designation, isAdhoc, trainingNeed, description, startDate, endDate, destination, myAction)
-        messages.success(request, "Successfully Added!!")
-        print(response)
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
-        return redirect('training_request')
-    return redirect('training_request')
-
-
-def EditTrainingRequest(request):
-    requestNo = ''
-    employeeNo = request.session['Employee_No_']
-    usersId = request.session['User_ID']
-    designation = request.session['User_Responsibility_Center']
-    isAdhoc = ""
-    trainingNeed = ""
-    description = ""
-    startDate = ''
-    endDate = ''
-    destination = ''
-    currency = ''
-    myAction = 'modify'
-    if request.method == 'POST':
+        if not sponsor:
+            sponsor = 0
+        sponsor = int(sponsor)
+        print("venue",venue)
+        print("sponsor",sponsor)
         try:
-            isAdhoc = request.POST.get('isAdhoc')
-            description = request.POST.get('description')
-            startDate = request.POST.get('startDate')
-            trainingNeed = request.POST.get('trainingNeed')
-            destination = request.POST.get('destination')
-            endDate = request.POST.get('endDate')
-            currency = request.POST.get('currency')
-        except ValueError:
-            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            response = config.CLIENT.service.FnTrainingRequest(
+                requestNo, employeeNo, usersId, isAdhoc, trainingNeed, description, startDate, endDate, destination, myAction,venue,sponsor)
+            messages.success(request, "Successfully Added!!")
+            print(response)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
             return redirect('training_request')
-    try:
-        response = config.CLIENT.service.FnTrainingRequest(
-            requestNo, employeeNo, usersId, designation, isAdhoc, trainingNeed, description, startDate, endDate, destination, currency, myAction)
-        messages.success(request, "Successfully Added!!")
-        print(response)
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
     return redirect('training_request')
 
 

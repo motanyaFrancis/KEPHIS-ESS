@@ -427,6 +427,16 @@
 
                                 </div>
                             </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label class="form-label">Destination Type</label>
+                                    <select class="form-select" id="DestType" name="">
+                                        <option selected disabled value="">Select Type </option>
+                                        <option value="1">Local</option>
+                                        <option value="">Foregn</option>
+                                    </select>
+                                </div>
+                            </div>
                             <div class="row" id="TrainingDates" style="display: none;">
                                 <div class="col-md-6">
                                     <label for="" class="form-label">Start Date:</label>
@@ -438,25 +448,41 @@
                                 </div>
                             </div>
 
-                            <div class="row" id="TrainingDestinations" style="display: none;">
+                            <div class="row" id="DestinationLocal" style="display: none;">
                                 <div class="col-md-12">
-                                    <label for="destination" class="form-label">Destination</label>
+                                    <label for="destination" class="form-label">Local Destination</label>
                                     <select class="form-select" id="destinationT" name="destination" disabled>
                                         <option selected disabled value="">Select Destination</option>
-                                        {% for res in des %}
+                                        {% for res in local %}
                                         <option value="{{res.Destination_Code}}">{{res.Destination_Code}}</option>
                                         {% endfor %}
                                     </select>'
                                 </div>
                             </div>
-                            <div class="row" id="CurrencyRow" style="display: none;">
+                            <div class="row" id="venueRow" style="display: none;">
                                 <div class="col-md-12">
-                                    <label for="currency" class="form-label">Currency</label>
-                                    <select class="form-select" id="currencyT" name="currency" disabled>
+                                    <label class="form-label">Venue</label>
+                                    <select class="form-select" id="venueT" name="venue" disabled>
                                         <option selected disabled value="">Select </option>
-                                        {% for res in cur %}
-                                        <option value="{{res.Code}}">{{res.Description}} ({{res.Code}})</option>
-                                        {% endfor %}
+                                        <option value="1">Physical</option>
+                                        <option value="2">Virtual</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row" id="VenueNameRow" style="display: none;">
+                                <div class="col-md-12">
+                                    <label class="form-label">Venue</label>
+                                    <input class="form-control" id="VenueName" name="VenueName" disabled>
+
+                                </div>
+                            </div>
+                            <div class="row" id="sponsorRow" style="display: none;">
+                                <div class="col-md-12">
+                                    <label class="form-label">Sponsor Type</label>
+                                    <select class="form-select" id="sponsor" name="sponsor" disabled>
+                                        <option selected disabled value="">Select </option>
+                                        <option value="1">Self Sponsored</option>
+                                        <option value="2">Organization Sponsored</option>
                                     </select>
                                 </div>
                             </div>
@@ -484,24 +510,44 @@
         $('#isAdhocT').on('change', function () {
             if (this.value == "True") {
                 $("#TrainingDates").show(1000);
-                $("#TrainingDestinations").show(1100);
-                $("#CurrencyRow").show(1200);
+                $("#venueRow").show(1200);
                 $("#descriptionRow").show(1300);
                 $('#startDateT').prop('disabled', false);
                 $('#endDateT').prop('disabled', false);
-                $('#destinationT').prop('disabled', false);
-                $('#currencyT').prop('disabled', false);
+                $('#venueT').prop('disabled', false);
                 $('#descriptionT').prop('disabled', false);
+                $('#sponsorRow').show(1500)
+                $('#sponsor').prop('disabled', false);
             } else {
                 $("#TrainingDates").hide(1000);
-                $("#TrainingDestinations").hide(1100);
-                $("#CurrencyRow").hide(1200);
                 $("#descriptionRow").hide(1300);
+                $("#venueRow").hide(1500);
                 $('#startDateT').prop('disabled', true);
                 $('#endDateT').prop('disabled', true);
-                $('#destinationT').prop('disabled', true);
-                $('#currencyT').prop('disabled', true);
+                $('#venueT').prop('disabled', true);
                 $('#descriptionT').prop('disabled', true);
+                $('#sponsorRow').hide(1500)
+                $('#sponsor').prop('disabled', true);
+            }
+        });
+        $('#venueT').on('change', function () {
+            if (this.value == "1") {
+                $('#VenueNameRow').show(1000);
+                $('#VenueName').prop('disabled', false)
+            } else {
+                $("#VenueNameRow").hide(1000);
+                $('#VenueName').prop('disabled', true)
+            }
+        });
+        $('#DestType').on('change', function () {
+            if (this.value == "1") {
+                $('#DestinationLocal').show(1000);
+                $('#destinationT').prop('disabled', false)
+            } else {
+                $('#DestinationLocal').hide(1000);
+                $('#destinationT').prop('disabled', true)
+                $("#VenueNameRow").hide(1000);
+                $('#VenueName').prop('disabled', true)
             }
         });
     })
