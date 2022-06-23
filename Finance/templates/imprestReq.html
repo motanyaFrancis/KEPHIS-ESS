@@ -151,13 +151,25 @@
                                                                                         <option value="False">No
                                                                                         </option>
                                                                                     </select>
-                                                                                    <div class="invalid-feedback">
-                                                                                        Please select a valid
-                                                                                        option.
-                                                                                    </div>
+
                                                                                 </div>
                                                                             </div>
-
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <label class="form-label">Travel
+                                                                                        Type <span
+                                                                                            class="text-danger">*</span></label>
+                                                                                    <select class="form-select"
+                                                                                        name="travelType" required>
+                                                                                        <option selected disabled
+                                                                                            value="">Select Option
+                                                                                        </option>
+                                                                                        <option value="1">Local</option>
+                                                                                        <option value="2">Foreign
+                                                                                        </option>
+                                                                                    </select>
+                                                                                </div>
+                                                                            </div>
                                                                             <div class="row">
                                                                                 <div class="col-md-12">
                                                                                     <input type="hidden" name="myAction"
@@ -340,34 +352,40 @@
                 <div class="modal-body">
                     <form class="myForm needs-validation" action="{% url 'create' %}" method="post" novalidate>
                         {% csrf_token %}
-                        <div class="mb-2">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <input type="hidden" name="imprestNo" value="">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <label class="form-label">Imprest</label>
-                                    <select class="form-select" name="isImprest" required>
-                                        <option selected disabled value="">Select Option</option>
-                                        <option value="True">Yes</option>
-                                        <option value="False">No</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">DSA</label>
-                                    <select class="form-select" name="isDsa" required>
-                                        <option selected disabled value="">Select Option</option>
-                                        <option value="True">Yes</option>
-                                        <option value="False">No</option>
-                                    </select>
-                                    <div class="invalid-feedback">
-                                        Please select a valid option.
-                                    </div>
-                                </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <input type="hidden" name="imprestNo" value="">
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="form-label">Imprest <span class="text-danger">*</span></label>
+                                <select class="form-select" name="isImprest" required>
+                                    <option selected disabled value="">Select Option</option>
+                                    <option value="True">Yes</option>
+                                    <option value="False">No</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">DSA <span class="text-danger">*</span></label>
+                                <select class="form-select" name="isDsa" required>
+                                    <option selected disabled value="">Select Option</option>
+                                    <option value="True">Yes</option>
+                                    <option value="False">No</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="form-label">Travel Type <span class="text-danger">*</span></label>
+                                <select class="form-select" name="travelType" required>
+                                    <option selected disabled value="">Select Option</option>
+                                    <option value="1">Local</option>
+                                    <option value="2">Foreign</option>
+                                </select>
+                            </div>
+                        </div>
+
                         <div class="row">
                             <div class="col-md-12">
                                 <input type="hidden" name="myAction" value="insert">
@@ -375,7 +393,8 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <label for="purpose" class="form-label">Purpose</label>
+                                <label for="purpose" class="form-label">Purpose <span
+                                        class="text-danger">*</span></label>
                                 <textarea class="form-control" name="purpose" rows="3" required></textarea>
 
                             </div>

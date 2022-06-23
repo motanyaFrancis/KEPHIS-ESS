@@ -51,8 +51,8 @@ def login_request(request):
                             print("Department:",request.session['Department'])
                     return redirect('dashboard')
 
-        except:
-            messages.error(request, "Invalid username or password!!")
+        except requests.exceptions.RequestException as e:
+            messages.info(request, e)
             return redirect('auth')
     ctx = {"year": year}
     return render(request, 'auth.html', ctx)

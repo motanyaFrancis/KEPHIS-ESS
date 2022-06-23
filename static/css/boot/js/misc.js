@@ -112,12 +112,3 @@
     })
   });
 })(jQuery);
-
-$(document).ready(function () {
-  $("nav-link").on("click", function () {
-    $(".nav-item.active").removeClass("active");
-    $(this).parent().addClass("active");
-  }).filter(function () {
-    return window.location.href.indexOf($(this).attr('href').trim()) > -1;
-  }).click();
-});

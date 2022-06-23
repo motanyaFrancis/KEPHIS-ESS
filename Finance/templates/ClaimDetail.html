@@ -6,14 +6,6 @@
     <div class="content-wrapper" style="padding-bottom: 5rem;">
         <div class="d-xl-flex justify-content-between align-items-start">
             <h2 class="text-dark font-weight-bold mb-2"> Staff Claim
-                {% if state == 3 %}
-                <form action="{% url 'FnGenerateStaffClaimReport' res.No_ %}" method="post"
-                    style="display:inline-block">
-                    {% csrf_token %}
-                    <button class="btn btn-success" type="submit"> Generate
-                        Report</button>
-                </form>
-                {% endif %}
             </h2>
 
             <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
@@ -23,32 +15,19 @@
                         data-bs-target="#staticBackdrop"> <i class="las la-plus"></i> Add Claim
                         Lines
                     </button>
+                    {% elif state == 3 %}
+                    <form action="{% url 'FnGenerateStaffClaimReport' res.No_ %}" method="post"
+                        style="display:inline-block">
+                        {% csrf_token %}
+                        <button class="btn btn-successs" type="submit"> Preview
+                            Report</button>
+                    </form>
                     {% endif %}
                 </div>
             </div>
         </div>
         <!--alert -->
-        {% if messages %}
-        {% for message in messages %}
-        {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
-        <div class="alert alert-success d-flex align-items-center alert-dismissible alert-success" role="alert">
-            <i class="las la-check-double" style="color: white;font-size: 2rem"></i>
-            <div class="a-icon mx-2">
-                {{message}}
-            </div>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        {% elif message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
-        <div class="alert alert-danger d-flex align-items-center alert-dismissible alert-warn" role="alert">
-            <i class="las la-exclamation-triangle" style="color: white;font-size: 2rem"></i>
-            <div class="a-icon mx-2">
-                {{message}}
-            </div>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        {% endif %}
-        {% endfor %}
-        {% endif %}
+        {% include 'alerts.html' %}
         <div class="row my-3">
             <div class="col-md-3">
                 <div class="card l-bg-cherry statCard h-100">
@@ -205,7 +184,9 @@
                                     <th>Description</th>
                                     <th>Amount</th>
                                     <th>Expenditure Date</th>
+                                    {% if state == 1 %}
                                     <th>Action</th>
+                                    {% endif %}
                                 </tr>
                             </thead>
                             <tbody>
@@ -216,6 +197,7 @@
                                     <td>{{res.Description}}</td>
                                     <td>{{res.Amount}}</td>
                                     <td>{{res.Expenditure_Date}}</td>
+                                    {% if state == 1 %}
                                     <td>
                                         <form action="{% url 'FnDeleteStaffClaimLine' res.No %}" method="post"
                                             style="display: inline-block;">
@@ -226,6 +208,7 @@
                                             </button>
                                         </form>
                                     </td>
+                                    {% endif %}
                                 </tr>
                                 {% endfor %}
                             </tbody>

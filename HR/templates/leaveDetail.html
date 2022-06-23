@@ -24,32 +24,12 @@
             </div>
         </div>
         <!--alert -->
-        {% if messages %}
-        {% for message in messages %}
-        {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
-        <div class="alert alert-success d-flex align-items-center alert-dismissible alert-success" role="alert">
-            <i class="las la-check-double" style="color: white;font-size: 2rem"></i>
-            <div class="a-icon mx-2">
-                {{message}}
-            </div>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        {% elif message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
-        <div class="alert alert-danger d-flex align-items-center alert-dismissible alert-warn" role="alert">
-            <i class="las la-exclamation-triangle" style="color: white;font-size: 2rem"></i>
-            <div class="a-icon mx-2">
-                {{message}}
-            </div>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        {% endif %}
-        {% endfor %}
-        {% endif %}
+        {% include 'alerts.html' %}
         <div class="row my-3">
             <div class="col-md-3">
                 <div class="card l-bg-cherry statCard h-100">
                     <div class="card-statistic-3 p-4">
-                        <div class="card-icon card-icon-large"><i class="fas fa-dollar-sign"></i></div>
+                        <div class="card-icon card-icon-large"><i class="fas fa-file"></i></div>
                         <div class="mb-4">
                             <h5 class="card-title mb-0">Leave Type</h5>
                         </div>
@@ -66,7 +46,7 @@
             <div class="col-md-3">
                 <div class="card l-bg-blue-dark statCard h-100">
                     <div class="card-statistic-3 p-4">
-                        <div class="card-icon card-icon-large"><i class="fas fa-users"></i></div>
+                        <div class="card-icon card-icon-large"><i class="fas fa-file"></i></div>
                         <div class="mb-4">
                             <h5 class="card-title mb-0">Leave Status</h5>
                         </div>
@@ -173,10 +153,6 @@
                         <input type="text" class="form-control" placeholder="{{res.Start_Date}}" readonly>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Mobile No</label>
-                        <input type="text" class="form-control" placeholder="{{res.Mobile_No}}" readonly>
-                    </div>
-                    <div class="col-md-4">
                         <label class="form-label">Leave Period</label>
                         <input type="text" class="form-control" placeholder="{{res.Leave_Period}}" readonly>
                     </div>
@@ -196,11 +172,11 @@
                         <label class="form-label">Leave Allowance Payable</label>
                         <input type="text" class="form-control" placeholder="{{res.Leave_Allowance_Payable}}" readonly>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <label class="form-label">End Date</label>
                         <input type="text" class="form-control" placeholder="{{res.End_Date}}" readonly>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <label class="form-label">Employment Type</label>
                         <input type="text" class="form-control" placeholder="{{res.Employment_Type}}" readonly>
                     </div>

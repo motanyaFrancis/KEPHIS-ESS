@@ -14,33 +14,13 @@
                     <button class="btn btn-successs align-items-center p-3" data-bs-toggle="modal"
                         data-bs-target="#staticBackdrop"
                         style="margin-left: auto;margin-right:0;outline: none;border: none;"><i
-                            class="las la-plus text-white" style="font-size: 15xp;"></i> New Store Request</button>
+                            class="las la-plus text-white" style="font-size: 15px;"></i> New Store Request</button>
                 </span>
 
             </div>
         </div>
         <!--alert -->
-        {% if messages %}
-        {% for message in messages %}
-        {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
-        <div class="alert alert-success d-flex align-items-center alert-dismissible alert-success" role="alert">
-            <i class="las la-check-double" style="color: white;font-size: 2rem"></i>
-            <div class="a-icon mx-2">
-                {{message}}
-            </div>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        {% elif message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
-        <div class="alert alert-danger d-flex align-items-center alert-dismissible alert-warn" role="alert">
-            <i class="las la-exclamation-triangle" style="color: white;font-size: 2rem"></i>
-            <div class="a-icon mx-2">
-                {{message}}
-            </div>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        {% endif %}
-        {% endfor %}
-        {% endif %}
+        {% include 'alerts.html' %}
         <div class="row my-2">
             <div class="col-md-12">
                 <div class="card" id="d-card">
@@ -51,15 +31,15 @@
                                     ({{count}})</a>
                             </li>
                             <li class="nav-item">
+                                <a href="#pending" class="nav-link" data-bs-toggle="tab">Pending Approval ({{pend}})</a>
+                            </li>
+                            <li class="nav-item">
                                 <a href="#profile" class="nav-link" data-bs-toggle="tab">Approved
                                     ({{counter}})</a>
                             </li>
                             <li class="nav-item">
                                 <a href="#reject" class="nav-link" data-bs-toggle="tab">Rejected
                                     ({{reject}})</a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#pending" class="nav-link" data-bs-toggle="tab">Pending Approval ({{pend}})</a>
                             </li>
                         </ul>
                         <div class="tab-content">
@@ -342,34 +322,27 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
-                                    <label for="" class="form-label">Issuing Store</label>
+                                    <label for="" class="form-label">Issuing Store <span
+                                            class="text-danger">*</span></label>
                                     <select class="form-select" name="issuingStore" required>
                                         <option selected disabled value="">Select Issuing Store</option>
                                         {% for res in store %}
                                         <option value="{{res.Code}}">{{res.Name}}</option>
                                         {% endfor %}
                                     </select>
-                                    <div class="invalid-feedback">
-                                        Please Select a Valid Store.
-                                    </div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
-                                    <label for="" class="form-label">Expected Receipt Date</label>
+                                    <label for="" class="form-label">Expected Receipt Date <span
+                                            class="text-danger">*</span></label>
                                     <input type="date" name="expectedReceiptDate" class="form-control" required>
-                                    <div class="invalid-feedback">
-                                        Please select a valid Expected Receipt Date.
-                                    </div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
-                                    <label for="" class="form-label">Purpose</label>
+                                    <label for="" class="form-label">Purpose <span class="text-danger">*</span></label>
                                     <textarea class="form-control" name="reason" rows="3" required></textarea>
-                                    <div class="invalid-feedback">
-                                        Purpose can't be empty.
-                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -55,8 +55,10 @@ def ImprestRequisition(request):
 
             reject = len(Rejected)
 
-        except requests.exceptions.ConnectionError as e:
+        except requests.exceptions.RequestException as e:
             print(e)
+            messages.info(request, "Whoops! Something went wrong. Please Login to Continue")
+            return redirect('auth')
 
         todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
 
@@ -76,37 +78,40 @@ def CreateImprest(request):
     session = requests.Session()
     session.auth = config.AUTHS
     imprestNo = ""
-    accountNo = request.session['Customer_No_']
-    responsibilityCenter = request.session['User_Responsibility_Center']
-    travelType = 0
     purpose = ''
-    usersId = request.session['User_ID']
-    personalNo = request.session['Employee_No_']
     isImprest = ''
     isDsa = ''
     myAction = ''
     if request.method == 'POST':
         try:
+            accountNo = request.session['Customer_No_']
+            responsibilityCenter = request.session['User_Responsibility_Center']
+            usersId = request.session['User_ID']
+            personalNo = request.session['Employee_No_']
             imprestNo = request.POST.get('imprestNo')
+            travelType = int(request.POST.get('travelType'))
             purpose = request.POST.get('purpose')
             isImprest = eval(request.POST.get('isImprest'))
             isDsa = eval(request.POST.get('isDsa'))
             myAction = request.POST.get('myAction')
             imprestNo = request.POST.get('imprestNo')
         except ValueError:
-            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            messages.error(request, "Missing Input")
             return redirect('imprestReq')
+        except KeyError:
+            messages.info(request, "Session Expired. Please Login")
+            return redirect('auth')
         if not imprestNo:
             imprestNo = " "
-        print("Myaction", myAction)
         try:
             response = config.CLIENT.service.FnImprestHeader(
                 imprestNo, accountNo, responsibilityCenter, travelType, purpose, usersId, personalNo, isImprest, isDsa, myAction)
-            messages.success(request, "Successfully Added!!")
+            messages.success(request, "Request Successful")
             print(response)
         except Exception as e:
             messages.error(request, e)
             print(e)
+            return redirect('imprestReq')
     return redirect('imprestReq')
 
 
@@ -124,12 +129,15 @@ def ImprestDetails(request, pk):
         Dimension = config.O_DATA.format("/QyDimensionValues")
         destination = config.O_DATA.format("/QyDestinations")
         Approver = config.O_DATA.format("/QyApprovalEntries")
+        Lines_Res = config.O_DATA.format("/QyImprestLines")
         try:
             response = session.get(Access_Point, timeout=10).json()
             Imprest_RES = session.get(Imprest_Type, timeout=10).json()
             Dimension_RES = session.get(Dimension, timeout=10).json()
             res_dest = session.get(destination, timeout=10).json()
             res_approver = session.get(Approver, timeout=10).json()
+            responses = session.get(Lines_Res, timeout=10).json()
+            openLines = []
 
             openImp = []
             res_type = []
@@ -196,19 +204,14 @@ def ImprestDetails(request, pk):
                             res = imprest
                             if imprest['Status'] == 'Pending Approval':
                                 state = 2
-        except requests.exceptions.ConnectionError as e:
-            print(e)
-
-        Lines_Res = config.O_DATA.format("/QyImprestLines")
-        try:
-            response = session.get(Lines_Res, timeout=10).json()
-            openLines = []
-            for imprest in response['value']:
+            for imprest in responses['value']:
                 if imprest['AuxiliaryIndex1'] == pk:
                     output_json = json.dumps(imprest)
                     openLines.append(json.loads(output_json))
-        except requests.exceptions.ConnectionError as e:
+        except requests.exceptions.RequestException as e:
             print(e)
+            messages.info(request, "Whoops! Something went wrong. Please Login to Continue")
+            return redirect('imprestReq')
         todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
                     
         print(ForegnDest)
@@ -218,22 +221,18 @@ def ImprestDetails(request, pk):
             "area": Area, "biz": BizGroup,
             "Local": Local, "year": year,
             "full": fullname, "Foreign": ForegnDest, "dest": destination}
-    except KeyError:
+    except KeyError as e:
+        print(e)
         messages.info(request, "Session Expired. Please Login")
         return redirect('auth')
     return render(request, 'imprestDetail.html', ctx)
 
 
 def UploadAttachment(request, pk):
-    docNo = pk
-    response = ""
-    fileName = ""
-    attachment = ""
-    tableID = 52177430
-
     if request.method == "POST":
         try:
             attach = request.FILES.getlist('attachment')
+            tableID = 52177430
         except Exception as e:
             return redirect('IMPDetails', pk=pk)
         for files in attach:
@@ -241,128 +240,105 @@ def UploadAttachment(request, pk):
             attachment = base64.b64encode(files.read())
             try:
                 response = config.CLIENT.service.FnUploadAttachedDocument(
-                    docNo, fileName, attachment, tableID)
+                    pk, fileName, attachment, tableID)
             except Exception as e:
                 messages.error(request, e)
                 print(e)
         if response == True:
-            messages.success(request, "Successfully Sent !!")
-
+            messages.success(request, "File(s) Upload Successful")
             return redirect('IMPDetails', pk=pk)
         else:
-            messages.error(request, "Not Sent !!")
+            messages.error(request, "Failed, Try Again")
             return redirect('IMPDetails', pk=pk)
     return redirect('IMPDetails', pk=pk)
 
 # Delete Imprest Header
 
 def FnDeleteImprestLine(request, pk):
-    lineNo = ''
-    imprestNo = pk
     if request.method == 'POST':
         try:
             lineNo = int(request.POST.get('lineNo'))
         except ValueError as e:
             return redirect('IMPDetails', pk=pk)
-    print(lineNo)
-    print(imprestNo)
-    try:
-        response = config.CLIENT.service.FnDeleteImprestLine(
-            lineNo, imprestNo)
-        messages.success(request, "Approval Request Successfully Sent!!")
-        print(response)
-        return redirect('IMPDetails', pk=pk)
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
+
+        try:
+            response = config.CLIENT.service.FnDeleteImprestLine(
+                lineNo, pk)
+            messages.success(request, "Approval Request Sent Successfully")
+            print(response)
+            return redirect('IMPDetails', pk=pk)
+        except Exception as e:
+            messages.info(request, e)
+            print(e)
+            return redirect('IMPDetails', pk=pk)
     return redirect('IMPDetails', pk=pk)
 
 
 def FnGenerateImprestReport(request, pk):
     nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
                         for i in range(5))
-    employeeNo = request.session['Employee_No_']
-    filenameFromApp = ''
-    imprestNo = pk
     if request.method == 'POST':
+
+        filenameFromApp = pk + str(nameChars) + ".pdf"
         try:
-            filenameFromApp = pk
-        except ValueError as e:
-            messages.error(request, "Invalid Line number, Try Again!!")
-            return redirect('IMPDetails', pk=pk)
-    filenameFromApp = filenameFromApp + str(nameChars) + ".pdf"
-    print(filenameFromApp)
-    try:
-        response = config.CLIENT.service.FnGenerateImprestReport(
-            employeeNo, filenameFromApp, imprestNo)
-        buffer = BytesIO.BytesIO()
-        content = base64.b64decode(response)
-        buffer.write(content)
-        responses = HttpResponse(
-            buffer.getvalue(),
-            content_type="application/pdf",
-        )
-        responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
-        return responses
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
+            response = config.CLIENT.service.FnGenerateImprestReport(
+                request.session['Employee_No_'], filenameFromApp, pk)
+            buffer = BytesIO.BytesIO()
+            content = base64.b64decode(response)
+            buffer.write(content)
+            responses = HttpResponse(
+                buffer.getvalue(),
+                content_type="application/pdf",
+            )
+            responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
+            return responses
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+            return redirect('auth')
     return redirect('IMPDetails', pk=pk)
 
 
 def FnRequestPaymentApproval(request, pk):
-    employeeNo = request.session['Employee_No_']
-    requisitionNo = ""
+
     if request.method == 'POST':
         try:
             requisitionNo = request.POST.get('requisitionNo')
         except ValueError as e:
-            messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('IMPDetails', pk=pk)
-    try:
-        response = config.CLIENT.service.FnRequestPaymentApproval(
-            employeeNo, requisitionNo)
-        messages.success(request, "Approval Request Successfully Sent!!")
-        print(response)
-        return redirect('IMPDetails', pk=pk)
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
+        try:
+            response = config.CLIENT.service.FnRequestPaymentApproval(
+                request.session['Employee_No_'], requisitionNo)
+            messages.success(request, "Approval Request Sent Successfully")
+            print(response)
+            return redirect('IMPDetails', pk=pk)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+            return redirect('auth')
     return redirect('IMPDetails', pk=pk)
 
 
 def FnCancelPaymentApproval(request, pk):
-    employeeNo = request.session['Employee_No_']
-    requisitionNo = ""
     if request.method == 'POST':
         try:
             requisitionNo = request.POST.get('requisitionNo')
         except ValueError as e:
-            messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('IMPDetails', pk=pk)
-    try:
-        response = config.CLIENT.service.FnCancelPaymentApproval(
-            employeeNo, requisitionNo)
-        messages.success(request, "Cancel Approval Successful !!")
-        print(response)
-        return redirect('IMPDetails', pk=pk)
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
+        try:
+            response = config.CLIENT.service.FnCancelPaymentApproval(
+                request.session['Employee_No_'], requisitionNo)
+            messages.success(request, "Cancel Approval Successful")
+            print(response)
+            return redirect('IMPDetails', pk=pk)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+            return redirect('auth')
     return redirect('IMPDetails', pk=pk)
 
 
 def CreateImprestLines(request, pk):
-    lineNo = ""
-    imprestNo = pk
-    imprestType = ''
-    destination = ""
-    travelDate = ''
-    returnDate = ''
-    requisitionType = ''
-    amount = ""
-    imprestTypes = ''
-    myAction = ''
     if request.method == 'POST':
         try:
             lineNo = int(request.POST.get('lineNo'))
@@ -376,25 +352,26 @@ def CreateImprestLines(request, pk):
                 request.POST.get('returnDate'), '%Y-%m-%d').date()
             myAction = request.POST.get('myAction')
         except ValueError:
-            messages.error(request, "Not sent. Invalid Input, Try Again!!")
-            return redirect('IMPDetails', pk=imprestNo)
+            messages.error(request, "Missing Input")
+            return redirect('IMPDetails', pk=pk)
 
-    class Data(enum.Enum):
-        values = imprestTypes
-    imprestType = (Data.values).value
+        class Data(enum.Enum):
+            values = imprestTypes
+        imprestType = (Data.values).value
 
-    if not amount:
-        amount = 0
-    try:
-        response = config.CLIENT.service.FnImprestLine(
-            lineNo, imprestNo, imprestType, destination, travelDate, returnDate, requisitionType, float(amount), myAction)
-        messages.success(request, "Successfully Added!!")
-        print(response)
-        return redirect('IMPDetails', pk=imprestNo)
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
-    return redirect('IMPDetails', pk=imprestNo)
+        if not amount:
+            amount = 0
+        try:
+            response = config.CLIENT.service.FnImprestLine(
+                lineNo, pk, imprestType, destination, travelDate, returnDate, requisitionType, float(amount), myAction)
+            messages.success(request, "Request Successful")
+            print(response)
+            return redirect('IMPDetails', pk=pk)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+            return redirect('IMPDetails', pk=pk)
+    return redirect('IMPDetails', pk=pk)
 
 
 def ImprestSurrender(request):
@@ -439,8 +416,10 @@ def ImprestSurrender(request):
             Rejects = len(Reject)
 
             pend = len(Pending)
-        except requests.exceptions.ConnectionError as e:
+        except requests.exceptions.RequestException as e:
             print(e)
+            messages.info(request, "Whoops! Something went wrong. Please Login to Continue")
+            return redirect('auth')
 
         todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
         ctx = {"today": todays_date, "res": open,
@@ -456,33 +435,32 @@ def ImprestSurrender(request):
 
 
 def CreateSurrender(request):
-
-    surrenderNo = ""
-    imprestIssueDocNo = ''
-    accountNo = request.session['Customer_No_']
-    purpose = ""
-    usersId = request.session['User_ID']
-    staffNo = request.session['Employee_No_']
-    myAction = ''
     if request.method == 'POST':
         try:
+            usersId = request.session['User_ID']
+            staffNo = request.session['Employee_No_']
+            accountNo = request.session['Customer_No_']
             surrenderNo = request.POST.get('surrenderNo')
             imprestIssueDocNo = request.POST.get('imprestIssueDocNo')
             purpose = request.POST.get('purpose')
             myAction = request.POST.get('myAction')
         except ValueError:
-            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            messages.error(request, "Missing Input")
             return redirect('imprestSurr')
-    if not surrenderNo:
-        surrenderNo = " "
-    try:
-        response = config.CLIENT.service.FnImprestSurrenderHeader(
-            surrenderNo, imprestIssueDocNo, accountNo, purpose, usersId, staffNo, myAction)
-        messages.success(request, "Successfully Added!!")
-        print(response)
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
+        except KeyError:
+            messages.info(request, "Session Expired. Please Login")
+            return redirect('auth')
+        if not surrenderNo:
+            surrenderNo = " "
+        try:
+            response = config.CLIENT.service.FnImprestSurrenderHeader(
+                surrenderNo, imprestIssueDocNo, accountNo, purpose, usersId, staffNo, myAction)
+            messages.success(request, "Request Successful")
+            print(response)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+            return redirect('imprestSurr')
     return redirect('imprestSurr')
 
 
@@ -577,37 +555,30 @@ def SurrenderDetails(request, pk):
 
 
 def CreateSurrenderLines(request, pk):
-    lineNo = ""
-    surrenderNo = pk
-    actualSpent = ""
     if request.method == 'POST':
         try:
             lineNo = int(request.POST.get('lineNo'))
             actualSpent = float(request.POST.get('actualSpent'))
         except ValueError:
-            messages.error(request, "Not sent. Invalid Input, Try Again!!")
-            return redirect('IMPDetails', pk=surrenderNo)
+            messages.error(request, "Missing Input")
+            return redirect('IMPDetails', pk=pk)
         try:
             response = config.CLIENT.service.FnImprestSurrenderLine(
-                lineNo, surrenderNo, actualSpent)
-            messages.success(request, "Successfully Added!!")
+                lineNo, pk, actualSpent)
+            messages.success(request, "Request Successful")
             print(response)
-            return redirect('IMPSurrender', pk=surrenderNo)
+            return redirect('IMPSurrender', pk=pk)
         except Exception as e:
             messages.error(request, e)
             print(e)
-    return redirect('IMPSurrender', pk=surrenderNo)
+            return redirect('IMPSurrender', pk=pk)
+    return redirect('IMPSurrender', pk=pk)
 
 
 def UploadSurrenderAttachment(request, pk):
-    docNo = pk
-    response = ""
-    fileName = ""
-    attachment = ""
-    tableID = 52177430
-
     if request.method == "POST":
         try:
+            tableID = 52177430
             attach = request.FILES.getlist('attachment')
         except Exception as e:
             return redirect('IMPSurrender', pk=pk)
@@ -616,90 +587,76 @@ def UploadSurrenderAttachment(request, pk):
             attachment = base64.b64encode(files.read())
             try:
                 response = config.CLIENT.service.FnUploadAttachedDocument(
-                    docNo, fileName, attachment, tableID)
+                    pk, fileName, attachment, tableID)
             except Exception as e:
                 messages.error(request, e)
                 print(e)
         if response == True:
-            messages.success(request, "Successfully Sent !!")
-
+            messages.success(request, "File(s) Upload Successful")
             return redirect('IMPSurrender', pk=pk)
         else:
-            messages.error(request, "Not Sent !!")
+            messages.error(request, "Failed, Try Again")
             return redirect('IMPSurrender', pk=pk)
-
     return redirect('IMPSurrender', pk=pk)
 
 
 def FnGenerateImprestSurrenderReport(request, pk):
     nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
                         for i in range(5))
-    surrenderNo = pk
-    filenameFromApp = ''
     if request.method == 'POST':
+        filenameFromApp = pk + str(nameChars) + ".pdf"
         try:
-            filenameFromApp = pk
-        except ValueError as e:
-            messages.error(request, "Invalid Line number, Try Again!!")
+            response = config.CLIENT.service.FnGenerateImprestSurrenderReport(
+                pk, filenameFromApp)
+            buffer = BytesIO.BytesIO()
+            content = base64.b64decode(response)
+            buffer.write(content)
+            responses = HttpResponse(
+                buffer.getvalue(),
+                content_type="application/pdf",
+            )
+            responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
+            return responses
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
             return redirect('IMPSurrender', pk=pk)
-    filenameFromApp = filenameFromApp + str(nameChars) + ".pdf"
-    try:
-        response = config.CLIENT.service.FnGenerateImprestSurrenderReport(
-            surrenderNo, filenameFromApp)
-        buffer = BytesIO.BytesIO()
-        content = base64.b64decode(response)
-        buffer.write(content)
-        responses = HttpResponse(
-            buffer.getvalue(),
-            content_type="application/pdf",
-        )
-        responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
-        return responses
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
     return redirect('IMPSurrender', pk=pk)
 
 
 def SurrenderApproval(request, pk):
-    employeeNo = request.session['Employee_No_']
-    requisitionNo = ""
     if request.method == 'POST':
         try:
             requisitionNo = request.POST.get('requisitionNo')
         except ValueError as e:
-            messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('IMPSurrender', pk=pk)
-    try:
-        response = config.CLIENT.service.FnRequestPaymentApproval(
-            employeeNo, requisitionNo)
-        messages.success(request, "Approval Request Successfully Sent!!")
-        print(response)
-        return redirect('IMPSurrender', pk=pk)
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
+        try:
+            response = config.CLIENT.service.FnRequestPaymentApproval(
+                request.session['Employee_No_'], requisitionNo)
+            messages.success(request, "Approval Request Sent Successfully")
+            print(response)
+            return redirect('IMPSurrender', pk=pk)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
     return redirect('IMPSurrender', pk=pk)
 
 
 def FnCancelSurrenderApproval(request, pk):
-    employeeNo = request.session['Employee_No_']
-    requisitionNo = ""
     if request.method == 'POST':
         try:
             requisitionNo = request.POST.get('requisitionNo')
         except ValueError as e:
-            messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('IMPSurrender', pk=pk)
-    try:
-        response = config.CLIENT.service.FnCancelPaymentApproval(
-            employeeNo, requisitionNo)
-        messages.success(request, "Cancel Approval Successful !!")
-        print(response)
-        return redirect('IMPSurrender', pk=pk)
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
+        try:
+            response = config.CLIENT.service.FnCancelPaymentApproval(
+                request.session['Employee_No_'], requisitionNo)
+            messages.success(request, "Cancel Approval Successful !!")
+            print(response)
+            return redirect('IMPSurrender', pk=pk)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
     return redirect('IMPSurrender', pk=pk)
 
 
@@ -746,7 +703,8 @@ def StaffClaim(request):
             pend = len(Pending)
         except requests.exceptions.ConnectionError as e:
             print(e)
-
+            messages.info(request,e)
+            return redirect('auth')
         todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
         ctx = {"today": todays_date, "res": open,
             "count": counts, "rej": rej,
@@ -783,7 +741,7 @@ def CreateClaim(request):
         try:
             response = config.CLIENT.service.FnStaffClaimHeader(
                 claimNo, claimType, accountNo, purpose, usersId, staffNo, imprestSurrDocNo, myAction)
-            messages.success(request, "Successfully Added!!")
+            messages.success(request, "Request Successful")
             print(response)
             return redirect('claim')
         except Exception as e:
@@ -879,7 +837,7 @@ def CreateClaimLines(request, pk):
     lineNo = ""
     claimNo = pk
     claimType = ""
-    accountNo = request.session['Customer_No_']
+    
     amount = ""
     claimReceiptNo = ""
     dimension3 = ''
@@ -888,6 +846,7 @@ def CreateClaimLines(request, pk):
     myAction = ''
     if request.method == 'POST':
         try:
+            accountNo = request.session['Customer_No_']
             lineNo = int(request.POST.get('lineNo'))
             claimType = request.POST.get('claimType')
             amount = float(request.POST.get('amount'))
@@ -899,7 +858,7 @@ def CreateClaimLines(request, pk):
             tableID = 52177431
         except Exception as e:
             messages.error(request, "Invalid Input.")
-            return redirect('ClaimDetail', pk=claimNo)
+            return redirect('ClaimDetail', pk=pk)
 
         try:
             response = config.CLIENT.service.FnStaffClaimLine(
@@ -916,7 +875,7 @@ def CreateClaimLines(request, pk):
                             messages.success(request, "Request Successful")
                             return redirect('ClaimDetail', pk=pk)
                         else:
-                            messages.error(request, "Not Sent !!")
+                            messages.error(request, "Failed, Try Again")
                             return redirect('ClaimDetail', pk=pk)
                     except Exception as e:
                         messages.error(request, e)
@@ -925,22 +884,19 @@ def CreateClaimLines(request, pk):
         except Exception as e:
             messages.error(request, e)
             print(e)
-    return redirect('ClaimDetail', pk=claimNo)
+    return redirect('ClaimDetail', pk=pk)
 
 
 def ClaimApproval(request, pk):
-    employeeNo = request.session['Employee_No_']
-    requisitionNo = ""
     if request.method == 'POST':
         try:
             requisitionNo = request.POST.get('requisitionNo')
         except ValueError as e:
-            messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('ClaimDetail', pk=pk)
         try:
             response = config.CLIENT.service.FnRequestPaymentApproval(
-                employeeNo, requisitionNo)
-            messages.success(request, "Approval Request Successfully Sent!!")
+                request.session['Employee_No_'], requisitionNo)
+            messages.success(request, "Approval Request Sent Successfully")
             print(response)
             return redirect('ClaimDetail', pk=pk)
         except Exception as e:
@@ -949,17 +905,14 @@ def ClaimApproval(request, pk):
     return redirect('ClaimDetail', pk=pk)
 
 def FnCancelClaimApproval(request, pk):
-    employeeNo = request.session['Employee_No_']
-    requisitionNo = ""
     if request.method == 'POST':
         try:
             requisitionNo = request.POST.get('requisitionNo')
         except ValueError as e:
-            messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('ClaimDetail', pk=pk)
         try:
             response = config.CLIENT.service.FnCancelPaymentApproval(
-                employeeNo, requisitionNo)
+                request.session['Employee_No_'], requisitionNo)
             messages.success(request, "Cancel Approval Successful !!")
             print(response)
             return redirect('ClaimDetail', pk=pk)
@@ -969,14 +922,11 @@ def FnCancelClaimApproval(request, pk):
     return redirect('ClaimDetail', pk=pk)
 
 def FnDeleteStaffClaimLine(request, pk):
-    lineNo = ""
-    requisitionNo = pk
-
     if request.method == 'POST':
         lineNo = int(request.POST.get('lineNo'))
         try:
             response = config.CLIENT.service.FnDeleteStaffClaimLine(lineNo,
-                                                                    requisitionNo)
+                                                                    pk)
             messages.success(request, "Successfully Deleted")
             print(response)
         except Exception as e:
@@ -988,29 +938,22 @@ def FnDeleteStaffClaimLine(request, pk):
 def FnGenerateStaffClaimReport(request, pk):
     nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
                         for i in range(5))
-    employeeNo = request.session['Employee_No_']
-    filenameFromApp = ''
-    claimNo = pk
     if request.method == 'POST':
+        filenameFromApp = pk + str(nameChars) + ".pdf"
         try:
-            filenameFromApp = pk
-        except ValueError as e:
-            return redirect('ClaimDetail', pk=pk)
-    filenameFromApp = filenameFromApp + str(nameChars) + ".pdf"
-    try:
-        response = config.CLIENT.service.FnGenerateStaffClaimReport(
-            employeeNo, filenameFromApp, claimNo)
-        messages.success(request, "Successfully Sent!!")
-        buffer = BytesIO.BytesIO()
-        content = base64.b64decode(response)
-        buffer.write(content)
-        responses = HttpResponse(
-            buffer.getvalue(),
-            content_type="application/pdf",
-        )
-        responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
-        return responses
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
+            response = config.CLIENT.service.FnGenerateStaffClaimReport(
+                request.session['Employee_No_'], filenameFromApp, pk)
+            messages.success(request, "Successfully Sent!!")
+            buffer = BytesIO.BytesIO()
+            content = base64.b64decode(response)
+            buffer.write(content)
+            responses = HttpResponse(
+                buffer.getvalue(),
+                content_type="application/pdf",
+            )
+            responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
+            return responses
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
     return redirect('ClaimDetail', pk=pk)
