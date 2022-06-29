@@ -591,7 +591,7 @@ def TrainingDetail(request, pk):
                 output_json = json.dumps(train)
                 openLines.append(json.loads(output_json))
     except requests.exceptions.ConnectionError as e:
-        messages.error(request,"500 Server Error, Try Again in a few")
+        messages.error(request,e)
         return redirect('training_request')
 
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
@@ -623,10 +623,11 @@ def FnAdhocTrainingNeedRequest(request, pk):
             venue = request.POST.get('venue')
             sponsor = request.POST.get('sponsor')
             destination = request.POST.get('destination')
+            OtherDestinationName = request.POST.get('OtherDestinationName')
             provider = request.POST.get('provider')
 
         except ValueError as e:
-            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            messages.error(request, "Invalid Input, Try Again!!")
             return redirect('TrainingDetail', pk=pk)
         if not sponsor:
             sponsor = 0
@@ -637,6 +638,9 @@ def FnAdhocTrainingNeedRequest(request, pk):
         
         if not venue:
             venue = "Online"
+
+        if OtherDestinationName:
+            destination = OtherDestinationName
         try:
             response = config.CLIENT.service.FnAdhocTrainingNeedRequest(requestNo,
                                                                         no, employeeNo, trainingName, trainingArea, trainingObjectives, venue, provider, myAction,sponsor,startDate,endDate,destination)

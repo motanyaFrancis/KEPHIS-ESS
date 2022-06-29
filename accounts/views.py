@@ -31,7 +31,6 @@ def login_request(request):
             CLIENT = Client(config.BASE_URL, transport=Transport(session=user))
             response = user.get(Access_Point, timeout=10).json()
             res_data = user.get(Access2, timeout=10).json()
-            Employees = []
             Data = []
             for data in res_data['value']:
                 if data['User_ID'] == username:
@@ -52,7 +51,7 @@ def login_request(request):
                     return redirect('dashboard')
 
         except requests.exceptions.RequestException as e:
-            messages.info(request, e)
+            messages.error(request, "Invalid Username or Password")
             return redirect('auth')
     ctx = {"year": year}
     return render(request, 'auth.html', ctx)

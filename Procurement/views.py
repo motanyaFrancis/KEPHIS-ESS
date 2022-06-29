@@ -114,6 +114,7 @@ def PurchaseRequestDetails(request, pk):
         Approver = config.O_DATA.format("/QyApprovalEntries")
         ProcPlan = config.O_DATA.format("/QyProcurementPlans")
         itemNo = config.O_DATA.format("/QyItems")
+        # Why are we passing items that have no relationship with the Procurement Plan
         GL_Acc = config.O_DATA.format("/QyGLAccounts")
         Lines_Res = config.O_DATA.format("/QyPurchaseRequisitionLines")
         try:

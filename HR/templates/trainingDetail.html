@@ -32,6 +32,98 @@
         </div>
         <!--alert -->
         {% include 'alerts.html' %}
+        {% if res.Adhoc == True %}
+        <div class="row my-3">
+            <div class="col-md-4">
+                <div class="card l-bg-cherry statCard h-100">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-file"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Adhoc</h5>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{res.Adhoc}}
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card l-bg-blue-dark statCard h-100">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-file"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Training Status</h5>
+                        </div>
+                        {% if res.Status == "Open" %}
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{res.Status}}
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="progress mt-1 " data-height="8" style="height: 8px;">
+                            <div class="progress-bar l-bg-red" role="progressbar" data-width="50%" aria-valuenow="25"
+                                aria-valuemin="0" aria-valuemax="100"
+                                style="width: 50%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
+                            </div>
+                        </div>
+                        {% elif res.Status == "Pending Approval" %}
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{res.Status}}
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="progress mt-1" data-height="8" style="height: 8px;">
+                            <div class="progress-bar" role="progressbar" data-width="75%" aria-valuenow="75"
+                                aria-valuemin="0" aria-valuemax="75"
+                                style="width: 75%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
+                            </div>
+                        </div>
+                        {% elif res.Status == "Released" %}
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    Approved
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="progress mt-1 " data-height="8" style="height: 8px;">
+                            <div class="progress-bars" role="progressbar" data-width="75%" aria-valuenow="75"
+                                aria-valuemin="0" aria-valuemax="100"
+                                style="width: 100%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card l-bg-orange-dark statCard h-100">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-calendar-times"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Request Date</h5>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{res.Request_Date}}
+                                </h2>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
         <div class="row my-3">
             <div class="col-md-3">
                 <div class="card l-bg-cherry statCard h-100">
@@ -120,26 +212,6 @@
                     </div>
                 </div>
             </div>
-            {% if res.Adhoc == True %}
-            <div class="col-md-3">
-                <div class="card l-bg-orange-dark statCard h-100">
-                    <div class="card-statistic-3 p-4">
-                        <div class="card-icon card-icon-large"><i class="fas fa-calendar-times"></i></div>
-                        <div class="mb-4">
-                            <h5 class="card-title mb-0">Request Date</h5>
-                        </div>
-                        <div class="row align-items-center mb-2 d-flex">
-                            <div class="col-md-12">
-                                <h2 class="d-flex align-items-center mb-0">
-                                    {{res.Request_Date}}
-                                </h2>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% else %}
             <div class="col-md-3">
                 <div class="card l-bg-orange-dark statCard h-100">
                     <div class="card-statistic-3 p-4">
@@ -158,8 +230,8 @@
                     </div>
                 </div>
             </div>
-            {% endif %}
         </div>
+        {% endif %}
         <div class="row">
             <div class="col-md-12">
                 <form class="row g-3">
@@ -220,6 +292,7 @@
                                     <th id="long">Training Name</th>
                                     <th>Training Area</th>
                                     <th>Training Objectives</th>
+                                    <th>Location</th>
                                     <th>Venue</th>
                                     <th>Provider</th>
                                     <th>Action</th>
@@ -231,6 +304,7 @@
                                     <td>{{res.Training_Name}}</td>
                                     <td>{{res.Training_area}}</td>
                                     <td>{{res.Training_Objectives}}</td>
+                                    <td>{{res.Location}}</td>
                                     <td>{{res.Venue}}</td>
                                     <td>{{res.Provider}}</td>
                                     <td>
@@ -356,32 +430,44 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="row" id="venueRow" style="display: none">
-                            <div class="col-md-12">
-                                <label for="" class="form-label">Venue</label>
-                                <input type="text" class="form-control" name="venue" id="venue" disabled>
-                            </div>
-                        </div>
+
                         <div class="row" id="LocaldestinationsRow" style="display:none">
                             <div class="col-md-12">
                                 <label class="form-label">Local Destination</label>
-                                <select class="form-select" name="destination" id="destinationsLocal" disabled>
+                                <select class="form-select myDestinations" name="destination" id="destinationsLocal"
+                                    disabled>
                                     <option selected disabled value="">Select </option>
                                     {% for res in local %}
                                     <option value="{{res.Destination_Code}}">{{res.Destination_Code}}</option>
                                     {% endfor %}
+                                    <option value="Other">Other</option>
                                 </select>
                             </div>
                         </div>
                         <div class="row" id="ForegnDestinationsRow" style="display:none">
                             <div class="col-md-12">
                                 <label class="form-label">Foregn Destination</label>
-                                <select class="form-select" name="destination" id="destinationsForeign" disabled>
+                                <select class="form-select myDestinations" name="destination" id="destinationsForeign"
+                                    disabled>
                                     <option selected disabled value="">Select </option>
                                     {% for res in foreign %}
                                     <option value="{{res.Destination_Code}}">{{res.Destination_Code}}</option>
                                     {% endfor %}
+                                    <option value="Other">Other</option>
                                 </select>
+                            </div>
+                        </div>
+                        <div class="row my-2 OtherDestinationRow" style="display:none">
+                            <div class="col-md-12">
+                                <label class="form-label">Other Destination</label>
+                                <input type="text" class="form-control" name="OtherDestinationName"
+                                    id="OtherDestinationName" disabled>
+                            </div>
+                        </div>
+                        <div class="row" id="venueRow" style="display: none">
+                            <div class="col-md-12">
+                                <label for="" class="form-label">Venue</label>
+                                <input type="text" class="form-control" name="venue" id="venue" disabled>
                             </div>
                         </div>
                         <div class="row">
@@ -479,6 +565,15 @@
                 $('#destinationsLocal').prop('disabled', true)
                 $('#venue').prop('disabled', true)
                 $('#venueRow').hide(1500)
+            }
+        });
+        $('.myDestinations').on('change', function () {
+            if (this.value == "Other") {
+                $(".OtherDestinationRow").show(1000);
+                $('#OtherDestinationName').prop('disabled', false)
+            } else {
+                $(".OtherDestinationRow").hide(1000);
+                $('#OtherDestinationName').prop('disabled', true)
             }
         });
     })
