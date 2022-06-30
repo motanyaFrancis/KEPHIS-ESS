@@ -102,7 +102,8 @@ def CreateImprest(request):
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
         if not imprestNo:
-            imprestNo = " "
+            imprestNo = ""
+        print(travelType)
         try:
             response = config.CLIENT.service.FnImprestHeader(
                 imprestNo, accountNo, responsibilityCenter, travelType, purpose, usersId, personalNo, isImprest, isDsa, myAction)
