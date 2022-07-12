@@ -32,10 +32,10 @@
         <!--alert -->
         {% include 'alerts.html' %}
         <div class="row my-3">
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="card l-bg-cherry statCard h-100">
                     <div class="card-statistic-3 p-4">
-                        <div class="card-icon card-icon-large"><i class="fas fa-dollar-sign"></i></div>
+                        <div class="card-icon card-icon-large"><i class="fas fa-users"></i></div>
                         <div class="mb-4">
                             <h5 class="card-title mb-0">Requested By</h5>
                         </div>
@@ -49,7 +49,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="card l-bg-blue-dark statCard h-100">
                     <div class="card-statistic-3 p-4">
                         <div class="card-icon card-icon-large"><i class="fas fa-users"></i></div>
@@ -102,24 +102,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card l-bg-green-dark statCard h-100">
-                    <div class="card-statistic-3 p-4">
-                        <div class="card-icon card-icon-large"><i class="fas fa-calendar-alt"></i></div>
-                        <div class="mb-4">
-                            <h5 class="card-title mb-0">Expected Receipt Date</h5>
-                        </div>
-                        <div class="row align-items-center mb-2 d-flex">
-                            <div class="col-md-12">
-                                <h2 class="d-flex align-items-center mb-0">
-                                    {{res.Expected_Receipt_Date}}
-                                </h2>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="card l-bg-orange-dark statCard h-100">
                     <div class="card-statistic-3 p-4">
                         <div class="card-icon card-icon-large"><i class="fas fa-calendar-times"></i></div>
@@ -292,8 +275,52 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <label class="form-label">Item <span class="text-danger">*</span></label>
-                                <select class="form-select" name="itemCode" required>
+                                <label class="form-label">Item Category<span class="text-danger">*</span></label>
+                                <select class="form-select" name="itemCategory" id="itemCategory" required>
+                                    <option selected disabled value="">Select Item Category</option>
+                                    <option value="1">Design and printing</option>
+                                    <option value="2">Stationery and common user items</option>
+                                    <option value="3">Toiletry soap and detergent</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row" id="DesignAndPrintingRow" style="display:none">
+                            <div class="col-md-12">
+                                <label class="form-label">Design and Printing Items <span
+                                        class="text-danger">*</span></label>
+                                <select class="form-select" name="itemCode" id="DesignAndPrinting" disabled>
+                                    <option selected disabled value="">Select Item</option>
+                                    {% for res in items %}
+                                    <option value="{{res.No_}}">{{res.Description}} <span
+                                            class="text-muted avail">({{res.Inventory}}
+                                            -
+                                            Available)</span>
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row" id="StationeryRow" style="display: none;">
+                            <div class="col-md-12">
+                                <label class="form-label">Stationery and common user items <span
+                                        class="text-danger">*</span></label>
+                                <select class="form-select" name="itemCode" id="Stationery" disabled>
+                                    <option selected disabled value="">Select Item</option>
+                                    {% for res in items %}
+                                    <option value="{{res.No_}}">{{res.Description}} <span
+                                            class="text-muted avail">({{res.Inventory}}
+                                            -
+                                            Available)</span>
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row" id="ToiletryRow" style="display: none;">
+                            <div class="col-md-12">
+                                <label class="form-label">Toiletry Soap and Detergent Items <span
+                                        class="text-danger">*</span></label>
+                                <select class="form-select" name="itemCode" id="Toiletry" disabled>
                                     <option selected disabled value="">Select Item</option>
                                     {% for res in items %}
                                     <option value="{{res.No_}}">{{res.Description}} <span
@@ -372,5 +399,32 @@
         </div>
     </div>
 </div>
-
+<script>
+    $(document).ready(function () {
+        $('#itemCategory').on('change', function () {
+            if (this.value == "1") {
+                $('#DesignAndPrintingRow').show(1000);
+                $('#DesignAndPrinting').prop('disabled', false);
+                $('#StationeryRow').hide();
+                $('#Stationery').prop('disabled', true);
+                $('#ToiletryRow').hide();
+                $('#Toiletry').prop('disabled', true);
+            } else if (this.value == "2") {
+                $('#StationeryRow').show(1000);
+                $('#Stationery').prop('disabled', false);
+                $('#DesignAndPrintingRow').hide();
+                $('#DesignAndPrinting').prop('disabled', true);
+                $('#ToiletryRow').hide();
+                $('#Toiletry').prop('disabled', true);
+            } else {
+                $('#ToiletryRow').show(1000);
+                $('#Toiletry').prop('disabled', false);
+                $('#DesignAndPrintingRow').hide();
+                $('#DesignAndPrinting').prop('disabled', true);
+                $('#StationeryRow').hide();
+                $('#Stationery').prop('disabled', true);
+            }
+        });
+    })
+</script>
 {% endblock %}

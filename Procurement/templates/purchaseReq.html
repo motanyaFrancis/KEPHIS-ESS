@@ -53,7 +53,6 @@
                                         <thead>
                                             <th>Order Date</th>
                                             <th>Procurement Plan</th>
-                                            <th>Expected Receipt Date</th>
                                             <th>Requested By</th>
                                             <th>Action</th>
                                             </tr>
@@ -63,7 +62,6 @@
                                             <tr>
                                                 <td>{{res.Order_Date}}</td>
                                                 <td>{{res.Procurement_Plan}}</td>
-                                                <td>{{res.Expected_Receipt_Date}}</td>
                                                 <td>{{res.Requested_By}}</td>
                                                 <td>
                                                     <button class="btn btn-primary" data-bs-toggle="modal"
@@ -119,17 +117,6 @@
                                                                                         class="form-control" required>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="row">
-                                                                                <div class="col-md-12">
-                                                                                    <label for=""
-                                                                                        class="form-label">Expected
-                                                                                        Receipt Date</label>
-                                                                                    <input type="date"
-                                                                                        name="expectedReceiptDate"
-                                                                                        class="form-control" required>
-                                                                                </div>
-                                                                            </div>
-
                                                                         </div>
                                                                         <div class="modal-footer">
                                                                             <button type="button" class="btn btn-danger"
@@ -159,7 +146,6 @@
                                             <tr id="tops">
                                                 <th>Order Date</th>
                                                 <th>Procurement Plan</th>
-                                                <th>Expected Receipt Date</th>
                                                 <th>Requested By</th>
                                                 <th>Action</th>
                                             </tr>
@@ -169,7 +155,6 @@
                                             <tr>
                                                 <td>{{res.Order_Date}}</td>
                                                 <td>{{res.Procurement_Plan}}</td>
-                                                <td>{{res.Expected_Receipt_Date}}</td>
                                                 <td>{{res.Requested_By}}</td>
                                                 <td>
                                                     <a href="{% url 'PurchaseDetail' res.No_ %} "
@@ -194,7 +179,6 @@
                                             <tr id="tops">
                                                 <th>Order Date</th>
                                                 <th>Procurement Plan</th>
-                                                <th>Expected Receipt Date</th>
                                                 <th>Requested By</th>
                                                 <th>Action</th>
                                             </tr>
@@ -203,7 +187,6 @@
                                             {% for res in rej %}
                                             <td>{{res.Order_Date}}</td>
                                             <td>{{res.Procurement_Plan}}</td>
-                                            <td>{{res.Expected_Receipt_Date}}</td>
                                             <td>{{res.Requested_By}}</td>
                                             <td>
                                                 <a href="{% url 'PurchaseDetail' res.No_ %} "
@@ -228,7 +211,6 @@
                                             <tr id="tops">
                                                 <th>Order Date</th>
                                                 <th>Procurement Plan</th>
-                                                <th>Expected Receipt Date</th>
                                                 <th>Requested By</th>
                                                 <th>Action</th>
                                             </tr>
@@ -238,7 +220,6 @@
                                             <tr>
                                                 <td>{{res.Order_Date}}</td>
                                                 <td>{{res.Procurement_Plan}}</td>
-                                                <td>{{res.Expected_Receipt_Date}}</td>
                                                 <td>{{res.Requested_By}}</td>
                                                 <td>
                                                     <a href="{% url 'PurchaseDetail' res.No_ %} "
@@ -289,13 +270,6 @@
                                     <label for="" class="form-label">Order Date <span
                                             class="text-danger">*</span></label>
                                     <input type="date" name="orderDate" class="form-control" required>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <label for="" class="form-label">Expected Receipt Date <span
-                                            class="text-danger">*</span></label>
-                                    <input type="date" name="expectedReceiptDate" class="form-control" required>
                                 </div>
                             </div>
                         </div>

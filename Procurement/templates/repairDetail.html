@@ -5,7 +5,7 @@
 <section class="dash2">
     <div class="content-wrapper">
         <div class="d-xl-flex justify-content-between align-items-start">
-            <h2 class="text-dark font-weight-bold mb-2"> Repair Request
+            <h2 class="text-dark font-weight-bold mb-2"> Repair Request and Maintenance
             </h2>
 
             <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
@@ -13,7 +13,7 @@
                     {% if state == 1 %}
                     <button class="btn btn-successs p-3 d-flex align-items-center" type="button" data-bs-toggle="modal"
                         data-bs-target="#staticBackdrop"> <i class="las la-plus text-white"
-                            style="font-size: 15px;"></i> Repair Lines
+                            style="font-size: 15px;"></i> Repair/Maintenance Lines
                     </button>
                     {% endif %}
                 </div>
@@ -22,10 +22,10 @@
         <!--alert -->
         {% include 'alerts.html' %}
         <div class="row my-3">
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="card l-bg-cherry statCard h-100">
                     <div class="card-statistic-3 p-4">
-                        <div class="card-icon card-icon-large"><i class="fas fa-dollar-sign"></i></div>
+                        <div class="card-icon card-icon-large"><i class="fas fa-users"></i></div>
                         <div class="mb-4">
                             <h5 class="card-title mb-0">Requested By</h5>
                         </div>
@@ -39,12 +39,12 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="card l-bg-blue-dark statCard h-100">
                     <div class="card-statistic-3 p-4">
                         <div class="card-icon card-icon-large"><i class="fas fa-users"></i></div>
                         <div class="mb-4">
-                            <h5 class="card-title mb-0">Repair Status</h5>
+                            <h5 class="card-title mb-0">Repair/Maintenance Status</h5>
                         </div>
                         {% if res.Status == "Open" %}
                         <div class="row align-items-center mb-2 d-flex">
@@ -92,24 +92,8 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card l-bg-green-dark statCard h-100">
-                    <div class="card-statistic-3 p-4">
-                        <div class="card-icon card-icon-large"><i class="fas fa-calendar-alt"></i></div>
-                        <div class="mb-4">
-                            <h5 class="card-title mb-0">Expected Receipt Date</h5>
-                        </div>
-                        <div class="row align-items-center mb-2 d-flex">
-                            <div class="col-md-12">
-                                <h2 class="d-flex align-items-center mb-0">
-                                    {{res.Expected_Receipt_Date}}
-                                </h2>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
+
+            <div class="col-md-4">
                 <div class="card l-bg-orange-dark statCard h-100">
                     <div class="card-statistic-3 p-4">
                         <div class="card-icon card-icon-large"><i class="fas fa-calendar-times"></i></div>
@@ -153,7 +137,7 @@
         <div class="row mt-4">
             <div class="col-md-12">
                 <div class="card" id="d-card">
-                    <h4 class="mt-2 mx-2 text-dark">Repair Request Lines</h4>
+                    <h4 class="mt-2 mx-2 text-dark">Repair/Maintenance Lines</h4>
                     <div class="card-body">
                         <table id="example"
                             class="display table table-striped table-bordered dt-responsive table-responsive-lg"
@@ -263,7 +247,7 @@
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">New Repair Line
+                    <h5 class="modal-title" id="staticBackdropLabel">New Repair/Maintenance Line
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -279,19 +263,24 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <label class="form-label">Asset <span class="text-danger">*</span></label>
-                                <select class="form-select" name="assetCode" required>
+                                <label class="form-label">Asset</label>
+                                <select class="form-select" name="assetCode" id="assetCode">
                                     <option selected disabled value="">Select Asset</option>
                                     {% for res in asset %}
                                     <option value="{{res.No_}}">{{res.Description}}</option>
                                     {% endfor %}
+                                    <option value="Other">Other</option>
                                 </select>
                             </div>
                         </div>
+                        <div class="row" id="OtherAssetRow" style="display: none">
+                            <label class="form-label">Other Asset</label>
+                            <input type="text" name="OtherAsset" id="OtherAsset" class="form-control" disabled>
+                        </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <label class="form-label">Attachments <span class="text-danger">*</span></label>
-                                <input class="form-control" name="attachment" type="file" multiple required>
+                                <label class="form-label">Attachments </label>
+                                <input class="form-control" name="attachment" type="file" multiple>
                                 <div class="form-text">
                                     Select single/multiple documents
                                 </div>
@@ -299,11 +288,8 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <label class="form-label">Description <span class="text-danger">*</span></label>
+                                <label class="form-label">Detail <span class="text-danger">*</span></label>
                                 <textarea class="form-control" name="description" rows="3" required></textarea>
-                                <div class="invalid-feedback">
-                                    Enter Description.
-                                </div>
                             </div>
                         </div>
                 </div>
@@ -317,5 +303,17 @@
     </div>
 </section>
 
-
+<script>
+    $(document).ready(function () {
+        $('#assetCode').on('change', function () {
+            if (this.value == "Other") {
+                $('#OtherAssetRow').show(1000);
+                $('#OtherAsset').prop('disabled', false);
+            } else {
+                $('#OtherAssetRow').hide();
+                $('#OtherAsset').prop('disabled', true);
+            }
+        });
+    })
+</script>
 {% endblock %}

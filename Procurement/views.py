@@ -71,7 +71,6 @@ def PurchaseRequisition(request):
 def CreatePurchaseRequisition(request):
     requisitionNo = ''
     orderDate = ''
-    expectedReceiptDate = ''
     myAction = ' '
     if request.method == 'POST':
         try:
@@ -93,7 +92,7 @@ def CreatePurchaseRequisition(request):
             requisitionNo = " "
         try:
             response = config.CLIENT.service.FnPurchaseRequisitionHeader(
-                requisitionNo, orderDate, employeeNo, expectedReceiptDate, myUserId, myAction)
+                requisitionNo, orderDate, employeeNo, myUserId, myAction)
             messages.success(request, "Request Successful")
             print(response)
         except Exception as e:
@@ -114,7 +113,6 @@ def PurchaseRequestDetails(request, pk):
         Approver = config.O_DATA.format("/QyApprovalEntries")
         ProcPlan = config.O_DATA.format("/QyProcurementPlans")
         itemNo = config.O_DATA.format("/QyItems")
-        # Why are we passing items that have no relationship with the Procurement Plan
         GL_Acc = config.O_DATA.format("/QyGLAccounts")
         Lines_Res = config.O_DATA.format("/QyPurchaseRequisitionLines")
         try:
@@ -403,7 +401,6 @@ def CreateRepairRequest(request):
     requisitionNo = ''
     orderDate = ''
     reason = ""
-    expectedReceiptDate = ''
     myAction = ' '
     if request.method == 'POST':
         try:
@@ -413,8 +410,6 @@ def CreateRepairRequest(request):
             orderDate = datetime.strptime(
                 request.POST.get('orderDate'), '%Y-%m-%d').date()
             reason = request.POST.get('reason')
-            expectedReceiptDate = datetime.strptime(
-                request.POST.get('expectedReceiptDate'), '%Y-%m-%d').date()
             myAction = request.POST.get('myAction')
         except ValueError:
             messages.error(request, "Missing Input")
@@ -426,7 +421,7 @@ def CreateRepairRequest(request):
             requisitionNo = " "
         try:
             response = config.CLIENT.service.FnRepairRequisitionHeader(
-                requisitionNo, orderDate, employeeNo, reason, expectedReceiptDate, myUserId, myAction)
+                requisitionNo, orderDate, employeeNo, reason, myUserId, myAction)
             messages.success(request, "Request Successful")
             print(response)
         except Exception as e:
@@ -571,6 +566,7 @@ def CreateRepairLines(request, pk):
         try:
             lineNo = int(request.POST.get('lineNo'))
             assetCode = request.POST.get('assetCode')
+            OtherAsset = request.POST.get('OtherAsset')
             description = request.POST.get('description')
             attach = request.FILES.getlist('attachment')
             myAction = request.POST.get('myAction')
@@ -579,6 +575,8 @@ def CreateRepairLines(request, pk):
             messages.error(request, "Missing Input")
             return redirect('RepairDetail', pk=pk)
 
+        if OtherAsset:
+            assetCode = OtherAsset
         try:
             response = config.CLIENT.service.FnRepairRequisitionLine(
                 pk, lineNo, assetCode, description, myAction)
@@ -677,15 +675,12 @@ def CreateStoreRequisition(request):
     requisitionNo = ''
     issuingStore = ""
     reason = ""
-    expectedReceiptDate = ''
     myAction = ''
     if request.method == 'POST':
         try:
             requisitionNo = request.POST.get('requisitionNo')
             issuingStore = request.POST.get('issuingStore')
             reason = request.POST.get('reason')
-            expectedReceiptDate = datetime.strptime(
-                request.POST.get('expectedReceiptDate'), '%Y-%m-%d').date()
             myAction = request.POST.get('myAction')
             myUserId = request.session['User_ID']
             employeeNo = request.session['Employee_No_']
@@ -700,7 +695,7 @@ def CreateStoreRequisition(request):
 
         try:
             response = config.CLIENT.service.FnStoreRequisitionHeader(
-                requisitionNo, employeeNo, issuingStore, reason, expectedReceiptDate, myUserId, myAction)
+                requisitionNo, employeeNo, issuingStore, reason, myUserId, myAction)
             messages.success(request, "Request Successful")
             print(response)
         except Exception as e:

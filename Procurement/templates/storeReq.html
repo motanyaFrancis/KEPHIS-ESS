@@ -53,7 +53,6 @@
                                             <tr id="tops">
                                                 <th id="long">Request No</th>
                                                 <th>Description</th>
-                                                <th>Expected Receipt Date</th>
                                                 <th>Location Code</th>
                                                 <th>Status</th>
                                                 <th>Action</th>
@@ -64,7 +63,6 @@
                                             <tr>
                                                 <td>{{res.No_}}</td>
                                                 <td>{{res.Reason_Description}}</td>
-                                                <td>{{res.Expected_Receipt_Date}}</td>
                                                 <td>{{res.Location_Code}}</td>
                                                 <td>{{res.Status}}</td>
                                                 <td>
@@ -128,35 +126,16 @@
                                                                                             {{res.Name}}</option>
                                                                                         {% endfor %}
                                                                                     </select>
-                                                                                    <div class="invalid-feedback">
-                                                                                        Please Select a Valid Store.
-                                                                                    </div>
                                                                                 </div>
                                                                             </div>
                                                                             <div class="row">
                                                                                 <div class="col-md-12">
                                                                                     <label for=""
-                                                                                        class="form-label">Expected
-                                                                                        Receipt Date</label>
-                                                                                    <input type="date"
-                                                                                        name="expectedReceiptDate"
-                                                                                        class="form-control" required>
-                                                                                    <div class="invalid-feedback">
-                                                                                        Please select a valid Expected
-                                                                                        Receipt Date.
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="row">
-                                                                                <div class="col-md-12">
-                                                                                    <label for=""
-                                                                                        class="form-label">Purpose</label>
+                                                                                        class="form-label">Detail</label>
                                                                                     <textarea class="form-control"
                                                                                         name="reason" rows="3"
                                                                                         required></textarea>
-                                                                                    <div class="invalid-feedback">
-                                                                                        Purpose can't be empty.
-                                                                                    </div>
+
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -188,7 +167,6 @@
                                             <tr id="tops">
                                                 <th id="long">Request No</th>
                                                 <th>Description</th>
-                                                <th>Expected Receipt Date</th>
                                                 <th>Location Code</th>
                                                 <th>Status</th>
                                                 <th>Action</th>
@@ -199,7 +177,6 @@
                                             <tr>
                                                 <td>{{res.No_}}</td>
                                                 <td>{{res.Reason_Description}}</td>
-                                                <td>{{res.Expected_Receipt_Date}}</td>
                                                 <td>{{res.Location_Code}}</td>
                                                 <td>{{res.Status}}</td>
                                                 <td>
@@ -225,7 +202,6 @@
                                             <tr id="tops">
                                                 <th id="long">Request No</th>
                                                 <th>Description</th>
-                                                <th>Expected Receipt Date</th>
                                                 <th>Location Code</th>
                                                 <th>Status</th>
                                                 <th>Action</th>
@@ -236,7 +212,6 @@
                                             <tr>
                                                 <td>{{res.No_}}</td>
                                                 <td>{{res.Reason_Description}}</td>
-                                                <td>{{res.Expected_Receipt_Date}}</td>
                                                 <td>{{res.Location_Code}}</td>
                                                 <td>{{res.Status}}</td>
                                                 <td>
@@ -262,7 +237,6 @@
                                             <tr id="tops">
                                                 <th id="long">Request No</th>
                                                 <th>Description</th>
-                                                <th>Expected Receipt Date</th>
                                                 <th>Location Code</th>
                                                 <th>Status</th>
                                                 <th>Action</th>
@@ -273,7 +247,6 @@
                                             <tr>
                                                 <td>{{res.No_}}</td>
                                                 <td>{{res.Reason_Description}}</td>
-                                                <td>{{res.Expected_Receipt_Date}}</td>
                                                 <td>{{res.Location_Code}}</td>
                                                 <td>{{res.Status}}</td>
                                                 <td>
@@ -334,14 +307,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
-                                    <label for="" class="form-label">Expected Receipt Date <span
-                                            class="text-danger">*</span></label>
-                                    <input type="date" name="expectedReceiptDate" class="form-control" required>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <label for="" class="form-label">Purpose <span class="text-danger">*</span></label>
+                                    <label for="" class="form-label">Detail <span class="text-danger">*</span></label>
                                     <textarea class="form-control" name="reason" rows="3" required></textarea>
                                 </div>
                             </div>
