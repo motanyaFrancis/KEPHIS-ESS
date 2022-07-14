@@ -5,7 +5,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
     crossorigin="anonymous"></script>
 <section class="dash2">
-    <div class="content-wrapper general-bg" style="padding-bottom: 5rem;">
+    <div class="content-wrapper" style="padding-bottom: 5rem;">
         <div class="row" id="proBanner">
             <div class="col-12">
                 <span class="d-flex align-items-center purchase-popup">
@@ -19,142 +19,1137 @@
         </div>
         <!--alert -->
         {% include 'alerts.html' %}
-        <div class="row my-2">
-            <div class="col-md-12">
-                <div class="card" id="d-card">
-                    <div class="m-4">
-                        <ul class="nav nav-tabs" id="myTab">
-                            <li class="nav-item">
-                                <a href="#home" class="nav-link active" data-bs-toggle="tab">Documents Pending Your
-                                    Approval
-                                    ({{count}})</a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#profile" class="nav-link" data-bs-toggle="tab">Documents You Approved
-                                    ({{countApproved}})</a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#reject" class="nav-link" data-bs-toggle="tab">Documents You Rejected
-                                    ({{countReject}})</a>
-                            </li>
-                        </ul>
-                        <div class="tab-content">
-                            <div class="tab-pane fade show active" id="home">
-                                <h4 class="mt-2 text-dark">Documents Pending Your Approval</h4>
-                                <div class="card-body">
-                                    <table id="example"
-                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                                        style="width:100%">
-                                        <thead>
-                                            <tr id="tops">
-                                                <th id="long">Document No</th>
-                                                <th>Document Type</th>
-                                                <th>Sender</th>
-                                                <th>Status</th>
-                                                <th>Due Date</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for res in res %}
-                                            <tr>
-                                                <td>{{res.Document_No_}}</td>
-                                                <td id="rap">{{res.Document_Type}}</td>
-                                                <td>{{res.Sender_ID}}</td>
-                                                <td>{{res.Status}}</td>
-                                                <td>{{res.Due_Date}}</td>
-                                                <td>
-                                                    <a href="{% url 'ApproveData' res.Document_No_ %}"
-                                                        class="btn btn-success btn-icon-text" type="button"
-                                                        data-toggle="tooltip" data-placement="top" title="View"
-                                                        style="background: #25CC88;"><i class="fa fa-table"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
+        <div class="row">
+            <div class="col-md-12 ">
+                <div class="d-sm-flex justify-content-between align-items-center transaparent-tab-border">
+                    <ul class="nav nav-tabs tab-transparent" id="nav-tab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-item nav-link active" id="nav-leave-tab" data-toggle="tab" href="#nav-leave"
+                                role="tab" aria-controls="nav-leave" aria-selected="true">Leave <span
+                                    class="brs">({{CountLeave}})</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-item nav-link" id="nav-Training-tab" data-toggle="tab" href="#nav-Training"
+                                role="tab" aria-controls="nav-Training" aria-selected="false">Training <span
+                                    class="brs">({{CountTraining}})</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-item nav-link" id="nav-Imprest-tab" data-toggle="tab" href="#nav-Imprest"
+                                role="tab" aria-controls="nav-Imprest" aria-selected="false">Imprest <span
+                                    class="brs">({{countIMP}})</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-item nav-link" id="nav-Surrender-tab" data-toggle="tab" href="#nav-Surrender"
+                                role="tab" aria-controls="nav-Surrender" aria-selected="false">Surrender <span
+                                    class="brs">({{countSurrender}})</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-item nav-link" id="nav-claim-tab" data-toggle="tab" href="#nav-claim"
+                                role="tab" aria-controls="nav-claim" aria-selected="false">Staff Claim <span
+                                    class="brs">({{countClaim}})</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-item nav-link" id="nav-Purchase-tab" data-toggle="tab" href="#nav-Purchase"
+                                role="tab" aria-controls="nav-Purchase" aria-selected="false">Purchase Request <span
+                                    class="brs">({{countPurchase}})</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-item nav-link" id="nav-Repair-tab" data-toggle="tab" href="#nav-Repair"
+                                role="tab" aria-controls="nav-Repair" aria-selected="false">Repair <span
+                                    class="brs">({{countRepair}})</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-item nav-link" id="nav-Store-tab" data-toggle="tab" href="#nav-Store"
+                                role="tab" aria-controls="nav-Store" aria-selected="false">Store <span
+                                    class="brs">({{countStore}})</span></a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="tab-content tab-transparent-content py-3 px-3 px-sm-0" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="nav-leave" role="tabpanel"
+                        aria-labelledby="nav-leave-tab">
+                        <div class="card" id="d-card">
+                            <div class="m-4">
+                                <ul class="nav nav-tabs" id="myTab">
+                                    <li class="nav-item">
+                                        <a href="#openLeave" class="nav-link active" data-bs-toggle="tab">Leave Requests
+                                            Pending Your
+                                            Approval({{CountLeave}})
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#appLeave" class="nav-link" data-bs-toggle="tab">Leave Requests You
+                                            Approved
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#rejLeave" class="nav-link" data-bs-toggle="tab">Leave Requests You
+                                            Rejected
+                                        </a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div class="tab-pane fade show active" id="openLeave">
+                                        <div class="card-body">
+                                            <table id="example"
+                                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                                style="width:100%">
+                                                <thead>
+                                                    <tr id="tops">
+                                                        <th id="long">Document No</th>
+                                                        <th>Document Type</th>
+                                                        <th>Sender</th>
+                                                        <th>Status</th>
+                                                        <th>Due Date</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for res in openLeave %}
+                                                    <tr>
+                                                        <td>{{res.Document_No_}}</td>
+                                                        <td id="rap">{{res.Document_Type}}</td>
+                                                        <td>{{res.Sender_ID}}</td>
+                                                        <td>{{res.Status}}</td>
+                                                        <td>{{res.Due_Date}}</td>
+                                                        <td>
+                                                            <a href="{% url 'ApproveData' res.Document_No_ %}"
+                                                                class="btn btn-success btn-icon-text" type="button"
+                                                                data-toggle="tooltip" data-placement="top" title="View"
+                                                                style="background: #25CC88;"><i class="fa fa-table"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="appLeave">
+                                        <div class="card-body">
+                                            <table id="example"
+                                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                                style="width:100%">
+                                                <thead>
+                                                    <tr id="tops">
+                                                        <th id="long">Document No</th>
+                                                        <th>Document Type</th>
+                                                        <th>Sender</th>
+                                                        <th>Status</th>
+                                                        <th>Due Date</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for res in approvedLeave %}
+                                                    <tr>
+                                                        <td>{{res.Document_No_}}</td>
+                                                        <td id="rap">{{res.Document_Type}}</td>
+                                                        <td>{{res.Sender_ID}}</td>
+                                                        <td>{{res.Status}}</td>
+                                                        <td>{{res.Due_Date}}</td>
+                                                        <td>
+                                                            <a href="{% url 'ApproveData' res.Document_No_ %}"
+                                                                class="btn btn-success btn-icon-text" type="button"
+                                                                data-toggle="tooltip" data-placement="top" title="View"
+                                                                style="background: #25CC88;"><i class="fa fa-table"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="rejLeave">
+                                        <div class="card-body">
+                                            <table id="example"
+                                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                                style="width:100%">
+                                                <thead>
+                                                    <tr id="tops">
+                                                        <th id="long">Document No</th>
+                                                        <th>Document Type</th>
+                                                        <th>Sender</th>
+                                                        <th>Status</th>
+                                                        <th>Due Date</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for res in reject %}
+                                                    <tr>
+                                                        <td>{{res.Document_No_}}</td>
+                                                        <td id="rap">{{res.Document_Type}}</td>
+                                                        <td>{{res.Sender_ID}}</td>
+                                                        <td>{{res.Status}}</td>
+                                                        <td>{{res.Due_Date}}</td>
+                                                        <td>
+                                                            <a href="{% url 'ApproveData' res.Document_No_ %}"
+                                                                class="btn btn-success btn-icon-text" type="button"
+                                                                data-toggle="tooltip" data-placement="top" title="View"
+                                                                style="background: #25CC88;"><i class="fa fa-table"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="tab-pane fade" id="profile">
-                                <h4 class="mt-2">Approved Documents</h4>
-                                <div class="card-body">
-                                    <table id="example"
-                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                                        style="width:100%">
-                                        <thead>
-                                            <tr id="tops">
-                                                <th id="long">Document No</th>
-                                                <th>Document Type</th>
-                                                <th>Sender</th>
-                                                <th>Status</th>
-                                                <th>Due Date</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for res in approved %}
-                                            <tr>
-                                                <td>{{res.Document_No_}}</td>
-                                                <td id="rap">{{res.Document_Type}}</td>
-                                                <td>{{res.Sender_ID}}</td>
-                                                <td>{{res.Status}}</td>
-                                                <td>{{res.Due_Date}}</td>
-                                                <td>
-                                                    <a href="{% url 'ApproveData' res.Document_No_ %}"
-                                                        class="btn btn-success btn-icon-text" type="button"
-                                                        data-toggle="tooltip" data-placement="top" title="View"
-                                                        style="background: #25CC88;"><i class="fa fa-table"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="nav-Training" role="tabpanel" aria-labelledby="nav-Training-tab">
+                        <div class="card" id="d-card">
+                            <div class="m-4">
+                                <ul class="nav nav-tabs" id="myTab">
+                                    <li class="nav-item">
+                                        <a href="#openTrain" class="nav-link active" data-bs-toggle="tab">Training
+                                            Requests
+                                            Pending Your
+                                            Approval
+                                            ({{CountTraining}})</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#appTrain" class="nav-link" data-bs-toggle="tab">Training Requests You
+                                            Approved
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#rejTrain" class="nav-link" data-bs-toggle="tab">Training Requests You
+                                            Rejected
+                                        </a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div class="tab-pane fade show active" id="openTrain">
+                                        <div class="card-body">
+                                            <table id="example"
+                                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                                style="width:100%">
+                                                <thead>
+                                                    <tr id="tops">
+                                                        <th id="long">Document No</th>
+                                                        <th>Document Type</th>
+                                                        <th>Sender</th>
+                                                        <th>Status</th>
+                                                        <th>Due Date</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for res in openTraining %}
+                                                    <tr>
+                                                        <td>{{res.Document_No_}}</td>
+                                                        <td id="rap">{{res.Document_Type}}</td>
+                                                        <td>{{res.Sender_ID}}</td>
+                                                        <td>{{res.Status}}</td>
+                                                        <td>{{res.Due_Date}}</td>
+                                                        <td>
+                                                            <a href="{% url 'ApproveData' res.Document_No_ %}"
+                                                                class="btn btn-success btn-icon-text" type="button"
+                                                                data-toggle="tooltip" data-placement="top" title="View"
+                                                                style="background: #25CC88;"><i class="fa fa-table"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="appTrain">
+                                        <div class="card-body">
+                                            <table id="example"
+                                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                                style="width:100%">
+                                                <thead>
+                                                    <tr id="tops">
+                                                        <th id="long">Document No</th>
+                                                        <th>Document Type</th>
+                                                        <th>Sender</th>
+                                                        <th>Status</th>
+                                                        <th>Due Date</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for res in approveTraining %}
+                                                    <tr>
+                                                        <td>{{res.Document_No_}}</td>
+                                                        <td id="rap">{{res.Document_Type}}</td>
+                                                        <td>{{res.Sender_ID}}</td>
+                                                        <td>{{res.Status}}</td>
+                                                        <td>{{res.Due_Date}}</td>
+                                                        <td>
+                                                            <a href="{% url 'ApproveData' res.Document_No_ %}"
+                                                                class="btn btn-success btn-icon-text" type="button"
+                                                                data-toggle="tooltip" data-placement="top" title="View"
+                                                                style="background: #25CC88;"><i class="fa fa-table"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="rejTrain">
+                                        <div class="card-body">
+                                            <table id="example"
+                                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                                style="width:100%">
+                                                <thead>
+                                                    <tr id="tops">
+                                                        <th id="long">Document No</th>
+                                                        <th>Document Type</th>
+                                                        <th>Sender</th>
+                                                        <th>Status</th>
+                                                        <th>Due Date</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for res in reject %}
+                                                    <tr>
+                                                        <td>{{res.Document_No_}}</td>
+                                                        <td id="rap">{{res.Document_Type}}</td>
+                                                        <td>{{res.Sender_ID}}</td>
+                                                        <td>{{res.Status}}</td>
+                                                        <td>{{res.Due_Date}}</td>
+                                                        <td>
+                                                            <a href="{% url 'ApproveData' res.Document_No_ %}"
+                                                                class="btn btn-success btn-icon-text" type="button"
+                                                                data-toggle="tooltip" data-placement="top" title="View"
+                                                                style="background: #25CC88;"><i class="fa fa-table"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="tab-pane fade" id="reject">
-                                <h4 class="mt-2">Rejected Documents</h4>
-                                <div class="card-body">
-                                    <table id="example"
-                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                                        style="width:100%">
-                                        <thead>
-                                            <tr id="tops">
-                                                <th id="long">Document No</th>
-                                                <th>Document Type</th>
-                                                <th>Sender</th>
-                                                <th>Status</th>
-                                                <th>Due Date</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for res in reject %}
-                                            <tr>
-                                                <td>{{res.Document_No_}}</td>
-                                                <td id="rap">{{res.Document_Type}}</td>
-                                                <td>{{res.Sender_ID}}</td>
-                                                <td>{{res.Status}}</td>
-                                                <td>{{res.Due_Date}}</td>
-                                                <td>
-                                                    <a href="{% url 'ApproveData' res.Document_No_ %}"
-                                                        class="btn btn-success btn-icon-text" type="button"
-                                                        data-toggle="tooltip" data-placement="top" title="View"
-                                                        style="background: #25CC88;"><i class="fa fa-table"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="nav-Imprest" role="tabpanel" aria-labelledby="nav-Imprest-tab">
+                        <div class="card" id="d-card">
+                            <div class="m-4">
+                                <ul class="nav nav-tabs" id="myTab">
+                                    <li class="nav-item">
+                                        <a href="#opeIMp" class="nav-link active" data-bs-toggle="tab">Imprest Requests
+                                            Pending Your
+                                            Approval
+                                            ({{countIMP}})</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#AppImp" class="nav-link" data-bs-toggle="tab">Imprest Requests You
+                                            Approved
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#rejImp" class="nav-link" data-bs-toggle="tab">Imprest Requests You
+                                            Rejected
+                                        </a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div class="tab-pane fade show active" id="opeIMp">
+                                        <div class="card-body">
+                                            <table id="example"
+                                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                                style="width:100%">
+                                                <thead>
+                                                    <tr id="tops">
+                                                        <th id="long">Document No</th>
+                                                        <th>Document Type</th>
+                                                        <th>Sender</th>
+                                                        <th>Status</th>
+                                                        <th>Due Date</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for res in imprest %}
+                                                    <tr>
+                                                        <td>{{res.Document_No_}}</td>
+                                                        <td id="rap">{{res.Document_Type}}</td>
+                                                        <td>{{res.Sender_ID}}</td>
+                                                        <td>{{res.Status}}</td>
+                                                        <td>{{res.Due_Date}}</td>
+                                                        <td>
+                                                            <a href="{% url 'ApproveData' res.Document_No_ %}"
+                                                                class="btn btn-success btn-icon-text" type="button"
+                                                                data-toggle="tooltip" data-placement="top" title="View"
+                                                                style="background: #25CC88;"><i class="fa fa-table"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="AppImp">
+                                        <div class="card-body">
+                                            <table id="example"
+                                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                                style="width:100%">
+                                                <thead>
+                                                    <tr id="tops">
+                                                        <th id="long">Document No</th>
+                                                        <th>Document Type</th>
+                                                        <th>Sender</th>
+                                                        <th>Status</th>
+                                                        <th>Due Date</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for appImp in approvedIMP %}
+                                                    <tr>
+                                                        <td>{{appImp.Document_No_}}</td>
+                                                        <td id="rap">{{res.Document_Type}}</td>
+                                                        <td>{{appImp.Sender_ID}}</td>
+                                                        <td>{{appImp.Status}}</td>
+                                                        <td>{{appImp.Due_Date}}</td>
+                                                        <td>
+                                                            <a href="{% url 'ApproveData' appImp.Document_No_ %}"
+                                                                class="btn btn-success btn-icon-text" type="button"
+                                                                data-toggle="tooltip" data-placement="top" title="View"
+                                                                style="background: #25CC88;"><i class="fa fa-table"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="rejImp">
+                                        <div class="card-body">
+                                            <table id="example"
+                                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                                style="width:100%">
+                                                <thead>
+                                                    <tr id="tops">
+                                                        <th id="long">Document No</th>
+                                                        <th>Document Type</th>
+                                                        <th>Sender</th>
+                                                        <th>Status</th>
+                                                        <th>Due Date</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for res in rejectedImp %}
+                                                    <tr>
+                                                        <td>{{res.Document_No_}}</td>
+                                                        <td id="rap">{{res.Document_Type}}</td>
+                                                        <td>{{res.Sender_ID}}</td>
+                                                        <td>{{res.Status}}</td>
+                                                        <td>{{res.Due_Date}}</td>
+                                                        <td>
+                                                            <a href="{% url 'ApproveData' res.Document_No_ %}"
+                                                                class="btn btn-success btn-icon-text" type="button"
+                                                                data-toggle="tooltip" data-placement="top" title="View"
+                                                                style="background: #25CC88;"><i class="fa fa-table"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="nav-Surrender" role="tabpanel" aria-labelledby="nav-Surrender-tab">
+                        <div class="card" id="d-card">
+                            <div class="m-4">
+                                <ul class="nav nav-tabs" id="myTab">
+                                    <li class="nav-item">
+                                        <a href="#home" class="nav-link active" data-bs-toggle="tab">Imprest Surrender
+                                            Pending Your
+                                            Approval
+                                            ({{countSurrender}})</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#profile" class="nav-link" data-bs-toggle="tab">Imprest Surrender You
+                                            Approved
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#reject" class="nav-link" data-bs-toggle="tab">Imprest Surrender You
+                                            Rejected
+                                        </a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div class="tab-pane fade show active" id="home">
+                                        <div class="card-body">
+                                            <table id="example"
+                                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                                style="width:100%">
+                                                <thead>
+                                                    <tr id="tops">
+                                                        <th id="long">Document No</th>
+                                                        <th>Document Type</th>
+                                                        <th>Sender</th>
+                                                        <th>Status</th>
+                                                        <th>Due Date</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for res in openSurrender %}
+                                                    <tr>
+                                                        <td>{{res.Document_No_}}</td>
+                                                        <td id="rap">{{res.Document_Type}}</td>
+                                                        <td>{{res.Sender_ID}}</td>
+                                                        <td>{{res.Status}}</td>
+                                                        <td>{{res.Due_Date}}</td>
+                                                        <td>
+                                                            <a href="{% url 'ApproveData' res.Document_No_ %}"
+                                                                class="btn btn-success btn-icon-text" type="button"
+                                                                data-toggle="tooltip" data-placement="top" title="View"
+                                                                style="background: #25CC88;"><i class="fa fa-table"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="profile">
+                                        <div class="card-body">
+                                            <table id="example"
+                                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                                style="width:100%">
+                                                <thead>
+                                                    <tr id="tops">
+                                                        <th id="long">Document No</th>
+                                                        <th>Document Type</th>
+                                                        <th>Sender</th>
+                                                        <th>Status</th>
+                                                        <th>Due Date</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for res in approveSurrender %}
+                                                    <tr>
+                                                        <td>{{res.Document_No_}}</td>
+                                                        <td id="rap">{{res.Document_Type}}</td>
+                                                        <td>{{res.Sender_ID}}</td>
+                                                        <td>{{res.Status}}</td>
+                                                        <td>{{res.Due_Date}}</td>
+                                                        <td>
+                                                            <a href="{% url 'ApproveData' res.Document_No_ %}"
+                                                                class="btn btn-success btn-icon-text" type="button"
+                                                                data-toggle="tooltip" data-placement="top" title="View"
+                                                                style="background: #25CC88;"><i class="fa fa-table"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="reject">
+                                        <div class="card-body">
+                                            <table id="example"
+                                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                                style="width:100%">
+                                                <thead>
+                                                    <tr id="tops">
+                                                        <th id="long">Document No</th>
+                                                        <th>Document Type</th>
+                                                        <th>Sender</th>
+                                                        <th>Status</th>
+                                                        <th>Due Date</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for res in reject %}
+                                                    <tr>
+                                                        <td>{{res.Document_No_}}</td>
+                                                        <td id="rap">{{res.Document_Type}}</td>
+                                                        <td>{{res.Sender_ID}}</td>
+                                                        <td>{{res.Status}}</td>
+                                                        <td>{{res.Due_Date}}</td>
+                                                        <td>
+                                                            <a href="{% url 'ApproveData' res.Document_No_ %}"
+                                                                class="btn btn-success btn-icon-text" type="button"
+                                                                data-toggle="tooltip" data-placement="top" title="View"
+                                                                style="background: #25CC88;"><i class="fa fa-table"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="nav-claim" role="tabpanel" aria-labelledby="nav-claim-tab">
+                        <div class="card" id="d-card">
+                            <div class="m-4">
+                                <ul class="nav nav-tabs" id="myTab">
+                                    <li class="nav-item">
+                                        <a href="#openClaim" class="nav-link active" data-bs-toggle="tab">Staff Claim
+                                            Pending Your
+                                            Approval
+                                            ({{countClaim}})</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#appClaim" class="nav-link" data-bs-toggle="tab">Staff Claim You
+                                            Approved
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#rejClaim" class="nav-link" data-bs-toggle="tab">Staff Claim You
+                                            Rejected
+                                        </a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div class="tab-pane fade show active" id="openClaim">
+                                        <div class="card-body">
+                                            <table id="example"
+                                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                                style="width:100%">
+                                                <thead>
+                                                    <tr id="tops">
+                                                        <th id="long">Document No</th>
+                                                        <th>Document Type</th>
+                                                        <th>Sender</th>
+                                                        <th>Status</th>
+                                                        <th>Due Date</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for res in openClaim %}
+                                                    <tr>
+                                                        <td>{{res.Document_No_}}</td>
+                                                        <td id="rap">{{res.Document_Type}}</td>
+                                                        <td>{{res.Sender_ID}}</td>
+                                                        <td>{{res.Status}}</td>
+                                                        <td>{{res.Due_Date}}</td>
+                                                        <td>
+                                                            <a href="{% url 'ApproveData' res.Document_No_ %}"
+                                                                class="btn btn-success btn-icon-text" type="button"
+                                                                data-toggle="tooltip" data-placement="top" title="View"
+                                                                style="background: #25CC88;"><i class="fa fa-table"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="appClaim">
+                                        <div class="card-body">
+                                            <table id="example"
+                                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                                style="width:100%">
+                                                <thead>
+                                                    <tr id="tops">
+                                                        <th id="long">Document No</th>
+                                                        <th>Document Type</th>
+                                                        <th>Sender</th>
+                                                        <th>Status</th>
+                                                        <th>Due Date</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for res in approveClaim %}
+                                                    <tr>
+                                                        <td>{{res.Document_No_}}</td>
+                                                        <td id="rap">{{res.Document_Type}}</td>
+                                                        <td>{{res.Sender_ID}}</td>
+                                                        <td>{{res.Status}}</td>
+                                                        <td>{{res.Due_Date}}</td>
+                                                        <td>
+                                                            <a href="{% url 'ApproveData' res.Document_No_ %}"
+                                                                class="btn btn-success btn-icon-text" type="button"
+                                                                data-toggle="tooltip" data-placement="top" title="View"
+                                                                style="background: #25CC88;"><i class="fa fa-table"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="rejClaim">
+                                        <div class="card-body">
+                                            <table id="example"
+                                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                                style="width:100%">
+                                                <thead>
+                                                    <tr id="tops">
+                                                        <th id="long">Document No</th>
+                                                        <th>Document Type</th>
+                                                        <th>Sender</th>
+                                                        <th>Status</th>
+                                                        <th>Due Date</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for res in rejectClaim %}
+                                                    <tr>
+                                                        <td>{{res.Document_No_}}</td>
+                                                        <td id="rap">{{res.Document_Type}}</td>
+                                                        <td>{{res.Sender_ID}}</td>
+                                                        <td>{{res.Status}}</td>
+                                                        <td>{{res.Due_Date}}</td>
+                                                        <td>
+                                                            <a href="{% url 'ApproveData' res.Document_No_ %}"
+                                                                class="btn btn-success btn-icon-text" type="button"
+                                                                data-toggle="tooltip" data-placement="top" title="View"
+                                                                style="background: #25CC88;"><i class="fa fa-table"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="nav-Purchase" role="tabpanel" aria-labelledby="nav-Purchase-tab">
+                        <div class="card" id="d-card">
+                            <div class="m-4">
+                                <ul class="nav nav-tabs" id="myTab">
+                                    <li class="nav-item">
+                                        <a href="#openPurchase" class="nav-link active" data-bs-toggle="tab">Purchase
+                                            Request
+                                            Pending Your
+                                            Approval
+                                            ({{countPurchase}})</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#appPurchase" class="nav-link" data-bs-toggle="tab">Purchase Request
+                                            You
+                                            Approved
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#rejPurchase" class="nav-link" data-bs-toggle="tab">Purchase Request
+                                            You
+                                            Rejected
+                                        </a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div class="tab-pane fade show active" id="openPurchase">
+                                        <div class="card-body">
+                                            <table id="example"
+                                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                                style="width:100%">
+                                                <thead>
+                                                    <tr id="tops">
+                                                        <th id="long">Document No</th>
+                                                        <th>Document Type</th>
+                                                        <th>Sender</th>
+                                                        <th>Status</th>
+                                                        <th>Due Date</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for res in openPurchase %}
+                                                    <tr>
+                                                        <td>{{res.Document_No_}}</td>
+                                                        <td id="rap">{{res.Document_Type}}</td>
+                                                        <td>{{res.Sender_ID}}</td>
+                                                        <td>{{res.Status}}</td>
+                                                        <td>{{res.Due_Date}}</td>
+                                                        <td>
+                                                            <a href="{% url 'ApproveData' res.Document_No_ %}"
+                                                                class="btn btn-success btn-icon-text" type="button"
+                                                                data-toggle="tooltip" data-placement="top" title="View"
+                                                                style="background: #25CC88;"><i class="fa fa-table"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="appPurchase">
+                                        <div class="card-body">
+                                            <table id="example"
+                                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                                style="width:100%">
+                                                <thead>
+                                                    <tr id="tops">
+                                                        <th id="long">Document No</th>
+                                                        <th>Document Type</th>
+                                                        <th>Sender</th>
+                                                        <th>Status</th>
+                                                        <th>Due Date</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for res in approvePurchase %}
+                                                    <tr>
+                                                        <td>{{res.Document_No_}}</td>
+                                                        <td id="rap">{{res.Document_Type}}</td>
+                                                        <td>{{res.Sender_ID}}</td>
+                                                        <td>{{res.Status}}</td>
+                                                        <td>{{res.Due_Date}}</td>
+                                                        <td>
+                                                            <a href="{% url 'ApproveData' res.Document_No_ %}"
+                                                                class="btn btn-success btn-icon-text" type="button"
+                                                                data-toggle="tooltip" data-placement="top" title="View"
+                                                                style="background: #25CC88;"><i class="fa fa-table"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="rejPurchase">
+                                        <div class="card-body">
+                                            <table id="example"
+                                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                                style="width:100%">
+                                                <thead>
+                                                    <tr id="tops">
+                                                        <th id="long">Document No</th>
+                                                        <th>Document Type</th>
+                                                        <th>Sender</th>
+                                                        <th>Status</th>
+                                                        <th>Due Date</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for res in rejectPurchase %}
+                                                    <tr>
+                                                        <td>{{res.Document_No_}}</td>
+                                                        <td id="rap">{{res.Document_Type}}</td>
+                                                        <td>{{res.Sender_ID}}</td>
+                                                        <td>{{res.Status}}</td>
+                                                        <td>{{res.Due_Date}}</td>
+                                                        <td>
+                                                            <a href="{% url 'ApproveData' res.Document_No_ %}"
+                                                                class="btn btn-success btn-icon-text" type="button"
+                                                                data-toggle="tooltip" data-placement="top" title="View"
+                                                                style="background: #25CC88;"><i class="fa fa-table"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="nav-Repair" role="tabpanel" aria-labelledby="nav-Repair-tab">
+                        <div class="card" id="d-card">
+                            <div class="m-4">
+                                <ul class="nav nav-tabs" id="myTab">
+                                    <li class="nav-item">
+                                        <a href="#openrepair" class="nav-link active" data-bs-toggle="tab">Repair
+                                            Request
+                                            Pending Your
+                                            Approval
+                                            ({{countRepair}})</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#appRepair" class="nav-link" data-bs-toggle="tab">Repair Request You
+                                            Approved
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#rejRepair" class="nav-link" data-bs-toggle="tab">Repair Request You
+                                            Rejected
+                                        </a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div class="tab-pane fade show active" id="openrepair">
+                                        <div class="card-body">
+                                            <table id="example"
+                                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                                style="width:100%">
+                                                <thead>
+                                                    <tr id="tops">
+                                                        <th id="long">Document No</th>
+                                                        <th>Document Type</th>
+                                                        <th>Sender</th>
+                                                        <th>Status</th>
+                                                        <th>Due Date</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for res in openRepair %}
+                                                    <tr>
+                                                        <td>{{res.Document_No_}}</td>
+                                                        <td id="rap">{{res.Document_Type}}</td>
+                                                        <td>{{res.Sender_ID}}</td>
+                                                        <td>{{res.Status}}</td>
+                                                        <td>{{res.Due_Date}}</td>
+                                                        <td>
+                                                            <a href="{% url 'ApproveData' res.Document_No_ %}"
+                                                                class="btn btn-success btn-icon-text" type="button"
+                                                                data-toggle="tooltip" data-placement="top" title="View"
+                                                                style="background: #25CC88;"><i class="fa fa-table"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="appRepair">
+                                        <div class="card-body">
+                                            <table id="example"
+                                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                                style="width:100%">
+                                                <thead>
+                                                    <tr id="tops">
+                                                        <th id="long">Document No</th>
+                                                        <th>Document Type</th>
+                                                        <th>Sender</th>
+                                                        <th>Status</th>
+                                                        <th>Due Date</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for res in appRepair %}
+                                                    <tr>
+                                                        <td>{{res.Document_No_}}</td>
+                                                        <td id="rap">{{res.Document_Type}}</td>
+                                                        <td>{{res.Sender_ID}}</td>
+                                                        <td>{{res.Status}}</td>
+                                                        <td>{{res.Due_Date}}</td>
+                                                        <td>
+                                                            <a href="{% url 'ApproveData' res.Document_No_ %}"
+                                                                class="btn btn-success btn-icon-text" type="button"
+                                                                data-toggle="tooltip" data-placement="top" title="View"
+                                                                style="background: #25CC88;"><i class="fa fa-table"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="rejRepair">
+                                        <div class="card-body">
+                                            <table id="example"
+                                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                                style="width:100%">
+                                                <thead>
+                                                    <tr id="tops">
+                                                        <th id="long">Document No</th>
+                                                        <th>Document Type</th>
+                                                        <th>Sender</th>
+                                                        <th>Status</th>
+                                                        <th>Due Date</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for res in rejRepair %}
+                                                    <tr>
+                                                        <td>{{res.Document_No_}}</td>
+                                                        <td id="rap">{{res.Document_Type}}</td>
+                                                        <td>{{res.Sender_ID}}</td>
+                                                        <td>{{res.Status}}</td>
+                                                        <td>{{res.Due_Date}}</td>
+                                                        <td>
+                                                            <a href="{% url 'ApproveData' res.Document_No_ %}"
+                                                                class="btn btn-success btn-icon-text" type="button"
+                                                                data-toggle="tooltip" data-placement="top" title="View"
+                                                                style="background: #25CC88;"><i class="fa fa-table"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="nav-Store" role="tabpanel" aria-labelledby="nav-Store-tab">
+                        <div class="card" id="d-card">
+                            <div class="m-4">
+                                <ul class="nav nav-tabs" id="myTab">
+                                    <li class="nav-item">
+                                        <a href="#openStore" class="nav-link active" data-bs-toggle="tab">Store Request
+                                            Pending Your
+                                            Approval
+                                            ({{countStore}})</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#appStore" class="nav-link" data-bs-toggle="tab">Store Request You
+                                            Approved
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#rejStore" class="nav-link" data-bs-toggle="tab">Store Request You
+                                            Rejected
+                                        </a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div class="tab-pane fade show active" id="openStore">
+                                        <div class="card-body">
+                                            <table id="example"
+                                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                                style="width:100%">
+                                                <thead>
+                                                    <tr id="tops">
+                                                        <th id="long">Document No</th>
+                                                        <th>Document Type</th>
+                                                        <th>Sender</th>
+                                                        <th>Status</th>
+                                                        <th>Due Date</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for res in openStore %}
+                                                    <tr>
+                                                        <td>{{res.Document_No_}}</td>
+                                                        <td id="rap">{{res.Document_Type}}</td>
+                                                        <td>{{res.Sender_ID}}</td>
+                                                        <td>{{res.Status}}</td>
+                                                        <td>{{res.Due_Date}}</td>
+                                                        <td>
+                                                            <a href="{% url 'ApproveData' res.Document_No_ %}"
+                                                                class="btn btn-success btn-icon-text" type="button"
+                                                                data-toggle="tooltip" data-placement="top" title="View"
+                                                                style="background: #25CC88;"><i class="fa fa-table"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="appStore">
+                                        <div class="card-body">
+                                            <table id="example"
+                                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                                style="width:100%">
+                                                <thead>
+                                                    <tr id="tops">
+                                                        <th id="long">Document No</th>
+                                                        <th>Document Type</th>
+                                                        <th>Sender</th>
+                                                        <th>Status</th>
+                                                        <th>Due Date</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for res in appStore %}
+                                                    <tr>
+                                                        <td>{{res.Document_No_}}</td>
+                                                        <td id="rap">{{res.Document_Type}}</td>
+                                                        <td>{{res.Sender_ID}}</td>
+                                                        <td>{{res.Status}}</td>
+                                                        <td>{{res.Due_Date}}</td>
+                                                        <td>
+                                                            <a href="{% url 'ApproveData' res.Document_No_ %}"
+                                                                class="btn btn-success btn-icon-text" type="button"
+                                                                data-toggle="tooltip" data-placement="top" title="View"
+                                                                style="background: #25CC88;"><i class="fa fa-table"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="rejStore">
+                                        <div class="card-body">
+                                            <table id="example"
+                                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                                style="width:100%">
+                                                <thead>
+                                                    <tr id="tops">
+                                                        <th id="long">Document No</th>
+                                                        <th>Document Type</th>
+                                                        <th>Sender</th>
+                                                        <th>Status</th>
+                                                        <th>Due Date</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for res in rejStore %}
+                                                    <tr>
+                                                        <td>{{res.Document_No_}}</td>
+                                                        <td id="rap">{{res.Document_Type}}</td>
+                                                        <td>{{res.Sender_ID}}</td>
+                                                        <td>{{res.Status}}</td>
+                                                        <td>{{res.Due_Date}}</td>
+                                                        <td>
+                                                            <a href="{% url 'ApproveData' res.Document_No_ %}"
+                                                                class="btn btn-success btn-icon-text" type="button"
+                                                                data-toggle="tooltip" data-placement="top" title="View"
+                                                                style="background: #25CC88;"><i class="fa fa-table"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
+
+    </div>
     </div>
 </section>
 

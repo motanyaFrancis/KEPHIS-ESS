@@ -11,6 +11,8 @@ import io as BytesIO
 import base64
 from django.http import HttpResponse
 
+from HR.views import Training_Request
+
 # Create your views here.
 
 
@@ -24,32 +26,137 @@ def Approve(request):
         Access_Point = config.O_DATA.format("/QyApprovalEntries")
         try:
             response = session.get(Access_Point, timeout=10).json()
-            open = []
-            approved = []
-            rejected = []
+            openLeave = []
+            approvedLeave = []
+            rejectedLeave = []
+            openTraining = []
+            approveTraining = []
+            rejectTraining = []
+            openSurrender = []
+            approveSurrender = []
+            rejectSurrender = []
+            openClaim = []
+            approveClaim = []
+            rejectClaim = []
+            openPurchase = []
+            approvePurchase = []
+            rejectPurchase = []
+            openRepair = []
+            appRepair = []
+            rejRepair = []
+            openStore = []
+            appStore = []
+            rejStore = []
+
+            openImp = []
+            approvedImp = []
+            rejectedImp = []
             for approve in response['value']:
-                if approve['Status'] == 'Open' and approve['Approver_ID'] == request.session['User_ID']:
+                # Leave
+                if approve['Status'] == 'Open' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'LeaveApplication':
                     output_json = json.dumps(approve)
-                    open.append(json.loads(output_json))
-                if approve['Status'] == 'Approved' and approve['Approver_ID'] == request.session['User_ID']:
+                    openLeave.append(json.loads(output_json))
+                if approve['Status'] == 'Approved' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'LeaveApplication':
                     output_json = json.dumps(approve)
-                    approved.append(json.loads(output_json))
-                if approve['Status'] == 'Canceled' and approve['Approver_ID'] == request.session['User_ID']:
+                    approvedLeave.append(json.loads(output_json))
+                if approve['Status'] == 'Canceled' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'LeaveApplication':
                     output_json = json.dumps(approve)
-                    rejected.append(json.loads(output_json))
-            counts = len(open)
-            countApproved = len(approved)
-            countReject = len(rejected)
+                    rejectedLeave.append(json.loads(output_json))
+                # Training
+                if approve['Status'] == 'Open' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'TrainingRequest':
+                    output_json = json.dumps(approve)
+                    openTraining.append(json.loads(output_json))
+                if approve['Status'] == 'Approved' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'TrainingRequest':
+                    output_json = json.dumps(approve)
+                    approveTraining.append(json.loads(output_json))
+                if approve['Status'] == 'Canceled' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'TrainingRequest':
+                    output_json = json.dumps(approve)
+                    rejectTraining.append(json.loads(output_json))
+                # Imprests
+                if approve['Status'] == 'Open' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Imprest':
+                    output_json = json.dumps(approve)
+                    openImp.append(json.loads(output_json))
+                if approve['Status'] == 'Approved' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Imprest':
+                    output_json = json.dumps(approve)
+                    approvedImp.append(json.loads(output_json))
+                if approve['Status'] == 'Canceled' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Imprest':
+                    output_json = json.dumps(approve)
+                    rejectedImp.append(json.loads(output_json))
+                # Surrender
+                if approve['Status'] == 'Open' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Imprest Surrender':
+                    output_json = json.dumps(approve)
+                    openSurrender.append(json.loads(output_json))
+                if approve['Status'] == 'Approved' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Imprest Surrender':
+                    output_json = json.dumps(approve)
+                    approveSurrender.append(json.loads(output_json))
+                if approve['Status'] == 'Canceled' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Imprest Surrender':
+                    output_json = json.dumps(approve)
+                    rejectSurrender.append(json.loads(output_json))
+                # Staff Claim
+                if approve['Status'] == 'Open' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Staff Claim':
+                    output_json = json.dumps(approve)
+                    openClaim.append(json.loads(output_json))
+                if approve['Status'] == 'Approved' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Staff Claim':
+                    output_json = json.dumps(approve)
+                    approveClaim.append(json.loads(output_json))
+                if approve['Status'] == 'Canceled' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Staff Claim':
+                    output_json = json.dumps(approve)
+                    rejectClaim.append(json.loads(output_json))
+                # Purchase Request
+                if approve['Status'] == 'Open' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Purchase Requisitions':
+                    output_json = json.dumps(approve)
+                    openPurchase.append(json.loads(output_json))
+                if approve['Status'] == 'Approved' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Purchase Requisitions':
+                    output_json = json.dumps(approve)
+                    approvePurchase.append(json.loads(output_json))
+                if approve['Status'] == 'Canceled' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Purchase Requisitions':
+                    output_json = json.dumps(approve)
+                    rejectPurchase.append(json.loads(output_json))
+                # Repair Request
+                if approve['Status'] == 'Open' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Repair':
+                    output_json = json.dumps(approve)
+                    openRepair.append(json.loads(output_json))
+                if approve['Status'] == 'Approved' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Repair':
+                    output_json = json.dumps(approve)
+                    appRepair.append(json.loads(output_json))
+                if approve['Status'] == 'Canceled' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Repair':
+                    output_json = json.dumps(approve)
+                    rejRepair.append(json.loads(output_json))
+                # Store Request
+                if approve['Status'] == 'Open' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Store Requisitions':
+                    output_json = json.dumps(approve)
+                    openStore.append(json.loads(output_json))
+                if approve['Status'] == 'Approved' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Store Requisitions':
+                    output_json = json.dumps(approve)
+                    appStore.append(json.loads(output_json))
+                if approve['Status'] == 'Canceled' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Store Requisitions':
+                    output_json = json.dumps(approve)
+                    rejRepair.append(json.loads(output_json))
+            countIMP = len(openImp)
+            CountLeave = len(openLeave)
+            CountTraining = len(openTraining)
+            countSurrender = len(openSurrender)
+            countClaim = len(openClaim)
+            countPurchase = len(openPurchase)
+            countRepair = len(openRepair)
+            countStore = len(openStore)
+
         except requests.exceptions.RequestException as e:
             print(e)
-            messages.info(request, "Whoops! Something went wrong. Please Login to Continue")
+            messages.info(request, e)
             return redirect('auth')
 
         todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-        ctx = {"today": todays_date, "res": open,
-            "year": year, "full": fullname,
-            "count": counts,"countApproved":countApproved, "approved":approved,
-            "countReject":countReject,"reject":rejected}
+        ctx = {"today": todays_date, "imprest": openImp,"year": year, "full": fullname,
+            "countIMP": countIMP, "approvedIMP":approvedImp,"rejectedImp":rejectedImp,
+            "openLeave":openLeave,"CountLeave":CountLeave,"approvedLeave":approvedLeave,
+            "rejectedLeave":rejectedLeave, "openTraining":openTraining,"CountTraining":CountTraining,
+            "approveTraining":approveTraining,"rejectTraining":rejectTraining,"openSurrender":openSurrender,
+            "countSurrender":countSurrender,"approveSurrender":approveSurrender,"rejectSurrender":rejectSurrender,
+            "countClaim":countClaim,"openClaim":openClaim,"approveClaim":approveClaim,"rejectClaim":rejectClaim,
+            "countPurchase":countPurchase,"openPurchase":openPurchase,"approvePurchase":approvePurchase,
+            "rejectPurchase":rejectPurchase, "countRepair":countRepair,"appRepair":appRepair,"rejRepair":rejRepair,
+            "countStore":countStore,"openStore":openStore,"appStore":appStore,"rejStore":rejStore}
     except KeyError:
         messages.info(request, "Session Expired. Please Login")
         return redirect('auth')       
@@ -63,11 +170,31 @@ def ApproveDetails(request, pk):
         session = requests.Session()
         session.auth = config.AUTHS
         res = ''
+        data =''
+        state =''
         Access_Point = config.O_DATA.format("/QyApprovalEntries")
         Access_File = config.O_DATA.format("/QyDocumentAttachments")
+        Imprest = config.O_DATA.format("/Imprests")
+        Leave_Request = config.O_DATA.format("/QyLeaveApplications")
+        TrainingRequest = config.O_DATA.format("/QyTrainingRequests")
+        SurrenderRequest = config.O_DATA.format("/QyImprestSurrenders")
+        ClaimRequest = config.O_DATA.format("/QyStaffClaims")
+        PurchaseRequest = config.O_DATA.format("/QyPurchaseRequisitionHeaders")
+        ImprestLineRequest=config.O_DATA.format("/QyImprestLines")
+        TrainingLineRequest=config.O_DATA.format("/QyTrainingNeedsRequest")
+
         try:
             response = session.get(Access_Point, timeout=10).json()
             Approves = []
+            Imprests = []
+            Leaves = []
+            Training = []
+            Surrender = []
+            Claims = []
+            Purchase = []
+            ImprestLine = []
+            TrainLine = []
+    
             for approve in response['value']:
                 if approve['Status'] == 'Open' and approve['Approver_ID'] == request.session['User_ID']:
                     output_json = json.dumps(approve)
@@ -88,18 +215,179 @@ def ApproveDetails(request, pk):
                         if claim['Document_No_'] == pk:
                             res = claim
             allFiles = []
+
             res_file = session.get(Access_File, timeout=10).json()
             for file in res_file['value']:
                 if file['No_'] == pk:
                     output_json = json.dumps(file)
                     allFiles.append(json.loads(output_json))
+            '''
+            Imprest Requisition Data
+            '''
+            ImprestResponse = session.get(Imprest, timeout=10).json()
+            for imprest in ImprestResponse['value']:
+                if imprest['Status'] == "Pending Approval":
+                    output_json = json.dumps(imprest)
+                    Imprests.append(json.loads(output_json))
+                    for imprest in Imprests:
+                        if imprest['No_'] == pk:
+                            data = imprest
+                            if imprest['Status'] == 'Pending Approval':
+                                state = 1
+            # Imprest Line
+            ImpLineResponse = session.get(ImprestLineRequest, timeout=10).json()
+            for imprest in ImpLineResponse['value']:
+                if imprest['AuxiliaryIndex1'] == pk:
+                    output_json = json.dumps(imprest)
+                    ImprestLine.append(json.loads(output_json))
+            # End of Imprest
+
+            '''
+            Leave  Data
+            '''
+            LeaveResponse = session.get(Leave_Request, timeout=10).json()
+            for leave in LeaveResponse['value']:
+                if leave['Status'] == "Pending Approval":
+                    output_json = json.dumps(leave)
+                    Leaves.append(json.loads(output_json))
+                    for myLeave in Leaves:
+                        if myLeave['Application_No'] == pk:
+                            data = myLeave
+                            if myLeave['Status'] == 'Pending Approval':
+                                state = 2
+            # End of Leave
+            '''
+            Training  Data
+            '''
+            TrainResponse = session.get(TrainingRequest, timeout=10).json()
+            for train in TrainResponse['value']:
+                if train['Status'] == 'Pending Approval':
+                    output_json = json.dumps(train)
+                    Training.append(json.loads(output_json))
+                    for trains in Training:
+                        if trains['Request_No_'] == pk:
+                            data = trains
+                            if trains['Status'] == 'Pending Approval':
+                                state = 3
+            # Training Line
+            TrainLineResponse = session.get(TrainingLineRequest, timeout=10).json()
+            for trainLine in TrainLineResponse['value']:
+                if trainLine['Source_Document_No'] == pk :
+                    output_json = json.dumps(trainLine)
+                    TrainLine.append(json.loads(output_json))
+            # End Training
+            # Imprest Surrender
+            SurrenderResponse = session.get(SurrenderRequest, timeout=10).json()
+            for imprest in SurrenderResponse['value']:
+                if imprest['Status'] == "Pending Approval":
+                    output_json = json.dumps(imprest)
+                    Surrender.append(json.loads(output_json))
+                    for imprest in Surrender:
+                        if imprest['No_'] == pk:
+                            data = imprest
+                            if imprest['Status'] == 'Pending Approval':
+                                state = 4
+            Lines_Surrender = config.O_DATA.format("/QyImprestSurrenderLines")
+            SurrenderLinesResponse = session.get(Lines_Surrender, timeout=10).json()
+            SurrenderLines = []
+            for imprest in SurrenderLinesResponse['value']:
+                if imprest['No'] == pk:
+                    output_json = json.dumps(imprest)
+                    SurrenderLines.append(json.loads(output_json))
+            # End Surrender
+
+            # Staff Claim
+            ClaimResponse = session.get(ClaimRequest, timeout=10).json()
+            for claim in ClaimResponse['value']:
+                if claim['Status'] == "Pending Approval":
+                    output_json = json.dumps(imprest)
+                    Claims.append(json.loads(output_json))
+                    for claim in Claims:
+                        if claim['No_'] == pk:
+                            data = claim
+                            if claim['Status'] == 'Pending Approval':
+                                state = 5
+            Lines_Claim = config.O_DATA.format("/QyStaffClaimLines")
+            ClaimLineResponse = session.get(Lines_Claim, timeout=10).json()
+            ClaimLines = []
+            for claim in ClaimLineResponse['value']:
+                if claim['No'] == pk:
+                    output_json = json.dumps(claim)
+                    ClaimLines.append(json.loads(output_json))
+            
+            '''
+            Purchase Requisition  Data
+            '''
+            PurchaseResponse = session.get(PurchaseRequest, timeout=10).json()
+            for purchase in PurchaseResponse['value']:
+                if purchase['Status'] == "Pending Approval":
+                    output_json = json.dumps(purchase)
+                    Purchase.append(json.loads(output_json))
+                    for purchase in Purchase:
+                        if purchase['No_'] == pk:
+                            data = purchase
+                            if purchase['Status'] == 'Pending Approval':
+                                state = 6
+            Lines_Purchase = config.O_DATA.format("/QyPurchaseRequisitionLines")
+            PurchaseLineResponse = session.get(Lines_Purchase, timeout=10).json()
+            PurchaseLines = []
+            for document in PurchaseLineResponse['value']:
+                if document['AuxiliaryIndex1'] == pk:
+                    output_json = json.dumps(document)
+                    PurchaseLines.append(json.loads(output_json))
+            '''
+            Repair Requisition  Data
+            '''
+            RepairRequest = config.O_DATA.format("/QyRepairRequisitionHeaders")
+            RepairResponse = session.get(RepairRequest, timeout=10).json()
+            Repair = []
+            for repair in RepairResponse['value']:
+                if repair['Status'] == "Pending Approval":
+                    output_json = json.dumps(repair)
+                    Repair.append(json.loads(output_json))
+                    for repair in Repair:
+                        if repair['No_'] == pk:
+                            data = repair
+                            if repair['Status'] == 'Pending Approval':
+                                state = 7
+            Lines_Repair = config.O_DATA.format("/QyRepairRequisitionLines")
+            RepairLineResponse = session.get(Lines_Repair, timeout=10).json()
+            RepairLines = []
+            for document in RepairLineResponse['value']:
+                if document['AuxiliaryIndex1'] == pk:
+                    output_json = json.dumps(document)
+                    RepairLines.append(json.loads(output_json))
+            '''
+            Store Requisition  Data
+            '''
+            StoreRequest = config.O_DATA.format("/QyStoreRequisitionHeaders")
+            StoreResponse = session.get(StoreRequest, timeout=10).json()
+            Store = []
+            for store in StoreResponse['value']:
+                if store['Status'] == "Pending Approval":
+                    output_json = json.dumps(repair)
+                    Store.append(json.loads(output_json))
+                    for store in Store:
+                        if store['No_'] == pk:
+                            data = store
+                            if store['Status'] == 'Pending Approval':
+                                state = 8
+            Lines_Store = config.O_DATA.format("/QyStoreRequisitionLines")
+            StoreLineResponse = session.get(Lines_Store, timeout=10).json()
+            StoreLines = []
+            for document in StoreLineResponse['value']:
+                if document['AuxiliaryIndex1'] == pk:
+                    output_json = json.dumps(document)
+                    StoreLines.append(json.loads(output_json))
         except requests.exceptions.RequestException as e:
             print(e)
-            messages.info(request, "Whoops! Something went wrong. Please Login to Continue")
-            return redirect('auth')
+            messages.info(request, e)
+            return redirect('approve')
         todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
         ctx = {"today": todays_date, "res": res, "full": fullname, "year": year,
-        "file":allFiles}
+        "file":allFiles,"data":data,"state":state,"ImpLine":ImprestLine,"TrainLine":TrainLine,
+        "SurrenderLines":SurrenderLines,"ClaimLines":ClaimLines,"PurchaseLines":PurchaseLines,
+        "RepairLines":RepairLines,"StoreLines":StoreLines}
     except KeyError:
         messages.info(request, "Session Expired. Please Login")
         return redirect('auth')

@@ -81,33 +81,572 @@
                 </div>
             </div>
         </div>
+        {% if state == 1 %}
         <div class="row">
-            <div class="col-md-8">
+            <div class="col-md-12">
                 <form class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Approver</label>
-                        <input type="text" class="form-control" placeholder="{{res.Approver_ID}}" readonly>
+                    <div class="col-md-4">
+                        <label class="form-label">Imprest Number</label>
+                        <input type="text" class="form-control" placeholder="{{data.No_}}" readonly>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
+                        <label class="form-label">Date Inserted</label>
+                        <input type="text" class="form-control" placeholder="{{data.Date}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Account No</label>
+                        <input type="text" class="form-control" placeholder="{{data.Account_No_}}" readonly>
+                    </div>
+                    <div class="col-md-4">
                         <label class="form-label">Status</label>
-                        <input type="text" class="form-control" placeholder="{{res.Status}}" readonly>
+                        <input type="text" class="form-control" placeholder="{{data.Status}}" readonly>
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Last Date Time Modified</label>
-                        <input type="text" class="form-control" placeholder="{{res.Last_Date_Time_Modified}}" readonly>
+                    <div class="col-md-4">
+                        <label class="form-label">Travel Type</label>
+                        <input type="text" class="form-control" placeholder="{{data.Travel_Type}}" readonly>
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Last Modified By User</label>
-                        <input type="text" class="form-control" placeholder="{{res.Last_Modified_By_User_ID}}" readonly>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Account Type</label>
+                        <input type="text" class="form-control" placeholder="{{data.Account_Type}}" readonly>
                     </div>
-                    <div class="col-md-12">
-                        <label class="form-label">Amount</label>
-                        <input type="text" class="form-control" placeholder="{{res.Amount}}" readonly>
+                    <div class="col-md-4">
+                        <label class="form-label">Imprest Amount</label>
+                        <input type="text" class="form-control" placeholder="{{data.Imprest_Amount}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Imprest</label>
+                        <input type="text" class="form-control" placeholder="{{data.Imprest}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">DSA</label>
+                        <input type="text" class="form-control" placeholder="{{data.DSA}}" readonly>
+                    </div>
+                    <div class="col-12">
+                        <label for="inputAddress" class="form-label">purpose</label>
+                        <textarea class="form-control" placeholder="{{data.Payment_Narration}}" rows="3"
+                            readonly></textarea>
                     </div>
                 </form>
             </div>
-            <div class="col-md-4">
-                <div class="card h-100 solution_card">
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card" id="d-card">
+                    <h4 class="mt-2 mx-2 text-dark">Imprest Lines</h4>
+                    <div class="card-body">
+                        <table id="example"
+                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                            style="width:100%">
+                            <thead>
+                                <tr id="tops">
+                                    <th id="long">Destination</th>
+                                    <th>Travel Date</th>
+                                    <th>Return Date</th>
+                                    <th>No of Days</th>
+                                    <th>Daily Rate</th>
+                                    <th>Quantity</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for res in ImpLine %}
+                                <tr>
+                                    <td>{{res.Destination}}</td>
+                                    <td>{{res.Date_of_Project}}</td>
+                                    <td>{{res.Date_of_Completion}}</td>
+                                    <td>{{res.No_of_Days}}</td>
+                                    <td>{{res.Daily_Rate}}</td>
+                                    <td>{{res.Quantity}}</td>
+                                    <td>{{res.Amount}}</td>
+                                </tr>
+
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% elif state == 2 %}
+        <div class="row py-3">
+            <div class="col-md-12">
+                <form class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Leave Number</label>
+                        <input type="text" class="form-control" placeholder="{{data.Application_No}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Application Date</label>
+                        <input type="text" class="form-control" placeholder="{{data.Application_Date}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Employee No</label>
+                        <input type="text" class="form-control" placeholder="{{data.Employee_No}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Start Date</label>
+                        <input type="text" class="form-control" placeholder="{{data.Start_Date}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Leave Period</label>
+                        <input type="text" class="form-control" placeholder="{{data.Leave_Period}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">User</label>
+                        <input type="text" class="form-control" placeholder="{{data.User_ID}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Planner Start Date</label>
+                        <input type="text" class="form-control" placeholder="{{data.Planner_Start_Date}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Return same day</label>
+                        <input type="text" class="form-control" placeholder="{{data.Return_same_day}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Leave Allowance Payable</label>
+                        <input type="text" class="form-control" placeholder="{{data.Leave_Allowance_Payable}}" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">End Date</label>
+                        <input type="text" class="form-control" placeholder="{{data.End_Date}}" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Employment Type</label>
+                        <input type="text" class="form-control" placeholder="{{data.Employment_Type}}" readonly>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {% elif state == 3 %}
+        <div class="row">
+            <div class="col-md-12">
+                <form class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Request Number</label>
+                        <input type="text" class="form-control" placeholder="{{data.Request_No_}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Designation</label>
+                        <input type="text" class="form-control" placeholder="{{data.Designation}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Adhoc</label>
+                        <input type="text" class="form-control" placeholder="{{data.Adhoc}}" readonly>
+                    </div>
+                    {% if data.Adhoc == False %}
+                    <div class="col-md-4">
+                        <label class="form-label">Training Name</label>
+                        <input type="text" class="form-control" placeholder="{{data.Description}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Training Need</label>
+                        <input type="text" class="form-control" placeholder="{{data.Training_Need}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Planned End Date</label>
+                        <input type="text" class="form-control" placeholder="{{data.Planned_End_Date}}" readonly>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Sponsor Type</label>
+                        <input type="text" class="form-control" placeholder="{{data.Sponsor_Type}}" readonly>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Venue</label>
+                        <input type="text" class="form-control" placeholder="{{data.Venue}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Provider</label>
+                        <input type="text" class="form-control" placeholder="{{data.Provider}}" readonly>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Training Objectives</label>
+                        <textarea class="form-control" placeholder="{{data.Training_Objectives}}" readonly></textarea>
+                    </div>
+                    {% if data.Adhoc == True %}
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <div class="card" id="d-card">
+                                <h4 class="mt-2 mx-2 text-dark">Adhoc Training Lines </h4>
+                                <div class="card-body">
+                                    <table id="example"
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
+                                        <thead>
+                                            <tr id="tops">
+                                                <th id="long">Training Name</th>
+                                                <th>Training Area</th>
+                                                <th>Training Objectives</th>
+                                                <th>Location</th>
+                                                <th>Venue</th>
+                                                <th>Provider</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for res in TrainLine %}
+                                            <tr>
+                                                <td>{{res.Training_Name}}</td>
+                                                <td>{{res.Training_area}}</td>
+                                                <td>{{res.Training_Objectives}}</td>
+                                                <td>{{res.Location}}</td>
+                                                <td>{{res.Venue}}</td>
+                                                <td>{{res.Provider}}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+        {% elif state == 4 %}
+        <div class="row">
+            <div class="col-md-12">
+                <form class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Surrender Number</label>
+                        <input type="text" class="form-control" placeholder="{{data.No_}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Date Created</label>
+                        <input type="text" class="form-control" placeholder="{{data.Date}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Surrender Date</label>
+                        <input type="text" class="form-control" placeholder="{{data.Surrender_Date}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Account No</label>
+                        <input type="text" class="form-control" placeholder="{{data.Account_No_}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Payee</label>
+                        <input type="text" class="form-control" placeholder="{{data.Payee}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">User</label>
+                        <input type="text" class="form-control" placeholder="{{data.User_Id}}" readonly>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Due Date</label>
+                        <input type="text" class="form-control" placeholder="{{data.Due_Date}}" readonly>
+                    </div>
+                    <div class="col-md-12">
+                        <label for="inputAddress" class="form-label">Purpose</label>
+                        <textarea class="form-control" placeholder="{{data.Payment_Narration}}" rows="3"
+                            readonly></textarea>
+                    </div>
+            </div>
+            </form>
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div class="card" id="d-card">
+                        <h4 class="mt-2 mx-2 text-dark">Imprest Surrender Lines</h4>
+                        <div class="card-body">
+                            <table id="example"
+                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                style="width:100%">
+                                <thead>
+                                    <tr id="tops">
+                                        <th id="long">Expenditure Type</th>
+                                        <th>Description</th>
+                                        <th>Actual Spent</th>
+                                        <th>Remaining Amount</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for res in SurrenderLines %}
+                                    <tr>
+                                        <td>{{res.Expenditure_Type}}</td>
+                                        <td>{{res.Description}}</td>
+                                        <td>{{res.Actual_Spent}}</td>
+                                        <td>{{res.Remaining_Amount}}</td>
+                                        <td>{{res.Amount}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% elif state == 5 %}
+        <div class="row">
+            <div class="col-md-12">
+                <form class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Claim Number</label>
+                        <input type="text" class="form-control" placeholder="{{data.No_}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Date Created</label>
+                        <input type="text" class="form-control" placeholder="{{data.Date}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Account No </label>
+                        <input type="text" class="form-control" placeholder="{{data.Account_No_}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Account Name </label>
+                        <input type="text" class="form-control" placeholder="{{data.Account_Name}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">User</label>
+                        <input type="text" class="form-control" placeholder="{{data.User_Id}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Responsibility Center</label>
+                        <input type="text" class="form-control" placeholder="{{data.Responsibility_Center}}" readonly>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Imprest Surrender Doc No</label>
+                        <input type="text" class="form-control" placeholder="{{data.Imprest_Surrender_Doc__No}}"
+                            readonly>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Purpose</label>
+                        <textarea class="form-control" placeholder="{{data.Payment_Narration}}" rows="3"
+                            readonly></textarea>
+                    </div>
+            </div>
+            </form>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card" id="d-card">
+                    <h4 class="mt-2 mx-2 text-dark">Staff Claim Lines</h4>
+                    <div class="card-body">
+                        <table id="example"
+                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                            style="width:100%">
+                            <thead>
+                                <tr id="tops">
+                                    <th id="long">Claim Type</th>
+                                    <th>Payment Type</th>
+                                    <th>Description</th>
+                                    <th>Amount</th>
+                                    <th>Expenditure Date</th>
+                                    {% if state == 1 %}
+                                    <th>Action</th>
+                                    {% endif %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for res in ClaimLines %}
+                                <tr>
+                                    <td>{{res.Claim_Type}}</td>
+                                    <td>{{res.Payment_Type}}</td>
+                                    <td>{{res.Description}}</td>
+                                    <td>{{res.Amount}}</td>
+                                    <td>{{res.Expenditure_Date}}</td>
+                                    {% if state == 1 %}
+                                    <td>
+                                        <form action="{% url 'FnDeleteStaffClaimLine' res.No %}" method="post"
+                                            style="display: inline-block;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="lineNo" value="{{res.Line_No}}">
+                                            <button type="submit" class="btn btn-danger" data-toggle="tooltip"
+                                                data-placement="top" title="Delete"><i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                    {% endif %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% elif state == 6 %}
+        <div class="row">
+            <div class="col-md-12">
+                <form class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Requisition Number</label>
+                        <input type="text" class="form-control" placeholder="{{data.No_}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Document Date</label>
+                        <input type="text" class="form-control" placeholder="{{data.Document_Date}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Employee No</label>
+                        <input type="text" class="form-control" placeholder="{{data.Employee_No_}}" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Employee Name</label>
+                        <input type="text" class="form-control" placeholder="{{data.Employee_Name}}" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Requested By</label>
+                        <input type="text" class="form-control" placeholder="{{data.Requested_By}}" readonly>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card" id="d-card">
+                    <h4 class="mt-2 mx-2 text-dark">Purchase Requisition Lines</h4>
+                    <div class="card-body">
+                        <table id="example"
+                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                            style="width:100%">
+                            <thead>
+                                <tr id="tops">
+                                    <th id="long">Procurement Plan</th>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                    <th>Quantity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for res in PurchaseLines %}
+                                <tr>
+                                    <td>{{res.Procurement_Plan}}</td>
+                                    <td>{{res.Type}}</td>
+                                    <td>{{res.Description}}</td>
+                                    <td>{{res.Quantity}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% elif state == 7 %}
+        <div class="row">
+            <div class="col-md-12">
+                <form class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Request Number</label>
+                        <input type="text" class="form-control" placeholder="{{data.No_}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Document Date</label>
+                        <input type="text" class="form-control" placeholder="{{data.Document_Date}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Employee Name</label>
+                        <input type="text" class="form-control" placeholder="{{data.Employee_Name}}" readonly>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Reason Description</label>
+                        <textarea class="form-control" placeholder="{{data.Reason_Description}}" readonly></textarea>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card" id="d-card">
+                    <h4 class="mt-2 mx-2 text-dark">Repair/Maintenance Lines</h4>
+                    <div class="card-body">
+                        <table id="example"
+                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                            style="width:100%">
+                            <thead>
+                                <tr id="tops">
+                                    <th id="long">Asset No.</th>
+                                    <th>Asset Description</th>
+                                    <th>Description</th>
+                                    <th>Book Value</th>
+                                    <th>Repair No</th>
+                            </thead>
+                            <tbody>
+                                {% for res in RepairLines %}
+                                <tr>
+                                    <td>{{res.Asset}}</td>
+                                    <td>{{res.Asset_Description}}</td>
+                                    <td>{{res.Description}}</td>
+                                    <td>{{res.Book_Value}}</td>
+                                    <td>{{res.AuxiliaryIndex1}}</td>
+
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% elif state == 8 %}
+        <div class="row">
+            <div class="col-md-12">
+                <form class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Request Number</label>
+                        <input type="text" class="form-control" placeholder="{{data.No_}}" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Posting Date</label>
+                        <input type="text" class="form-control" placeholder="{{data.Posting_Date}}" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Document Date</label>
+                        <input type="text" class="form-control" placeholder="{{data.Document_Date}}" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Employee Name</label>
+                        <input type="text" class="form-control" placeholder="{{data.Employee_Name}}" readonly>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Reason Description</label>
+                        <textarea class="form-control" placeholder="{{data.Reason_Description}}" readonly></textarea>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card" id="d-card">
+                    <h4 class="mt-2 mx-2 text-dark">Store Request Lines</h4>
+                    <div class="card-body">
+                        <table id="example"
+                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                            style="width:100%">
+                            <thead>
+                                <tr id="tops">
+                                    <th id="long">Item No</th>
+                                    <th>Description</th>
+                                    <th>Location Code</th>
+                                    <th>Unit of Measure</th>
+                                    <th>Quantity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for res in StoreLines %}
+                                <tr>
+                                    <td>{{res.No_}}</td>
+                                    <td>{{res.Description}}</td>
+                                    <td>{{res.Location_Code}}</td>
+                                    <td>{{res.Unit_of_Measure}}</td>
+                                    <td>{{res.Quantity}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        <div class="row my-2">
+            <div class="col-md-12">
+                <div class="card">
                     <div class="card-body">
                         <h4 class="card-title mb-4">
                             Attachments

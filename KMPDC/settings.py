@@ -185,6 +185,7 @@ AUTHS = Session()
 
 WEB_SERVICE_PWD = 'Admin@123'
 
+
 O_DATA = "http://20.121.189.145:7048/KMPDC/ODataV4/Company('KMPDC'){}"
 BASE_URL = 'http://20.121.189.145:7047/KMPDC/WS/KMPDC/Codeunit/WebPortal'
 AUTHS.auth = HTTPBasicAuth('EMAEBA', WEB_SERVICE_PWD)

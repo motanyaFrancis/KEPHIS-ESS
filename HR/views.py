@@ -186,7 +186,7 @@ def Leave_Request(request):
         LeaveTypes = config.O_DATA.format("/QyLeaveTypes")
         LeavePlanner = config.O_DATA.format("/QyLeavePlannerLines")
         try:
-            response = session.get(Access_Point, timeout=10).json()
+            response = session.get(Access_Point, timeout=20).json()
             res_types = session.get(LeaveTypes, timeout=10).json()
             res_planner = session.get(LeavePlanner, timeout=10).json()
             open = []
