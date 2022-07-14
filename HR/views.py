@@ -15,6 +15,9 @@ from django.http import HttpResponse
 import io as BytesIO
 import secrets
 import string
+from requests.auth import HTTPBasicAuth
+from zeep import Client
+from zeep.transports import Transport
 
 # Create your views here.
 
@@ -376,6 +379,11 @@ def UploadLeaveAttachment(request, pk):
 def LeaveApproval(request, pk):
     employeeNo = request.session['Employee_No_']
     applicationNo = ""
+    Username = request.session['User_ID']
+    Password = request.session['password']
+    AUTHS = Session()
+    AUTHS.auth = HTTPBasicAuth(Username, Password)
+    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
     if request.method == 'POST':
         try:
             applicationNo = request.POST.get('applicationNo')
@@ -383,7 +391,7 @@ def LeaveApproval(request, pk):
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('LeaveDetail', pk=pk)
     try:
-        response = config.CLIENT.service.FnRequestLeaveApproval(
+        response = CLIENT.service.FnRequestLeaveApproval(
             employeeNo, applicationNo)
         messages.success(request, "Approval Request Successfully Sent!!")
         print(response)
@@ -744,21 +752,26 @@ def FnAdhocLineDelete(request, pk):
 def TrainingApproval(request, pk):
     myUserID = request.session['User_ID']
     trainingNo = ""
+    Username = request.session['User_ID']
+    Password = request.session['password']
+    AUTHS = Session()
+    AUTHS.auth = HTTPBasicAuth(Username, Password)
+    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
     if request.method == 'POST':
         try:
             trainingNo = request.POST.get('trainingNo')
         except ValueError as e:
             messages.error(request, "Not sent. Invalid Input, Try Again!!")
             return redirect('TrainingDetail', pk=pk)
-    try:
-        response = config.CLIENT.service.FnRequestTrainingApproval(
-            myUserID, trainingNo)
-        messages.success(request, "Approval Request Successfully Sent!!")
-        print(response)
-        return redirect('TrainingDetail', pk=pk)
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
+        try:
+            response = CLIENT.service.FnRequestTrainingApproval(
+                myUserID, trainingNo)
+            messages.success(request, "Approval Request Successfully Sent!!")
+            print(response)
+            return redirect('TrainingDetail', pk=pk)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
     return redirect('TrainingDetail', pk=pk)
 
 

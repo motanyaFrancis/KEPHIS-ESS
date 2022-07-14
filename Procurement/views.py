@@ -15,6 +15,9 @@ import secrets
 from django.http import HttpResponse
 import io as BytesIO
 import string
+from zeep import Client
+from zeep.transports import Transport
+from requests.auth import HTTPBasicAuth
 
 # Create your views here.
 
@@ -79,8 +82,6 @@ def CreatePurchaseRequisition(request):
             employeeNo = request.session['Employee_No_']
             orderDate = datetime.strptime(
                 request.POST.get('orderDate'), '%Y-%m-%d').date()
-            expectedReceiptDate = datetime.strptime(
-                request.POST.get('expectedReceiptDate'), '%Y-%m-%d').date()
             myAction = request.POST.get('myAction')
         except ValueError:
             messages.error(request, "Missing Input")
@@ -236,6 +237,11 @@ def CreatePurchaseLines(request, pk):
 
 
 def PurchaseApproval(request, pk):
+    Username = request.session['User_ID']
+    Password = request.session['password']
+    AUTHS = Session()
+    AUTHS.auth = HTTPBasicAuth(Username, Password)
+    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
     requistionNo = ""
     if request.method == 'POST':
         try:
@@ -248,7 +254,7 @@ def PurchaseApproval(request, pk):
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
         try:
-            response = config.CLIENT.service.FnRequestInternalRequestApproval(
+            response = CLIENT.service.FnRequestInternalRequestApproval(
                 myUserID, requistionNo)
             messages.success(request, "Approval Request Sent Successfully")
             print(response)
@@ -515,6 +521,11 @@ def RepairRequestDetails(request, pk):
 
 
 def RepairApproval(request, pk):
+    Username = request.session['User_ID']
+    Password = request.session['password']
+    AUTHS = Session()
+    AUTHS.auth = HTTPBasicAuth(Username, Password)
+    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
     requistionNo = ""
     if request.method == 'POST':
         try:
@@ -524,7 +535,7 @@ def RepairApproval(request, pk):
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
         try:
-            response = config.CLIENT.service.FnRequestInternalRequestApproval(
+            response = CLIENT.service.FnRequestInternalRequestApproval(
                 myUserID, requistionNo)
             messages.success(request, "Approval Request Sent Successfully")
             print(response)
@@ -581,7 +592,10 @@ def CreateRepairLines(request, pk):
             response = config.CLIENT.service.FnRepairRequisitionLine(
                 pk, lineNo, assetCode, description, myAction)
             print(response)
-            if response != 0:
+            if response !=0 and not attach:
+                messages.success(request, "Request Successful")
+                return redirect('RepairDetail', pk=pk)
+            if attach and response != 0:
                 for files in attach:
                     fileName = request.FILES['attachment'].name
                     attachment = base64.b64encode(files.read())
@@ -790,6 +804,11 @@ def StoreRequestDetails(request, pk):
 
 
 def StoreApproval(request, pk):
+    Username = request.session['User_ID']
+    Password = request.session['password']
+    AUTHS = Session()
+    AUTHS.auth = HTTPBasicAuth(Username, Password)
+    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
     requistionNo = ""
     if request.method == 'POST':
         try:
@@ -799,7 +818,7 @@ def StoreApproval(request, pk):
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
         try:
-            response = config.CLIENT.service.FnRequestInternalRequestApproval(
+            response = CLIENT.service.FnRequestInternalRequestApproval(
                 myUserID, requistionNo)
             messages.success(request, "Approval Request Sent Successfully")
             print(response)

@@ -15,6 +15,9 @@ import string
 from django.http import HttpResponse
 import io as BytesIO
 from django.template.response import TemplateResponse
+from zeep import Client
+from zeep.transports import Transport
+from requests.auth import HTTPBasicAuth
 
 
 # Create your views here.
@@ -265,7 +268,7 @@ def FnDeleteImprestLine(request, pk):
         try:
             response = config.CLIENT.service.FnDeleteImprestLine(
                 lineNo, pk)
-            messages.success(request, "Approval Request Sent Successfully")
+            messages.success(request, "Deleted Successfully")
             print(response)
             return redirect('IMPDetails', pk=pk)
         except Exception as e:
@@ -301,14 +304,18 @@ def FnGenerateImprestReport(request, pk):
 
 
 def FnRequestPaymentApproval(request, pk):
-
+    Username = request.session['User_ID']
+    Password = request.session['password']
+    AUTHS = Session()
+    AUTHS.auth = HTTPBasicAuth(Username, Password)
+    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
     if request.method == 'POST':
         try:
             requisitionNo = request.POST.get('requisitionNo')
         except ValueError as e:
             return redirect('IMPDetails', pk=pk)
         try:
-            response = config.CLIENT.service.FnRequestPaymentApproval(
+            response = CLIENT.service.FnRequestPaymentApproval(
                 request.session['Employee_No_'], requisitionNo)
             messages.success(request, "Approval Request Sent Successfully")
             print(response)
@@ -626,13 +633,18 @@ def FnGenerateImprestSurrenderReport(request, pk):
 
 
 def SurrenderApproval(request, pk):
+    Username = request.session['User_ID']
+    Password = request.session['password']
+    AUTHS = Session()
+    AUTHS.auth = HTTPBasicAuth(Username, Password)
+    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
     if request.method == 'POST':
         try:
             requisitionNo = request.POST.get('requisitionNo')
         except ValueError as e:
             return redirect('IMPSurrender', pk=pk)
         try:
-            response = config.CLIENT.service.FnRequestPaymentApproval(
+            response = CLIENT.service.FnRequestPaymentApproval(
                 request.session['Employee_No_'], requisitionNo)
             messages.success(request, "Approval Request Sent Successfully")
             print(response)
@@ -889,13 +901,18 @@ def CreateClaimLines(request, pk):
 
 
 def ClaimApproval(request, pk):
+    Username = request.session['User_ID']
+    Password = request.session['password']
+    AUTHS = Session()
+    AUTHS.auth = HTTPBasicAuth(Username, Password)
+    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
     if request.method == 'POST':
         try:
             requisitionNo = request.POST.get('requisitionNo')
         except ValueError as e:
             return redirect('ClaimDetail', pk=pk)
         try:
-            response = config.CLIENT.service.FnRequestPaymentApproval(
+            response = CLIENT.service.FnRequestPaymentApproval(
                 request.session['Employee_No_'], requisitionNo)
             messages.success(request, "Approval Request Sent Successfully")
             print(response)

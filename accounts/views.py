@@ -43,6 +43,7 @@ def login_request(request):
                     request.session['User_Responsibility_Center'] = Data[0]['User_Responsibility_Center']
                     print(request.session['User_ID'])
                     print("Emp",request.session['Employee_No_'])
+                    request.session['password'] = password
 
                     for emp in response['value']:
                         if emp['No_'] == request.session['Employee_No_']:
