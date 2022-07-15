@@ -586,11 +586,11 @@ def CreateRepairLines(request, pk):
             messages.error(request, "Missing Input")
             return redirect('RepairDetail', pk=pk)
 
-        if OtherAsset:
-            assetCode = OtherAsset
+        if not OtherAsset:
+            OtherAsset = ''
         try:
             response = config.CLIENT.service.FnRepairRequisitionLine(
-                pk, lineNo, assetCode, description, myAction)
+                pk, lineNo, assetCode, description, myAction,OtherAsset)
             print(response)
             if response !=0 and not attach:
                 messages.success(request, "Request Successful")
