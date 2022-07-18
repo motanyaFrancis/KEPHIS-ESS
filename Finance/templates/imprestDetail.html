@@ -35,23 +35,6 @@
         {% include 'alerts.html' %}
         <div class="row my-3">
             <div class="col-md-3">
-                <div class="card l-bg-cherry statCard h-100">
-                    <div class="card-statistic-3 p-4">
-                        <div class="card-icon card-icon-large"><i class="fas fa-users"></i></div>
-                        <div class="mb-4">
-                            <h5 class="card-title mb-0">Account Type</h5>
-                        </div>
-                        <div class="row align-items-center mb-2 d-flex">
-                            <div class="col-md-12">
-                                <h2 class="d-flex align-items-center mb-0">
-                                    {{res.Account_Type}}
-                                </h2>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
                 <div class="card l-bg-blue-dark statCard h-100">
                     <div class="card-statistic-3 p-4">
                         <div class="card-icon card-icon-large"><i class="fas fa-file"></i></div>
@@ -122,6 +105,23 @@
                 </div>
             </div>
             <div class="col-md-3">
+                <div class="card l-bg-cherry statCard h-100">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-dollar-sign"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">DSA Amount</h5>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{res.DSA_Allowance_Amount}}
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
                 <div class="card l-bg-orange-dark statCard h-100">
                     <div class="card-statistic-3 p-4">
                         <div class="card-icon card-icon-large"><i class="fas fa-calendar-times"></i></div>
@@ -173,10 +173,14 @@
                         <input type="text" class="form-control" placeholder="{{res.Imprest_Amount}}" readonly>
                     </div>
                     <div class="col-md-4">
+                        <label class="form-label">DSA Amount</label>
+                        <input type="text" class="form-control" placeholder="{{res.DSA_Allowance_Amount}}" readonly>
+                    </div>
+                    <div class="col-md-4">
                         <label class="form-label">Imprest</label>
                         <input type="text" class="form-control" placeholder="{{res.Imprest}}" readonly>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-12">
                         <label class="form-label">DSA</label>
                         <input type="text" class="form-control" placeholder="{{res.DSA}}" readonly>
                     </div>

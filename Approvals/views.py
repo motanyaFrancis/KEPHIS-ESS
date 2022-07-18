@@ -221,9 +221,6 @@ def ApproveDetails(request, pk):
                 if file['No_'] == pk:
                     output_json = json.dumps(file)
                     allFiles.append(json.loads(output_json))
-            '''
-            Imprest Requisition Data
-            '''
             ImprestResponse = session.get(Imprest, timeout=10).json()
             for imprest in ImprestResponse['value']:
                 if imprest['Status'] == "Pending Approval":
@@ -234,17 +231,12 @@ def ApproveDetails(request, pk):
                             data = imprest
                             if imprest['Status'] == 'Pending Approval':
                                 state = 1
-            # Imprest Line
             ImpLineResponse = session.get(ImprestLineRequest, timeout=10).json()
             for imprest in ImpLineResponse['value']:
                 if imprest['AuxiliaryIndex1'] == pk:
                     output_json = json.dumps(imprest)
                     ImprestLine.append(json.loads(output_json))
-            # End of Imprest
 
-            '''
-            Leave  Data
-            '''
             LeaveResponse = session.get(Leave_Request, timeout=10).json()
             for leave in LeaveResponse['value']:
                 if leave['Status'] == "Pending Approval":
@@ -255,10 +247,7 @@ def ApproveDetails(request, pk):
                             data = myLeave
                             if myLeave['Status'] == 'Pending Approval':
                                 state = 2
-            # End of Leave
-            '''
-            Training  Data
-            '''
+
             TrainResponse = session.get(TrainingRequest, timeout=10).json()
             for train in TrainResponse['value']:
                 if train['Status'] == 'Pending Approval':
@@ -269,14 +258,11 @@ def ApproveDetails(request, pk):
                             data = trains
                             if trains['Status'] == 'Pending Approval':
                                 state = 3
-            # Training Line
             TrainLineResponse = session.get(TrainingLineRequest, timeout=10).json()
             for trainLine in TrainLineResponse['value']:
                 if trainLine['Source_Document_No'] == pk :
                     output_json = json.dumps(trainLine)
                     TrainLine.append(json.loads(output_json))
-            # End Training
-            # Imprest Surrender
             SurrenderResponse = session.get(SurrenderRequest, timeout=10).json()
             for imprest in SurrenderResponse['value']:
                 if imprest['Status'] == "Pending Approval":
@@ -294,13 +280,10 @@ def ApproveDetails(request, pk):
                 if imprest['No'] == pk:
                     output_json = json.dumps(imprest)
                     SurrenderLines.append(json.loads(output_json))
-            # End Surrender
-
-            # Staff Claim
             ClaimResponse = session.get(ClaimRequest, timeout=10).json()
             for claim in ClaimResponse['value']:
                 if claim['Status'] == "Pending Approval":
-                    output_json = json.dumps(imprest)
+                    output_json = json.dumps(claim)
                     Claims.append(json.loads(output_json))
                     for claim in Claims:
                         if claim['No_'] == pk:
@@ -314,10 +297,6 @@ def ApproveDetails(request, pk):
                 if claim['No'] == pk:
                     output_json = json.dumps(claim)
                     ClaimLines.append(json.loads(output_json))
-            
-            '''
-            Purchase Requisition  Data
-            '''
             PurchaseResponse = session.get(PurchaseRequest, timeout=10).json()
             for purchase in PurchaseResponse['value']:
                 if purchase['Status'] == "Pending Approval":
@@ -335,9 +314,6 @@ def ApproveDetails(request, pk):
                 if document['AuxiliaryIndex1'] == pk:
                     output_json = json.dumps(document)
                     PurchaseLines.append(json.loads(output_json))
-            '''
-            Repair Requisition  Data
-            '''
             RepairRequest = config.O_DATA.format("/QyRepairRequisitionHeaders")
             RepairResponse = session.get(RepairRequest, timeout=10).json()
             Repair = []
@@ -357,9 +333,6 @@ def ApproveDetails(request, pk):
                 if document['AuxiliaryIndex1'] == pk:
                     output_json = json.dumps(document)
                     RepairLines.append(json.loads(output_json))
-            '''
-            Store Requisition  Data
-            '''
             StoreRequest = config.O_DATA.format("/QyStoreRequisitionHeaders")
             StoreResponse = session.get(StoreRequest, timeout=10).json()
             Store = []
@@ -388,8 +361,9 @@ def ApproveDetails(request, pk):
         "file":allFiles,"data":data,"state":state,"ImpLine":ImprestLine,"TrainLine":TrainLine,
         "SurrenderLines":SurrenderLines,"ClaimLines":ClaimLines,"PurchaseLines":PurchaseLines,
         "RepairLines":RepairLines,"StoreLines":StoreLines}
-    except KeyError:
+    except KeyError as e:
         messages.info(request, "Session Expired. Please Login")
+        print(e)
         return redirect('auth')
     return render(request, 'approveDetails.html', ctx)
 
