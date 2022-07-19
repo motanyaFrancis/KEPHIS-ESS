@@ -361,7 +361,7 @@ def UploadLeaveAttachment(request, pk):
             attachment = base64.b64encode(files.read())
             try:
                 response = config.CLIENT.service.FnUploadAttachedDocument(
-                    docNo, fileName, attachment, tableID)
+                    docNo, fileName, attachment, tableID,request.session['User_ID'])
             except Exception as e:
                 messages.error(request, e)
                 print(e)
@@ -678,7 +678,7 @@ def UploadTrainingAttachment(request, pk):
             attachment = base64.b64encode(files.read())
             try:
                 response = config.CLIENT.service.FnUploadAttachedDocument(
-                    docNo, fileName, attachment, tableID)
+                    docNo, fileName, attachment, tableID,request.session['User_ID'])
             except Exception as e:
                 messages.error(request, e)
                 print(e)

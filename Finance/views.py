@@ -1,5 +1,4 @@
 import base64
-import imp
 from django.shortcuts import render, redirect
 from datetime import date, datetime
 import requests
@@ -21,8 +20,6 @@ from requests.auth import HTTPBasicAuth
 
 
 # Create your views here.
-
-
 def ImprestRequisition(request):
     try:
         fullname =  request.session['User_ID']
@@ -233,6 +230,7 @@ def ImprestDetails(request, pk):
 
 
 def UploadAttachment(request, pk):
+    response = ''
     if request.method == "POST":
         try:
             attach = request.FILES.getlist('attachment')
@@ -244,7 +242,7 @@ def UploadAttachment(request, pk):
             attachment = base64.b64encode(files.read())
             try:
                 response = config.CLIENT.service.FnUploadAttachedDocument(
-                    pk, fileName, attachment, tableID)
+                    pk, fileName, attachment, tableID,request.session['User_ID'])
             except Exception as e:
                 messages.error(request, e)
                 print(e)
@@ -595,7 +593,7 @@ def UploadSurrenderAttachment(request, pk):
             attachment = base64.b64encode(files.read())
             try:
                 response = config.CLIENT.service.FnUploadAttachedDocument(
-                    pk, fileName, attachment, tableID)
+                    pk, fileName, attachment, tableID,request.session['User_ID'])
             except Exception as e:
                 messages.error(request, e)
                 print(e)
@@ -883,7 +881,7 @@ def CreateClaimLines(request, pk):
                     attachment = base64.b64encode(files.read())
                     try:
                         responses = config.CLIENT.service.FnUploadAttachedDocument(
-                            pk +'#'+str(response), fileName, attachment, tableID)
+                            pk +'#'+str(response), fileName, attachment, tableID,request.session['User_ID'])
                         if responses == True:
                             messages.success(request, "Request Successful")
                             return redirect('ClaimDetail', pk=pk)

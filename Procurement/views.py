@@ -281,7 +281,7 @@ def UploadPurchaseAttachment(request, pk):
             attachment = base64.b64encode(files.read())
             try:
                 response = config.CLIENT.service.FnUploadAttachedDocument(
-                    pk, fileName, attachment, tableID)
+                    pk, fileName, attachment, tableID,request.session['User_ID'])
             except Exception as e:
                 messages.error(request, e)
                 print(e)
@@ -601,7 +601,7 @@ def CreateRepairLines(request, pk):
                     attachment = base64.b64encode(files.read())
                     try:
                         responses = config.CLIENT.service.FnUploadAttachedDocument(
-                            pk +'#'+str(response), fileName, attachment, tableID)
+                            pk +'#'+str(response), fileName, attachment, tableID,request.session['User_ID'])
                         if responses == True:
                             messages.success(request, "Request Successful")
                             return redirect('RepairDetail', pk=pk)
@@ -942,7 +942,7 @@ def UploadStoreAttachment(request, pk):
             attachment = base64.b64encode(files.read())
             try:
                 response = config.CLIENT.service.FnUploadAttachedDocument(
-                    pk, fileName, attachment, tableID)
+                    pk, fileName, attachment, tableID,request.session['User_ID'])
             except Exception as e:
                 messages.error(request, e)
                 print(e)
