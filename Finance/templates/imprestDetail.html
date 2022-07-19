@@ -353,7 +353,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <label for="" class="form-label">Imprest Type <span class="text-danger">*</span></label>
-                                <select class="form-select" name="imprestType" required>
+                                <select class="form-select" name="imprestType" id="imprestType" required>
                                     <option selected disabled value="">Select Imprest Type</option>
                                     <option value="1">Imprest</option>
                                     <option value="2">DSA</option>
@@ -370,23 +370,42 @@
                                 <input type="date" id="to" class="form-control" name="returnDate" required>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row" style="display: none;" id="imprestTypeRow">
                             <div class="col-md-12">
                                 <label for="" class="form-label">Requisition Type <span
                                         class="text-danger">*</span></label>
-                                <select name="requisitionType" class="form-select" onchange="getRep()" required>
+                                <select name="requisitionType" class="form-select" id="imprestTypess"
+                                    onchange="getRep()" disabled>
                                     <option value='' selected='selected'>Select</option>
                                     {% for res in type %}
-                                    <option value='{{res.Code}}' ren='{{res.Based_On_a_Table}}'>{{res.Description}}
+                                    {% if res.DSA == False %}
+                                    <option value='{{res.Code}}' ren='{{res.Based_On_a_Table}}'>
+                                        {{res.Description}}
                                     </option>
+                                    {% endif %}
                                     {% endfor %}
                                 </select>
                             </div>
                         </div>
-                        <div class="row" id="tableAmountRow" style="display: none">
+                        <div class="row" style="display: none;" id="DSATypeRow">
+                            <div class="col-md-12">
+                                <label for="" class="form-label">Requisition Type <span
+                                        class="text-danger">*</span></label>
+                                <select id="DSAType" name="DSAType" class="form-select" onchange="getReps()" disabled>
+                                    <option value='' selected='selected'>Select</option>
+                                    {% for res in type %}
+                                    {% if res.DSA == True %}
+                                    <option value='{{res.Code}}' rens='{{res.Based_On_a_Table}}'>{{res.Description}}
+                                    </option>
+                                    {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row tableAmountRow" style="display: none">
                             <div class="col-md-12">
                                 <label class="form-label">Amount</label>
-                                <input type="number" class="form-control" id="tableAmount" disabled name="amount">
+                                <input type="number" class="form-control tableAmount" disabled name="amount">
                             </div>
                         </div>
                 </div>
@@ -436,13 +455,42 @@
             .getAttribute('ren');
 
         if (ren === 'False') {
-            $('#tableAmountRow').show(1000)
-            document.getElementById('tableAmount').disabled = false;
+            $('.tableAmountRow').show(1000)
+            $('.tableAmount').prop('disabled', false);
         } else if (ren === 'True') {
-            document.getElementById('tableAmount').disabled = true;
-            $('#tableAmountRow').hide(1000)
+            $('.tableAmount').prop('disabled', true);
+            $('.tableAmountRow').hide(1000)
         }
     }
+
+    function getReps() {
+        var rens = document.forms['frm_'].elements['DSAType'].options[document.forms['frm_'].elements[
+                'DSAType'].selectedIndex]
+            .getAttribute('rens');
+
+        if (rens === 'False') {
+            $('.tableAmountRow').show(1000)
+            $('.tableAmount').prop('disabled', false);
+        } else if (rens === 'True') {
+            $('.tableAmount').prop('disabled', true);
+            $('.tableAmountRow').hide(1000)
+        }
+    }
+    $(document).ready(function () {
+        $('#imprestType').on('change', function () {
+            if (this.value == "1") {
+                $('#imprestTypeRow').show(1000)
+                $('#imprestTypess').prop('disabled', false);
+                $('#DSATypeRow').hide(1300)
+                $('#DSAType').prop('disabled', true);
+            } else {
+                $('#imprestTypess').prop('disabled', true);
+                $('#imprestTypeRow').hide(1000);
+                $('#DSATypeRow').show(1300)
+                $('#DSAType').prop('disabled', false);
+            }
+        });
+    })
 </script>
 
 {% endblock %}

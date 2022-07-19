@@ -332,34 +332,11 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <label for="recipient-name" class="col-form-label">Location <span
-                                        class="text-danger">*</span></label>
-                                <select class="form-select" name="location" required>
-                                    <option selected disabled value="">Select Location</option>
-                                    {% for res in loc %}
-                                    <option value="{{res.Code}}">{{res.Name}}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
+
                         <div class="row">
                             <div class="col-md-12">
                                 <label class="form-label">Quantity <span class="text-danger">*</span></label>
                                 <input type="number" class="form-control" name="quantity" required>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <label for="recipient-name" class="col-form-label">Unit Of Measure <span
-                                        class="text-danger">*</span></label>
-                                <select class="form-select" name="unitOfMeasure" required>
-                                    <option selected disabled value="">Choose</option>
-                                    {% for res in unit %}
-                                    <option value="{{res.Code}}">{{res.Description}}</option>
-                                    {% endfor %}
-                                </select>
                             </div>
                         </div>
                 </div>

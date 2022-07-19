@@ -230,6 +230,7 @@ def ImprestDetails(request, pk):
 
 
 def UploadAttachment(request, pk):
+    
     response = ''
     if request.method == "POST":
         try:
@@ -351,6 +352,7 @@ def CreateImprestLines(request, pk):
             destination = request.POST.get('destination')
             imprestTypes = request.POST.get('imprestType')
             requisitionType = request.POST.get('requisitionType')
+            DSAType= request.POST.get('DSAType')
             travelDate = datetime.strptime(
                 request.POST.get('travel'), '%Y-%m-%d').date()
             amount = request.POST.get("amount")
@@ -367,6 +369,9 @@ def CreateImprestLines(request, pk):
 
         if not amount:
             amount = 0
+
+        if DSAType:
+            requisitionType = DSAType
         try:
             response = config.CLIENT.service.FnImprestLine(
                 lineNo, pk, imprestType, destination, travelDate, returnDate, requisitionType, float(amount), myAction)

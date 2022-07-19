@@ -855,17 +855,13 @@ def FnCancelStoreApproval(request, pk):
 def CreateStoreLines(request, pk):
     lineNo = ""
     itemCode = ""
-    location = ""
     quantity = ""
-    unitOfMeasure = ""
     myAction = ''
     if request.method == 'POST':
         try:
             requisitionNo = pk
             lineNo = int(request.POST.get('lineNo'))
             itemCode = request.POST.get('itemCode')
-            location = request.POST.get('location')
-            unitOfMeasure = request.POST.get('unitOfMeasure')
             quantity = int(request.POST.get('quantity'))
             myAction = request.POST.get('myAction')
         except ValueError:
@@ -873,7 +869,7 @@ def CreateStoreLines(request, pk):
             return redirect('StoreDetail', pk=pk)
         try:
             response = config.CLIENT.service.FnStoreRequisitionLine(
-                requisitionNo, lineNo, itemCode, location, quantity, unitOfMeasure, myAction)
+                requisitionNo, lineNo, itemCode, quantity, myAction)
             messages.success(request, "Request Successful")
             print(response)
             return redirect('StoreDetail', pk=pk)

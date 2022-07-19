@@ -353,11 +353,21 @@
                             <div class="row mt-3">
                                 <div class="col-md-12">
                                     <label class="form-label"> Leave Type</label>
-                                    <select class="form-select" id="leaveType" name="leaveType" required>
+                                    <select class="form-select" name="leaveType" required>
                                         <option selected disabled value="">Choose...</option>
                                         {% for res in leave %}
                                         <option value="{{res.Code}}">{{res.Description}}</option>
                                         {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label class="form-label"> Leave Based on Planner?</label>
+                                    <select class="form-select" id="BasedOnPlanner" name="BasedOnPlanner" required>
+                                        <option selected value="">Select</option>
+                                        <option value="True">Yes</option>
+                                        <option value="False">No</option>
                                     </select>
                                 </div>
                             </div>
@@ -434,8 +444,8 @@
             }
         });
         // Leave type on change to display and hide planner start date
-        $('#leaveType').on('change', function () {
-            if (this.value == "ANNUAL") {
+        $('#BasedOnPlanner').on('change', function () {
+            if (this.value == "True") {
                 $('#plannerStartDateRow').show(1000)
                 $('#plannerStartDate').prop('disabled', false);
                 $('#LeaveStartDateRow').hide(1300)
