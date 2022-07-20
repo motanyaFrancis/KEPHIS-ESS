@@ -53,4 +53,6 @@ urlpatterns = [
          views.FnGenerateStoreReport, name='FnGenerateStoreReport'),
     path('UploadStoreAttachment/<str:pk>',
          views.UploadStoreAttachment, name='UploadStoreAttachment'),
+    path('itemCategory',
+         views.itemCategory, name='itemCategory'),
 ]

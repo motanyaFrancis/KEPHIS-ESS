@@ -18,6 +18,7 @@ import string
 from zeep import Client
 from zeep.transports import Transport
 from requests.auth import HTTPBasicAuth
+from django.http import JsonResponse
 
 # Create your views here.
 
@@ -728,25 +729,22 @@ def StoreRequestDetails(request, pk):
         state = ''
         res = ''
         Access_Point = config.O_DATA.format("/QyStoreRequisitionHeaders")
-        Item = config.O_DATA.format("/QyItems")
+        ItemCategory = config.O_DATA.format("/QyItemCategories")
         Location = config.O_DATA.format("/QyLocations")
         Approver = config.O_DATA.format("/QyApprovalEntries")
-        Measure = config.O_DATA.format("/QyUnitsOfMeasure")
         Lines_Res = config.O_DATA.format("/QyStoreRequisitionLines")
         try:
             response = session.get(Access_Point, timeout=10).json()
-            Item_res = session.get(Item, timeout=10).json()
             Loc_res = session.get(Location, timeout=10).json()
             res_approver = session.get(Approver, timeout=10).json()
-            res_Measure = session.get(Measure, timeout=10).json()
             response_Lines = session.get(Lines_Res, timeout=10).json()
             openLines = []
             openImp = []
             res_type = []
             Approvers = []
-            items = Item_res['value']
+            Item_Cat = session.get(ItemCategory, timeout=10).json()
+            itemsCategory = Item_Cat['value']
             Location = Loc_res['value']
-            unit = res_Measure['value']
             for approver in res_approver['value']:
                 if approver['Document_No_'] == pk:
                     output_json = json.dumps(approver)
@@ -793,15 +791,27 @@ def StoreRequestDetails(request, pk):
         todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
         ctx = {"today": todays_date, "res": res,
             "state": state, "line": openLines,
-            "type": res_type, "items": items,
+            "type": res_type, 
             "Approvers": Approvers, "loc": Location,
             "year": year, "full": fullname,
-            "unit": unit}
+            "itemsCategory": itemsCategory}
     except KeyError:
         messages.info(request, "Session Expired. Please Login")
         return redirect('auth')
     return render(request, 'storeDetail.html', ctx)
 
+def itemCategory(request):
+    session = requests.Session()
+    session.auth = config.AUTHS
+    Item = config.O_DATA.format("/QyItems")
+    text = request.GET.get('ItemCode')
+    try:
+        Item_res = session.get(Item, timeout=10).json()
+        return JsonResponse(Item_res)
+
+    except  Exception as e:
+        pass
+    return redirect('store')
 
 def StoreApproval(request, pk):
     Username = request.session['User_ID']

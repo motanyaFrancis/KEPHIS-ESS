@@ -264,8 +264,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="myForm needs-validation" action="{% url 'CreateStoreLine' res.No_ %}" method="post"
-                        novalidate>
+                    <form class="myForm needs-validation" id="formAdd" action="{% url 'CreateStoreLine' res.No_ %}"
+                        method="post" novalidate>
                         {% csrf_token %}
                         <div class="row">
                             <div class="col-md-12">
@@ -278,57 +278,18 @@
                                 <label class="form-label">Item Category<span class="text-danger">*</span></label>
                                 <select class="form-select" name="itemCategory" id="itemCategory" required>
                                     <option selected disabled value="">Select Item Category</option>
-                                    <option value="1">Design and printing</option>
-                                    <option value="2">Stationery and common user items</option>
-                                    <option value="3">Toiletry soap and detergent</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row" id="DesignAndPrintingRow" style="display:none">
-                            <div class="col-md-12">
-                                <label class="form-label">Design and Printing Items <span
-                                        class="text-danger">*</span></label>
-                                <select class="form-select" name="itemCode" id="DesignAndPrinting" disabled>
-                                    <option selected disabled value="">Select Item</option>
-                                    {% for res in items %}
-                                    <option value="{{res.No_}}">{{res.Description}} <span
-                                            class="text-muted avail">({{res.Inventory}}
-                                            -
-                                            Available)</span>
-                                    </option>
+                                    {% for res in itemsCategory %}
+                                    <option value="{{res.Code}}">{{res.Description}}</option>
                                     {% endfor %}
                                 </select>
                             </div>
                         </div>
-                        <div class="row" id="StationeryRow" style="display: none;">
+                        <div class="row">
                             <div class="col-md-12">
-                                <label class="form-label">Stationery and common user items <span
-                                        class="text-danger">*</span></label>
-                                <select class="form-select" name="itemCode" id="Stationery" disabled>
-                                    <option selected disabled value="">Select Item</option>
-                                    {% for res in items %}
-                                    <option value="{{res.No_}}">{{res.Description}} <span
-                                            class="text-muted avail">({{res.Inventory}}
-                                            -
-                                            Available)</span>
-                                    </option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row" id="ToiletryRow" style="display: none;">
-                            <div class="col-md-12">
-                                <label class="form-label">Toiletry Soap and Detergent Items <span
-                                        class="text-danger">*</span></label>
-                                <select class="form-select" name="itemCode" id="Toiletry" disabled>
-                                    <option selected disabled value="">Select Item</option>
-                                    {% for res in items %}
-                                    <option value="{{res.No_}}">{{res.Description}} <span
-                                            class="text-muted avail">({{res.Inventory}}
-                                            -
-                                            Available)</span>
-                                    </option>
-                                    {% endfor %}
+                                <label class="form-label">Items <span class="text-danger">*</span></label>
+                                <select class="form-select" name="itemCode" id="DesignAndPrinting">
+                                    <option class="after" value="">--Select--</option>
+
                                 </select>
                             </div>
                         </div>
@@ -378,28 +339,39 @@
 </div>
 <script>
     $(document).ready(function () {
-        $('#itemCategory').on('change', function () {
-            if (this.value == "1") {
-                $('#DesignAndPrintingRow').show(1000);
-                $('#DesignAndPrinting').prop('disabled', false);
-                $('#StationeryRow').hide();
-                $('#Stationery').prop('disabled', true);
-                $('#ToiletryRow').hide();
-                $('#Toiletry').prop('disabled', true);
-            } else if (this.value == "2") {
-                $('#StationeryRow').show(1000);
-                $('#Stationery').prop('disabled', false);
-                $('#DesignAndPrintingRow').hide();
-                $('#DesignAndPrinting').prop('disabled', true);
-                $('#ToiletryRow').hide();
-                $('#Toiletry').prop('disabled', true);
+        $('#itemCategory').on('change', function (e) {
+            e.preventDefault();
+            var ItemCode = $("#itemCategory").val();
+            if (ItemCode != null) {
+                $("#formAdd select[name='itemCode']").find('.after').nextAll().remove();
+                $.ajax({
+                    type: 'get',
+                    url: '{% url "itemCategory" %}',
+                    dataType: 'json',
+                    data: {
+                        ItemCode: ItemCode
+                    },
+                    success: function (response) {
+                        let options = '';
+                        for (var i = 0; i < response.value.length; i++) {
+                            if (response.value[i].Item_Category_Code == ItemCode) {
+                                options += '<option value=' + response.value[i]
+                                    .No_ + '>' + response.value[i].Description + ' ' + '(' +
+                                    response.value[i].Inventory + ' ' + '-' + ' ' +
+                                    'Available' + ')' +
+                                    '</option>';
+
+                            }
+                        }
+                        $("#formAdd select[name='itemCode']").find('.after').after(options);
+
+                    },
+                    error: function (response) {
+                        console.log('Something went wrong');
+                    }
+                });
             } else {
-                $('#ToiletryRow').show(1000);
-                $('#Toiletry').prop('disabled', false);
-                $('#DesignAndPrintingRow').hide();
-                $('#DesignAndPrinting').prop('disabled', true);
-                $('#StationeryRow').hide();
-                $('#Stationery').prop('disabled', true);
+                $("#formAdd select[name='itemCode']").find('.after').nextAll().remove();
             }
         });
     })
