@@ -416,7 +416,7 @@ def ImprestSurrender(request):
                     output_json = json.dumps(imprest)
                     Pending.append(json.loads(output_json))
             for imprest in Released['value']:
-                if imprest['Status'] == 'Released' and imprest['User_Id'] == request.session['User_ID'] and imprest['DSA'] == False and imprest['Surrendered'] == False and imprest['Posted'] == True:
+                if imprest['Status'] == 'Released' and imprest['User_Id'] == request.session['User_ID'] and imprest['Imprest'] == True and imprest['Surrendered'] == False and imprest['Posted'] == True:
                     output_json = json.dumps(imprest)
                     APPImp.append(json.loads(output_json))
             
@@ -549,7 +549,7 @@ def SurrenderDetails(request, pk):
             ress = session.get(Lines_Res, timeout=10).json()
             openLines = []
             for imprest in ress['value']:
-                if imprest['No'] == pk:
+                if imprest['No'] == pk and imprest['Imprest_Type'] == "Imprest":
                     output_json = json.dumps(imprest)
                     openLines.append(json.loads(output_json))
         except requests.exceptions.ConnectionError as e:
