@@ -642,15 +642,12 @@ def StoreRequest(request):
         session.auth = config.AUTHS
 
         Access_Point = config.O_DATA.format("/QyStoreRequisitionHeaders")
-        QYStore = config.O_DATA.format("/QyLocations")
         try:
             response = session.get(Access_Point, timeout=10).json()
-            Store_res = session.get(QYStore, timeout=10).json()
             open = []
             Approved = []
             Rejected = []
             Pending = []
-            Stores = Store_res['value']
             for document in response['value']:
                 if document['Status'] == 'Open' and document['Requested_By'] == request.session['User_ID']:
                     output_json = json.dumps(document)
@@ -677,7 +674,7 @@ def StoreRequest(request):
         ctx = {"today": todays_date, "res": open,
             "count": counts, "response": Approved,
             "counter": counter, "rej": Rejected,
-            'reject': reject, "store": Stores,
+            'reject': reject,
             "pend": pend, "pending": Pending,
             "full": fullname, "year": year}
     except KeyError:
@@ -688,13 +685,11 @@ def StoreRequest(request):
 
 def CreateStoreRequisition(request):
     requisitionNo = ''
-    issuingStore = ""
     reason = ""
     myAction = ''
     if request.method == 'POST':
         try:
             requisitionNo = request.POST.get('requisitionNo')
-            issuingStore = request.POST.get('issuingStore')
             reason = request.POST.get('reason')
             myAction = request.POST.get('myAction')
             myUserId = request.session['User_ID']
@@ -710,7 +705,7 @@ def CreateStoreRequisition(request):
 
         try:
             response = config.CLIENT.service.FnStoreRequisitionHeader(
-                requisitionNo, employeeNo, issuingStore, reason, myUserId, myAction)
+                requisitionNo, employeeNo, reason, myUserId, myAction)
             messages.success(request, "Request Successful")
             print(response)
         except Exception as e:
