@@ -85,6 +85,7 @@ INSTALLED_APPS = [
     'Procurement',
     'Approvals',
     'accounts',
+    'advance',
 
 ]
 
