@@ -977,6 +977,22 @@ def ClaimApproval(request, pk):
             print(e)
     return redirect('ClaimDetail', pk=pk)
 
+def DeleteClaimAttachment(request,pk):
+    if request.method == "POST":
+        docID = int(request.POST.get('docID'))
+        tableID= int(request.POST.get('tableID'))
+        try:
+            response = config.CLIENT.service.FnDeleteDocumentAttachment(
+                pk,docID,tableID)
+            print(response)
+            if response == True:
+                messages.success(request, "Deleted Successfully ")
+                return redirect('ClaimDetail', pk=pk)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+    return redirect('ClaimDetail', pk=pk)
+
 def FnCancelClaimApproval(request, pk):
     if request.method == 'POST':
         try:

@@ -47,5 +47,7 @@ urlpatterns = [
          name='FnDeleteStaffClaimLine'),
     path('FnGenerateStaffClaimReport/<str:pk>', views.FnGenerateStaffClaimReport,
          name='FnGenerateStaffClaimReport'),
+    path('DeleteClaimAttachment/<str:pk>',
+         views.DeleteClaimAttachment, name='DeleteClaimAttachment'),
 
 ]
