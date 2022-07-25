@@ -308,6 +308,21 @@ def FnGenerateImprestReport(request, pk):
             return redirect('auth')
     return redirect('IMPDetails', pk=pk)
 
+def DeleteImprestAttachment(request,pk):
+    if request.method == "POST":
+        docID = int(request.POST.get('docID'))
+        tableID= int(request.POST.get('tableID'))
+        try:
+            response = config.CLIENT.service.FnDeleteDocumentAttachment(
+                pk,docID,tableID)
+            print(response)
+            if response == True:
+                messages.success(request, "Deleted Successfully ")
+                return redirect('IMPDetails', pk=pk)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+    return redirect('IMPDetails', pk=pk)
 
 def FnRequestPaymentApproval(request, pk):
     Username = request.session['User_ID']
@@ -573,7 +588,8 @@ def SurrenderDetails(request, pk):
             "state": state, "line": openLines,
             "Approvers": Approvers, "type": res_type,
             "year": year, "full": fullname,"file":allFiles}
-    except KeyError:
+    except KeyError as e:
+        print(e)
         messages.info(request, "Session Expired. Please Login")
         return redirect('auth')
     return render(request, 'SurrenderDetail.html', ctx)
@@ -624,6 +640,21 @@ def UploadSurrenderAttachment(request, pk):
             return redirect('IMPSurrender', pk=pk)
     return redirect('IMPSurrender', pk=pk)
 
+def DeleteSurrenderAttachment(request,pk):
+    if request.method == "POST":
+        docID = int(request.POST.get('docID'))
+        tableID= int(request.POST.get('tableID'))
+        try:
+            response = config.CLIENT.service.FnDeleteDocumentAttachment(
+                pk,docID,tableID)
+            print(response)
+            if response == True:
+                messages.success(request, "Deleted Successfully ")
+                return redirect('IMPSurrender', pk=pk)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+    return redirect('IMPSurrender', pk=pk)
 
 def FnGenerateImprestSurrenderReport(request, pk):
     nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)

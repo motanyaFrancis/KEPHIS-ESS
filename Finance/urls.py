@@ -16,6 +16,8 @@ urlpatterns = [
     path('Imp/<str:pk>', views.ImprestDetails, name='IMPDetails'),
     path('UploadAttachment/<str:pk>',
          views.UploadAttachment, name='UploadAttachment'),
+    path('DeleteImprestAttachment/<str:pk>',
+         views.DeleteImprestAttachment, name='DeleteImprestAttachment'),
 
 
     path('ImprestSurrender', views.ImprestSurrender, name='imprestSurr'),
@@ -32,6 +34,8 @@ urlpatterns = [
          views.UploadSurrenderAttachment, name='UploadSurrenderAttachment'),
     path('FnGenerateImprestSurrenderReport/<str:pk>',
          views.FnGenerateImprestSurrenderReport, name='FnGenerateImprestSurrenderReport'),
+    path('DeleteSurrenderAttachment/<str:pk>',
+         views.DeleteSurrenderAttachment, name='DeleteSurrenderAttachment'),
 
     path('StaffClaim', views.StaffClaim, name='claim'),
     path("NewClaim", views.CreateClaim, name="NewClaim"),
