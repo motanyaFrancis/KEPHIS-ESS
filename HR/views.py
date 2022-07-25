@@ -284,6 +284,7 @@ def LeaveDetail(request, pk):
         Access_Point = config.O_DATA.format("/QyLeaveApplications")
         Approver = config.O_DATA.format("/QyApprovalEntries")
         Ledger = config.O_DATA.format("/QyLeaveLedgerEntries")
+        Access_File = config.O_DATA.format("/QyDocumentAttachments")
         try:
             response = session.get(Access_Point, timeout=10).json()
             res_approver = session.get(Approver, timeout=10).json()
@@ -329,6 +330,12 @@ def LeaveDetail(request, pk):
                             res = claim
                             if claim['Status'] == 'Pending Approval':
                                 state = 2
+            res_file = session.get(Access_File, timeout=10).json()
+            allFiles = []
+            for file in res_file['value']:
+                if file['No_'] == pk:
+                    output_json = json.dumps(file)
+                    allFiles.append(json.loads(output_json))
         except requests.exceptions.ConnectionError as e:
             print(e)
             messages.error(request,"500 Server Error, Try Again in a few")
@@ -337,7 +344,7 @@ def LeaveDetail(request, pk):
         todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
         ctx = {"today": todays_date, "res": res,
             "Approvers": Approvers, "state": state,
-            "year": year, "full": fullname}
+            "year": year, "full": fullname,"file":allFiles}
     except KeyError:
         messages.info(request, "Session Expired. Please Login")
         return redirect('auth')

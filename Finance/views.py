@@ -131,6 +131,7 @@ def ImprestDetails(request, pk):
         destination = config.O_DATA.format("/QyDestinations")
         Approver = config.O_DATA.format("/QyApprovalEntries")
         Lines_Res = config.O_DATA.format("/QyImprestLines")
+        Access_File = config.O_DATA.format("/QyDocumentAttachments")
         try:
             response = session.get(Access_Point, timeout=10).json()
             Imprest_RES = session.get(Imprest_Type, timeout=10).json()
@@ -209,19 +210,25 @@ def ImprestDetails(request, pk):
                 if imprest['AuxiliaryIndex1'] == pk:
                     output_json = json.dumps(imprest)
                     openLines.append(json.loads(output_json))
+            res_file = session.get(Access_File, timeout=10).json()
+            allFiles = []
+            for file in res_file['value']:
+                if file['No_'] == pk:
+                    output_json = json.dumps(file)
+                    allFiles.append(json.loads(output_json))
         except requests.exceptions.RequestException as e:
             print(e)
             messages.info(request, "Whoops! Something went wrong. Please Login to Continue")
             return redirect('imprestReq')
         todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
                     
-        print(ForegnDest)
         ctx = {"today": todays_date, "res": res,
             "line": openLines, "state": state,
             "Approvers": Approvers, "type": res_type,
             "area": Area, "biz": BizGroup,
             "Local": Local, "year": year,
-            "full": fullname, "Foreign": ForegnDest, "dest": destination}
+            "full": fullname, "Foreign": ForegnDest, "dest": destination,
+            "file":allFiles}
     except KeyError as e:
         print(e)
         messages.info(request, "Session Expired. Please Login")
@@ -542,6 +549,13 @@ def SurrenderDetails(request, pk):
                             res = imprest
                             if imprest['Status'] == 'Pending Approval':
                                 state = 2
+            Access_File = config.O_DATA.format("/QyDocumentAttachments")
+            res_file = session.get(Access_File, timeout=10).json()
+            allFiles = []
+            for file in res_file['value']:
+                if file['No_'] == pk:
+                    output_json = json.dumps(file)
+                    allFiles.append(json.loads(output_json))
         except requests.exceptions.ConnectionError as e:
             print(e)
         Lines_Res = config.O_DATA.format("/QyImprestSurrenderLines")
@@ -558,7 +572,7 @@ def SurrenderDetails(request, pk):
         ctx = {"today": todays_date, "res": res,
             "state": state, "line": openLines,
             "Approvers": Approvers, "type": res_type,
-            "year": year, "full": fullname}
+            "year": year, "full": fullname,"file":allFiles}
     except KeyError:
         messages.info(request, "Session Expired. Please Login")
         return redirect('auth')
@@ -825,6 +839,13 @@ def ClaimDetails(request, pk):
                             res = claim
                             if claim['Status'] == 'Pending Approval':
                                 state = 2
+            Access_File = config.O_DATA.format("/QyDocumentAttachments")
+            res_file = session.get(Access_File, timeout=10).json()
+            allFiles = []
+            for file in res_file['value']:
+                if file['No_'] == pk:
+                    output_json = json.dumps(file)
+                    allFiles.append(json.loads(output_json))
         except requests.exceptions.ConnectionError as e:
             print(e)
         Lines_Res = config.O_DATA.format("/QyStaffClaimLines")
@@ -842,7 +863,7 @@ def ClaimDetails(request, pk):
         ctx = {"today": todays_date, "res": res,
             "state": state, "res_type": res_type,
             "Approvers": Approvers, "line": openLines,
-            "year": year, "full": fullname}
+            "year": year, "full": fullname,"file":allFiles}
     except KeyError:
         messages.info(request, "Session Expired. Please Login")
         return redirect('auth')

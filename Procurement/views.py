@@ -176,6 +176,13 @@ def PurchaseRequestDetails(request, pk):
                 if document['AuxiliaryIndex1'] == pk:
                     output_json = json.dumps(document)
                     openLines.append(json.loads(output_json))
+            Access_File = config.O_DATA.format("/QyDocumentAttachments")
+            res_file = session.get(Access_File, timeout=10).json()
+            allFiles = []
+            for file in res_file['value']:
+                if file['No_'] == pk:
+                    output_json = json.dumps(file)
+                    allFiles.append(json.loads(output_json))
         except requests.exceptions.RequestException as e:
             print(e)
             messages.info(request, "Whoops! Something went wrong. Please Login to Continue")
@@ -185,7 +192,7 @@ def PurchaseRequestDetails(request, pk):
             "state": state, "line": openLines,
             "type": res_type, "Approvers": Approvers,
             "plans": planitem, "items": Items,
-            "gl": Gl_Accounts}
+            "gl": Gl_Accounts,"file":allFiles}
     except KeyError as e:
         print(e)
         messages.info(request, "Session Expired. Please Login")
@@ -506,6 +513,13 @@ def RepairRequestDetails(request, pk):
                 if document['AuxiliaryIndex1'] == pk:
                     output_json = json.dumps(document)
                     openLines.append(json.loads(output_json))
+            Access_File = config.O_DATA.format("/QyDocumentAttachments")
+            res_file = session.get(Access_File, timeout=10).json()
+            allFiles = []
+            for file in res_file['value']:
+                if file['No_'] == pk:
+                    output_json = json.dumps(file)
+                    allFiles.append(json.loads(output_json))
         except requests.exceptions.RequestException as e:
             print(e)
             messages.info(request, "Whoops! Something went wrong. Please Login to Continue")
@@ -514,7 +528,7 @@ def RepairRequestDetails(request, pk):
             "state": state, "line": openLines,
             "type": res_type, "Approvers": Approvers,
             "asset": my_asset, "full": fullname,
-            "year": year}
+            "year": year,"file":allFiles}
     except KeyError:
         messages.info(request, "Session Expired. Please Login")
         return redirect('auth')
@@ -779,6 +793,13 @@ def StoreRequestDetails(request, pk):
                 if document['AuxiliaryIndex1'] == pk:
                     output_json = json.dumps(document)
                     openLines.append(json.loads(output_json))
+            Access_File = config.O_DATA.format("/QyDocumentAttachments")
+            res_file = session.get(Access_File, timeout=10).json()
+            allFiles = []
+            for file in res_file['value']:
+                if file['No_'] == pk:
+                    output_json = json.dumps(file)
+                    allFiles.append(json.loads(output_json))
         except requests.exceptions.RequestException as e:
             print(e)
             messages.info(request, "Whoops! Something went wrong. Please Login to Continue")
@@ -789,7 +810,7 @@ def StoreRequestDetails(request, pk):
             "type": res_type, 
             "Approvers": Approvers, "loc": Location,
             "year": year, "full": fullname,
-            "itemsCategory": itemsCategory}
+            "itemsCategory": itemsCategory,"file":allFiles}
     except KeyError:
         messages.info(request, "Session Expired. Please Login")
         return redirect('auth')
