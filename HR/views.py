@@ -45,6 +45,7 @@ def Leave_Planner(request):
             "year": year, "full": fullname}
     except KeyError as e:
         messages.info(request, "Session Expired. Please Login")
+        print(e)
         return redirect('auth')
     return render(request, 'planner.html', ctx)
 
@@ -381,7 +382,22 @@ def UploadLeaveAttachment(request, pk):
             return redirect('LeaveDetail', pk=pk)
 
     return redirect('LeaveDetail', pk=pk)
-
+    
+def DeleteLeaveAttachment(request,pk):
+    if request.method == "POST":
+        docID = int(request.POST.get('docID'))
+        tableID= int(request.POST.get('tableID'))
+        try:
+            response = config.CLIENT.service.FnDeleteDocumentAttachment(
+                pk,docID,tableID)
+            print(response)
+            if response == True:
+                messages.success(request, "Deleted Successfully ")
+                return redirect('LeaveDetail', pk=pk)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+    return redirect('LeaveDetail', pk=pk)
 
 def LeaveApproval(request, pk):
     employeeNo = request.session['Employee_No_']

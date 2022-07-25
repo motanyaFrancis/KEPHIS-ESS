@@ -154,3 +154,22 @@ def FnRequestSalaryAdvanceApproval(request,pk):
             messages.error(request, e)
             print(e)        
     return redirect('advanceDetail', pk=pk)
+
+def FnCancelSalaryAdvanceApproval(request,pk):
+    Username = request.session['User_ID']
+    Password = request.session['password']
+    AUTHS = Session()
+    AUTHS.auth = HTTPBasicAuth(Username, Password)
+    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
+    if request.method == "POST":
+        try:
+            response = CLIENT.service.FnCancelSalaryAdvanceApproval(
+                request.session['Employee_No_'],pk)
+            print(response)
+            if response == True:
+                messages.success(request, "Approval Request Sent Successfully ")
+                return redirect('advance')
+        except Exception as e:
+            messages.error(request, e)
+            print(e)        
+    return redirect('advanceDetail', pk=pk)

@@ -5,7 +5,7 @@
 <section class="dash2">
     <div class="content-wrapper">
         <div class="d-xl-flex justify-content-between align-items-start">
-            <h2 class="text-dark font-weight-bold mb-2"> Leave Requests </h2>
+            <h2 class="text-dark font-weight-bold mb-2"> Salary Advance </h2>
         </div>
         <!--alert -->
         {% include 'alerts.html' %}
@@ -142,14 +142,11 @@
                         <button class="btn btn-info" type="submit">Request For Approval</button>
                     </form>
                 </div>
-                {% elif state == 2 %}
+                {% elif state == 'Being Processed' %}
                 <div class="d-grid gap-2 my-3">
-                    <form action="{% url 'LeaveCancel' res.Application_No %}" method="POST" class="myForm"
+                    <form action="{% url 'FnCancelSalaryAdvanceApproval' res.Loan_No %}" method="POST" class="myForm"
                         id="approvalForm">
                         {% csrf_token %}
-                        <div class="mb-3">
-                            <input type="hidden" hidden name="applicationNo" value="{{res.Application_No}}">
-                        </div>
                         <button class="btn btn-info" type="submit">Cancel Request For Approval</button>
                     </form>
                 </div>

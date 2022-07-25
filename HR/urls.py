@@ -19,6 +19,7 @@ urlpatterns = [
          name='FnGenerateLeaveReport'),
     path('UploadLeaveAttachment/<str:pk>', views.UploadLeaveAttachment,
          name='UploadLeaveAttachment'),
+    path("DeleteLeaveAttachment/<str:pk>",views.DeleteLeaveAttachment,name ="DeleteLeaveAttachment"),
 
 
     path('training', views.Training_Request, name='training_request'),
