@@ -414,8 +414,16 @@
                                 <label for="" class="form-label">Imprest Type <span class="text-danger">*</span></label>
                                 <select class="form-select" name="imprestType" id="imprestType" required>
                                     <option selected disabled value="">Select Imprest Type</option>
+                                    {% if res.Imprest == False and res.DSA == False %}
+                                    <option value="" disabled>You can not have both DSA and Imprest as False</option>
+                                    {% elif res.Imprest == True and res.DSA == True  %}
                                     <option value="1">Imprest</option>
                                     <option value="2">DSA</option>
+                                    {% elif res.Imprest == True and res.DSA == False %}
+                                    <option value="1">Imprest</option>
+                                    {% elif res.Imprest == False and res.DSA == True %}
+                                    <option value="2">DSA</option>
+                                    {% endif %}
                                 </select>
                             </div>
                         </div>

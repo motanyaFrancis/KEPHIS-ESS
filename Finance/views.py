@@ -103,6 +103,9 @@ def CreateImprest(request):
             return redirect('auth')
         if not imprestNo:
             imprestNo = ""
+        if not isImprest and isDsa:
+            messages.info(request,"Both DSA and Imprest cannot be empty.")
+            return redirect('imprestReq')
         print(travelType)
         try:
             response = config.CLIENT.service.FnImprestHeader(

@@ -84,9 +84,8 @@
                                                                         aria-label="Close"></button>
                                                                 </div>
                                                                 <div class="modal-body">
-                                                                    <form class="myForm needs-validation"
-                                                                        action="{% url 'create' %}" method="post"
-                                                                        novalidate>
+                                                                    <form class="myForm" action="{% url 'create' %}"
+                                                                        method="post" novalidate>
                                                                         {% csrf_token %}
                                                                         <div class="mb-2 myForm">
                                                                             <div class="row">
