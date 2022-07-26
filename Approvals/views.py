@@ -157,7 +157,8 @@ def Approve(request):
             "rejectPurchase":rejectPurchase, "countRepair":countRepair,"appRepair":appRepair,"rejRepair":rejRepair,
             "countStore":countStore,"openStore":openStore,"appStore":appStore,"rejStore":rejStore,
             "openOther":openOther,"appOther":appOther,"rejOther":rejOther,"countOther":countOther}
-    except KeyError:
+    except KeyError as e:
+        print (e)
         messages.info(request, "Session Expired. Please Login")
         return redirect('auth')       
     return render(request, 'Approve.html', ctx)
@@ -191,7 +192,6 @@ def ApproveDetails(request, pk):
             Training = []
             Surrender = []
             Claims = []
-            Purchase = []
             ImprestLine = []
             TrainLine = []
     
@@ -347,6 +347,46 @@ def ApproveDetails(request, pk):
                 if document['AuxiliaryIndex1'] == pk:
                     output_json = json.dumps(document)
                     StoreLines.append(json.loads(output_json))
+
+            VoucherRequest = config.O_DATA.format("/QyPaymentVoucherHeaders")
+            VoucherResponse = session.get(VoucherRequest, timeout=10).json()
+            for voucher in VoucherResponse['value']:
+                if voucher['No_'] == pk:
+                    data = voucher
+                    state = "voucher"
+            Lines_Voucher = config.O_DATA.format("/QyStoreRequisitionLines")
+            VoucherLineResponse = session.get(Lines_Voucher, timeout=10).json()
+            VoucherLines = []
+            for document in VoucherLineResponse['value']:
+                if document['No'] == pk:
+                    output_json = json.dumps(document)
+                    VoucherLines.append(json.loads(output_json))
+            PettyRequest = config.O_DATA.format("/QyPettyCashHeaders")
+            PettyResponse = session.get(PettyRequest, timeout=10).json()
+            for petty in PettyResponse['value']:
+                if petty['No_'] == pk:
+                    data = petty
+                    state = "petty cash"
+            Lines_Petty = config.O_DATA.format("/QyPettyCashLines")
+            PettyLineResponse = session.get(Lines_Petty, timeout=10).json()
+            PettyLines = []
+            for document in PettyLineResponse['value']:
+                if document['No'] == pk:
+                    output_json = json.dumps(document)
+                    PettyLines.append(json.loads(output_json))
+            PettySurrenderRequest = config.O_DATA.format("/QyPettyCashSurrenderHeaders")
+            PettySurrenderResponse = session.get(PettySurrenderRequest, timeout=10).json()
+            for pettySurrender in PettySurrenderResponse['value']:
+                if pettySurrender['No_'] == pk:
+                    data = pettySurrender
+                    state = "petty cash surrender"
+            Lines_PettySurrender = config.O_DATA.format("/QyPettyCashSurrenderLines")
+            PettySurrenderLineResponse = session.get(Lines_PettySurrender, timeout=10).json()
+            PettySurrenderLines = []
+            for document in PettySurrenderLineResponse['value']:
+                if document['No'] == pk:
+                    output_json = json.dumps(document)
+                    PettySurrenderLines.append(json.loads(output_json))
         except requests.exceptions.RequestException as e:
             print(e)
             messages.info(request, e)
@@ -355,7 +395,8 @@ def ApproveDetails(request, pk):
         ctx = {"today": todays_date, "res": res, "full": fullname, "year": year,
         "file":allFiles,"data":data,"state":state,"ImpLine":ImprestLine,"TrainLine":TrainLine,
         "SurrenderLines":SurrenderLines,"ClaimLines":ClaimLines,"PurchaseLines":PurchaseLines,
-        "RepairLines":RepairLines,"StoreLines":StoreLines}
+        "RepairLines":RepairLines,"StoreLines":StoreLines,"VoucherLines":VoucherLines,
+        "PettyLines":PettyLines,"PettySurrenderLines":PettySurrenderLines}
     except KeyError as e:
         messages.info(request, "Session Expired. Please Login")
         print(e)

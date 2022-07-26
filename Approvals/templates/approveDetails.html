@@ -647,6 +647,277 @@
                 </div>
             </div>
         </div>
+        {% elif state == "voucher" %}
+        <div class="row">
+            <div class="col-md-12">
+                <form class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Request Number</label>
+                        <input type="text" class="form-control" placeholder="{{data.No_}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Posting Date</label>
+                        <input type="text" class="form-control" placeholder="{{data.Posted_Date}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Pay Mode</label>
+                        <input type="text" class="form-control" placeholder="{{data.Pay_Mode}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Payee</label>
+                        <input type="text" class="form-control" placeholder="{{data.Payee}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Status</label>
+                        <input type="text" class="form-control" placeholder="{{data.Status}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Total Amount</label>
+                        <input type="text" class="form-control" placeholder="{{data.Total_Amount}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Total VAT Amount</label>
+                        <input type="text" class="form-control" placeholder="{{data.Total_VAT_Amount}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Total Withholding Tax Amount</label>
+                        <input type="text" class="form-control" placeholder="{{data.Total_Witholding_Tax_Amount}}"
+                            readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Total Withholding VAT Tax</label>
+                        <input type="text" class="form-control" placeholder="{{data.Total_Witholding_VAT_Tax}}"
+                            readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Total Retention Amount</label>
+                        <input type="text" class="form-control" placeholder="{{data.Total_Retention_Amount}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Total Net Amount</label>
+                        <input type="text" class="form-control" placeholder="{{data.Total_Net_Amount}}" readonly>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" placeholder="{{data.Payment_Narration}}" readonly></textarea>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card" id="d-card">
+                    <h4 class="mt-2 mx-2 text-dark">Payment Voucher Lines</h4>
+                    <div class="card-body">
+                        <table id="example"
+                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                            style="width:100%">
+                            <thead>
+                                <tr id="tops">
+                                    <th id="long">Document No</th>
+                                    <th>Payment Type</th>
+                                    <th>Account No</th>
+                                    <th>Amount</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for res in VoucherLines %}
+                                <tr>
+                                    <td>{{res.No}}</td>
+                                    <td>{{res.Payment_Type}}</td>
+                                    <td>{{res.Account_No}}</td>
+                                    <td>{{res.Currency}} {{res.Amount}}</td>
+                                    <td>{{res.Description}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% elif state == "petty cash" %}
+        <div class="row">
+            <div class="col-md-12">
+                <form class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Request Number</label>
+                        <input type="text" class="form-control" placeholder="{{data.No_}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Posting Date</label>
+                        <input type="text" class="form-control" placeholder="{{data.Posted_Date}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Pay Mode</label>
+                        <input type="text" class="form-control" placeholder="{{data.Pay_Mode}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Payee</label>
+                        <input type="text" class="form-control" placeholder="{{data.Payee}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Status</label>
+                        <input type="text" class="form-control" placeholder="{{data.Status}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Total Amount</label>
+                        <input type="text" class="form-control" placeholder="{{data.Total_Amount}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Total VAT Amount</label>
+                        <input type="text" class="form-control" placeholder="{{data.Total_VAT_Amount}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Total Withholding Tax Amount</label>
+                        <input type="text" class="form-control" placeholder="{{data.Total_Witholding_Tax_Amount}}"
+                            readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Total Withholding VAT Tax</label>
+                        <input type="text" class="form-control" placeholder="{{data.Total_Witholding_VAT_Tax}}"
+                            readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Total Retention Amount</label>
+                        <input type="text" class="form-control" placeholder="{{data.Total_Retention_Amount}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Total Net Amount</label>
+                        <input type="text" class="form-control" placeholder="{{data.Total_Net_Amount}}" readonly>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" placeholder="{{data.Payment_Narration}}" readonly></textarea>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card" id="d-card">
+                    <h4 class="mt-2 mx-2 text-dark">Petty Cash Lines</h4>
+                    <div class="card-body">
+                        <table id="example"
+                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                            style="width:100%">
+                            <thead>
+                                <tr id="tops">
+                                    <th id="long">Document No</th>
+                                    <th>Payment Type</th>
+                                    <th>Account No</th>
+                                    <th>Amount</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for res in PettyLines %}
+                                <tr>
+                                    <td>{{res.No}}</td>
+                                    <td>{{res.Payment_Type}}</td>
+                                    <td>{{res.Account_No}}</td>
+                                    <td>{{res.Currency}} {{res.Amount}}</td>
+                                    <td>{{res.Description}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% elif state == "petty cash surrender" %}
+        <div class="row">
+            <div class="col-md-12">
+                <form class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Request Number</label>
+                        <input type="text" class="form-control" placeholder="{{data.No_}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Posting Date</label>
+                        <input type="text" class="form-control" placeholder="{{data.Posted_Date}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Pay Mode</label>
+                        <input type="text" class="form-control" placeholder="{{data.Pay_Mode}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Payee</label>
+                        <input type="text" class="form-control" placeholder="{{data.Payee}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Status</label>
+                        <input type="text" class="form-control" placeholder="{{data.Status}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Total Amount</label>
+                        <input type="text" class="form-control" placeholder="{{data.Total_Amount}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Total VAT Amount</label>
+                        <input type="text" class="form-control" placeholder="{{data.Total_VAT_Amount}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Total Withholding Tax Amount</label>
+                        <input type="text" class="form-control" placeholder="{{data.Total_Witholding_Tax_Amount}}"
+                            readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Total Withholding VAT Tax</label>
+                        <input type="text" class="form-control" placeholder="{{data.Total_Witholding_VAT_Tax}}"
+                            readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Total Retention Amount</label>
+                        <input type="text" class="form-control" placeholder="{{data.Total_Retention_Amount}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Total Net Amount</label>
+                        <input type="text" class="form-control" placeholder="{{data.Total_Net_Amount}}" readonly>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" placeholder="{{data.Payment_Narration}}" readonly></textarea>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card" id="d-card">
+                    <h4 class="mt-2 mx-2 text-dark">Petty Cash Surrender Lines</h4>
+                    <div class="card-body">
+                        <table id="example"
+                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                            style="width:100%">
+                            <thead>
+                                <tr id="tops">
+                                    <th id="long">Document No</th>
+                                    <th>Payment Type</th>
+                                    <th>Account No</th>
+                                    <th>Amount</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for res in PettySurrenderLines %}
+                                <tr>
+                                    <td>{{res.No}}</td>
+                                    <td>{{res.Payment_Type}}</td>
+                                    <td>{{res.Account_No}}</td>
+                                    <td>{{res.Currency}} {{res.Amount}}</td>
+                                    <td>{{res.Description}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
         {% endif %}
         <div class="row my-2">
             <div class="col-md-12">
