@@ -108,10 +108,10 @@
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <label class="form-label">Claim
-                                                                                    Type <span
+                                                                                <label class="form-label">Claim Type
+                                                                                    <span
                                                                                         class="text-danger">*</span></label>
-                                                                                <select class="form-select"
+                                                                                <select class="form-select claimTypes"
                                                                                     name="claimType" required>
                                                                                     <option selected disabled value="">
                                                                                         Select Claim Type</option>
@@ -122,15 +122,16 @@
                                                                                     <option value="3">Imprest Claim
                                                                                     </option>
                                                                                 </select>
-
                                                                             </div>
                                                                         </div>
-                                                                        <div class="row">
+                                                                        <div class="row imprestSurrDocNoRows"
+                                                                            style="display:none">
                                                                             <div class="col-md-12">
                                                                                 <label class="form-label">Imprest
                                                                                     Surrender No</label>
-                                                                                <select class="form-select"
-                                                                                    name="imprestSurrDocNo">
+                                                                                <select
+                                                                                    class="form-select imprestSurrDocNos"
+                                                                                    name="imprestSurrDocNo" disabled>
                                                                                     <option selected disabled value="">
                                                                                         Select Imprest Surrender No
                                                                                     </option>
@@ -279,10 +280,10 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="row" id="imprestSurrDocNoRow" style="display:none">
+                        <div class="row imprestSurrDocNoRow" style="display:none">
                             <div class="col-md-12">
                                 <label class="form-label">Imprest Surrender No</label>
-                                <select class="form-select" name="imprestSurrDocNo">
+                                <select class="form-select imprestSurrDocNo" name="imprestSurrDocNo" disabled>
                                     <option selected disabled value="">Select Imprest Surrender No</option>
                                     {% for res in my_claim %}
                                     <option value="{{res.No_}}">{{res.No_}} - {{res.Payment_Narration}}</option>
@@ -311,17 +312,22 @@
 </section>
 <script>
     $(document).ready(function () {
-        $('#imprestType').on('change', function () {
-            if (this.value == "1") {
-                $('#imprestTypeRow').show(1000)
-                $('#imprestTypess').prop('disabled', false);
-                $('#DSATypeRow').hide(1300)
-                $('#DSAType').prop('disabled', true);
+        $('.claimType').on('change', function () {
+            if (this.value == "3") {
+                $('.imprestSurrDocNoRow').show(1000)
+                $('.imprestSurrDocNo').prop('disabled', false);
             } else {
-                $('#imprestTypess').prop('disabled', true);
-                $('#imprestTypeRow').hide(1000);
-                $('#DSATypeRow').show(1300)
-                $('#DSAType').prop('disabled', false);
+                $('.imprestSurrDocNo').prop('disabled', true);
+                $('.imprestSurrDocNoRow').hide(1000);
+            }
+        });
+        $('.claimTypes').on('change', function () {
+            if (this.value == "3") {
+                $('.imprestSurrDocNoRows').show(1000)
+                $('.imprestSurrDocNos').prop('disabled', false);
+            } else {
+                $('.imprestSurrDocNos').prop('disabled', true);
+                $('.imprestSurrDocNoRows').hide(1000);
             }
         });
     })

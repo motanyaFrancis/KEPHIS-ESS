@@ -874,7 +874,11 @@ def PayslipRequest(request):
         Access_Point = config.O_DATA.format("/QyPayrollPeriods")
         try:
             response = session.get(Access_Point, timeout=10).json()
-            res = response['value']
+            Payslip = []
+            for slip in response ['value']:
+                if slip['Closed'] == True:
+                    output_json = json.dumps(slip)
+                    Payslip.append(json.loads(output_json))
         except requests.exceptions.ConnectionError as e:
             print(e)
             
@@ -910,8 +914,8 @@ def PayslipRequest(request):
             except Exception as e:
                 messages.error(request, e)
                 print(e)
-        ctx = {"today": todays_date, "year": year, "full": fullname,"res":res}
-    except KeyError:
+        ctx = {"today": todays_date, "year": year, "full": fullname,"res":Payslip}
+    except KeyError as e:
         messages.info(request, "Session Expired. Please Login")
         return redirect('auth')
     return render(request, "payslip.html", ctx)

@@ -461,7 +461,8 @@ def ImprestSurrender(request):
             "response": Approved, "counter": counter,
             "app": APPImp, "year": year,
             "pend": pend, "pending": Pending}
-    except KeyError:
+    except KeyError as e:
+        print(e)
         messages.info(request, "Session Expired. Please Login")
         return redirect('auth')
     return render(request, 'imprestSurr.html', ctx)
@@ -573,12 +574,13 @@ def SurrenderDetails(request, pk):
                     allFiles.append(json.loads(output_json))
         except requests.exceptions.ConnectionError as e:
             print(e)
+        
         Lines_Res = config.O_DATA.format("/QyImprestSurrenderLines")
         try:
             ress = session.get(Lines_Res, timeout=10).json()
             openLines = []
             for imprest in ress['value']:
-                if imprest['No'] == pk and imprest['Imprest_Type'] == "Imprest":
+                if imprest['No'] == pk:
                     output_json = json.dumps(imprest)
                     openLines.append(json.loads(output_json))
         except requests.exceptions.ConnectionError as e:
