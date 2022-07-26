@@ -394,6 +394,10 @@ def CreateImprestLines(request, pk):
 
         if not amount:
             amount = 0
+        
+        if not imprestType:
+            messages.info(request,"Both Imprest and DSA can't be empty.")
+            return redirect('IMPDetails', pk=pk)
 
         if DSAType:
             requisitionType = DSAType
