@@ -387,6 +387,12 @@ def ApproveDetails(request, pk):
                 if document['No'] == pk:
                     output_json = json.dumps(document)
                     PettySurrenderLines.append(json.loads(output_json))
+            advanceRequest = config.O_DATA.format("/QySalaryAdvances")
+            advanceResponse = session.get(advanceRequest, timeout=10).json()
+            for advance in advanceResponse['value']:
+                if advance['Loan_No'] == pk:
+                    data = advance
+                    state = "advance"
         except requests.exceptions.RequestException as e:
             print(e)
             messages.info(request, e)

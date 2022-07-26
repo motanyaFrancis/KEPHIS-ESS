@@ -918,6 +918,62 @@
                 </div>
             </div>
         </div>
+        {% elif state == "advance" %}
+        <div class="row">
+            <div class="col-md-12">
+                <form class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Loan Number</label>
+                        <input type="text" class="form-control" placeholder="{{data.Loan_No}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Application Date</label>
+                        <input type="text" class="form-control" placeholder="{{data.Application_Date}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Employee No</label>
+                        <input type="text" class="form-control" placeholder="{{data.Employee_No}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Loan Product</label>
+                        <input type="text" class="form-control" placeholder="{{data.Loan_Product_Name}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Instalment</label>
+                        <input type="text" class="form-control" placeholder="{{data.Instalment}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Amount Requested</label>
+                        <input type="text" class="form-control" placeholder="{{data.Amount_Requested}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Issued Date</label>
+                        <input type="text" class="form-control" placeholder="{{data.Issued_Date}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Interest Calculation Method</label>
+                        <input type="text" class="form-control" placeholder="{{data.Interest_Calculation_Method}}"
+                            readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Repayment Amount</label>
+                        <input type="text" class="form-control" placeholder="{{data.Repayment_Amount}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Interest Rate</label>
+                        <input type="text" class="form-control" placeholder="{{data.Interest_Rate}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Total Repayment</label>
+                        <input type="text" class="form-control" placeholder="{{data.Total_Repayment}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Period Repayment</label>
+                        <input type="text" class="form-control" placeholder="{{data.Period_Repayment}}" readonly>
+                    </div>
+                </form>
+            </div>
+        </div>
         {% endif %}
         <div class="row my-2">
             <div class="col-md-12">
