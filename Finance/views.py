@@ -380,7 +380,7 @@ def CreateImprestLines(request, pk):
             DSAType= request.POST.get('DSAType')
             travelDate = datetime.strptime(
                 request.POST.get('travel'), '%Y-%m-%d').date()
-            amount = request.POST.get("amount")
+            amount = float(request.POST.get("amount"))
             returnDate = datetime.strptime(
                 request.POST.get('returnDate'), '%Y-%m-%d').date()
             myAction = request.POST.get('myAction')

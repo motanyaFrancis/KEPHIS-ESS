@@ -271,7 +271,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <label class="form-label">Claim Type <span class="text-danger">*</span></label>
-                                <select class="form-select" name="claimType" required>
+                                <select class="form-select claimType" name="claimType" required>
                                     <option selected disabled value="">Select Claim Type</option>
                                     <option value="1">General Claim</option>
                                     <option value="2">Medical Claim</option>
@@ -279,7 +279,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row" id="imprestSurrDocNoRow" style="display:none">
                             <div class="col-md-12">
                                 <label class="form-label">Imprest Surrender No</label>
                                 <select class="form-select" name="imprestSurrDocNo">
@@ -309,5 +309,22 @@
         </div>
     </div>
 </section>
+<script>
+    $(document).ready(function () {
+        $('#imprestType').on('change', function () {
+            if (this.value == "1") {
+                $('#imprestTypeRow').show(1000)
+                $('#imprestTypess').prop('disabled', false);
+                $('#DSATypeRow').hide(1300)
+                $('#DSAType').prop('disabled', true);
+            } else {
+                $('#imprestTypess').prop('disabled', true);
+                $('#imprestTypeRow').hide(1000);
+                $('#DSATypeRow').show(1300)
+                $('#DSAType').prop('disabled', false);
+            }
+        });
+    })
+</script>
 
 {% endblock %}

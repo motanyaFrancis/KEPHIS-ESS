@@ -354,7 +354,7 @@ def ApproveDetails(request, pk):
                 if voucher['No_'] == pk:
                     data = voucher
                     state = "voucher"
-            Lines_Voucher = config.O_DATA.format("/QyStoreRequisitionLines")
+            Lines_Voucher = config.O_DATA.format("/QyPaymentVoucherLines")
             VoucherLineResponse = session.get(Lines_Voucher, timeout=10).json()
             VoucherLines = []
             for document in VoucherLineResponse['value']:
