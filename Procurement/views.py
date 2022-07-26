@@ -301,6 +301,22 @@ def UploadPurchaseAttachment(request, pk):
             return redirect('PurchaseDetail', pk=pk)
     return redirect('PurchaseDetail', pk=pk)
 
+def DeletePurchaseAttachment(request,pk):
+    if request.method == "POST":
+        docID = int(request.POST.get('docID'))
+        tableID= int(request.POST.get('tableID'))
+        try:
+            response = config.CLIENT.service.FnDeleteDocumentAttachment(
+                pk,docID,tableID)
+            print(response)
+            if response == True:
+                messages.success(request, "Deleted Successfully ")
+                return redirect('PurchaseDetail', pk=pk)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+    return redirect('PurchaseDetail', pk=pk)
+
 
 def FnCancelPurchaseApproval(request, pk):
     requistionNo = ""
@@ -580,6 +596,22 @@ def FnCancelRepairApproval(request, pk):
             messages.info(request, e)
             print(e)
             return redirect('RepairDetail', pk=pk)
+    return redirect('RepairDetail', pk=pk)
+
+def DeleteRepairAttachment(request,pk):
+    if request.method == "POST":
+        docID = int(request.POST.get('docID'))
+        tableID= int(request.POST.get('tableID'))
+        try:
+            response = config.CLIENT.service.FnDeleteDocumentAttachment(
+                pk,docID,tableID)
+            print(response)
+            if response == True:
+                messages.success(request, "Deleted Successfully ")
+                return redirect('RepairDetail', pk=pk)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
     return redirect('RepairDetail', pk=pk)
 
 
@@ -974,4 +1006,20 @@ def UploadStoreAttachment(request, pk):
         else:
             messages.error(request, "Failed, Try Again.")
             return redirect('StoreDetail', pk=pk)
+    return redirect('StoreDetail', pk=pk)
+
+def DeleteStoreAttachment(request,pk):
+    if request.method == "POST":
+        docID = int(request.POST.get('docID'))
+        tableID= int(request.POST.get('tableID'))
+        try:
+            response = config.CLIENT.service.FnDeleteDocumentAttachment(
+                pk,docID,tableID)
+            print(response)
+            if response == True:
+                messages.success(request, "Deleted Successfully ")
+                return redirect('StoreDetail', pk=pk)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
     return redirect('StoreDetail', pk=pk)

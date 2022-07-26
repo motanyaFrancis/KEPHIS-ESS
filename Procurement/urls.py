@@ -19,6 +19,8 @@ urlpatterns = [
          views.FnGeneratePurchaseReport, name='FnGeneratePurchaseReport'),
     path('UploadPurchaseAttachment/<str:pk>',
          views.UploadPurchaseAttachment, name='UploadPurchaseAttachment'),
+    path('DeletePurchaseAttachment/<str:pk>',
+         views.DeletePurchaseAttachment, name='DeletePurchaseAttachment'),
 
     path('RepairRequest', views.RepairRequest, name='repair'),
     path('CreateRepairRequest', views.CreateRepairRequest,
@@ -33,6 +35,8 @@ urlpatterns = [
          views.FnCancelRepairApproval, name='RepairCancel'),
     path('FnDeleteRepair/<str:pk>',
          views.FnDeleteRepairRequisitionLine, name='FnDeleteRepairRequisitionLine'),
+    path('DeleteRepairAttachment/<str:pk>',
+         views.DeleteRepairAttachment, name='DeleteRepairAttachment'),
 
 
 
@@ -55,4 +59,6 @@ urlpatterns = [
          views.UploadStoreAttachment, name='UploadStoreAttachment'),
     path('itemCategory',
          views.itemCategory, name='itemCategory'),
+    path('DeleteStoreAttachment/<str:pk>',
+         views.DeleteStoreAttachment, name='DeleteStoreAttachment'),
 ]

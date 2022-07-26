@@ -29,9 +29,6 @@ def Approve(request):
             openLeave = []
             approvedLeave = []
             rejectedLeave = []
-            openTraining = []
-            approveTraining = []
-            rejectTraining = []
             openSurrender = []
             approveSurrender = []
             rejectSurrender = []
@@ -51,27 +48,21 @@ def Approve(request):
             openImp = []
             approvedImp = []
             rejectedImp = []
+            openOther = []
+            appOther = []
+            rejOther = []
             for approve in response['value']:
-                # Leave
-                if approve['Status'] == 'Open' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'LeaveApplication':
+                # HR
+                if  (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Open'  and approve['Document_Type'] == 'LeaveApplication') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Open' and approve['Document_Type'] == 'TrainingRequest'):
                     output_json = json.dumps(approve)
                     openLeave.append(json.loads(output_json))
-                if approve['Status'] == 'Approved' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'LeaveApplication':
+                if (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Approved' and approve['Document_Type'] == 'LeaveApplication') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Open' and approve['Document_Type'] == 'TrainingRequest'):
                     output_json = json.dumps(approve)
                     approvedLeave.append(json.loads(output_json))
-                if approve['Status'] == 'Canceled' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'LeaveApplication':
+                if (approve['Approver_ID'] == request.session['User_ID'] and  approve['Status'] == 'Canceled' and approve['Document_Type'] == 'LeaveApplication') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Open' and approve['Document_Type'] == 'TrainingRequest'):
                     output_json = json.dumps(approve)
                     rejectedLeave.append(json.loads(output_json))
-                # Training
-                if approve['Status'] == 'Open' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'TrainingRequest':
-                    output_json = json.dumps(approve)
-                    openTraining.append(json.loads(output_json))
-                if approve['Status'] == 'Approved' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'TrainingRequest':
-                    output_json = json.dumps(approve)
-                    approveTraining.append(json.loads(output_json))
-                if approve['Status'] == 'Canceled' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'TrainingRequest':
-                    output_json = json.dumps(approve)
-                    rejectTraining.append(json.loads(output_json))
+
                 # Imprests
                 if approve['Status'] == 'Open' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Imprest':
                     output_json = json.dumps(approve)
@@ -132,14 +123,24 @@ def Approve(request):
                 if approve['Status'] == 'Canceled' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Store Requisitions':
                     output_json = json.dumps(approve)
                     rejRepair.append(json.loads(output_json))
+                # Other Request
+                if approve['Status'] == 'Open' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] != 'Store Requisitions' and approve['Document_Type'] != 'Repair' and approve['Document_Type'] != 'Purchase Requisitions' and approve['Document_Type'] != 'Staff Claim'  and approve['Document_Type'] != 'Imprest Surrender' and approve['Document_Type'] != 'Imprest' and approve['Document_Type'] != 'LeaveApplication' and approve['Document_Type'] != 'TrainingRequest':
+                    output_json = json.dumps(approve)
+                    openOther.append(json.loads(output_json))
+                if approve['Status'] == 'Approved' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] != 'Store Requisitions' and approve['Document_Type'] != 'Repair' and approve['Document_Type'] != 'Purchase Requisitions' and approve['Document_Type'] != 'Staff Claim'  and approve['Document_Type'] != 'Imprest Surrender' and approve['Document_Type'] != 'Imprest' and approve['Document_Type'] != 'LeaveApplication' and approve['Document_Type'] != 'TrainingRequest':
+                    output_json = json.dumps(approve)
+                    appOther.append(json.loads(output_json))
+                if approve['Status'] == 'Canceled' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] != 'Store Requisitions' and approve['Document_Type'] != 'Repair' and approve['Document_Type'] != 'Purchase Requisitions' and approve['Document_Type'] != 'Staff Claim'  and approve['Document_Type'] != 'Imprest Surrender' and approve['Document_Type'] != 'Imprest' and approve['Document_Type'] != 'LeaveApplication' and approve['Document_Type'] != 'TrainingRequest':
+                    output_json = json.dumps(approve)
+                    rejOther.append(json.loads(output_json))
             countIMP = len(openImp)
             CountLeave = len(openLeave)
-            CountTraining = len(openTraining)
             countSurrender = len(openSurrender)
             countClaim = len(openClaim)
             countPurchase = len(openPurchase)
             countRepair = len(openRepair)
             countStore = len(openStore)
+            countOther = len(openOther)
 
         except requests.exceptions.RequestException as e:
             print(e)
@@ -150,13 +151,12 @@ def Approve(request):
         ctx = {"today": todays_date, "imprest": openImp,"year": year, "full": fullname,
             "countIMP": countIMP, "approvedIMP":approvedImp,"rejectedImp":rejectedImp,
             "openLeave":openLeave,"CountLeave":CountLeave,"approvedLeave":approvedLeave,
-            "rejectedLeave":rejectedLeave, "openTraining":openTraining,"CountTraining":CountTraining,
-            "approveTraining":approveTraining,"rejectTraining":rejectTraining,"openSurrender":openSurrender,
-            "countSurrender":countSurrender,"approveSurrender":approveSurrender,"rejectSurrender":rejectSurrender,
+            "rejectedLeave":rejectedLeave,"openSurrender":openSurrender,"countSurrender":countSurrender,"approveSurrender":approveSurrender,"rejectSurrender":rejectSurrender,
             "countClaim":countClaim,"openClaim":openClaim,"approveClaim":approveClaim,"rejectClaim":rejectClaim,
             "countPurchase":countPurchase,"openPurchase":openPurchase,"approvePurchase":approvePurchase,
             "rejectPurchase":rejectPurchase, "countRepair":countRepair,"appRepair":appRepair,"rejRepair":rejRepair,
-            "countStore":countStore,"openStore":openStore,"appStore":appStore,"rejStore":rejStore}
+            "countStore":countStore,"openStore":openStore,"appStore":appStore,"rejStore":rejStore,
+            "openOther":openOther,"appOther":appOther,"rejOther":rejOther,"countOther":countOther}
     except KeyError:
         messages.info(request, "Session Expired. Please Login")
         return redirect('auth')       

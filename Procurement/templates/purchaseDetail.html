@@ -203,34 +203,54 @@
                         <h4 class="card-title mb-4">
                             My Attachments
                         </h4>
-                        <ul class="inbox-wid list-unstyled">
+                        <div class="row">
                             {% for data in file %}
-                            <form action="{% url 'getDocs' data.No_ data.Table_ID %}" method="post">
-                                {% csrf_token %}
-                                <input type="hidden" name="attachmentID" value="{{data.AuxiliaryIndex2}}">
-                                <input type="hidden" name="File_Name" value="{{data.File_Name}}">
-                                <input type="hidden" name="File_Extension" value="{{data.File_Extension}}">
-                                <li class="inbox-list-item">
-                                    <button type="submit" data-toggle="tooltip" data-placement="top"
-                                        title="Click to Download">
-                                        <div class="media" style="display: flex;">
-                                            <div class="media-body">
-                                                <h5 class="font-size-16 mb-1">
-                                                    <i class="fas fa-download me-2 text-success"></i>
-                                                    {{data.File_Name}}.{{data.File_Extension}}
-                                                </h5>
-                                            </div>
+                            <div class="col-md-3">
+                                <div class="drive-item module text-center">
+                                    <div class="drive-item-inner module-inner">
+                                        <div class="drive-item-title"><a
+                                                href="#">{{data.File_Name}}.{{data.File_Extension}}</a></div>
+                                        <div class="drive-item-thumb">
+                                            <i class="fas fa-file-alt"></i>
                                         </div>
-                                    </button>
-                                </li>
-                                <hr style="margin-top:-.5rem">
-                            </form>
+                                    </div>
+                                    <div class="drive-item-footer module-footer">
+                                        <ul class="utilities my-2 list-inline">
+                                            <li>
+                                                <form action="{% url 'getDocs' data.No_ data.Table_ID %}" method="post">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="attachmentID"
+                                                        value="{{data.AuxiliaryIndex2}}">
+                                                    <input type="hidden" name="File_Name" value="{{data.File_Name}}">
+                                                    <input type="hidden" name="File_Extension"
+                                                        value="{{data.File_Extension}}">
+                                                    <button type="submit" data-toggle="tooltip" data-placement="top"
+                                                        title="Click to Download"><i
+                                                            class="fa fa-download text-success"></i></button>
+                                                </form>
+                                            </li>
+                                            <li>
+                                                <form action="{% url 'DeletePurchaseAttachment' data.No_  %}"
+                                                    method="post">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="docID" value="{{data.AuxiliaryIndex2}}">
+                                                    <input type="hidden" name="tableID" value="{{data.Table_ID}}">
+                                                    <button type="submit" data-toggle="tooltip" data-placement="top"
+                                                        title="Click to Delete"><i
+                                                            class="fa fa-trash text-danger"></i></button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
                             {% empty %}
                             <p class="text-danger">
-                                Document has no attachments <i class="las la-file-download"></i>
+                                You have not uploaded any attachments <i class="las la-file-download"></i>
                             </p>
                             {% endfor %}
-                        </ul>
+                        </div>
+
                     </div>
                 </div>
             </div>
