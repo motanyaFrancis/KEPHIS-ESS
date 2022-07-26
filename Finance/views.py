@@ -103,7 +103,7 @@ def CreateImprest(request):
             return redirect('auth')
         if not imprestNo:
             imprestNo = ""
-        if not isImprest and isDsa:
+        if isImprest == False and isDsa == False:
             messages.info(request,"Both DSA and Imprest cannot be empty.")
             return redirect('imprestReq')
         print(travelType)
