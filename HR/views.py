@@ -195,7 +195,6 @@ def Leave_Request(request):
             res_planner = session.get(LeavePlanner, timeout=10).json()
             open = []
             Approved = []
-            Rejected = []
             Pending = []
             Plan = []
             Leave = res_types['value']
@@ -210,19 +209,14 @@ def Leave_Request(request):
                 if imprest['Status'] == 'Released' and imprest['User_ID'] == request.session['User_ID']:
                     output_json = json.dumps(imprest)
                     Approved.append(json.loads(output_json))
-                if imprest['Status'] == 'Rejected' and imprest['User_ID'] == request.session['User_ID']:
-                    output_json = json.dumps(imprest)
-                    Rejected.append(json.loads(output_json))
                 if imprest['Status'] == "Pending Approval" and imprest['User_ID'] == request.session['User_ID']:
                     output_json = json.dumps(imprest)
                     Pending.append(json.loads(output_json))
             counts = len(open)
             pend = len(Pending)
-            print(request.session['User_ID'])
 
             counter = len(Approved)
 
-            reject = len(Rejected)
 
         except requests.exceptions.ConnectionError as e:
             print(e)
@@ -230,8 +224,7 @@ def Leave_Request(request):
         todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
         ctx = {"today": todays_date, "res": open,
             "count": counts, "response": Approved,
-            "counter": counter, "rej": Rejected,
-            'reject': reject, 'leave': Leave,
+            "counter": counter,'leave': Leave,
             "plan": Plan, "pend": pend,
             "pending": Pending, "year": year,
             "full": fullname}
@@ -465,7 +458,6 @@ def Training_Request(request):
             
             open = []
             Approved = []
-            Rejected = []
             Pending = []
             cur = res_currency['value']
             trains = res_train['value']
@@ -477,17 +469,12 @@ def Training_Request(request):
                 if imprest['Status'] == 'Released' and imprest['Employee_No'] == request.session['Employee_No_']:
                     output_json = json.dumps(imprest)
                     Approved.append(json.loads(output_json))
-                if imprest['Status'] == 'Rejected' and imprest['Employee_No'] == request.session['Employee_No_']:
-                    output_json = json.dumps(imprest)
-                    Rejected.append(json.loads(output_json))
                 if imprest['Status'] == 'Pending Approval' and imprest['Employee_No'] == request.session['Employee_No_']:
                     output_json = json.dumps(imprest)
                     Pending.append(json.loads(output_json))
             counts = len(open)
 
             counter = len(Approved)
-
-            reject = len(Rejected)
 
             pend = len(Pending)
         except requests.exceptions.ConnectionError as e:
@@ -498,12 +485,12 @@ def Training_Request(request):
         todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
         ctx = {"today": todays_date, "res": open,
             "count": counts, "response": Approved,
-            "counter": counter, "rej": Rejected,
-            'reject': reject, 'cur': cur,
+            "counter": counter,'cur': cur,
             "train": trains,
             "pend": pend, "pending": Pending,
             "year": year, "full": fullname}
-    except KeyError:
+    except KeyError as e:
+        print(e)
         messages.info(request, "Session Expired. Please Login")
         return redirect('auth')
     return render(request, 'training.html', ctx)

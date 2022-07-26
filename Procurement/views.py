@@ -34,7 +34,6 @@ def PurchaseRequisition(request):
             response = session.get(Access_Point, timeout=10).json()
             open = []
             Approved = []
-            Rejected = []
             Pending = []
             for document in response['value']:
                 if document['Status'] == 'Open' and document['Employee_No_'] == request.session['Employee_No_']:
@@ -43,15 +42,11 @@ def PurchaseRequisition(request):
                 if document['Status'] == 'Released' and document['Employee_No_'] == request.session['Employee_No_']:
                     output_json = json.dumps(document)
                     Approved.append(json.loads(output_json))
-                if document['Status'] == 'Disapproved' and document['Employee_No_'] == request.session['Employee_No_']:
-                    output_json = json.dumps(document)
-                    Rejected.append(json.loads(output_json))
                 if document['Status'] == "Pending Approval" and document['Employee_No_'] == request.session['Employee_No_']:
                     output_json = json.dumps(document)
                     Pending.append(json.loads(output_json))
             counts = len(open)
             counter = len(Approved)
-            reject = len(Rejected)
             pend = len(Pending)
         except requests.exceptions.RequestException as e:
             print(e)
@@ -59,11 +54,11 @@ def PurchaseRequisition(request):
             return redirect('auth')
 
         todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
+    
 
         ctx = {"today": todays_date, "res": open,
             "count": counts, "response": Approved,
-            "counter": counter, "rej": Rejected,
-            'reject': reject, "pend": pend,
+            "counter": counter, "pend": pend,
             "pending": Pending, "year": year,
             "full": fullname}
     except KeyError:
@@ -389,7 +384,6 @@ def RepairRequest(request):
             response = session.get(Access_Point, timeout=10).json()
             open = []
             Approved = []
-            Rejected = []
             Pending = []
             for document in response['value']:
                 if document['Status'] == 'Open' and document['Requested_By'] == request.session['User_ID']:
@@ -398,15 +392,11 @@ def RepairRequest(request):
                 if document['Status'] == 'Released' and document['Requested_By'] == request.session['User_ID']:
                     output_json = json.dumps(document)
                     Approved.append(json.loads(output_json))
-                if document['Status'] == 'Disapproved' and document['Requested_By'] == request.session['User_ID']:
-                    output_json = json.dumps(document)
-                    Rejected.append(json.loads(output_json))
                 if document['Status'] == "Pending Approval" and document['Requested_By'] == request.session['User_ID']:
                     output_json = json.dumps(document)
                     Pending.append(json.loads(output_json))
             counts = len(open)
             counter = len(Approved)
-            reject = len(Rejected)
             pend = len(Pending)
         except requests.exceptions.RequestException as e:
             print(e)
@@ -416,8 +406,7 @@ def RepairRequest(request):
         todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
         ctx = {"today": todays_date, "res": open,
             "count": counts, "response": Approved,
-            "counter": counter, "rej": Rejected,
-            'reject': reject, "pend": pend,
+            "counter": counter,"pend": pend,
             "year": year, "full": fullname,
             "pending": Pending
             }
@@ -692,7 +681,6 @@ def StoreRequest(request):
             response = session.get(Access_Point, timeout=10).json()
             open = []
             Approved = []
-            Rejected = []
             Pending = []
             for document in response['value']:
                 if document['Status'] == 'Open' and document['Requested_By'] == request.session['User_ID']:
@@ -701,15 +689,11 @@ def StoreRequest(request):
                 if document['Status'] == 'Released' and document['Requested_By'] == request.session['User_ID']:
                     output_json = json.dumps(document)
                     Approved.append(json.loads(output_json))
-                if document['Status'] == 'Disapproved' and document['Requested_By'] == request.session['User_ID']:
-                    output_json = json.dumps(document)
-                    Rejected.append(json.loads(output_json))
                 if document['Status'] == "Pending Approval" and document['Requested_By'] == request.session['User_ID']:
                     output_json = json.dumps(document)
                     Pending.append(json.loads(output_json))
             counts = len(open)
             counter = len(Approved)
-            reject = len(Rejected)
             pend = len(Pending)
         except requests.exceptions.RequestException as e:
             print(e)
@@ -719,9 +703,7 @@ def StoreRequest(request):
         todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
         ctx = {"today": todays_date, "res": open,
             "count": counts, "response": Approved,
-            "counter": counter, "rej": Rejected,
-            'reject': reject,
-            "pend": pend, "pending": Pending,
+            "counter": counter,"pend": pend, "pending": Pending,
             "full": fullname, "year": year}
     except KeyError:
         messages.info(request, "Session Expired. Please Login")

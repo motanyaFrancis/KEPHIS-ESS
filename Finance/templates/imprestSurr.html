@@ -39,11 +39,6 @@
                                 <a href="#s-approve" class="nav-link" data-bs-toggle="tab">Appproved
                                     ({{counter}})</a>
                             </li>
-                            <li class="nav-item flex-fill">
-                                <a href="#s-reject" class="nav-link" data-bs-toggle="tab">Rejected
-                                    ({{reject}})</a>
-                            </li>
-
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane fade show active" id="s-open">
@@ -194,41 +189,6 @@
                                                 <td>{{res.Status}}</td>
                                                 <td>
                                                     <a href="{% url 'IMPSurrender' res.No_  %}"
-                                                        class="btn btn-success btn-icon-text" type="button"
-                                                        data-toggle="tooltip" data-placement="top"
-                                                        title="Click to View"> View <i class="far fa-eye"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="tab-pane fade" id="s-reject">
-                                <h4 class="mt-2 text-dark">Rejected Surrender Imprest</h4>
-                                <div class="card-body">
-                                    <table id="example"
-                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                                        style="width:100%">
-                                        <thead>
-                                            <tr id="tops">
-                                                <th id="long">Imprest No</th>
-                                                <th>Date</th>
-                                                <th>Created By</th>
-                                                <th>Status</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for res in rej %}
-                                            <tr>
-                                                <td>{{res.No_}}</td>
-                                                <td id="rap">{{res.Date}}</td>
-                                                <td>{{res.User_Id}}</td>
-                                                <td>{{res.Status}}</td>
-                                                <td>
-                                                    <a href="{% url 'IMPSurrender' res.No_ %}"
                                                         class="btn btn-success btn-icon-text" type="button"
                                                         data-toggle="tooltip" data-placement="top"
                                                         title="Click to View"> View <i class="far fa-eye"></i>

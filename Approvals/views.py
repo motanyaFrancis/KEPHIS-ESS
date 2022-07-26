@@ -59,7 +59,7 @@ def Approve(request):
                 if (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Approved' and approve['Document_Type'] == 'LeaveApplication') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Open' and approve['Document_Type'] == 'TrainingRequest'):
                     output_json = json.dumps(approve)
                     approvedLeave.append(json.loads(output_json))
-                if (approve['Approver_ID'] == request.session['User_ID'] and  approve['Status'] == 'Canceled' and approve['Document_Type'] == 'LeaveApplication') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Open' and approve['Document_Type'] == 'TrainingRequest'):
+                if (approve['Approver_ID'] == request.session['User_ID'] and  approve['Status'] == 'Rejected' and approve['Document_Type'] == 'LeaveApplication') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Open' and approve['Document_Type'] == 'TrainingRequest'):
                     output_json = json.dumps(approve)
                     rejectedLeave.append(json.loads(output_json))
 
@@ -70,7 +70,7 @@ def Approve(request):
                 if approve['Status'] == 'Approved' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Imprest':
                     output_json = json.dumps(approve)
                     approvedImp.append(json.loads(output_json))
-                if approve['Status'] == 'Canceled' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Imprest':
+                if approve['Status'] == 'Rejected' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Imprest':
                     output_json = json.dumps(approve)
                     rejectedImp.append(json.loads(output_json))
                 # Surrender
@@ -80,7 +80,7 @@ def Approve(request):
                 if approve['Status'] == 'Approved' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Imprest Surrender':
                     output_json = json.dumps(approve)
                     approveSurrender.append(json.loads(output_json))
-                if approve['Status'] == 'Canceled' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Imprest Surrender':
+                if approve['Status'] == 'Rejected' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Imprest Surrender':
                     output_json = json.dumps(approve)
                     rejectSurrender.append(json.loads(output_json))
                 # Staff Claim
@@ -90,7 +90,7 @@ def Approve(request):
                 if approve['Status'] == 'Approved' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Staff Claim':
                     output_json = json.dumps(approve)
                     approveClaim.append(json.loads(output_json))
-                if approve['Status'] == 'Canceled' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Staff Claim':
+                if approve['Status'] == 'Rejected' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Staff Claim':
                     output_json = json.dumps(approve)
                     rejectClaim.append(json.loads(output_json))
                 # Purchase Request
@@ -100,7 +100,7 @@ def Approve(request):
                 if approve['Status'] == 'Approved' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Purchase Requisitions':
                     output_json = json.dumps(approve)
                     approvePurchase.append(json.loads(output_json))
-                if approve['Status'] == 'Canceled' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Purchase Requisitions':
+                if approve['Status'] == 'Rejected' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Purchase Requisitions':
                     output_json = json.dumps(approve)
                     rejectPurchase.append(json.loads(output_json))
                 # Repair Request
@@ -110,7 +110,7 @@ def Approve(request):
                 if approve['Status'] == 'Approved' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Repair':
                     output_json = json.dumps(approve)
                     appRepair.append(json.loads(output_json))
-                if approve['Status'] == 'Canceled' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Repair':
+                if approve['Status'] == 'Rejected' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Repair':
                     output_json = json.dumps(approve)
                     rejRepair.append(json.loads(output_json))
                 # Store Request
@@ -120,17 +120,17 @@ def Approve(request):
                 if approve['Status'] == 'Approved' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Store Requisitions':
                     output_json = json.dumps(approve)
                     appStore.append(json.loads(output_json))
-                if approve['Status'] == 'Canceled' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Store Requisitions':
+                if approve['Status'] == 'Rejected' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Store Requisitions':
                     output_json = json.dumps(approve)
                     rejRepair.append(json.loads(output_json))
                 # Other Request
-                if approve['Status'] == 'Open' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] != 'Store Requisitions' and approve['Document_Type'] != 'Repair' and approve['Document_Type'] != 'Purchase Requisitions' and approve['Document_Type'] != 'Staff Claim'  and approve['Document_Type'] != 'Imprest Surrender' and approve['Document_Type'] != 'Imprest' and approve['Document_Type'] != 'LeaveApplication' and approve['Document_Type'] != 'TrainingRequest':
+                if (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Open' and approve['Document_Type'] == 'Payment Voucher') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Open' and  approve['Document_Type'] == 'Petty Cash') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Open' and approve['Document_Type'] == 'Petty Cash Surrender') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Open' and approve['Document_Type'] == 'Staff Payroll Approval') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Open'  and approve['Document_Type'] == 'Invoice') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Open' and approve['Document_Type'] == 'Order'):
                     output_json = json.dumps(approve)
                     openOther.append(json.loads(output_json))
-                if approve['Status'] == 'Approved' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] != 'Store Requisitions' and approve['Document_Type'] != 'Repair' and approve['Document_Type'] != 'Purchase Requisitions' and approve['Document_Type'] != 'Staff Claim'  and approve['Document_Type'] != 'Imprest Surrender' and approve['Document_Type'] != 'Imprest' and approve['Document_Type'] != 'LeaveApplication' and approve['Document_Type'] != 'TrainingRequest':
+                if (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Approved' and approve['Document_Type'] == 'Payment Voucher') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Approved' and  approve['Document_Type'] == 'Petty Cash') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Approved' and approve['Document_Type'] == 'Petty Cash Surrender') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Approved' and approve['Document_Type'] == 'Staff Payroll Approval') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Approved'  and approve['Document_Type'] == 'Invoice') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Approved' and approve['Document_Type'] == 'Order'):
                     output_json = json.dumps(approve)
                     appOther.append(json.loads(output_json))
-                if approve['Status'] == 'Canceled' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] != 'Store Requisitions' and approve['Document_Type'] != 'Repair' and approve['Document_Type'] != 'Purchase Requisitions' and approve['Document_Type'] != 'Staff Claim'  and approve['Document_Type'] != 'Imprest Surrender' and approve['Document_Type'] != 'Imprest' and approve['Document_Type'] != 'LeaveApplication' and approve['Document_Type'] != 'TrainingRequest':
+                if (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Rejected' and approve['Document_Type'] == 'Payment Voucher') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Rejected' and  approve['Document_Type'] == 'Petty Cash') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Rejected' and approve['Document_Type'] == 'Petty Cash Surrender') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Rejected' and approve['Document_Type'] == 'Staff Payroll Approval') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Rejected'  and approve['Document_Type'] == 'Invoice') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Rejected' and approve['Document_Type'] == 'Order'):
                     output_json = json.dumps(approve)
                     rejOther.append(json.loads(output_json))
             countIMP = len(openImp)
@@ -208,7 +208,7 @@ def ApproveDetails(request, pk):
                     for claim in Approves:
                         if claim['Document_No_'] == pk:
                             res = claim
-                if approve['Status'] == 'Canceled' and approve['Approver_ID'] == request.session['User_ID']:
+                if approve['Status'] == 'Rejected' and approve['Approver_ID'] == request.session['User_ID']:
                     output_json = json.dumps(approve)
                     Approves.append(json.loads(output_json))
                     for claim in Approves:
@@ -299,14 +299,9 @@ def ApproveDetails(request, pk):
                     ClaimLines.append(json.loads(output_json))
             PurchaseResponse = session.get(PurchaseRequest, timeout=10).json()
             for purchase in PurchaseResponse['value']:
-                if purchase['Status'] == "Pending Approval":
-                    output_json = json.dumps(purchase)
-                    Purchase.append(json.loads(output_json))
-                    for purchase in Purchase:
-                        if purchase['No_'] == pk:
-                            data = purchase
-                            if purchase['Status'] == 'Pending Approval':
-                                state = 6
+                if purchase['No_'] == pk:
+                    data = purchase
+                    state = 6
             Lines_Purchase = config.O_DATA.format("/QyPurchaseRequisitionLines")
             PurchaseLineResponse = session.get(Lines_Purchase, timeout=10).json()
             PurchaseLines = []

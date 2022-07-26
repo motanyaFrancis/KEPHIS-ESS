@@ -421,7 +421,6 @@ def ImprestSurrender(request):
             Released = session.get(Released_imprest, timeout=10).json()
             open = []
             Approved = []
-            Reject = []
             APPImp = []
             Pending = []
             for imprest in response['value']:
@@ -431,9 +430,6 @@ def ImprestSurrender(request):
                 if imprest['Status'] == 'Released' and imprest['User_Id'] == request.session['User_ID']:
                     output_json = json.dumps(imprest)
                     Approved.append(json.loads(output_json))
-                if imprest['Status'] == 'Rejected' and imprest['User_Id'] == request.session['User_ID']:
-                    output_json = json.dumps(imprest)
-                    Reject.append(json.loads(output_json))
                 if imprest['Status'] == 'Pending Approval' and imprest['User_Id'] == request.session['User_ID']:
                     output_json = json.dumps(imprest)
                     Pending.append(json.loads(output_json))
@@ -446,8 +442,6 @@ def ImprestSurrender(request):
 
             counter = len(Approved)
 
-            Rejects = len(Reject)
-
             pend = len(Pending)
         except requests.exceptions.RequestException as e:
             print(e)
@@ -458,7 +452,6 @@ def ImprestSurrender(request):
         ctx = {"today": todays_date, "res": open,
             "count": counts, "full": fullname,
             "response": Approved, "counter": counter,
-            "reject": Rejects, "rej": Reject,
             "app": APPImp, "year": year,
             "pend": pend, "pending": Pending}
     except KeyError:
@@ -736,7 +729,6 @@ def StaffClaim(request):
             res_claim = session.get(Claim, timeout=10).json()
             open = []
             Approved = []
-            Rejected = []
             My_Claim = []
             Pending = []
 
@@ -751,16 +743,12 @@ def StaffClaim(request):
                 if imprest['Status'] == 'Released' and imprest['User_Id'] == request.session['User_ID']:
                     output_json = json.dumps(imprest)
                     Approved.append(json.loads(output_json))
-                if imprest['Status'] == 'Rejected' and imprest['User_Id'] == request.session['User_ID']:
-                    output_json = json.dumps(imprest)
-                    Rejected.append(json.loads(output_json))
                 if imprest['Status'] == 'Pending Approval' and imprest['User_Id'] == request.session['User_ID']:
                     output_json = json.dumps(imprest)
                     Pending.append(json.loads(output_json))
             counts = len(open)
 
             counter = len(Approved)
-            rej = len(Rejected)
             pend = len(Pending)
         except requests.exceptions.ConnectionError as e:
             print(e)
@@ -768,10 +756,8 @@ def StaffClaim(request):
             return redirect('auth')
         todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
         ctx = {"today": todays_date, "res": open,
-            "count": counts, "rej": rej,
-            "response": Approved, "claim": counter,
-            'reject': Rejected, "my_claim": My_Claim,
-            "pend": pend,
+            "count": counts,"response": Approved, "claim": counter,
+            "my_claim": My_Claim,"pend": pend,
             "year": year, "pending": Pending,
             "full": fullname}
     except KeyError:
