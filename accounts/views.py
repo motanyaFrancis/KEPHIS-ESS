@@ -52,6 +52,7 @@ def login_request(request):
                     return redirect('dashboard')
 
         except requests.exceptions.RequestException as e:
+            print(e)
             messages.error(request, "Invalid Username or Password")
             return redirect('auth')
     ctx = {"year": year}

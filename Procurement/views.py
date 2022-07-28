@@ -624,9 +624,6 @@ def CreateRepairLines(request, pk):
 
         if not OtherAsset:
             OtherAsset = ''
-        if assetCode:
-            messages.info(request,"Kindly select the asset you want to repair")
-            return redirect('RepairDetail', pk=pk)
         try:
             response = config.CLIENT.service.FnRepairRequisitionLine(
                 pk, lineNo, assetCode, description, myAction,OtherAsset)
