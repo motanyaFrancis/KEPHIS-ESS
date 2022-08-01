@@ -404,7 +404,7 @@ def ApproveDetails(request, pk):
         "RepairLines":RepairLines,"StoreLines":StoreLines,"VoucherLines":VoucherLines,
         "PettyLines":PettyLines,"PettySurrenderLines":PettySurrenderLines}
     except KeyError as e:
-        messages.info(request, "Session Expired. Please Login")
+        messages.info(request, e)
         print(e)
         return redirect('auth')
     return render(request, 'approveDetails.html', ctx)
