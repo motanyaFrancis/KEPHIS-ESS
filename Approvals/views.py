@@ -10,6 +10,9 @@ from django.contrib import messages
 import io as BytesIO
 import base64
 from django.http import HttpResponse
+from zeep import Client
+from zeep.transports import Transport
+from requests.auth import HTTPBasicAuth
 
 from HR.views import Training_Request
 
@@ -411,9 +414,13 @@ def ApproveDetails(request, pk):
 
 
 def All_Approved(request, pk):
+    Username = request.session['User_ID']
+    Password = request.session['password']
     entryNo = ''
     approvalComments = ""
-   
+    AUTHS = Session()
+    AUTHS.auth = HTTPBasicAuth(Username, Password)
+    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
     if request.method == 'POST':
         try:
             entryNo = int(request.POST.get('entryNo'))
@@ -424,7 +431,7 @@ def All_Approved(request, pk):
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
         try:
-            response = config.CLIENT.service.FnDocumentApproval(
+            response = CLIENT.service.FnDocumentApproval(
                 entryNo, documentNo, myUserID, approvalComments, myAction)
             messages.success(request, "Document Approval successful")
             print(response)
@@ -437,9 +444,13 @@ def All_Approved(request, pk):
 
 
 def Rejected(request, pk):
+    Username = request.session['User_ID']
+    Password = request.session['password']
     entryNo = ''
     approvalComments = ""
-    
+    AUTHS = Session()
+    AUTHS.auth = HTTPBasicAuth(Username, Password)
+    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
     if request.method == 'POST':
         try:
             entryNo = int(request.POST.get('entryNo'))
@@ -454,7 +465,7 @@ def Rejected(request, pk):
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
         try:
-            response = config.CLIENT.service.FnDocumentApproval(
+            response = CLIENT.service.FnDocumentApproval(
                 entryNo, documentNo, userID, approvalComments, myAction)
             messages.success(request, "Reject Document Approval successful")
             print(response)

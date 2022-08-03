@@ -358,7 +358,15 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <label class="form-label">Requisition Item</label>
-                                <select class="form-select" name="itemNo">
+                                <select class="form-select" name="itemNo" id="allItems">
+                                    <option class="after" value="" disabled>--Select--</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row" id="Unit_of_MeasureRow" style="display: none;">
+                            <div class="col-md-12">
+                                <label class="form-label">Unit of Measure <span class="text-danger">*</span></label>
+                                <select class="form-select" name="Unit_of_Measure" id="Unit_of_Measure" disabled>
                                     <option class="after" value="" disabled>--Select--</option>
                                 </select>
                             </div>
@@ -419,6 +427,13 @@
         $('#itemType').on('change', function (e) {
             e.preventDefault();
             var ItemCode = $("#itemType").val();
+            if (ItemCode == '2') {
+                $('#Unit_of_MeasureRow').show(1000)
+                $('#Unit_of_Measure').prop('disabled', false);
+            } else {
+                $('#Unit_of_Measure').prop('disabled', true);
+                $('#Unit_of_MeasureRow').hide(1000);
+            }
             if (ItemCode != null) {
                 $("#PurchaseForm select[name='itemNo']").find('.after').nextAll().remove();
                 $.ajax({
@@ -444,6 +459,45 @@
                 });
             } else {
                 $("#PurchaseForm select[name='itemNo']").find('.after').nextAll().remove();
+            }
+        });
+        $('#allItems').on('change', function (e) {
+            e.preventDefault();
+            var ItemNumber = $("#allItems").val();
+            if (ItemNumber != null) {
+                $("#PurchaseForm select[name='Unit_of_Measure']").find('.after').nextAll().remove();
+                $.ajax({
+                    type: 'get',
+                    url: '{% url "itemUnitOfMeasure" %}',
+                    dataType: 'json',
+                    data: {
+                        ItemNumber: ItemNumber
+                    },
+                    success: function (response) {
+                        let options = '';
+                        for (var i = 0; i < response.value.length; i++) {
+                            if (response.value[i].Item_No_ == ItemNumber) {
+                                options += '<option value=' + response.value[i]
+                                    .Code + '>' + response.value[i].Code + ' ' + '-' + ' ' +
+                                    '(' +
+                                    response.value[i].Qty__per_Unit_of_Measure + ' ' +
+                                    'PER' + ' ' +
+                                    response.value[i].Code + ')' +
+                                    '</option>';
+
+                            }
+                        }
+                        $("#PurchaseForm select[name='Unit_of_Measure']").find('.after')
+                            .after(
+                                options);
+
+                    },
+                    error: function (response) {
+                        console.log('Something went wrong');
+                    }
+                });
+            } else {
+                $("#PurchaseForm select[name='Unit_of_Measure']").find('.after').nextAll().remove();
             }
         });
     })

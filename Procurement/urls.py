@@ -62,4 +62,5 @@ urlpatterns = [
          views.itemCategory, name='itemCategory'),
     path('DeleteStoreAttachment/<str:pk>',
          views.DeleteStoreAttachment, name='DeleteStoreAttachment'),
+    path('itemUnitOfMeasure',views.itemUnitOfMeasure, name='itemUnitOfMeasure'),
 ]

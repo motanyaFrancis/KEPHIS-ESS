@@ -232,6 +232,7 @@ def CreatePurchaseLines(request, pk):
             itemNo = request.POST.get('itemNo')
             specification = request.POST.get('specification')
             quantity = int(request.POST.get('quantity'))
+            Unit_of_Measure = request.POST.get('Unit_of_Measure')
             myAction = request.POST.get('myAction')
 
         except ValueError:
@@ -246,9 +247,11 @@ def CreatePurchaseLines(request, pk):
 
         if not procPlanItem:
             procPlanItem = ""
+        if not Unit_of_Measure:
+            Unit_of_Measure = ''
         try:
             response = config.CLIENT.service.FnPurchaseRequisitionLine(
-                pk, lineNo, procPlanItem, itemType, itemNo, specification, quantity, myUserId, myAction)
+                pk, lineNo, procPlanItem, itemType, itemNo, specification, quantity, myUserId, myAction,Unit_of_Measure)
             messages.success(request, "Request Successful")
             print(response)
             return redirect('PurchaseDetail', pk=pk)
@@ -865,6 +868,19 @@ def itemCategory(request):
         pass
     return redirect('store')
 
+def itemUnitOfMeasure(request):
+    session = requests.Session()
+    session.auth = config.AUTHS
+    Item = config.O_DATA.format("/QyItemUnitOfMeasure")
+    text = request.GET.get('ItemNumber')
+    try:
+        Item_res = session.get(Item, timeout=10).json()
+        return JsonResponse(Item_res)
+
+    except  Exception as e:
+        pass
+    return redirect('dashboard')
+
 def StoreApproval(request, pk):
     Username = request.session['User_ID']
     Password = request.session['password']
@@ -926,12 +942,15 @@ def CreateStoreLines(request, pk):
             itemCode = request.POST.get('itemCode')
             quantity = int(request.POST.get('quantity'))
             myAction = request.POST.get('myAction')
+            Unit_of_Measure = request.POST.get('Unit_of_Measure')
         except ValueError:
             messages.error(request, "Missing Input")
             return redirect('StoreDetail', pk=pk)
+        if not Unit_of_Measure:
+            Unit_of_Measure = ''
         try:
             response = config.CLIENT.service.FnStoreRequisitionLine(
-                requisitionNo, lineNo, itemCode, quantity, myAction)
+                requisitionNo, lineNo, itemCode, quantity, myAction,Unit_of_Measure)
             messages.success(request, "Request Successful")
             print(response)
             return redirect('StoreDetail', pk=pk)
