@@ -126,7 +126,24 @@
                                                                                     </select>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="row mt-3 EditPlannerStartDateRow"
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <label class="form-label"> Leave
+                                                                                        Based on Planner?</label>
+                                                                                    <select class="form-select"
+                                                                                        id="BasedOnPlanners"
+                                                                                        name="BasedOnPlanner" required>
+                                                                                        <option selected value="">Select
+                                                                                        </option>
+                                                                                        <option value="True">Yes
+                                                                                        </option>
+                                                                                        <option value="False">No
+                                                                                        </option>
+                                                                                    </select>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row mt-3"
+                                                                                id="EditPlannerStartDateRow"
                                                                                 style="display:none">
                                                                                 <div class="col-md-12">
                                                                                     <label class="form-label">
@@ -416,15 +433,15 @@
                 $('#LeaveStartDate').prop('disabled', false);
             }
         });
-        $('.EditLeaveType').on('change', function () {
-            if (this.value == "ANNUAL") {
-                $('.EditPlannerStartDateRow').show(1000)
+        $('#BasedOnPlanners').on('change', function () {
+            if (this.value == "True") {
+                $('#EditPlannerStartDateRow').show(1000)
                 $('.EditPlannerStartDate').prop('disabled', false);
                 $('.EditLeaveStartDateRow').hide(1300)
                 $('.EditLeaveStartDate').prop('disabled', true);
             } else {
                 $('.EditPlannerStartDate').prop('disabled', true);
-                $('.EditPlannerStartDateRow').hide(1000);
+                $('#EditPlannerStartDateRow').hide(1000);
                 $('.EditLeaveStartDateRow').show(1300)
                 $('.EditLeaveStartDate').prop('disabled', false);
             }

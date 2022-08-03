@@ -21,6 +21,7 @@ urlpatterns = [
          views.UploadPurchaseAttachment, name='UploadPurchaseAttachment'),
     path('DeletePurchaseAttachment/<str:pk>',
          views.DeletePurchaseAttachment, name='DeletePurchaseAttachment'),
+    path('RequisitionCategory',views.RequisitionCategory, name='RequisitionCategory'),
 
     path('RepairRequest', views.RepairRequest, name='repair'),
     path('CreateRepairRequest', views.CreateRepairRequest,

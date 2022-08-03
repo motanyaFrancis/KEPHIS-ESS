@@ -324,7 +324,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="myForm needs-validation" action="{% url 'PurchaseLines' res.No_ %}" method="post"
+                    <form class="myForm" action="{% url 'PurchaseLines' res.No_ %}" method="post" id="PurchaseForm"
                         novalidate>
                         {% csrf_token %}
                         <div class="row">
@@ -346,33 +346,20 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <label class="form-label">Item Type <span class="text-danger">*</span></label>
-                                <select class="form-select" id="itemTypess" name="itemTypes" required>
-                                    <option selected disabled value="">Select Item Type</option>
+                                <label class="form-label">Requisition Type <span class="text-danger">*</span></label>
+                                <select class="form-select" id="itemType" name="itemTypes" required>
+                                    <option selected disabled value="">Select Requisition Type</option>
                                     <option value="1">G/L</option>
                                     <option value="2">Item</option>
+                                    <option value="3">Fixed Asset</option>
                                 </select>
                             </div>
                         </div>
-                        <div class="row" id="itemNosRow" style="display: none;">
+                        <div class="row">
                             <div class="col-md-12">
-                                <label class="form-label">Item</label>
-                                <select class="form-select" id="itemNos" name="itemNo" disabled>
-                                    <option selected disabled value="">Select Item</option>
-                                    {% for res in items %}
-                                    <option value="{{res.No_}}">{{res.Description}}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row" id="glsRow" style="display: none;">
-                            <div class="col-md-12">
-                                <label class="form-label">G/L Accounts</label>
-                                <select class="form-select" id="gls" name="itemNo" disabled>
-                                    <option selected disabled value="">Select G/L Account</option>
-                                    {% for res in gl %}
-                                    <option value="{{res.No_}}">{{res.Name}}</option>
-                                    {% endfor %}
+                                <label class="form-label">Requisition Item</label>
+                                <select class="form-select" name="itemNo">
+                                    <option class="after" value="" disabled>--Select--</option>
                                 </select>
                             </div>
                         </div>
@@ -429,34 +416,34 @@
 </div>
 <script>
     $(document).ready(function () {
-        $('#itemTypess').on('change', function () {
-            if (this.value == "1") {
-                $('#itemNosRow').hide();
-                $('#glsRow').show(1000);
-                $('#gls').prop('disabled', false);
-                $('#itemNos').prop('disabled', true);
-            } else if (this.value == "2") {
-                $('#itemNosRow').show(1000);
-                $('#glsRow').hide(1000);
-                $('#itemNos').prop('disabled', false);
-                $('#gls').prop('disabled', true);
+        $('#itemType').on('change', function (e) {
+            e.preventDefault();
+            var ItemCode = $("#itemType").val();
+            if (ItemCode != null) {
+                $("#PurchaseForm select[name='itemNo']").find('.after').nextAll().remove();
+                $.ajax({
+                    type: 'get',
+                    url: '{% url "RequisitionCategory" %}',
+                    dataType: 'json',
+                    data: {
+                        ItemCode: ItemCode
+                    },
+                    success: function (response) {
+                        let options = '';
+                        for (var i = 0; i < response.value.length; i++) {
+                            options += '<option value=' + response.value[i]
+                                .No_ + '>' + response.value[i].Description + '</option>';
+                        }
+                        $("#PurchaseForm select[name='itemNo']").find('.after').after(
+                            options);
+
+                    },
+                    error: function (response) {
+                        console.log('Something went wrong');
+                    }
+                });
             } else {
-                $('#itemNosRow').hide();
-                $('#glsRow').hide();
-                $('#gls').prop('disabled', true);
-                $('#itemNos').prop('disabled', true);
-            }
-        });
-        $('#itemTypes').on('change', function () {
-            if (this.value == "1") {
-                $('#gl').prop('disabled', false);
-                $('#itemNo').prop('disabled', true);
-            } else if (this.value == "2") {
-                $('#itemNo').prop('disabled', false);
-                $('#gl').prop('disabled', true);
-            } else {
-                $('#gl').prop('disabled', true);
-                $('#itemNo').prop('disabled', true);
+                $("#PurchaseForm select[name='itemNo']").find('.after').nextAll().remove();
             }
         });
     })

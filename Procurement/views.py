@@ -194,6 +194,26 @@ def PurchaseRequestDetails(request, pk):
         return redirect('auth')
     return render(request, 'purchaseDetail.html', ctx)
 
+def RequisitionCategory(request):
+    session = requests.Session()
+    session.auth = config.AUTHS
+    Item = config.O_DATA.format("/QyItems")
+    GL_Acc = config.O_DATA.format("/QyGLAccounts")
+    Assets = config.O_DATA.format("/QyFixedAssets")
+    text = request.GET.get('ItemCode')
+    try:
+        if text == '1':
+            Res_GL = session.get(GL_Acc, timeout=10).json()
+            return JsonResponse(Res_GL)
+        if text == '2':
+            Item_res = session.get(Item, timeout=10).json()
+            return JsonResponse(Item_res)
+        if text == '3':
+            Asset_res = session.get(Assets, timeout=10).json()
+            return JsonResponse(Asset_res)
+    except  Exception as e:
+        print(e)
+    return redirect('purchase')
 
 def CreatePurchaseLines(request, pk):
     lineNo = ""
@@ -829,6 +849,8 @@ def StoreRequestDetails(request, pk):
         messages.info(request, "Session Expired. Please Login")
         return redirect('auth')
     return render(request, 'storeDetail.html', ctx)
+
+
 
 def itemCategory(request):
     session = requests.Session()
