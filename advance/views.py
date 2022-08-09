@@ -119,7 +119,13 @@ def advanceDetail(request,pk):
                 if advance['Employee_No'] == request.session['Employee_No_'] and advance['Loan_No'] == pk:
                     res = advance
                     state = advance['Loan_Status']
-
+            RejectComments = config.O_DATA.format("/QyApprovalCommentLines")
+            RejectedResponse = session.get(RejectComments, timeout=10).json()
+            Comments = []
+            for comment in RejectedResponse['value']:
+                if comment['Document_No_'] == pk:
+                    output_json = json.dumps(comment)
+                    Comments.append(json.loads(output_json))
         except requests.exceptions.ConnectionError as e:
             print(e)
             messages.error(request,e)
@@ -128,7 +134,7 @@ def advanceDetail(request,pk):
         todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
         ctx = {"today": todays_date, "res": res,
             "Approvers": Approvers, "state": state,
-            "year": year, "full": fullname,}
+            "year": year, "full": fullname,"Comments":Comments}
     except KeyError as e:
         messages.info(request, "Session Expired. Please Login")
         print(e)

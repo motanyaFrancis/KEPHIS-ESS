@@ -219,6 +219,13 @@ def ImprestDetails(request, pk):
                 if file['No_'] == pk:
                     output_json = json.dumps(file)
                     allFiles.append(json.loads(output_json))
+            RejectComments = config.O_DATA.format("/QyApprovalCommentLines")
+            RejectedResponse = session.get(RejectComments, timeout=10).json()
+            Comments = []
+            for comment in RejectedResponse['value']:
+                if comment['Document_No_'] == pk:
+                    output_json = json.dumps(comment)
+                    Comments.append(json.loads(output_json))
         except requests.exceptions.RequestException as e:
             print(e)
             messages.info(request, "Whoops! Something went wrong. Please Login to Continue")
@@ -231,7 +238,7 @@ def ImprestDetails(request, pk):
             "area": Area, "biz": BizGroup,
             "Local": Local, "year": year,
             "full": fullname, "Foreign": ForegnDest, "dest": destination,
-            "file":allFiles}
+            "file":allFiles,"Comments":Comments}
     except KeyError as e:
         print(e)
         messages.info(request, "Session Expired. Please Login")
@@ -572,6 +579,13 @@ def SurrenderDetails(request, pk):
                 if file['No_'] == pk:
                     output_json = json.dumps(file)
                     allFiles.append(json.loads(output_json))
+            RejectComments = config.O_DATA.format("/QyApprovalCommentLines")
+            RejectedResponse = session.get(RejectComments, timeout=10).json()
+            Comments = []
+            for comment in RejectedResponse['value']:
+                if comment['Document_No_'] == pk:
+                    output_json = json.dumps(comment)
+                    Comments.append(json.loads(output_json))
         except requests.exceptions.ConnectionError as e:
             print(e)
         
@@ -589,7 +603,7 @@ def SurrenderDetails(request, pk):
         ctx = {"today": todays_date, "res": res,
             "state": state, "line": openLines,
             "Approvers": Approvers, "type": res_type,
-            "year": year, "full": fullname,"file":allFiles}
+            "year": year, "full": fullname,"file":allFiles,"Comments":Comments}
     except KeyError as e:
         print(e)
         messages.info(request, "Session Expired. Please Login")
@@ -872,6 +886,13 @@ def ClaimDetails(request, pk):
                 if file['No_'] == pk:
                     output_json = json.dumps(file)
                     allFiles.append(json.loads(output_json))
+            RejectComments = config.O_DATA.format("/QyApprovalCommentLines")
+            RejectedResponse = session.get(RejectComments, timeout=10).json()
+            Comments = []
+            for comment in RejectedResponse['value']:
+                if comment['Document_No_'] == pk:
+                    output_json = json.dumps(comment)
+                    Comments.append(json.loads(output_json))
         except requests.exceptions.ConnectionError as e:
             print(e)
         Lines_Res = config.O_DATA.format("/QyStaffClaimLines")
@@ -889,7 +910,8 @@ def ClaimDetails(request, pk):
         ctx = {"today": todays_date, "res": res,
             "state": state, "res_type": res_type,
             "Approvers": Approvers, "line": openLines,
-            "year": year, "full": fullname,"file":allFiles}
+            "year": year, "full": fullname,"file":allFiles,
+            "Comments":Comments}
     except KeyError:
         messages.info(request, "Session Expired. Please Login")
         return redirect('auth')

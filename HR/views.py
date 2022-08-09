@@ -330,6 +330,13 @@ def LeaveDetail(request, pk):
                 if file['No_'] == pk:
                     output_json = json.dumps(file)
                     allFiles.append(json.loads(output_json))
+            RejectComments = config.O_DATA.format("/QyApprovalCommentLines")
+            RejectedResponse = session.get(RejectComments, timeout=10).json()
+            Comments = []
+            for comment in RejectedResponse['value']:
+                if comment['Document_No_'] == pk:
+                    output_json = json.dumps(comment)
+                    Comments.append(json.loads(output_json))
         except requests.exceptions.ConnectionError as e:
             print(e)
             messages.error(request,"500 Server Error, Try Again in a few")
@@ -338,7 +345,7 @@ def LeaveDetail(request, pk):
         todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
         ctx = {"today": todays_date, "res": res,
             "Approvers": Approvers, "state": state,
-            "year": year, "full": fullname,"file":allFiles}
+            "year": year, "full": fullname,"file":allFiles,"Comments":Comments}
     except KeyError:
         messages.info(request, "Session Expired. Please Login")
         return redirect('auth')
@@ -593,6 +600,13 @@ def TrainingDetail(request, pk):
                         res = claim
                         if claim['Status'] == 'Pending Approval':
                             state = 2
+            RejectComments = config.O_DATA.format("/QyApprovalCommentLines")
+            RejectedResponse = session.get(RejectComments, timeout=10).json()
+            Comments = []
+            for comment in RejectedResponse['value']:
+                if comment['Document_No_'] == pk:
+                    output_json = json.dumps(comment)
+                    Comments.append(json.loads(output_json))
     except requests.exceptions.ConnectionError as e:
         print(e)
         messages.error(request,"500 Server Error, Try Again in a few")
@@ -617,7 +631,7 @@ def TrainingDetail(request, pk):
         "Approvers": Approvers, "state": state,
         "year": year, "full": fullname,
         "train_status": train_status, "line": openLines,
-        "local":Local,"foreign":Foreign}
+        "local":Local,"foreign":Foreign,"Comments":Comments}
     return render(request, 'trainingDetail.html', ctx)
 
 

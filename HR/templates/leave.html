@@ -58,7 +58,8 @@
                                         </thead>
                                         <tbody>
                                             {% for res in res %}
-                                            <tr>
+                                            {% if res.Rejected_By_Approver == True and res.Status == 'Open' %}
+                                            <tr style="background: #fee36e !important;">
                                                 <td>{{res.Application_No}}</td>
                                                 <td id="rap">{{res.Status}}</td>
                                                 <td>{{res.Planner_Start_Date}}</td>
@@ -130,9 +131,10 @@
                                                                                 <div class="col-md-12">
                                                                                     <label class="form-label"> Leave
                                                                                         Based on Planner?</label>
-                                                                                    <select class="form-select"
-                                                                                        id="BasedOnPlanners"
-                                                                                        name="BasedOnPlanner" required>
+                                                                                    <select
+                                                                                        class="form-select BasedOnPlanners"
+                                                                                        id="" name="BasedOnPlanner"
+                                                                                        required>
                                                                                         <option selected value="">Select
                                                                                         </option>
                                                                                         <option value="True">Yes
@@ -142,9 +144,8 @@
                                                                                     </select>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="row mt-3"
-                                                                                id="EditPlannerStartDateRow"
-                                                                                style="display:none">
+                                                                            <div class="row mt-3 EditPlannerStartDateRow"
+                                                                                id="" style="display:none">
                                                                                 <div class="col-md-12">
                                                                                     <label class="form-label">
                                                                                         Planner Start Date</label>
@@ -218,7 +219,168 @@
                                                     </div>
                                                 </td>
                                             </tr>
-
+                                            {% else %}
+                                            <tr>
+                                                <td>{{res.Application_No}}</td>
+                                                <td id="rap">{{res.Status}}</td>
+                                                <td>{{res.Planner_Start_Date}}</td>
+                                                <td>{{res.Return_same_day}}</td>
+                                                <td>{{res.Days_Applied}}</td>
+                                                <td>
+                                                    <button class="btn btn-primary" data-toggle="tooltip"
+                                                        data-placement="top" title="edit" data-bs-toggle="modal"
+                                                        data-bs-target="#editLeave">Edit <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <a href="{% url 'LeaveDetail' res.Application_No %} "
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top" title="View"> View <i
+                                                            class="far fa-eye"></i>
+                                                    </a>
+                                                    <!-- Modal Edit Leave -->
+                                                    <div class="modal fade" id="editLeave" data-bs-backdrop="static"
+                                                        data-bs-keyboard="false" tabindex="-1"
+                                                        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                        <div
+                                                            class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="staticBackdropLabel">
+                                                                        Edit Leave
+                                                                        Request NO {{res.Application_No}}
+                                                                    </h5>
+                                                                    <button type="button" class="btn-close"
+                                                                        data-bs-dismiss="modal"
+                                                                        aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <form class="myForm needs-validation"
+                                                                        action="{% url 'CreateLeave' %}" method="post"
+                                                                        novalidate>
+                                                                        {% csrf_token %}
+                                                                        <div class="mb-2 myForm">
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <input type="hidden"
+                                                                                        name="applicationNo"
+                                                                                        value="{{res.Application_No}}">
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <input type="hidden" name="myAction"
+                                                                                        value="modify">
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <label class="form-label">
+                                                                                        Leave Type</label>
+                                                                                    <select
+                                                                                        class="form-select EditLeaveType"
+                                                                                        name="leaveType" required>
+                                                                                        <option selected
+                                                                                            value="{{res.Leave_Code}}">
+                                                                                            {{res.Leave_Code}}</option>
+                                                                                        {% for res in leave %}
+                                                                                        <option value="{{res.Code}}">
+                                                                                            {{res.Description}}</option>
+                                                                                        {% endfor %}
+                                                                                    </select>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <label class="form-label"> Leave
+                                                                                        Based on Planner?</label>
+                                                                                    <select
+                                                                                        class="form-select BasedOnPlanners"
+                                                                                        id="" name="BasedOnPlanner"
+                                                                                        required>
+                                                                                        <option selected value="">Select
+                                                                                        </option>
+                                                                                        <option value="True">Yes
+                                                                                        </option>
+                                                                                        <option value="False">No
+                                                                                        </option>
+                                                                                    </select>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row mt-3 EditPlannerStartDateRow"
+                                                                                id="" style="display:none">
+                                                                                <div class="col-md-12">
+                                                                                    <label class="form-label">
+                                                                                        Planner Start Date</label>
+                                                                                    <select
+                                                                                        class="form-select EditPlannerStartDate"
+                                                                                        name="plannerStartDate"
+                                                                                        disabled>
+                                                                                        <option selected disabled
+                                                                                            value="">
+                                                                                            Choose...</option>
+                                                                                        {% for res in plan %}
+                                                                                        <option
+                                                                                            value="{{res.Start_Date}}">
+                                                                                            {{res.Start_Date}}</option>
+                                                                                        {% endfor %}
+                                                                                    </select>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row EditLeaveStartDateRow"
+                                                                                style="display:none">
+                                                                                <div class="col-md-12">
+                                                                                    <label for=""
+                                                                                        class="form-label">Leave Start
+                                                                                        Date:</label>
+                                                                                    <input type="date"
+                                                                                        class="form-control EditLeaveStartDate"
+                                                                                        name="plannerStartDate"
+                                                                                        disabled>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <label class="form-label"> Return
+                                                                                        Same
+                                                                                        Day </label>
+                                                                                    <select
+                                                                                        class="form-select EditReturnSameDay"
+                                                                                        name="isReturnSameDay" required>
+                                                                                        <option selected value="">Select
+                                                                                        </option>
+                                                                                        <option value="True">Yes
+                                                                                        </option>
+                                                                                        <option value="False">No
+                                                                                        </option>
+                                                                                    </select>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row EditdayAppliedRow"
+                                                                                style="display: none;">
+                                                                                <div class="col-md-12">
+                                                                                    <label class="form-label">Days
+                                                                                        Applied</label>
+                                                                                    <input type="number"
+                                                                                        class="form-control EditdayApplied"
+                                                                                        name="daysApplied"
+                                                                                        placeholder="{{res.Days_Applied}}"
+                                                                                        disabled>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <button type="button" class="btn btn-danger"
+                                                                                data-bs-dismiss="modal">Discard</button>
+                                                                            <button type="submit"
+                                                                                class="btn btn-primary">Submit</button>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {% endif %}
                                             {% endfor %}
                                         </tbody>
                                     </table>
@@ -433,15 +595,15 @@
                 $('#LeaveStartDate').prop('disabled', false);
             }
         });
-        $('#BasedOnPlanners').on('change', function () {
+        $('.BasedOnPlanners').on('change', function () {
             if (this.value == "True") {
-                $('#EditPlannerStartDateRow').show(1000)
+                $('.EditPlannerStartDateRow').show(1000)
                 $('.EditPlannerStartDate').prop('disabled', false);
                 $('.EditLeaveStartDateRow').hide(1300)
                 $('.EditLeaveStartDate').prop('disabled', true);
             } else {
                 $('.EditPlannerStartDate').prop('disabled', true);
-                $('#EditPlannerStartDateRow').hide(1000);
+                $('.EditPlannerStartDateRow').hide(1000);
                 $('.EditLeaveStartDateRow').show(1300)
                 $('.EditLeaveStartDate').prop('disabled', false);
             }

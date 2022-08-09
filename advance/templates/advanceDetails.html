@@ -81,6 +81,34 @@
                 </div>
             </div>
         </div>
+        {% if res.Rejected_By_Approver == True and res.Status == 'Open' %}
+        <div class="row my-2 py-3">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">
+                            Rejection Comments
+                        </h4>
+                        <div class="row">
+                            <div class="chat-history">
+                                <ul class="m-b-0">
+                                    {% for comment in Comments %}
+                                    <li class="clearfix">
+                                        <div class="message-data">
+                                            <span class="message-data-time">{{comment.User_ID}}</span>
+                                        </div>
+                                        <div class="message my-message">{{comment.Comment}}</div>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
         <div class="row py-3">
             <div class="col-md-12">
                 <form class="row g-3">
