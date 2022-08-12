@@ -57,7 +57,8 @@
                                         </thead>
                                         <tbody>
                                             {% for res in res %}
-                                            <tr>
+                                            {% if res.Rejected_By_Approver == True and res.Status == 'Open' %}
+                                            <tr style="background: #fee36e !important;">
                                                 <td>{{res.No_}}</td>
                                                 <td id="rap">{{res.Date}}</td>
                                                 <td>{{res.Imprest}}</td>
@@ -182,7 +183,130 @@
                                                     </a>
                                                 </td>
                                             </tr>
+                                            {% else %}
+                                            <tr>
+                                                <td>{{res.No_}}</td>
+                                                <td id="rap">{{res.Date}}</td>
+                                                <td>{{res.Imprest}}</td>
+                                                <td>{{res.Travel_Type}}</td>
+                                                <td>
+                                                    <button class="btn btn-primary" data-bs-toggle="modal"
+                                                        data-bs-target="#trainedit{{res.No_}}" data-toggle="tooltip"
+                                                        data-placement="top" title="edit">Edit <i
+                                                            class="fas fa-edit"></i>
+                                                    </button>
+                                                    <div class="modal fade" id="trainedit{{res.No_}}"
+                                                        data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                                        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                        <div
+                                                            class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="staticBackdropLabel">
+                                                                        Edit
+                                                                        Impres No : {{res.No_}}
+                                                                    </h5>
+                                                                    <button type="button" class="btn-close"
+                                                                        data-bs-dismiss="modal"
+                                                                        aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <form class="myForm" action="{% url 'create' %}"
+                                                                        method="post" novalidate>
+                                                                        {% csrf_token %}
+                                                                        <div class="mb-2 myForm">
+                                                                            <div class="row">
+                                                                                <div class="col-md-6">
+                                                                                    <label
+                                                                                        class="form-label">Imprest</label>
+                                                                                    <select class="form-select"
+                                                                                        name="isImprest" required>
+                                                                                        <option selected disabled
+                                                                                            value="">
+                                                                                            Select Option
+                                                                                        </option>
+                                                                                        <option value="True">yes
+                                                                                        </option>
+                                                                                        <option value="False">No
+                                                                                        </option>
+                                                                                    </select>
 
+                                                                                </div>
+                                                                                <div class="col-md-6">
+                                                                                    <label
+                                                                                        class="form-label">DSA</label>
+                                                                                    <select class="form-select"
+                                                                                        name="isDsa" required>
+                                                                                        <option selected disabled
+                                                                                            value="">Select Option
+                                                                                        </option>
+                                                                                        <option value="True">Yes
+                                                                                        </option>
+                                                                                        <option value="False">No
+                                                                                        </option>
+                                                                                    </select>
+
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <label class="form-label">Travel
+                                                                                        Type <span
+                                                                                            class="text-danger">*</span></label>
+                                                                                    <select class="form-select"
+                                                                                        name="travelType" required>
+                                                                                        <option selected disabled
+                                                                                            value="">Select Option
+                                                                                        </option>
+                                                                                        <option value="0">Local</option>
+                                                                                        <option value="1">Foreign
+                                                                                        </option>
+                                                                                    </select>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <input type="hidden" name="myAction"
+                                                                                        value="modify">
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <input type="hidden"
+                                                                                        name="imprestNo"
+                                                                                        value="{{res.No_}}">
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <label for="purpose"
+                                                                                        class="form-label">Purpose</label>
+                                                                                    <textarea class="form-control"
+                                                                                        name="purpose" rows="3"
+                                                                                        required></textarea>
+                                                                                </div>
+                                                                            </div>
+
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <button type="button" class="btn btn-danger"
+                                                                                data-bs-dismiss="modal">Discard</button>
+                                                                            <button type="submit" id="sasa"
+                                                                                class="btn btn-primary">Submit</button>
+                                                                        </div>
+                                                                </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <a href="{% url 'IMPDetails' res.No_%}"
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top"
+                                                        title="Click to View"> View <i class="far fa-eye"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            {% endif %}
                                             {% endfor %}
                                         </tbody>
                                     </table>

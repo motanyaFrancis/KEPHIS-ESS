@@ -410,10 +410,6 @@ ul.tasks::after {
     margin-bottom: 15px
 }
 
-.chat-history .message-data img {
-    border-radius: 40px;
-    width: 40px
-}
 
 .chat-history .message-data-time {
     color: #434651;

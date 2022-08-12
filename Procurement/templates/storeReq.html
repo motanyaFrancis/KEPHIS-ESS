@@ -56,6 +56,83 @@
                                         </thead>
                                         <tbody>
                                             {% for res in res %}
+                                            {% if res.Rejected_By_Approver == True and res.Status == 'Open' %}
+                                            <tr style="background: #fee36e !important;">
+                                                <td>{{res.No_}}</td>
+                                                <td>{{res.Reason_Description}}</td>
+                                                <td>{{res.Location_Code}}</td>
+                                                <td>{{res.Status}}</td>
+                                                <td>
+                                                    <button class="btn btn-primary" data-bs-toggle="modal"
+                                                        data-bs-target="#trainedit{{res.No_}}" data-toggle="tooltip"
+                                                        data-placement="top" title="edit"> Edit <i
+                                                            class="fas fa-edit"></i>
+                                                    </button>
+                                                    <a href="{% url 'StoreDetail' res.No_ %}"
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top"
+                                                        title="Click to View"> View <i class="far fa-eye"></i>
+                                                    </a>
+                                                    <div class="modal fade" id="trainedit{{res.No_}}"
+                                                        data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                                        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                        <div
+                                                            class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="staticBackdropLabel">
+                                                                        Raise Store Request
+                                                                    </h5>
+                                                                    <button type="button" class="btn-close"
+                                                                        data-bs-dismiss="modal"
+                                                                        aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <form class="myForm needs-validation"
+                                                                        action="{% url 'CreateStoreRequest' %}"
+                                                                        method="post" novalidate>
+                                                                        {% csrf_token %}
+                                                                        <div class="mb-2"> <span class="w-name">
+                                                                                Store Request Header:
+                                                                            </span>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <input type="hidden"
+                                                                                        name="requisitionNo"
+                                                                                        value="{{res.No_}}">
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <input type="hidden" name="myAction"
+                                                                                        value="modify">
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <label for=""
+                                                                                        class="form-label">Detail</label>
+                                                                                    <textarea class="form-control"
+                                                                                        name="reason" rows="3"
+                                                                                        required></textarea>
+
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <button type="button" class="btn btn-danger"
+                                                                                data-bs-dismiss="modal">Discard</button>
+                                                                            <button type="submit"
+                                                                                class="btn btn-primary">Submit</button>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {% else %}
                                             <tr>
                                                 <td>{{res.No_}}</td>
                                                 <td>{{res.Reason_Description}}</td>
@@ -131,6 +208,7 @@
                                                     </div>
                                                 </td>
                                             </tr>
+                                            {% endif %}
                                             {% endfor %}
                                         </tbody>
                                     </table>

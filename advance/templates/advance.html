@@ -62,6 +62,100 @@
                                         </thead>
                                         <tbody>
                                             {% for res in res %}
+                                            {% if res.Rejected_By_Approver == True and res.Status == 'Open' %}
+                                            <tr style="background: #fee36e !important;">
+                                                <td>{{res.Loan_No}}</td>
+                                                <td>{{res.Application_Date}}</td>
+                                                <td id="rap">{{res.Loan_Product_Name}}</td>
+                                                <td>{{res.Loan_Status}}</td>
+                                                <td>{{res.Amount_Requested}}</td>
+                                                <td>
+                                                    <button class="btn btn-primary" data-bs-toggle="modal"
+                                                        data-bs-target="#trainedit{{res.Loan_No}}" data-toggle="tooltip"
+                                                        data-placement="top" title="edit">Edit <i
+                                                            class="fas fa-edit"></i>
+                                                    </button>
+                                                    <div class="modal fade" id="trainedit{{res.Loan_No}}"
+                                                        data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                                        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                        <div
+                                                            class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="staticBackdropLabel">
+                                                                        Edit
+                                                                        Loan No : {{res.Loan_No}}
+                                                                    </h5>
+                                                                    <button type="button" class="btn-close"
+                                                                        data-bs-dismiss="modal"
+                                                                        aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <form class="myForm needs-validation"
+                                                                        action="{% url 'RequestAdvance' %}"
+                                                                        method="post" novalidate>
+                                                                        {% csrf_token %}
+                                                                        <div class="mb-2 myForm">
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <input type="hidden" name="myAction"
+                                                                                        value="modify">
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <input type="hidden" name="loanNo"
+                                                                                        value="{{res.Loan_No}}">
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <label class="form-label">Loan Type
+                                                                                        <span
+                                                                                            class="text-danger">*</span></label>
+                                                                                    <select class="form-select"
+                                                                                        name="productType" required>
+                                                                                        <option value="" disabled
+                                                                                            selected>--Select--</option>
+                                                                                        {% for res in salary %}
+                                                                                        <option value="{{res.Code}}">
+                                                                                            {{res.Description}}</option>
+                                                                                        {% endfor %}
+                                                                                    </select>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <label class="form-label">Amount
+                                                                                        <span
+                                                                                            class="text-danger">*</span></label>
+                                                                                    <input type="number"
+                                                                                        name="amountRequested"
+                                                                                        class="form-control"
+                                                                                        placeholder="000.000" required>
+                                                                                </div>
+                                                                            </div>
+
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <button type="button" class="btn btn-danger"
+                                                                                data-bs-dismiss="modal">Discard</button>
+                                                                            <button type="submit" id="sasa"
+                                                                                class="btn btn-primary">Submit</button>
+                                                                        </div>
+                                                                </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <a href="{% url 'advanceDetail' res.Loan_No %}"
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top"
+                                                        title="Click to View"> View <i class="far fa-eye"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            {% else %}
                                             <tr>
                                                 <td>{{res.Loan_No}}</td>
                                                 <td>{{res.Application_Date}}</td>
@@ -154,7 +248,7 @@
                                                     </a>
                                                 </td>
                                             </tr>
-
+                                            {% endif %}
                                             {% endfor %}
                                         </tbody>
                                     </table>
