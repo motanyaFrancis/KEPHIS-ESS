@@ -331,18 +331,11 @@ def ApproveDetails(request, pk):
                 if document['AuxiliaryIndex1'] == pk:
                     output_json = json.dumps(document)
                     RepairLines.append(json.loads(output_json))
-            StoreRequest = config.O_DATA.format("/QyStoreRequisitionHeaders")
+            StoreRequest = config.O_DATA.format("/QyStoreRequisitionHeaders?$filter=No_%20eq%20%27{pk}%27%20").format(pk=pk)
             StoreResponse = session.get(StoreRequest, timeout=10).json()
-            Store = []
             for store in StoreResponse['value']:
-                if store['Status'] == "Pending Approval":
-                    output_json = json.dumps(repair)
-                    Store.append(json.loads(output_json))
-                    for store in Store:
-                        if store['No_'] == pk:
-                            data = store
-                            if store['Status'] == 'Pending Approval':
-                                state = 8
+                data = store
+                state = 8                                 
             Lines_Store = config.O_DATA.format("/QyStoreRequisitionLines")
             StoreLineResponse = session.get(Lines_Store, timeout=10).json()
             StoreLines = []
