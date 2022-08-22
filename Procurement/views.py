@@ -1068,3 +1068,4 @@ def DeleteStoreAttachment(request,pk):
             messages.error(request, e)
             print(e)
     return redirect('StoreDetail', pk=pk)
+
