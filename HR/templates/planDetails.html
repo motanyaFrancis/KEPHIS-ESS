@@ -90,37 +90,7 @@
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-12">
-                <form class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Plan Number</label>
-                        <input type="text" class="form-control" placeholder="{{res.No_}}" readonly>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Date Created</label>
-                        <input type="text" class="form-control" placeholder="{{res.Date}}" readonly>
-                    </div>
-                </form>
-                {% if state == 1 %}
-                <div class="d-grid gap-2 my-3">
-                    <form action="{% url 'FnSubmitLeavePlanner' res.No_ %}" method="POST" class="myForm"
-                        id="approvalForm">
-                        {% csrf_token %}
-                        <button class="btn btn-info" type="submit">Request For Approval</button>
-                    </form>
-                </div>
-                {% elif state == 2 %}
-                <div class="d-grid gap-2 my-3">
-                    <form action="{% url 'FnSubmitLeavePlanner' res.No_ %}" method="POST" class="myForm"
-                        id="approvalForm">
-                        {% csrf_token %}
-                        <button class="btn btn-info" type="submit">Cancel Request For Approval</button>
-                    </form>
-                </div>
-                {% endif %}
-            </div>
-        </div>
+
         <div class="row mt-4">
             <div class="col-md-12">
                 <div class="card" id="d-card">
@@ -154,74 +124,8 @@
                                                 data-placement="top" title="Delete"><i class="fas fa-trash-alt"></i>
                                             </button>
                                         </form>
-
-                                        <a href="{% url 'PlannerLine' res.Document_No_ %}" class="btn btn-primary"
-                                            data-toggle="tooltip" data-placement="top" title="edit"
-                                            data-bs-toggle="modal" data-bs-target="#trainedit"><i
-                                                class="fas fa-edit"></i>
-                                        </a>
                                     </td>
                                 </tr>
-                                <!-- Modal to Edit Planner Lines -->
-                                <div class="modal fade" id="trainedit" data-bs-backdrop="static"
-                                    data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
-                                    aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="staticBackdropLabel">Edit Training Line No
-                                                    {{res.Line_No_}}
-                                                </h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body myForm">
-                                                <form class="" action="{% url 'PlannerLine' res.Document_No_ %}"
-                                                    method="post">
-                                                    {% csrf_token %}
-                                                    <div class="mb-2">
-                                                        <span class="w-name">
-                                                            Edit Plan Line No {{res.Line_No_}}:
-                                                        </span>
-                                                        <div class="row">
-                                                            <div class="col-md-12">
-                                                                <input type="hidden" name="lineNo"
-                                                                    value="{{res.Line_No_}}">
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-md-12">
-                                                                <label for="" class="form-label">Start
-                                                                    Date:</label>
-                                                                <input type="date" class="form-control" name="startDate"
-                                                                    placeholder="{{res.Start_Date}}">
-
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-md-12">
-                                                                <label for="" class="form-label">End
-                                                                    Date:</label>
-                                                                <input type="date" class="form-control" name="endDate"
-                                                                    placeholder="{{res.End_Date}}">
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-md-12">
-                                                                <input type="hidden" name="myAction" value="modify">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-danger"
-                                                    data-bs-dismiss="modal">Discard</button>
-                                                <button type="submit" class="btn btn-primary">Submit</button>
-                                            </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
                                 {% endfor %}
                             </tbody>
                         </table>
@@ -275,7 +179,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form class="myForm needs-validation" action="{% url 'PlannerLine' res.No_ %}" method="post" novalidate>
+                <form class="myForm needs-validation" action="{% url 'PlanDetail' res.No_ %}" method="post" novalidate>
                     {% csrf_token %}
                     <div class="mb-2">
                         <span class="w-name">

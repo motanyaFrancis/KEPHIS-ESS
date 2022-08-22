@@ -61,8 +61,9 @@ def PurchaseRequisition(request):
             "counter": counter, "pend": pend,
             "pending": Pending, "year": year,
             "full": fullname}
-    except KeyError:
-        messages.info(request, "Session Expired. Please Login")
+    except KeyError as e:
+        print(e)
+        messages.info(request, e)
         return redirect('auth')
     return render(request, 'purchaseReq.html', ctx)
 
@@ -105,7 +106,6 @@ def PurchaseRequestDetails(request, pk):
         session.auth = config.AUTHS
         state = ''
         res = ''
-        Current_Year = date.today()
         Access_Point = config.O_DATA.format("/QyPurchaseRequisitionHeaders")
         Approver = config.O_DATA.format("/QyApprovalEntries")
         ProcPlan = config.O_DATA.format("/QyProcurementPlans")

@@ -3,10 +3,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('leave/Planner', views.Leave_Planner, name="LeavePlanner"),
-    path('CreatePlanner', views.CreatePlanner, name="CreatePlanner"),
-    path('PlanDetail/<str:pk>', views.PlanDetail, name='PlanDetail'),
-    path('PlannerLine/<str:pk>', views.CreatePlannerLine, name='PlannerLine'),
+    path('leave/Planner', views.Leave_Planner.as_view(), name="LeavePlanner"),
+    path('PlanDetail/<str:pk>', views.PlanDetail.as_view(), name='PlanDetail'),
     path('FnDeleteLeavePlannerLine/<str:pk>',
          views.FnDeleteLeavePlannerLine, name='FnDeleteLeavePlannerLine'),
 

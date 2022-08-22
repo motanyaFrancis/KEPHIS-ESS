@@ -1,62 +1,53 @@
-from logging import exception
-from django.http import response
-from django.shortcuts import render, HttpResponse, redirect
+
+from django.shortcuts import render, redirect
 from django.conf import settings as config
-import json
 import requests
 from requests import Session
-from requests_ntlm import HttpNtlmAuth
-import datetime
-from datetime import date
-from zeep import Client
-from zeep.transports import Transport
 from django.contrib import messages
 from requests.auth import HTTPBasicAuth
+from django.views import View
+from datetime import date
+
 # Create your views here.
+class UserObjectMixin(object):
+    model =None
+    user = Session()
+    def get_object(self,username,password,endpoint):
+        self.user.auth = HTTPBasicAuth(username, password)
+        response = self.user.get(endpoint, timeout=10).json()
+        return response
 
-
-def login_request(request):
-    todays_date = date.today()
-    year = todays_date.year
-    request.session['years'] = year
-    if request.method == 'POST':
+class Login(UserObjectMixin,View):
+    template_name = 'auth.html'
+    def get(self, request):
+        return render(request, self.template_name)
+    def post(self,request):
         username = request.POST.get('username').upper().strip()
         password = request.POST.get('password').strip()
         print(username, password)
-        user = Session()
-        user.auth = HTTPBasicAuth(username, password)
-        Access_Point = config.O_DATA.format("/QyEmployees")
-        Access2 = config.O_DATA.format("/QyUserSetup")
         try:
-            CLIENT = Client(config.BASE_URL, transport=Transport(session=user))
-            response = user.get(Access_Point, timeout=10).json()
-            res_data = user.get(Access2, timeout=10).json()
-            Data = []
+            QyUserSetup = config.O_DATA.format(f"/QyUserSetup?$filter=User_ID%20eq%20%27{username}%27")
+            res_data = self.get_object(username, password,QyUserSetup)
             for data in res_data['value']:
-                if data['User_ID'] == username:
-                    output_json = json.dumps(data)
-                    Data.append(json.loads(output_json))
-                    request.session['Employee_No_'] = Data[0]['Employee_No_']
-                    request.session['Customer_No_'] = Data[0]['Customer_No_']
-                    request.session['User_ID'] = Data[0]['User_ID']
-                    request.session['E_Mail'] = Data[0]['E_Mail']
-                    request.session['User_Responsibility_Center'] = Data[0]['User_Responsibility_Center']
-                    print(request.session['User_ID'])
-                    print("Emp",request.session['Employee_No_'])
-                    request.session['password'] = password
-
-                    for emp in response['value']:
-                        if emp['No_'] == request.session['Employee_No_']:
-                            request.session['Department'] = emp['Department_Code']
-                            print("Department:",request.session['Department'])
-                    return redirect('dashboard')
-
+                request.session['Employee_No_'] = data['Employee_No_']
+                request.session['Customer_No_'] = data['Customer_No_']
+                request.session['User_ID'] = data['User_ID']
+                request.session['E_Mail'] = data['E_Mail']
+                request.session['User_Responsibility_Center'] = data['User_Responsibility_Center']
+                request.session['password'] = password
+                current_year = date.today().year
+                request.session['years'] = current_year
+                print(request.session['Employee_No_'])
+                QyEmployees = config.O_DATA.format(f"/QyEmployees?$filter=No_%20eq%20%27{request.session['Employee_No_']}%27")
+                response = self.get_object(username, password,QyEmployees)
+                for emp in response['value']:
+                    request.session['Department'] = emp['Department_Code']
+                return redirect('dashboard')
         except requests.exceptions.RequestException as e:
             print(e)
             messages.error(request, "Invalid Username or Password")
             return redirect('auth')
-    ctx = {"year": year}
-    return render(request, 'auth.html', ctx)
+
 def logout(request):
     try:
         del request.session['User_ID']
@@ -64,6 +55,7 @@ def logout(request):
         del request.session['Customer_No_']
         del request.session['User_Responsibility_Center']
         del request.session['Department']
+        del request.session['years']
         messages.success(request,"Logged out successfully")
     except KeyError:
         print(False)

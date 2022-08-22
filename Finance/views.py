@@ -27,7 +27,7 @@ def ImprestRequisition(request):
         session = requests.Session()
         session.auth = config.AUTHS
 
-        Access_Point = config.O_DATA.format("/Imprests")
+        Access_Point = config.O_DATA.format(f"/Imprests?$filter%20=User_Id%20eq%20%27{request.session['User_ID']}%27")
         try:
             response = session.get(Access_Point, timeout=10).json()
             open = []

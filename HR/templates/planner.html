@@ -11,7 +11,7 @@
                 <span class="d-flex align-items-center purchase-popup">
                     <img src="../../../static/img/logo/fav.png" width="70px" class="img-fluid" alt="" srcset="">
                     <h2 class="text-dark font-weight-bold ml-3"> Annual Leave Plan </h2>
-                    <form action="{% url 'CreatePlanner' %}" method="post"
+                    <form action="{% url 'LeavePlanner' %}" method="post"
                         style="margin-left: auto;margin-right:0;outline: none;border: none;">
                         {% csrf_token %}
                         <input type="hidden" name="myAction" value="insert">

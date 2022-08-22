@@ -1,12 +1,10 @@
 import base64
 from curses.ascii import isdigit
-from urllib import request
 from django.shortcuts import render, redirect
-from datetime import date, datetime
+from datetime import datetime
 from isodate import date_isoformat
 import requests
 from requests import Session
-from requests_ntlm import HttpNtlmAuth
 import json
 from django.conf import settings as config
 import datetime as dt
@@ -18,161 +16,113 @@ import string
 from requests.auth import HTTPBasicAuth
 from zeep import Client
 from zeep.transports import Transport
-
+from django.views import View
 # Create your views here.
 
-
-def Leave_Planner(request):
-    try:
-        fullname = request.session['User_ID']
-        year = request.session['years']
-        session = requests.Session()
-        session.auth = config.AUTHS
-
-        Access_Point = config.O_DATA.format("/QyLeavePlannerHeaders")
-        try:
-            response = session.get(Access_Point, timeout=10).json()
-            Plans = []
-            for leave in response['value']:
-                if leave['Employee_No_'] == request.session['Employee_No_']:
-                    output_json = json.dumps(leave)
-                    Plans.append(json.loads(output_json))
-        except requests.exceptions.ConnectionError as e:
-            print(e)
-
-        todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-        ctx = {"today": todays_date, "res": Plans,
-            "year": year, "full": fullname}
-    except KeyError as e:
-        messages.info(request, "Session Expired. Please Login")
-        print(e)
-        return redirect('auth')
-    return render(request, 'planner.html', ctx)
-
-
-def CreatePlanner(request):
-    plannerNo = ""
-    employeeNo = request.session['Employee_No_']
-    myAction = ""
-    if request.method == 'POST':
-        try:
-            myAction = request.POST.get('myAction')
-        except ValueError as e:
-            messages.error(request, "Not sent. Invalid Input, Try Again!!")
-            return redirect('LeavePlanner')
-        try:
-            response = config.CLIENT.service.FnLeavePlannerHeader(
-                plannerNo, employeeNo, myAction)
-            messages.success(request, "Request Successful")
-            print(response)
-        
-        except Exception as e:
-            messages.error(request, e)
-            print(e)
-    return redirect('LeavePlanner')
-
-
-def PlanDetail(request, pk):
-    fullname = request.session['User_ID']
-    year = request.session['years']
+class UserObjectMixin(object):
+    model =None
     session = requests.Session()
     session.auth = config.AUTHS
-    res = ''
-    state = ''
-    Access_Point = config.O_DATA.format("/QyLeavePlannerHeaders")
-    try:
-        response = session.get(Access_Point, timeout=10).json()
-        openPlan = []
-        Pending = []
-        for plan in response['value']:
-            if plan['Employee_No_'] == request.session['Employee_No_']:
-                output_json = json.dumps(plan)
-                openPlan.append(json.loads(output_json))
-                for claim in openPlan:
-                    if claim['No_'] == pk:
-                        res = claim
-    except requests.exceptions.ConnectionError as e:
-        print(e)
-    Lines_Res = config.O_DATA.format("/QyLeavePlannerLines")
-    try:
-        responses = session.get(Lines_Res, timeout=10).json()
-        openLines = []
-        for train in responses['value']:
-            if train['Document_No_'] == pk and train['Employee_No_'] == request.session['Employee_No_']:
-                output_json = json.dumps(train)
-                openLines.append(json.loads(output_json))
-    except requests.exceptions.ConnectionError as e:
-        print(e)
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-    ctx = {"today": todays_date, "res": res,
-           "year": year, "full": fullname,
-           "line": openLines}
-    return render(request, 'planDetails.html', ctx)
+    def get_object(self,endpoint):
+        response = self.session.get(endpoint, timeout=10).json()
+        return response
 
-
-def FnSubmitLeavePlanner(request, pk):
-    plannerNo = pk
-    employeeNo = request.session['Employee_No_']
-    if request.method == 'POST':
+class Leave_Planner(UserObjectMixin,View):
+    def get(self,request):
         try:
-            response = config.CLIENT.service.FnSubmitLeavePlanner(
-                plannerNo, employeeNo)
-            messages.success(request, "Request Successful")
-            print(response)
+            userId = request.session['User_ID']
+            year = request.session['years']
+            empNo =request.session['Employee_No_']
+            session = requests.Session()
+            session.auth = config.AUTHS
+
+            Access_Point = config.O_DATA.format(f"/QyLeavePlannerHeaders?$filter=Employee_No_%20eq%20%27{empNo}%27")
+            response = self.get_object(Access_Point)
+            Plans = [x for x in response['value']]
+    
+        except KeyError as e:
+            messages.info(request, "Session Expired. Please Login")
+            print(e)
+            return redirect('auth')
+        except requests.exceptions.ConnectionError as e:
+                print(e)
+        ctx = {"today": self.todays_date, "res": Plans,
+                "year": year, "full": userId}
+        return render(request, 'planner.html', ctx)
+    def post(self,request):
+        plannerNo = ""
+        empNo = request.session['Employee_No_']
+        myAction = request.POST.get('myAction')
+        try:
+            response = config.CLIENT.service.FnLeavePlannerHeader(
+                plannerNo, empNo, myAction)
+            if response == True:
+                messages.success(request, "Request Successful")
+                print(response)
+                return redirect('LeavePlanner')
         except Exception as e:
             messages.error(request, e)
             print(e)
-    return redirect('PlanDetail', pk=pk)
+        return redirect('LeavePlanner')
 
-# Delete leave Planner Header
 
-def CreatePlannerLine(request, pk):
-    lineNo = ""
-    plannerNo = pk
-    startDate = ""
-    endDate = ""
-    myAction = ""
-
-    if request.method == 'POST':
+class PlanDetail(UserObjectMixin,View):
+    def get(self,request,pk):
+        fullname = request.session['User_ID']
+        year = request.session['years']
+        empNo =request.session['Employee_No_']
+        
         try:
+            Access_Point = config.O_DATA.format(f"/QyLeavePlannerHeaders?$filter=Employee_No_%20eq%20%27{empNo}%27%20and%20No_%20eq%20%27{pk}%27")
+            response = self.get_object(Access_Point)
+            for plan in response['value']:
+                res=plan
+            Lines_Res = config.O_DATA.format(f"/QyLeavePlannerLines?$filter=Employee_No_%20eq%20%27{empNo}%27%20and%20Document_No_%20eq%20%27{pk}%27")
+            LinesRes = self.get_object(Lines_Res)
+            openLines=[x for x in LinesRes['value'] if x['Document_No_'] == pk]
+
+        except requests.exceptions.ConnectionError as e:
+            print(e)
+        ctx = {"today": self.todays_date, 
+                "year": year, "full": fullname,
+                "line": openLines,"res":res}
+        return render(request, 'planDetails.html', ctx)
+
+    def post(self,request, pk):
+        try:
+            plannerNo = pk
             lineNo = int(request.POST.get('lineNo'))
-            startDate = datetime.strptime(
-                (request.POST.get('startDate')), '%Y-%m-%d').date()
-            endDate = datetime.strptime(
-                (request.POST.get('endDate')), '%Y-%m-%d').date()
+            startDate = datetime.strptime((request.POST.get('startDate')), '%Y-%m-%d').date()
+            endDate = datetime.strptime((request.POST.get('endDate')), '%Y-%m-%d').date()
             myAction = request.POST.get('myAction')
-        except ValueError as e:
-            messages.error(request, "Not sent. Invalid Input, Try Again!!")
-            return redirect('PlanDetail', pk=pk)
-    if not lineNo:
-        lineNo = 0
-    try:
-        response = config.CLIENT.service.FnLeavePlannerLine(
+
+            response = config.CLIENT.service.FnLeavePlannerLine(
             lineNo, plannerNo, startDate, endDate, myAction)
-        messages.success(request, "Request Successful")
-        print(response)
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
-    return redirect('PlanDetail', pk=pk)
+
+            if response == True:
+                messages.success(request, "Request Successful")
+                print(response)
+                return redirect('PlanDetail', pk=pk)
+        except ValueError as e:
+            messages.error(request, "Missing Input")
+            return redirect('PlanDetail', pk=pk)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+        return redirect('PlanDetail', pk=pk)
+        
 
 
 def FnDeleteLeavePlannerLine(request, pk):
-    plannerNo = pk
-    lineNo = ""
-
     if request.method == 'POST':
+        lineNo = int(request.POST.get('lineNo'))
         try:
-            lineNo = int(request.POST.get('lineNo'))
-        except ValueError as e:
-            messages.error(request, "Not sent. Invalid Input, Try Again!!")
-            return redirect('PlanDetail', pk=pk)
-        print(plannerNo,lineNo)
-        try:
-            response = config.CLIENT.service.FnDeleteLeavePlannerLine(plannerNo,
-                                                                    lineNo)
-            messages.success(request, "Successfully  Deleted!!")
-            print(response)
+            response = config.CLIENT.service.FnDeleteLeavePlannerLine(pk,lineNo)
+            if response == True:
+                messages.success(request, "Successfully  Deleted!!")
+                print(response)
+                return redirect('PlanDetail', pk=pk)
         except Exception as e:
             messages.error(request, e)
             print(e)

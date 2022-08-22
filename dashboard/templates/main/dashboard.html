@@ -97,7 +97,69 @@
                 </div>
             </div>
         </div>
-        <div class="row py-4">
+        <div class="row py-4 gx-2">
+            <div class="col-md-6 mb-2">
+                <div class="card p-3 h-100" style="background: #CCCCFF;">
+                    <div class="card-title text-dark">
+                        <h6>Requests Pending Approval</h6>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="Chart2"></canvas>
+                    </div>
+                    <script>
+                        const newlabel = [
+                            'Leave',
+                            'Training',
+                            'Imprest Requisition',
+                            'Imprest Surrender',
+                            'Staff Claim',
+                            'Purchase ',
+                            'Repair Requests',
+                            'Store Requests',
+                        ];
+
+                        var Rejected_Leave = '{{pendLeave}}'
+                        var Rej_Train = '{{pendTrain}}'
+                        var Rej_Imprest = '{{pendImp}}'
+                        var Rej_Claim = '{{pendClaim}}'
+                        var Rej_surrender = '{{pendSurrender}}'
+                        var Rej_Purchase = '{{pendPurchase}}'
+                        var Rej_Repair = '{{pendRepair}}'
+                        var Rej_Store = '{{pendStore}}'
+                        const data2 = {
+                            labels: newlabel,
+                            datasets: [{
+                                label: 'All Rejected Requests',
+                                backgroundColor: [
+                                    '#ff5e6c',
+                                    '#DFFF00',
+                                    '#8076a3',
+                                    '#FFBF00',
+                                    '#9FE2BF',
+                                ],
+                                borderColor: 'rgb(255, 99, 132)',
+                                data: [Rejected_Leave, Rej_Train, Rej_Imprest, Rej_surrender, Rej_Claim,
+                                    Rej_Purchase,
+                                    Rej_Repair,
+                                    Rej_Store
+                                ],
+                            }]
+                        };
+
+                        const configs = {
+                            type: 'bar',
+                            data: data2,
+                            options: {}
+                        };
+                    </script>
+                    <script>
+                        const Chart2 = new Chart(
+                            document.getElementById('Chart2'),
+                            configs
+                        );
+                    </script>
+                </div>
+            </div>
             <div class="col-md-6 mb-2">
                 <div class="card p-3 h-100" style="background: #d9e3f0;">
                     <div class="card-title text-dark">
@@ -149,68 +211,6 @@
                         const myChart = new Chart(
                             document.getElementById('myChart'),
                             config
-                        );
-                    </script>
-                </div>
-            </div>
-            <div class="col-md-6 mb-2">
-                <div class="card p-3 h-100" style="background: #CCCCFF;">
-                    <div class="card-title text-dark">
-                        <h6>Rejected Requests</h6>
-                    </div>
-                    <div class="card-body">
-                        <canvas id="Chart2"></canvas>
-                    </div>
-                    <script>
-                        const newlabel = [
-                            'Leave',
-                            'Training',
-                            'Imprest Requisition',
-                            'Imprest Surrender',
-                            'Staff Claim',
-                            'Purchase ',
-                            'Repair Requests',
-                            'Store Requests',
-                        ];
-
-                        var Rejected_Leave = '{{leave_rej}}'
-                        var Rej_Train = '{{rej_train}}'
-                        var Rej_Imprest = '{{imprest_rej}}'
-                        var Rej_Claim = '{{rej_claim}}'
-                        var Rej_surrender = '{{surrender_rej}}'
-                        var Rej_Purchase = '{{rej_purchase}}'
-                        var Rej_Repair = '{{rej_repair}}'
-                        var Rej_Store = '{{rej_store}}'
-                        const data2 = {
-                            labels: newlabel,
-                            datasets: [{
-                                label: 'All Rejected Requests',
-                                backgroundColor: [
-                                    '#ff5e6c',
-                                    '#DFFF00',
-                                    '#8076a3',
-                                    '#FFBF00',
-                                    '#9FE2BF',
-                                ],
-                                borderColor: 'rgb(255, 99, 132)',
-                                data: [Rejected_Leave, Rej_Train, Rej_Imprest, Rej_surrender, Rej_Claim,
-                                    Rej_Purchase,
-                                    Rej_Repair,
-                                    Rej_Store
-                                ],
-                            }]
-                        };
-
-                        const configs = {
-                            type: 'bar',
-                            data: data2,
-                            options: {}
-                        };
-                    </script>
-                    <script>
-                        const Chart2 = new Chart(
-                            document.getElementById('Chart2'),
-                            configs
                         );
                     </script>
                 </div>
