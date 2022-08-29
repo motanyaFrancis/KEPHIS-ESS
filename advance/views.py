@@ -10,6 +10,14 @@ from zeep.transports import Transport
 from requests import Session
 
 # Create your views here.
+class UserObjectMixin(object):
+    model =None
+    user = Session()
+    def get_object(self,username,password,endpoint):
+        self.user.auth = HTTPBasicAuth(username, password)
+        response = self.user.get(endpoint, timeout=10).json()
+        return response
+        
 def advance(request):
     try:
         fullname =  request.session['User_ID']

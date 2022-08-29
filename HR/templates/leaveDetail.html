@@ -9,11 +9,11 @@
 
             <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
                 <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
-                    {% if state == 1 %}
+                    {% if res.Status == 'Open' %}
                     <button class="btn btn-successs p-3 d-flex align-items-center" type="button" data-bs-toggle="modal"
                         data-bs-target="#Attachment"> <i class="fas fa-upload mr-1"></i> Upload Attachment
                     </button>
-                    {% elif state == 3 %}
+                    {% elif res.Status == 'Released' %}
                     <form action="{% url 'FnGenerateLeaveReport' res.Application_No%}" method="post" class="d-flex">
                         {% csrf_token %}
                         <button class="btn btn-successs p-3 d-flex align-items-center" type="submit"> Generate
@@ -272,7 +272,7 @@
                     </div>
                 </div>
                 {% endif %}
-                {% if state == 1 %}
+                {% if res.Status == 'Open' %}
                 <div class="d-grid gap-2 my-3">
                     <form action="{% url 'LeaveApprove' res.Application_No %}" method="POST" class="myForm"
                         id="approvalForm">
@@ -283,7 +283,7 @@
                         <button class="btn btn-info" type="submit">Request For Approval</button>
                     </form>
                 </div>
-                {% elif state == 2 %}
+                {% elif res.Status == 'Pending Approval' %}
                 <div class="d-grid gap-2 my-3">
                     <form action="{% url 'LeaveCancel' res.Application_No %}" method="POST" class="myForm"
                         id="approvalForm">
@@ -298,7 +298,7 @@
                 {% endif %}
             </div>
         </div>
-        {% if state == 2 %}
+        {% if res.Status == 'Pending Approval' %}
         <div class="row mt-4">
             <div class="col-md-12">
                 <div class="card" id="d-card">
@@ -342,7 +342,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{% url 'UploadLeaveAttachment' res.Application_No %}" method="post" class="myForm"
+                    <form action="{% url 'LeaveDetail' res.Application_No %}" method="post" class="myForm"
                         enctype="multipart/form-data">
                         {% csrf_token %}
                         <div class=" mb-3">

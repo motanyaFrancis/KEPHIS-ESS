@@ -8,15 +8,12 @@ urlpatterns = [
     path('FnDeleteLeavePlannerLine/<str:pk>',
          views.FnDeleteLeavePlannerLine, name='FnDeleteLeavePlannerLine'),
 
-    path('leave', views.Leave_Request, name="leave"),
-    path('CreateLeave', views.CreateLeave, name="CreateLeave"),
-    path('leave/detail/<str:pk>', views.LeaveDetail, name='LeaveDetail'),
+    path('leave', views.Leave_Request.as_view(), name="leave"),
+    path('leave/detail/<str:pk>', views.LeaveDetail.as_view(), name='LeaveDetail'),
     path('LeaveApprove/<str:pk>', views.LeaveApproval, name='LeaveApprove'),
     path('LeaveCancel/<str:pk>', views.LeaveCancelApproval, name='LeaveCancel'),
     path('FnGenerateLeave/<str:pk>', views.FnGenerateLeaveReport,
          name='FnGenerateLeaveReport'),
-    path('UploadLeaveAttachment/<str:pk>', views.UploadLeaveAttachment,
-         name='UploadLeaveAttachment'),
     path("DeleteLeaveAttachment/<str:pk>",views.DeleteLeaveAttachment,name ="DeleteLeaveAttachment"),
 
 

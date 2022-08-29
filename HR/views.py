@@ -34,13 +34,10 @@ class Leave_Planner(UserObjectMixin,View):
             userId = request.session['User_ID']
             year = request.session['years']
             empNo =request.session['Employee_No_']
-            session = requests.Session()
-            session.auth = config.AUTHS
 
             Access_Point = config.O_DATA.format(f"/QyLeavePlannerHeaders?$filter=Employee_No_%20eq%20%27{empNo}%27")
             response = self.get_object(Access_Point)
             Plans = [x for x in response['value']]
-    
         except KeyError as e:
             messages.info(request, "Session Expired. Please Login")
             print(e)
@@ -129,209 +126,128 @@ def FnDeleteLeavePlannerLine(request, pk):
     return redirect('PlanDetail', pk=pk)
 
 
-def Leave_Request(request):
-    try:
-        fullname = request.session['User_ID']
-        year = request.session['years']
-        session = requests.Session()
-        session.auth = config.AUTHS
-
-        Access_Point = config.O_DATA.format("/QyLeaveApplications")
-        LeaveTypes = config.O_DATA.format("/QyLeaveTypes")
-        LeavePlanner = config.O_DATA.format("/QyLeavePlannerLines")
+class Leave_Request(UserObjectMixin,View):
+    def get(self,request):
         try:
-            response = session.get(Access_Point, timeout=20).json()
-            res_types = session.get(LeaveTypes, timeout=10).json()
-            res_planner = session.get(LeavePlanner, timeout=10).json()
-            open = []
-            Approved = []
-            Pending = []
-            Plan = []
-            Leave = res_types['value']
-            for planner in res_planner['value']:
-                if planner['Employee_No_'] == request.session['Employee_No_']:
-                    output_json = json.dumps(planner)
-                    Plan.append(json.loads(output_json))
-            for imprest in response['value']:
-                if imprest['Status'] == 'Open' and imprest['User_ID'] == request.session['User_ID']:
-                    output_json = json.dumps(imprest)
-                    open.append(json.loads(output_json))
-                if imprest['Status'] == 'Released' and imprest['User_ID'] == request.session['User_ID']:
-                    output_json = json.dumps(imprest)
-                    Approved.append(json.loads(output_json))
-                if imprest['Status'] == "Pending Approval" and imprest['User_ID'] == request.session['User_ID']:
-                    output_json = json.dumps(imprest)
-                    Pending.append(json.loads(output_json))
-            counts = len(open)
-            pend = len(Pending)
+            UserId = request.session['User_ID']
+            year = request.session['years']
+            empNo =request.session['Employee_No_']
 
-            counter = len(Approved)
+            Access_Point = config.O_DATA.format(f"/QyLeaveApplications?$filter=User_ID%20eq%20%27{UserId}%27")
+            response = self.get_object(Access_Point)
+            openLeave = [x for x in response['value'] if x['Status'] == 'Open']
+            pendingLeave = [x for x in response['value'] if x['Status'] == 'Pending Approval']
+            approvedLeave = [x for x in response['value'] if x['Status'] == 'Released']
 
+            LeaveTypes = config.O_DATA.format("/QyLeaveTypes")
+            res_types = self.get_object(LeaveTypes)
+            Leave = [x for x in res_types['value']]
 
+            LeavePlanner = config.O_DATA.format(f"/QyLeavePlannerLines?$filter=Employee_No_%20eq%20%27{empNo}%27")
+            res_planner = self.get_object(LeavePlanner)
+            Plan = [x for x in res_planner['value']]
+
+            counts = len(openLeave)
+            pend = len(pendingLeave)
+            counter = len(approvedLeave)
+
+        except KeyError:
+            messages.info(request, "Session Expired. Please Login")
+            return redirect('auth')
         except requests.exceptions.ConnectionError as e:
             print(e)
-
-        todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-        ctx = {"today": todays_date, "res": open,
-            "count": counts, "response": Approved,
+        
+        ctx = {"today": self.todays_date, "res": openLeave,
+            "count": counts, "response": approvedLeave,
             "counter": counter,'leave': Leave,
             "plan": Plan, "pend": pend,
-            "pending": Pending, "year": year,
-            "full": fullname}
-    except KeyError:
-        messages.info(request, "Session Expired. Please Login")
-        return redirect('auth')
-    return render(request, 'leave.html', ctx)
-
-
-def CreateLeave(request):
-    applicationNo = ''
-    employeeNo = request.session['Employee_No_']
-    usersId = request.session['User_ID']
-    dimension3 = ''
-    leaveType = ""
-    plannerStartDate = "",
-    daysApplied = ""
-    isReturnSameDay = ''
-    myAction = ''
-    if request.method == 'POST':
-        applicationNo = request.POST.get('applicationNo')
-        leaveType = request.POST.get('leaveType')
-        plannerStartDate = request.POST.get('plannerStartDate')
-        daysApplied = request.POST.get('daysApplied')
-        isReturnSameDay = eval(request.POST.get('isReturnSameDay'))
-        myAction = request.POST.get('myAction')
-
-        if not applicationNo:
-            applicationNo = " "
-        if not daysApplied:
-            daysApplied = 0
-        plannerStartDate =  datetime.strptime(plannerStartDate, '%Y-%m-%d').date()
-        try:
-            response = config.CLIENT.service.FnLeaveApplication(
-                applicationNo, employeeNo, usersId, dimension3, leaveType, plannerStartDate, int(daysApplied), isReturnSameDay, myAction)
-            messages.success(request, "Request Successful")
-            print(response)
-        except Exception as e:
-            messages.error(request, e)
-            print(e)
-    return redirect('leave')
-
-def LeaveDetail(request, pk):
-    try:
-        fullname = request.session['User_ID']
-        year = request.session['years']
-        session = requests.Session()
-        session.auth = config.AUTHS
-        res = ''
-        state = ''
-        Access_Point = config.O_DATA.format("/QyLeaveApplications")
-        Approver = config.O_DATA.format("/QyApprovalEntries")
-        Ledger = config.O_DATA.format("/QyLeaveLedgerEntries")
-        Access_File = config.O_DATA.format("/QyDocumentAttachments")
-        try:
-            response = session.get(Access_Point, timeout=10).json()
-            res_approver = session.get(Approver, timeout=10).json()
-            res_Ledger = session.get(Ledger, timeout=10).json()
-            openClaim = []
-            Approvers = []
-            Pending = []
-            Ledgers = []
-            for approver in res_approver['value']:
-                if approver['Document_No_'] == pk:
-                    output_json = json.dumps(approver)
-                    Approvers.append(json.loads(output_json))
-            for claim in response['value']:
-                if claim['Status'] == 'Released' and claim['User_ID'] == request.session['User_ID']:
-                    output_json = json.dumps(claim)
-                    openClaim.append(json.loads(output_json))
-                    for claim in openClaim:
-                        if claim['Application_No'] == pk:
-                            res = claim
-                            if claim['Status'] == 'Released':
-                                state = 3
-                if claim['Status'] == 'Open' and claim['User_ID'] == request.session['User_ID']:
-                    output_json = json.dumps(claim)
-                    openClaim.append(json.loads(output_json))
-                    for claim in openClaim:
-                        if claim['Application_No'] == pk:
-                            request.session['Leave_Period'] = claim['Leave_Period']
-                            request.session['Leave_Code'] = claim['Leave_Code']
-                            res = claim
-                            if claim['Status'] == 'Open':
-                                state = 1
-                if claim['Status'] == 'Rejected' and claim['User_ID'] == request.session['User_ID']:
-                    output_json = json.dumps(claim)
-                    openClaim.append(json.loads(output_json))
-                    for claim in openClaim:
-                        if claim['Application_No'] == pk:
-                            res = claim
-                if claim['Status'] == "Pending Approval" and claim['User_ID'] == request.session['User_ID']:
-                    output_json = json.dumps(claim)
-                    Pending.append(json.loads(output_json))
-                    for claim in Pending:
-                        if claim['Application_No'] == pk:
-                            res = claim
-                            if claim['Status'] == 'Pending Approval':
-                                state = 2
-            res_file = session.get(Access_File, timeout=10).json()
-            allFiles = []
-            for file in res_file['value']:
-                if file['No_'] == pk:
-                    output_json = json.dumps(file)
-                    allFiles.append(json.loads(output_json))
-            RejectComments = config.O_DATA.format("/QyApprovalCommentLines")
-            RejectedResponse = session.get(RejectComments, timeout=10).json()
-            Comments = []
-            for comment in RejectedResponse['value']:
-                if comment['Document_No_'] == pk:
-                    output_json = json.dumps(comment)
-                    Comments.append(json.loads(output_json))
-        except requests.exceptions.ConnectionError as e:
-            print(e)
-            messages.error(request,"500 Server Error, Try Again in a few")
-            return redirect('leave')
-
-        todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-        ctx = {"today": todays_date, "res": res,
-            "Approvers": Approvers, "state": state,
-            "year": year, "full": fullname,"file":allFiles,"Comments":Comments}
-    except KeyError:
-        messages.info(request, "Session Expired. Please Login")
-        return redirect('auth')
-    return render(request, 'leaveDetail.html', ctx)
-
-
-def UploadLeaveAttachment(request, pk):
-    docNo = pk
-    response = ""
-    fileName = ""
-    attachment = ""
-    tableID = 52177494
-
-    if request.method == "POST":
-        try:
-            attach = request.FILES.getlist('attachment')
-        except Exception as e:
-            return redirect('IMPDetails', pk=pk)
-        for files in attach:
-            fileName = request.FILES['attachment'].name
-            attachment = base64.b64encode(files.read())
+            "pending": pendingLeave, "year": year,
+            "full": UserId}
+        return render(request, 'leave.html', ctx)
+    def post(self, request):
+        if request.method == 'POST':
+            dimension3 = ''
+            employeeNo = request.session['Employee_No_']
+            usersId = request.session['User_ID']
+            applicationNo = request.POST.get('applicationNo')
+            leaveType = request.POST.get('leaveType')
+            plannerStartDate = request.POST.get('plannerStartDate')
+            daysApplied = request.POST.get('daysApplied')
+            isReturnSameDay = eval(request.POST.get('isReturnSameDay'))
+            myAction = request.POST.get('myAction')
+            if not daysApplied:
+                daysApplied = 0
+            plannerStartDate =  datetime.strptime(plannerStartDate, '%Y-%m-%d').date()
             try:
-                response = config.CLIENT.service.FnUploadAttachedDocument(
-                    docNo, fileName, attachment, tableID,request.session['User_ID'])
+                response = config.CLIENT.service.FnLeaveApplication(
+                    applicationNo, employeeNo, usersId, dimension3, leaveType, plannerStartDate, int(daysApplied), isReturnSameDay, myAction)
+                messages.success(request, "Request Successful")
+                print(response)
             except Exception as e:
                 messages.error(request, e)
                 print(e)
-        if response == True:
-            messages.success(request, "Successfully Sent !!")
+        return redirect('leave')
 
-            return redirect('LeaveDetail', pk=pk)
-        else:
-            messages.error(request, "Not Sent !!")
-            return redirect('LeaveDetail', pk=pk)
 
-    return redirect('LeaveDetail', pk=pk)
+
+class LeaveDetail(UserObjectMixin,View):
+    def get(self,request,pk):
+        try:
+            userId = request.session['User_ID']
+            year = request.session['years']
+
+            Access_Point = config.O_DATA.format(f"/QyLeaveApplications?$filter=User_ID%20eq%20%27{userId}%27%20and%20Application_No%20eq%20%27{pk}%27")
+            response = self.get_object(Access_Point)
+            for leave in response['value']:
+                res=leave
+            Approver = config.O_DATA.format(f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
+            res_approver = self.get_object(Approver)
+            Approvers = [x for x in res_approver['value']]
+
+            Access_File = config.O_DATA.format(f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27")
+            res_file = self.get_object(Access_File)
+            allFiles = [x for x in res_file['value']]
+
+            RejectComments = config.O_DATA.format(f"/QyApprovalCommentLines?$filter=Document_No_%20eq%20%27{pk}%27")
+            RejectedResponse = self.get_object(RejectComments)
+            Comments = [x for x in RejectedResponse['value']]
+        except KeyError:
+            messages.info(request, "Session Expired. Please Login")
+            return redirect('auth')
+        except requests.exceptions.ConnectionError as e:
+                print(e)
+                messages.error(request,"500 Server Error, Try Again")
+                return redirect('leave')
+
+        ctx = {"today": self.todays_date, "res": res,
+                "Approvers": Approvers, "year": year,
+                "full": userId,"file":allFiles,"Comments":Comments}
+        return render(request, 'leaveDetail.html', ctx)
+
+    def post(self,request,pk):
+        if request.method == "POST":
+            try:
+                attach = request.FILES.getlist('attachment')
+                docNo = pk
+                tableID = 52177494
+                for files in attach:
+                    fileName = request.FILES['attachment'].name
+                    attachment = base64.b64encode(files.read())
+
+                    response = config.CLIENT.service.FnUploadAttachedDocument(
+                            docNo, fileName, attachment, tableID,request.session['User_ID'])
+                if response == True:
+                    messages.success(request, "Uploaded successfully")
+                    return redirect('LeaveDetail', pk=pk)
+                else:
+                    messages.error(request, "Upload Not Successful")
+                    return redirect('LeaveDetail', pk=pk)
+                        
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+        return redirect('LeaveDetail', pk=pk)
+    
     
 def DeleteLeaveAttachment(request,pk):
     if request.method == "POST":
@@ -396,61 +312,62 @@ def LeaveCancelApproval(request, pk):
     return redirect('LeaveDetail', pk=pk)
 
 
-def Training_Request(request):
-    try:
-        fullname = request.session['User_ID']
-        year = request.session['years']
-
-        session = requests.Session()
-        session.auth = config.AUTHS
-
-        Access_Point = config.O_DATA.format("/QyTrainingRequests")
-        currency = config.O_DATA.format("/QyCurrencies")
-        trainingNeed = config.O_DATA.format("/QyTrainingNeeds")
-       
+class Training_Request(UserObjectMixin,View):
+    def get(self, request):
         try:
-            response = session.get(Access_Point, timeout=10).json()
-            res_currency = session.get(currency, timeout=10).json()
-            res_train = session.get(trainingNeed, timeout=10).json()
-            
-            open = []
-            Approved = []
-            Pending = []
-            cur = res_currency['value']
-            trains = res_train['value']
+            userId = request.session['User_ID']
+            year = request.session['years']
+            empNo = request.session['Employee_No_']
 
-            for imprest in response['value']:
-                if imprest['Status'] == 'Open' and imprest['Employee_No'] == request.session['Employee_No_']:
-                    output_json = json.dumps(imprest)
-                    open.append(json.loads(output_json))
-                if imprest['Status'] == 'Released' and imprest['Employee_No'] == request.session['Employee_No_']:
-                    output_json = json.dumps(imprest)
-                    Approved.append(json.loads(output_json))
-                if imprest['Status'] == 'Pending Approval' and imprest['Employee_No'] == request.session['Employee_No_']:
-                    output_json = json.dumps(imprest)
-                    Pending.append(json.loads(output_json))
-            counts = len(open)
+            Access_Point = config.O_DATA.format(f"/QyTrainingRequests?$filter=Employee_No%20eq%20%27{empNo}%27")
+            response = self.get_object(Access_Point)
 
-            counter = len(Approved)
+            currency = config.O_DATA.format("/QyCurrencies")
+            trainingNeed = config.O_DATA.format("/QyTrainingNeeds")
+        
+            try:
+                
+                res_currency = session.get(currency, timeout=10).json()
+                res_train = session.get(trainingNeed, timeout=10).json()
+                
+                open = []
+                Approved = []
+                Pending = []
+                cur = res_currency['value']
+                trains = res_train['value']
 
-            pend = len(Pending)
-        except requests.exceptions.ConnectionError as e:
+                for imprest in response['value']:
+                    if imprest['Status'] == 'Open' and imprest['Employee_No'] == request.session['Employee_No_']:
+                        output_json = json.dumps(imprest)
+                        open.append(json.loads(output_json))
+                    if imprest['Status'] == 'Released' and imprest['Employee_No'] == request.session['Employee_No_']:
+                        output_json = json.dumps(imprest)
+                        Approved.append(json.loads(output_json))
+                    if imprest['Status'] == 'Pending Approval' and imprest['Employee_No'] == request.session['Employee_No_']:
+                        output_json = json.dumps(imprest)
+                        Pending.append(json.loads(output_json))
+                counts = len(open)
+
+                counter = len(Approved)
+
+                pend = len(Pending)
+            except requests.exceptions.ConnectionError as e:
+                print(e)
+                messages.error(request,"500 Server Error, Try Again in a few")
+                return redirect('dashboard')
+
+            todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
+            ctx = {"today": todays_date, "res": open,
+                "count": counts, "response": Approved,
+                "counter": counter,'cur': cur,
+                "train": trains,
+                "pend": pend, "pending": Pending,
+                "year": year, "full": fullname}
+        except KeyError as e:
             print(e)
-            messages.error(request,"500 Server Error, Try Again in a few")
-            return redirect('dashboard')
-
-        todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-        ctx = {"today": todays_date, "res": open,
-            "count": counts, "response": Approved,
-            "counter": counter,'cur': cur,
-            "train": trains,
-            "pend": pend, "pending": Pending,
-            "year": year, "full": fullname}
-    except KeyError as e:
-        print(e)
-        messages.info(request, "Session Expired. Please Login")
-        return redirect('auth')
-    return render(request, 'training.html', ctx)
+            messages.info(request, "Session Expired. Please Login")
+            return redirect('auth')
+        return render(request, 'training.html', ctx)
 
 
 def CreateTrainingRequest(request):

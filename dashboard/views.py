@@ -29,7 +29,6 @@ class Dashboard(UserObjectMixin,View):
             open_leave_list = len([x for x in Leave['value'] if x['Status'] == 'Open'])
             app_leave_list = len([x for x in Leave['value'] if x['Status'] == 'Released'])
             pendLeave = len([x for x in Leave['value'] if x['Status'] == 'Pending Approval'])
-            print("Pend", pendLeave)
 
             Access_Train = config.O_DATA.format(f"/QyTrainingRequests?$filter=Employee_No%20eq%20%27{empNo}%27")
             Training = self.get_object(Access_Train)
