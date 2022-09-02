@@ -3,8 +3,7 @@ from . import views
 
 
 urlpatterns = [
-    path('imprest/requisition', views.ImprestRequisition, name='imprestReq'),
-    path('CreateImp', views.CreateImprest, name='create'),
+    path('imprest/requisition', views.ImprestRequisition.as_view(), name='imprestReq'),
     path('CreateImpLines/<str:pk>',
          views.CreateImprestLines, name='CreateImpLines'),
     path('FnDeleteImprestLine/<str:pk>',
@@ -13,7 +12,7 @@ urlpatterns = [
     path('FnGenerateImprestReport/<str:pk>',
          views.FnGenerateImprestReport, name='FnGenerateImprestReport'),
     path('ImpresCancel/<str:pk>', views.FnCancelPaymentApproval, name='ImpresCancel'),
-    path('Imp/<str:pk>', views.ImprestDetails, name='IMPDetails'),
+    path('Imp/<str:pk>', views.ImprestDetails.as_view(), name='IMPDetails'),
     path('UploadAttachment/<str:pk>',
          views.UploadAttachment, name='UploadAttachment'),
     path('DeleteImprestAttachment/<str:pk>',

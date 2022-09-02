@@ -1,9 +1,8 @@
 import base64
 from django.shortcuts import render, redirect
-from datetime import date, datetime
+from datetime import datetime
 import requests
 from requests import Session
-from requests_ntlm import HttpNtlmAuth
 import json
 from django.conf import settings as config
 import datetime as dt
@@ -17,233 +16,144 @@ from django.template.response import TemplateResponse
 from zeep import Client
 from zeep.transports import Transport
 from requests.auth import HTTPBasicAuth
-
+from django.views import View
 
 # Create your views here.
-def ImprestRequisition(request):
-    try:
-        fullname =  request.session['User_ID']
-        year = request.session['years']
-        session = requests.Session()
-        session.auth = config.AUTHS
+class UserObjectMixin(object):
+    model =None
+    session = requests.Session()
+    session.auth = config.AUTHS
+    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
+    def get_object(self,endpoint):
+        response = self.session.get(endpoint, timeout=10).json()
+        return response
 
-        Access_Point = config.O_DATA.format(f"/Imprests?$filter%20=User_Id%20eq%20%27{request.session['User_ID']}%27")
+class ImprestRequisition(UserObjectMixin,View):
+    def get(self,request):
         try:
-            response = session.get(Access_Point, timeout=10).json()
-            open = []
-            Approved = []
-            Rejected = []
-            Pending = []
-            for imprest in response['value']:
-                if imprest['Status'] == 'Open' and imprest['User_Id'] == request.session['User_ID']:
-                    output_json = json.dumps(imprest)
-                    open.append(json.loads(output_json))
-                if imprest['Status'] == 'Released' and imprest['User_Id'] == request.session['User_ID']:
-                    output_json = json.dumps(imprest)
-                    Approved.append(json.loads(output_json))
-                if imprest['Status'] == 'Rejected' and imprest['User_Id'] == request.session['User_ID']:
-                    output_json = json.dumps(imprest)
-                    Rejected.append(json.loads(output_json))
-                if imprest['Status'] == 'Pending Approval' and imprest['User_Id'] == request.session['User_ID']:
-                    output_json = json.dumps(imprest)
-                    Pending.append(json.loads(output_json))
-            counts = len(open)
+            userID =  request.session['User_ID']
+            year = request.session['years']
+
+            Access_Point = config.O_DATA.format(f"/Imprests?$filter%20=User_Id%20eq%20%27{userID}%27")
+            response = self.get_object(Access_Point)
+            openImprest = [x for x in response['value'] if x['Status'] == 'Open']
+            Pending = [x for x in response['value'] if x['Status'] == 'Pending Approval']
+            Approved = [x for x in response['value'] if x['Status'] == 'Released']
+
+            counts = len(openImprest)
 
             pend = len(Pending)
 
             counter = len(Approved)
 
-            reject = len(Rejected)
-
         except requests.exceptions.RequestException as e:
             print(e)
             messages.info(request, "Whoops! Something went wrong. Please Login to Continue")
             return redirect('auth')
-
-        todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-
-        ctx = {"today": todays_date, "res": open,
-            "count": counts, "response": Approved,
-            "counter": counter, "reject": Rejected,
-            "rej": reject, "pend": pend,
-            "pending": Pending, "year": year,
-            "full": fullname}
-    except KeyError:
-        messages.info(request, "Session Expired. Please Login")
-        return redirect('auth')
-    return render(request, 'imprestReq.html', ctx)
-
-
-def CreateImprest(request):
-    session = requests.Session()
-    session.auth = config.AUTHS
-    imprestNo = ""
-    purpose = ''
-    isImprest = ''
-    isDsa = ''
-    myAction = ''
-    if request.method == 'POST':
-        try:
-            accountNo = request.session['Customer_No_']
-            responsibilityCenter = request.session['User_Responsibility_Center']
-            usersId = request.session['User_ID']
-            personalNo = request.session['Employee_No_']
-            imprestNo = request.POST.get('imprestNo')
-            travelType = int(request.POST.get('travelType'))
-            purpose = request.POST.get('purpose')
-            isImprest = eval(request.POST.get('isImprest'))
-            isDsa = eval(request.POST.get('isDsa'))
-            myAction = request.POST.get('myAction')
-            imprestNo = request.POST.get('imprestNo')
-        except ValueError:
-            messages.error(request, "Missing Input")
-            return redirect('imprestReq')
-        except KeyError:
+        except KeyError as e:
+            print(e)
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
-        if not imprestNo:
-            imprestNo = ""
-        if isImprest == False and isDsa == False:
-            messages.info(request,"Both DSA and Imprest cannot be empty.")
-            return redirect('imprestReq')
-        print(travelType)
+
+        ctx = {"today": self.todays_date, "res": openImprest,
+            "count": counts, "response": Approved,
+            "counter": counter, "pend": pend,
+            "pending": Pending, "year": year,
+            "full": userID}
+        return render(request, 'imprestReq.html', ctx)
+    def post(self,request):
+        if request.method == 'POST':
+            try:
+                accountNo = request.session['Customer_No_']
+                responsibilityCenter = request.session['User_Responsibility_Center']
+                usersId = request.session['User_ID']
+                personalNo = request.session['Employee_No_']
+                imprestNo = request.POST.get('imprestNo')
+                travelType = int(request.POST.get('travelType'))
+                purpose = request.POST.get('purpose')
+                isImprest = eval(request.POST.get('isImprest'))
+                isDsa = eval(request.POST.get('isDsa'))
+                myAction = request.POST.get('myAction')
+                imprestNo = request.POST.get('imprestNo')
+            except ValueError:
+                messages.error(request, "Missing Input")
+                return redirect('imprestReq')
+            except KeyError:
+                messages.info(request, "Session Expired. Please Login")
+                return redirect('auth')
+            if not imprestNo:
+                imprestNo = ""
+            if isImprest == False and isDsa == False:
+                messages.info(request,"Both DSA and Imprest cannot be empty.")
+                return redirect('imprestReq')
+            print(travelType)
+            try:
+                response = config.CLIENT.service.FnImprestHeader(
+                    imprestNo, accountNo, responsibilityCenter, travelType, purpose, usersId, personalNo, isImprest, isDsa, myAction)
+                messages.success(request, "Request Successful")
+                print(response)
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+                return redirect('imprestReq')
+        return redirect('imprestReq')
+
+
+class ImprestDetails(UserObjectMixin, View):
+    def get(self, request,pk):
         try:
-            response = config.CLIENT.service.FnImprestHeader(
-                imprestNo, accountNo, responsibilityCenter, travelType, purpose, usersId, personalNo, isImprest, isDsa, myAction)
-            messages.success(request, "Request Successful")
-            print(response)
-        except Exception as e:
-            messages.error(request, e)
-            print(e)
-            return redirect('imprestReq')
-    return redirect('imprestReq')
+            userID = request.session['User_ID']
+            year = request.session['years']
 
-
-def ImprestDetails(request, pk):
-    try:
-        fullname = request.session['User_ID']
-        year = request.session['years']
-
-        session = requests.Session()
-        session.auth = config.AUTHS
-        state = ''
-        res = ''
-        Access_Point = config.O_DATA.format("/Imprests")
-        Imprest_Type = config.O_DATA.format("/QyReceiptsAndPaymentTypes")
-        Dimension = config.O_DATA.format("/QyDimensionValues")
-        destination = config.O_DATA.format("/QyDestinations")
-        Approver = config.O_DATA.format("/QyApprovalEntries")
-        Lines_Res = config.O_DATA.format("/QyImprestLines")
-        Access_File = config.O_DATA.format("/QyDocumentAttachments")
-        try:
-            response = session.get(Access_Point, timeout=10).json()
-            Imprest_RES = session.get(Imprest_Type, timeout=10).json()
-            Dimension_RES = session.get(Dimension, timeout=10).json()
-            res_dest = session.get(destination, timeout=10).json()
-            res_approver = session.get(Approver, timeout=10).json()
-            responses = session.get(Lines_Res, timeout=10).json()
-            openLines = []
-
-            openImp = []
-            res_type = []
-            Area = []
-            BizGroup = []
-            Approvers = []
-            Pending = []
-            Local = []
-            ForegnDest = []
-            for dest in res_dest['value']:
-                if dest['Destination_Type'] == "Local":
-                    output_json = json.dumps(dest)
-                    Local.append(json.loads(output_json))
-                if dest['Destination_Type'] == "Foreign":
-                    output_json = json.dumps(dest)
-                    ForegnDest.append(json.loads(output_json))
-            for approver in res_approver['value']:
-                if approver['Document_No_'] == pk:
-                    output_json = json.dumps(approver)
-                    Approvers.append(json.loads(output_json))
-            for types in Dimension_RES['value']:
-                if types['Global_Dimension_No_'] == 1:
-                    output_json = json.dumps(types)
-                    Area.append(json.loads(output_json))
-                if types['Global_Dimension_No_'] == 2:
-                    output_json = json.dumps(types)
-                    BizGroup.append(json.loads(output_json))
-            for types in Imprest_RES['value']:
-                if types['Type'] == "Imprest":
-                    output_json = json.dumps(types)
-                    res_type.append(json.loads(output_json))
+            Access_Point = config.O_DATA.format(f"/Imprests?$filter=No_%20eq%20%27{pk}%27%20and%20User_Id%20eq%20%27{userID}%27")
+            response = self.get_object(Access_Point)
             for imprest in response['value']:
-                if imprest['Status'] == 'Released' and imprest['User_Id'] == request.session['User_ID']:
-                    output_json = json.dumps(imprest)
-                    openImp.append(json.loads(output_json))
-                    for imprest in openImp:
-                        if imprest['No_'] == pk:
-                            res = imprest
-                            if imprest['Status'] == 'Released':
-                                state = 3
-                if imprest['Status'] == 'Open' and imprest['User_Id'] == request.session['User_ID']:
-                    output_json = json.dumps(imprest)
-                    openImp.append(json.loads(output_json))
-                    for imprest in openImp:
-                        if imprest['No_'] == pk:
-                            res = imprest
-                            if imprest['Status'] == 'Open':
-                                state = 1
-                            if imprest['Travel_Type'] == 'Local':
-                                destination = "Local"
-                            if imprest['Travel_Type'] == 'Foreign':
-                                destination = "Foreign"
-                if imprest['Status'] == 'Rejected' and imprest['User_Id'] == request.session['User_ID']:
-                    output_json = json.dumps(imprest)
-                    openImp.append(json.loads(output_json))
-                    for imprest in openImp:
-                        if imprest['No_'] == pk:
-                            res = imprest
-                if imprest['Status'] == "Pending Approval" and imprest['User_Id'] == request.session['User_ID']:
-                    output_json = json.dumps(imprest)
-                    Pending.append(json.loads(output_json))
-                    for imprest in Pending:
-                        if imprest['No_'] == pk:
-                            res = imprest
-                            if imprest['Status'] == 'Pending Approval':
-                                state = 2
-            for imprest in responses['value']:
-                if imprest['AuxiliaryIndex1'] == pk:
-                    output_json = json.dumps(imprest)
-                    openLines.append(json.loads(output_json))
-            res_file = session.get(Access_File, timeout=10).json()
-            allFiles = []
-            for file in res_file['value']:
-                if file['No_'] == pk:
-                    output_json = json.dumps(file)
-                    allFiles.append(json.loads(output_json))
-            RejectComments = config.O_DATA.format("/QyApprovalCommentLines")
-            RejectedResponse = session.get(RejectComments, timeout=10).json()
-            Comments = []
-            for comment in RejectedResponse['value']:
-                if comment['Document_No_'] == pk:
-                    output_json = json.dumps(comment)
-                    Comments.append(json.loads(output_json))
+                res = imprest
+
+            Imprest_Type = config.O_DATA.format("/QyReceiptsAndPaymentTypes?$filter=Type%20eq%20%27Imprest%27")
+            Imprest_RES = self.get_object(Imprest_Type)
+            res_type = [x for x in Imprest_RES['value']]
+
+            Dimension = config.O_DATA.format("/QyDimensionValues")
+            Dimension_RES = self.get_object(Dimension)
+            Area = [x for x in Dimension_RES['value'] if x['Global_Dimension_No_'] == 1]
+            BizGroup = [x for x in Dimension_RES['value'] if x['Global_Dimension_No_'] == 2]
+
+            destination = config.O_DATA.format("/QyDestinations")
+            res_dest = self.get_object(destination)
+            Local = [x for x in res_dest['value'] if x['Destination_Type'] == 'Local']
+            ForegnDest = [x for x in res_dest['value'] if x['Destination_Type'] == 'Foreign']
+
+            Approver = config.O_DATA.format(f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
+            res_approver = self.get_object(Approver)
+            Approvers = [x for x in res_approver['value']]
+
+            Lines_Res = config.O_DATA.format(f"/QyImprestLines?$filter=AuxiliaryIndex1%20eq%20%27{pk}%27")
+            responses = self.get_object(Lines_Res)
+            openLines = [x for x in responses['value'] if x['AuxiliaryIndex1'] == pk]
+
+            Access_File = config.O_DATA.format(f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27")
+            res_file = self.get_object(Access_File)
+            allFiles = [x for x in res_file['value']]
+
+            RejectComments = config.O_DATA.format(f"/QyApprovalCommentLines?$filter=Document_No_%20eq%20%27{pk}%27")
+            RejectedResponse = self.get_object(RejectComments)
+            Comments = [x for x in RejectedResponse['value']]
+
+
         except requests.exceptions.RequestException as e:
             print(e)
             messages.info(request, "Whoops! Something went wrong. Please Login to Continue")
             return redirect('imprestReq')
-        todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-                    
-        ctx = {"today": todays_date, "res": res,
-            "line": openLines, "state": state,
-            "Approvers": Approvers, "type": res_type,
-            "area": Area, "biz": BizGroup,
-            "Local": Local, "year": year,
-            "full": fullname, "Foreign": ForegnDest, "dest": destination,
-            "file":allFiles,"Comments":Comments}
-    except KeyError as e:
-        print(e)
-        messages.info(request, "Session Expired. Please Login")
-        return redirect('auth')
-    return render(request, 'imprestDetail.html', ctx)
+        except KeyError as e:
+            print(e)
+            messages.info(request, "Session Expired. Please Login")
+            return redirect('auth')
+                        
+        ctx = {"today": self.todays_date, "res": res,"line": openLines,"Approvers": Approvers,
+               "type": res_type,"area": Area, "biz": BizGroup,"Local": Local, "year": year,
+               "full": userID, "Foreign": ForegnDest, "dest": destination,"file":allFiles,"Comments":Comments}
+        return render(request, 'imprestDetail.html', ctx)
 
 
 def UploadAttachment(request, pk):
@@ -271,8 +181,6 @@ def UploadAttachment(request, pk):
             messages.error(request, "Failed, Try Again")
             return redirect('IMPDetails', pk=pk)
     return redirect('IMPDetails', pk=pk)
-
-# Delete Imprest Header
 
 def FnDeleteImprestLine(request, pk):
     if request.method == 'POST':

@@ -109,7 +109,7 @@
                                                                 </div>
                                                                 <div class="modal-body">
                                                                     <form class="myForm needs-validation"
-                                                                        action="{% url 'CreateTrainingRequest' %}"
+                                                                        action="{% url 'training_request' %}"
                                                                         method="post" novalidate>
                                                                         {% csrf_token %}
                                                                         <div class="mb-2">
@@ -232,7 +232,7 @@
                                                                 </div>
                                                                 <div class="modal-body">
                                                                     <form class="myForm needs-validation"
-                                                                        action="{% url 'CreateTrainingRequest' %}"
+                                                                        action="{% url 'training_request' %}"
                                                                         method="post" novalidate>
                                                                         {% csrf_token %}
                                                                         <div class="mb-2">
@@ -430,7 +430,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="myForm" action="{% url 'CreateTrainingRequest' %}" method="post">
+                    <form class="myForm" action="{% url 'training_request' %}" method="post">
                         {% csrf_token %}
                         <div class="mb-2">
                             <div class="row">
@@ -442,7 +442,7 @@
                                 <div class="col-md-12">
                                     <label for="isAdhoc" class="form-label">Adhoc</label>
                                     <select class="form-select" id="isAdhocT" name="isAdhoc" required>
-                                        <option selected disabled value="">Select </option>
+                                        <option selected disabled value="0">--Select--</option>
                                         <option value="True">Yes</option>
                                         <option value="False">No</option>
                                     </select>
@@ -455,7 +455,7 @@
                                 <div class="col-md-12">
                                     <label class="form-label">Training Need</label>
                                     <select class="form-select" id="trainingNeed" name="trainingNeed" disabled>
-                                        <option selected disabled value="">Select Training Need </option>
+                                        <option selected disabled value="0">--Select Training Need-- </option>
                                         {% for res in train %}
                                         <option value="{{res.Code}}">{{res.Description}}</option>
                                         {% endfor %}

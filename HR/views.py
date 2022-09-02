@@ -321,237 +321,154 @@ class Training_Request(UserObjectMixin,View):
 
             Access_Point = config.O_DATA.format(f"/QyTrainingRequests?$filter=Employee_No%20eq%20%27{empNo}%27")
             response = self.get_object(Access_Point)
+            openTraining = [x for x in response['value'] if x['Status'] == 'Open']
+            pendingTraining = [x for x in response['value'] if x['Status'] == 'Pending Approval']
+            approvedTraining = [x for x in response['value'] if x['Status'] == 'Released']
 
-            currency = config.O_DATA.format("/QyCurrencies")
             trainingNeed = config.O_DATA.format("/QyTrainingNeeds")
-        
-            try:
-                
-                res_currency = session.get(currency, timeout=10).json()
-                res_train = session.get(trainingNeed, timeout=10).json()
-                
-                open = []
-                Approved = []
-                Pending = []
-                cur = res_currency['value']
-                trains = res_train['value']
+            res_train = self.get_object(trainingNeed)
+            trains = [x for x in res_train['value']]
 
-                for imprest in response['value']:
-                    if imprest['Status'] == 'Open' and imprest['Employee_No'] == request.session['Employee_No_']:
-                        output_json = json.dumps(imprest)
-                        open.append(json.loads(output_json))
-                    if imprest['Status'] == 'Released' and imprest['Employee_No'] == request.session['Employee_No_']:
-                        output_json = json.dumps(imprest)
-                        Approved.append(json.loads(output_json))
-                    if imprest['Status'] == 'Pending Approval' and imprest['Employee_No'] == request.session['Employee_No_']:
-                        output_json = json.dumps(imprest)
-                        Pending.append(json.loads(output_json))
-                counts = len(open)
+            counts = len(openTraining)
+            counter = len(approvedTraining)
+            pend = len(pendingTraining)
 
-                counter = len(Approved)
-
-                pend = len(Pending)
-            except requests.exceptions.ConnectionError as e:
-                print(e)
-                messages.error(request,"500 Server Error, Try Again in a few")
-                return redirect('dashboard')
-
-            todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-            ctx = {"today": todays_date, "res": open,
-                "count": counts, "response": Approved,
-                "counter": counter,'cur': cur,
-                "train": trains,
-                "pend": pend, "pending": Pending,
-                "year": year, "full": fullname}
         except KeyError as e:
             print(e)
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
+        except requests.exceptions.ConnectionError as e:
+            print(e)
+            messages.error(request,"500 Server Error")
+            return redirect('dashboard')
+
+        ctx = {"today": self.todays_date, "res": openTraining,
+                "count": counts, "response": approvedTraining,
+                "counter": counter,
+                "train": trains,
+                "pend": pend, "pending": pendingTraining,
+                "year": year, "full": userId}
         return render(request, 'training.html', ctx)
+    def post(self,request):
+        if request.method == 'POST':
+            try:
+                employeeNo = request.session['Employee_No_']
+                usersId = request.session['User_ID']
+                requestNo = request.POST.get('requestNo')
+                isAdhoc = eval(request.POST.get('isAdhoc'))
+                trainingNeed = request.POST.get('trainingNeed')
+                myAction = request.POST.get('myAction')
+            except ValueError:
+                messages.error(request, "Not sent. Invalid Input, Try Again!!")
+                return redirect('training_request')
+            if not requestNo:
+                requestNo = ""
+            
+            if not trainingNeed:
+                trainingNeed = ''
+            try:
+                response = config.CLIENT.service.FnTrainingRequest(
+                    requestNo, employeeNo, usersId, isAdhoc, trainingNeed, myAction)
+                messages.success(request, "Successfully Added!!")
+                print(response)
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+                return redirect('training_request')
+        return redirect('training_request')
 
 
-def CreateTrainingRequest(request):
-    requestNo = ''
-    employeeNo = request.session['Employee_No_']
-    usersId = request.session['User_ID']
-    isAdhoc = ""
-    trainingNeed = ""
-    myAction = ''
-    if request.method == 'POST':
+class TrainingDetail(UserObjectMixin, View):
+    def get(self,request,pk):
         try:
-            requestNo = request.POST.get('requestNo')
-            isAdhoc = eval(request.POST.get('isAdhoc'))
-            trainingNeed = request.POST.get('trainingNeed')
-            myAction = request.POST.get('myAction')
-        except ValueError:
-            messages.error(request, "Not sent. Invalid Input, Try Again!!")
+            userID = request.session['User_ID']
+            year = request.session['years']
+            empNo = request.session['Employee_No_'] 
+
+            Access_Point = config.O_DATA.format(f"/QyTrainingRequests?$filter=Employee_No%20eq%20%27{empNo}%27%20and%20Request_No_%20eq%20%27{pk}%27")
+            response = self.get_object(Access_Point)
+            for training in response['value']:
+                res = training
+
+            Approver = config.O_DATA.format(f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
+            res_approver = self.get_object(Approver)
+            Approvers = [x for x in res_approver['value']]
+
+            destination = config.O_DATA.format("/QyDestinations")
+            res_destination = self.get_object(destination)
+            Local = [x for x in res_destination['value'] if x['Destination_Type'] == 'Local']
+            Foreign = [x for x in res_destination['value'] if x['Destination_Type'] == 'Foreign']
+
+            RejectComments = config.O_DATA.format(f"/QyApprovalCommentLines?$filter=Document_No_%20eq%20%27{pk}%27")
+            RejectedResponse = self.get_object(RejectComments)
+            Comments = [x for x in RejectedResponse['value']]
+
+            Lines_Res = config.O_DATA.format(f"/QyTrainingNeedsRequest?$filter=Source_Document_No%20eq%20%27{pk}%27%20and%20Employee_No%20eq%20%27{empNo}%27")
+            responseNeeds = self.get_object(Lines_Res)
+            openLines = [x for x in responseNeeds['value']]
+
+
+        except requests.exceptions.ConnectionError as e:
+            print(e)
+            messages.error(request,"500 Server Error, Try Again in a few")
             return redirect('training_request')
-        if not requestNo:
-            requestNo = ""
-        
-        if not trainingNeed:
-            trainingNeed = ''
-        try:
-            response = config.CLIENT.service.FnTrainingRequest(
-                requestNo, employeeNo, usersId, isAdhoc, trainingNeed, myAction)
-            messages.success(request, "Successfully Added!!")
-            print(response)
+        except KeyError as e:
+            print(e)
+            messages.info(request, "Session Expired. Please Login")
+            return redirect('auth')
         except Exception as e:
             messages.error(request, e)
             print(e)
             return redirect('training_request')
-    return redirect('training_request')
 
+        ctx = {"today": self.todays_date, "res": res,
+            "Approvers": Approvers,"year": year, "full": userID,
+            "line": openLines,"local":Local,"foreign":Foreign,"Comments":Comments}
+        return render(request, 'trainingDetail.html', ctx)
+    def post(self,request,pk):
+        if request.method == 'POST':
+            try:
+                requestNo = pk
+                no = ""
+                employeeNo = request.session['Employee_No_']
+                myAction = "insert"
+                trainingName = request.POST.get('trainingName')
+                startDate = request.POST.get('startDate')
+                endDate = request.POST.get('endDate')
+                trainingArea = request.POST.get('trainingArea')
+                trainingObjectives = request.POST.get('trainingObjectives')
+                venue = request.POST.get('venue')
+                sponsor = request.POST.get('sponsor')
+                destination = request.POST.get('destination')
+                OtherDestinationName = request.POST.get('OtherDestinationName')
+                provider = request.POST.get('provider')
 
-def TrainingDetail(request, pk):
-    session = requests.Session()
-    session.auth = config.AUTHS
-    res = ''
-    state = ""
-    train_status = ""
-    Access_Point = config.O_DATA.format("/QyTrainingRequests")
-    Approver = config.O_DATA.format("/QyApprovalEntries")
-    destination = config.O_DATA.format("/QyDestinations")
-    try:
-        fullname = request.session['User_ID']
-        year = request.session['years']
-        response = session.get(Access_Point, timeout=10).json()
-        res_approver = session.get(Approver, timeout=10).json()
-        res_destination = session.get(destination, timeout=10).json()
-        openClaim = []
-        Approvers = []
-        Pending = []
-        Local = []
-        Foreign = []
-        for destinations in res_destination['value']:
-            if destinations['Destination_Type'] == 'Local':
-                output_json = json.dumps(destinations)
-                Local.append(json.loads(output_json))
-            if destinations['Destination_Type'] == 'Foreign':
-                output_json = json.dumps(destinations)
-                Foreign.append(json.loads(output_json))
-        for approver in res_approver['value']:
-            if approver['Document_No_'] == pk:
-                output_json = json.dumps(approver)
-                Approvers.append(json.loads(output_json))
-        for claim in response['value']:
-            if claim['Status'] == 'Released' and claim['Employee_No'] == request.session['Employee_No_']:
-                output_json = json.dumps(claim)
-                openClaim.append(json.loads(output_json))
-                for claim in openClaim:
-                    if claim['Request_No_'] == pk:
-                        res = claim
-                        if claim['Status'] == 'Released':
-                            state = 3
-            if claim['Status'] == 'Open' and claim['Employee_No'] == request.session['Employee_No_']:
-                output_json = json.dumps(claim)
-                openClaim.append(json.loads(output_json))
-                for claim in openClaim:
-                    if claim['Request_No_'] == pk:
-                        res = claim
-                        if claim['Status'] == 'Open':
-                            state = 1
-                        if claim['Adhoc'] == True:
-                            train_status = "Adhoc"
-            if claim['Status'] == 'Rejected' and claim['Employee_No'] == request.session['Employee_No_']:
-                output_json = json.dumps(claim)
-                openClaim.append(json.loads(output_json))
-                for claim in openClaim:
-                    if claim['Request_No_'] == pk:
-                        res = claim
-            if claim['Status'] == 'Pending Approval' and claim['Employee_No'] == request.session['Employee_No_']:
-                output_json = json.dumps(claim)
-                Pending.append(json.loads(output_json))
-                for claim in Pending:
-                    if claim['Request_No_'] == pk:
-                        res = claim
-                        if claim['Status'] == 'Pending Approval':
-                            state = 2
-            RejectComments = config.O_DATA.format("/QyApprovalCommentLines")
-            RejectedResponse = session.get(RejectComments, timeout=10).json()
-            Comments = []
-            for comment in RejectedResponse['value']:
-                if comment['Document_No_'] == pk:
-                    output_json = json.dumps(comment)
-                    Comments.append(json.loads(output_json))
-    except requests.exceptions.ConnectionError as e:
-        print(e)
-        messages.error(request,"500 Server Error, Try Again in a few")
-        return redirect('training_request')
-    except KeyError:
-        messages.info(request, "Session Expired. Please Login")
-        return redirect('auth')
-    Lines_Res = config.O_DATA.format("/QyTrainingNeedsRequest")
-    try:
-        responseNeeds = session.get(Lines_Res, timeout=10).json()
-        openLines = []
-        for train in responseNeeds['value']:
-            if train['Source_Document_No'] == pk and train['Employee_No'] == request.session['Employee_No_']:
-                output_json = json.dumps(train)
-                openLines.append(json.loads(output_json))
-    except requests.exceptions.ConnectionError as e:
-        messages.error(request,e)
-        return redirect('training_request')
+            except ValueError as e:
+                messages.error(request, "Invalid Input, Try Again!!")
+                return redirect('TrainingDetail', pk=pk)
+            if not sponsor:
+                sponsor = 0
+            sponsor = int(sponsor)
 
-    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-    ctx = {"today": todays_date, "res": res,
-        "Approvers": Approvers, "state": state,
-        "year": year, "full": fullname,
-        "train_status": train_status, "line": openLines,
-        "local":Local,"foreign":Foreign,"Comments":Comments}
-    return render(request, 'trainingDetail.html', ctx)
+            if not destination:
+                destination = 'none'
+            
+            if not venue:
+                venue = "Online"
 
-
-def FnAdhocTrainingNeedRequest(request, pk):
-    requestNo = pk
-    no = ""
-    employeeNo = request.session['Employee_No_']
-    trainingName = ""
-    trainingArea = ""
-    trainingObjectives = ""
-    venue = ""
-    provider = ""
-    myAction = "insert"
-    if request.method == 'POST':
-        try:
-            trainingName = request.POST.get('trainingName')
-            startDate = request.POST.get('startDate')
-            endDate = request.POST.get('endDate')
-            trainingArea = request.POST.get('trainingArea')
-            trainingObjectives = request.POST.get('trainingObjectives')
-            venue = request.POST.get('venue')
-            sponsor = request.POST.get('sponsor')
-            destination = request.POST.get('destination')
-            OtherDestinationName = request.POST.get('OtherDestinationName')
-            provider = request.POST.get('provider')
-
-        except ValueError as e:
-            messages.error(request, "Invalid Input, Try Again!!")
-            return redirect('TrainingDetail', pk=pk)
-        if not sponsor:
-            sponsor = 0
-        sponsor = int(sponsor)
-
-        if not destination:
-            destination = 'none'
-        
-        if not venue:
-            venue = "Online"
-
-        if OtherDestinationName:
-            destination = OtherDestinationName
-        try:
-            response = config.CLIENT.service.FnAdhocTrainingNeedRequest(requestNo,
-                                                                        no, employeeNo, trainingName, trainingArea, trainingObjectives, venue, provider, myAction,sponsor,startDate,endDate,destination)
-            messages.success(request, "Successfully Added!!")
-            print(response)
-            return redirect('TrainingDetail', pk=pk)
-        except Exception as e:
-            messages.error(request, e)
-            print(e)
-    return redirect('TrainingDetail', pk=pk)
-
-
+            if OtherDestinationName:
+                destination = OtherDestinationName
+            try:
+                response = config.CLIENT.service.FnAdhocTrainingNeedRequest(requestNo,
+                                                                            no, employeeNo, trainingName, trainingArea, trainingObjectives, venue, provider, myAction,sponsor,startDate,endDate,destination)
+                messages.success(request, "Successfully Added!!")
+                print(response)
+                return redirect('TrainingDetail', pk=pk)
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+        return redirect('TrainingDetail', pk=pk)
+   
 def UploadTrainingAttachment(request, pk):
     docNo = pk
     response = ""
@@ -687,120 +604,116 @@ def TrainingCancelApproval(request, pk):
     return redirect('TrainingDetail', pk=pk)
 
 
-def PNineRequest(request):
-    try:
-        nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
-                        for i in range(5))
-        fullname = request.session['User_ID']
-        year = request.session['years']
-        todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-        session = requests.Session()
-        session.auth = config.AUTHS
-        
-        Access_Point = config.O_DATA.format("/QyPayrollPeriods")
-        
+class PNineRequest(UserObjectMixin,View):
+    def get(self,request):
         try:
-            response = session.get(Access_Point, timeout=10).json()
-            res = response['value']
-        except requests.exceptions.ConnectionError as e:
-            print(e)
-        employeeNo = request.session['Employee_No_']
-        filenameFromApp = ""
-        startDate = ""
-        year = ''
-        if request.method == 'POST':
-            try:
-                startDate = request.POST.get('startDate')[0:4]
-            except ValueError as e:
-                messages.error(request, "Not sent. Invalid Input, Try Again!!")
-                return redirect('pNine')
-            filenameFromApp = "P9_For_" + str(nameChars) + year + ".pdf"
-            year = int(startDate)
-            try:
-                response = config.CLIENT.service.FnGeneratePNine(
-                    employeeNo, filenameFromApp, year)
-                try:
-                    buffer = BytesIO.BytesIO()
-                    content = base64.b64decode(response)
-                    buffer.write(content)
-                    responses = HttpResponse(
-                        buffer.getvalue(),
-                        content_type="application/pdf",
-                    )
-                    responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
-                    return responses
-                except:
-                    messages.error(request, "Payslip not found for the selected period")
-                    return redirect('pNine')
-            except Exception as e:
-                messages.error(request, e)
-                print(e)
-                return redirect('pNine')
-        ctx = {"today": todays_date, "year": year, "full": fullname,"res":res}
-    except KeyError:
-        messages.info(request, "Session Expired. Please Login")
-        return redirect('auth')
-    return render(request, "p9.html", ctx)
-
-
-def PayslipRequest(request):
-    try:
-        nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
-                        for i in range(5))
-        fullname = request.session['User_ID']
-        year = request.session['years']
-        session = requests.Session()
-        session.auth = config.AUTHS
-        
-        Access_Point = config.O_DATA.format("/QyPayrollPeriods")
-        try:
-            response = session.get(Access_Point, timeout=10).json()
-            Payslip = []
-            for slip in response ['value']:
-                if slip['Closed'] == True:
-                    output_json = json.dumps(slip)
-                    Payslip.append(json.loads(output_json))
-        except requests.exceptions.ConnectionError as e:
-            print(e)
+            userID = request.session['User_ID']
+            year = request.session['years']
             
-        todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-        employeeNo = request.session['Employee_No_']
-        filenameFromApp = ""
-        paymentPeriod = ""
-        if request.method == 'POST':
-            try:
-                paymentPeriod = datetime.strptime(
-                    request.POST.get('paymentPeriod'), '%Y-%m-%d').date()
-
-            except ValueError as e:
-                messages.error(request, "Not sent. Invalid Input, Try Again!!")
-                return redirect('payslip')
-            filenameFromApp = "Payslip" + str(paymentPeriod) + str(nameChars) + ".pdf"
-            try:
-                response = config.CLIENT.service.FnGeneratePayslip(
-                    employeeNo, filenameFromApp, paymentPeriod)
+            Access_Point = config.O_DATA.format("/QyPayrollPeriods")
+            response = self.get_object(Access_Point)
+            res = response['value']
+            
+        except KeyError as e:
+            print(e)
+            messages.info(request, "Session Expired. Please Login")
+            return redirect('auth')
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+            return redirect('pNine')
+        ctx = {"today": self.todays_date, "year": year, "full": userID,"res":res}
+        return render(request, "p9.html", ctx)
+    def post(self,request):
+         if request.method == 'POST':
                 try:
-                    buffer = BytesIO.BytesIO()
-                    content = base64.b64decode(response)
-                    buffer.write(content)
-                    responses = HttpResponse(
-                        buffer.getvalue(),
-                        content_type="application/pdf",
-                    )
-                    responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
-                    return responses
-                except:
-                    messages.error(request, "Payslip not found for the selected period")
+                    nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
+                            for i in range(5))
+                    employeeNo = request.session['Employee_No_']
+                    startDate = request.POST.get('startDate')[0:4]
+                    year = request.session['years']
+                except ValueError as e:
+                    messages.error(request, "Not sent. Invalid Input, Try Again!!")
+                    return redirect('pNine')
+                filenameFromApp = "P9_For_" + str(nameChars) + str(year) + ".pdf"
+                year = int(startDate)
+                try:
+                    response = config.CLIENT.service.FnGeneratePNine(
+                        employeeNo, filenameFromApp, year)
+                    try:
+                        buffer = BytesIO.BytesIO()
+                        content = base64.b64decode(response)
+                        buffer.write(content)
+                        responses = HttpResponse(
+                            buffer.getvalue(),
+                            content_type="application/pdf",
+                        )
+                        responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
+                        return responses
+                    except:
+                        messages.error(request, "Payslip not found for the selected period")
+                        return redirect('pNine')
+                except Exception as e:
+                    messages.error(request, e)
+                    print(e)
+                    return redirect('pNine')
+
+
+class PayslipRequest(UserObjectMixin,View):
+    def get(self, request):
+        try:
+            userID = request.session['User_ID']
+            year = request.session['years']
+            
+            Access_Point = config.O_DATA.format("/QyPayrollPeriods?$filter=Closed%20eq%20true")
+            response = self.get_object(Access_Point)
+            Payslip = [x for x in response['value']]
+
+        except KeyError as e:
+            messages.info(request, "Session Expired. Please Login")
+            return redirect('auth')
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+            return redirect('payslip')
+                    
+        ctx = {"today": self.todays_date, "year": year, "full": userID,"res":Payslip}
+        
+        return render(request, "payslip.html", ctx)
+
+    def post(self,request):
+        if request.method == 'POST':
+                try:
+                    employeeNo = request.session['Employee_No_']
+                    nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
+                            for i in range(5))
+
+                    paymentPeriod = datetime.strptime(
+                        request.POST.get('paymentPeriod'), '%Y-%m-%d').date()
+
+                except ValueError as e:
+                    messages.error(request, "Not sent. Invalid Input, Try Again!!")
                     return redirect('payslip')
-            except Exception as e:
-                messages.error(request, e)
-                print(e)
-        ctx = {"today": todays_date, "year": year, "full": fullname,"res":Payslip}
-    except KeyError as e:
-        messages.info(request, "Session Expired. Please Login")
-        return redirect('auth')
-    return render(request, "payslip.html", ctx)
-# Leave Report
+                filenameFromApp = "Payslip" + str(paymentPeriod) + str(nameChars) + ".pdf"
+                try:
+                    response = config.CLIENT.service.FnGeneratePayslip(
+                        employeeNo, filenameFromApp, paymentPeriod)
+                    try:
+                        buffer = BytesIO.BytesIO()
+                        content = base64.b64decode(response)
+                        buffer.write(content)
+                        responses = HttpResponse(
+                            buffer.getvalue(),
+                            content_type="application/pdf",
+                        )
+                        responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
+                        return responses
+                    except:
+                        messages.error(request, "Payslip not found for the selected period")
+                        return redirect('payslip')
+                except Exception as e:
+                    messages.error(request, e)
+                    print(e)
 
 
 def FnGenerateLeaveReport(request, pk):

@@ -8,147 +8,124 @@ from requests.auth import HTTPBasicAuth
 from zeep import Client
 from zeep.transports import Transport
 from requests import Session
+from django.views import View
 
 # Create your views here.
 class UserObjectMixin(object):
     model =None
-    user = Session()
-    def get_object(self,username,password,endpoint):
-        self.user.auth = HTTPBasicAuth(username, password)
-        response = self.user.get(endpoint, timeout=10).json()
+    session = requests.Session()
+    session.auth = config.AUTHS
+    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
+    def get_object(self,endpoint):
+        response = self.session.get(endpoint, timeout=10).json()
         return response
         
-def advance(request):
-    try:
-        fullname =  request.session['User_ID']
-        year = request.session['years']
-        session = requests.Session()
-        session.auth = config.AUTHS
-
-        Access_Point = config.O_DATA.format("/QySalaryAdvances")
+class advance(UserObjectMixin,View):
+    def get(self,request):
         try:
-            response = session.get(Access_Point, timeout=10).json()
-            open = []
-            Approved = []
-            Rejected = []
-            Pending = []
-            for imprest in response['value']:
-                if imprest['Loan_Status'] == 'Application' and imprest['Employee_No'] == request.session['Employee_No_']:
-                    output_json = json.dumps(imprest)
-                    open.append(json.loads(output_json))
-                if imprest['Loan_Status'] == 'Approved' and imprest['Employee_No'] == request.session['Employee_No_']:
-                    output_json = json.dumps(imprest)
-                    Approved.append(json.loads(output_json))
-                if imprest['Loan_Status'] == 'Rejected' and imprest['Employee_No'] == request.session['Employee_No_']:
-                    output_json = json.dumps(imprest)
-                    Rejected.append(json.loads(output_json))
-                if imprest['Loan_Status'] == 'Being Processed' and imprest['Employee_No'] == request.session['Employee_No_']:
-                    output_json = json.dumps(imprest)
-                    Pending.append(json.loads(output_json))
+            fullname =  request.session['User_ID']
+            year = request.session['years']
+            empNo =request.session['Employee_No_']
+
+            Access_Point = config.O_DATA.format(f"/QySalaryAdvances?$filter=Employee_No%20eq%20%27{empNo}%27")
+            response = self.get_object(Access_Point)
+            openAdvance = [x for x in response['value'] if x['Loan_Status'] == 'Application']
+            Pending = [x for x in response['value'] if x['Loan_Status'] == 'Being Processed']
+            Approved = [x for x in response['value'] if x['Loan_Status'] == 'Approved']
+
             SalaryProducts = config.O_DATA.format("/QyLoanProductTypes")
-            SalaryResponse = session.get(SalaryProducts, timeout=10).json()
+            SalaryResponse = self.get_object(SalaryProducts)
             salary = SalaryResponse['value']
-            counts = len(open)
 
+            counts = len(openAdvance)
             pend = len(Pending)
-
             counter = len(Approved)
-
-            reject = len(Rejected)
 
         except requests.exceptions.RequestException as e:
             print(e)
             messages.info(request, e)
             return redirect('auth')
-
-        todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-
-        ctx = {"today": todays_date, "res": open,
-            "count": counts, "response": Approved,
-            "counter": counter, "reject": Rejected,
-            "rej": reject, "pend": pend,
-            "pending": Pending, "year": year,
-            "full": fullname,"salary":salary}
-    except KeyError as e:
-        print(e)
-        messages.info(request, "Session Expired. Please Login")
-        return redirect('auth')
-    return render(request,"advance.html",ctx)
-
-def RequestAdvance(request):
-    if request.method == "POST":
-        try:
-            loanNo = request.POST.get('loanNo')
-            employeeNo = request.session['Employee_No_'] 
-            productType = request.POST.get('productType')
-            amountRequested = float(request.POST.get('amountRequested'))
-            myUserId = request.session['User_ID']
-            myAction = request.POST.get('myAction')
-        except ValueError as e:
-            print(e)
-            messages.error(request,e)
-            return redirect('advance')
         except KeyError as e:
             print(e)
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
-        try:
-            response = config.CLIENT.service.FnSalaryAdvanceApplication(
-                loanNo, employeeNo,productType,amountRequested,myUserId, myAction)
-            print(response)
-            if response == True:
-                messages.success(request, "Request Successful")
-                return redirect('advance')
-        
         except Exception as e:
-            messages.error(request, e)
             print(e)
-    return redirect('advance')
+            messages.error(request,e)
+            return redirect('auth')
+        ctx = {"today": self.todays_date, "res": openAdvance,
+            "count": counts, "response": Approved,
+            "counter": counter,"pend": pend,
+            "pending": Pending, "year": year,
+            "full": fullname,"salary":salary}
+        return render(request,"advance.html",ctx)
+    def post(self, request):
+        if request.method == "POST":
+            try:
+                loanNo = request.POST.get('loanNo')
+                employeeNo = request.session['Employee_No_'] 
+                productType = request.POST.get('productType')
+                amountRequested = float(request.POST.get('amountRequested'))
+                myUserId = request.session['User_ID']
+                myAction = request.POST.get('myAction')
+            except ValueError as e:
+                print(e)
+                messages.error(request,e)
+                return redirect('advance')
+            except KeyError as e:
+                print(e)
+                messages.info(request, "Session Expired. Please Login")
+                return redirect('auth')
+            try:
+                response = config.CLIENT.service.FnSalaryAdvanceApplication(
+                    loanNo, employeeNo,productType,amountRequested,myUserId, myAction)
+                print(response)
+                if response == True:
+                    messages.success(request, "Request Successful")
+                    return redirect('advance')
+            
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+        return redirect('advance')
 
-def advanceDetail(request,pk):
-    try:
-        fullname = request.session['User_ID']
-        year = request.session['years']
-        session = requests.Session()
-        session.auth = config.AUTHS
-        res = ''
-        state = ''
-        Access_Point = config.O_DATA.format("/QySalaryAdvances")
-        Approver = config.O_DATA.format("/QyApprovalEntries")
+class advanceDetail(UserObjectMixin,View):
+    def get(self, request,pk):
         try:
-            response = session.get(Access_Point, timeout=10).json()
-            res_approver = session.get(Approver, timeout=10).json()
-            Approvers = []
-            for approver in res_approver['value']:
-                if approver['Document_No_'] == pk:
-                    output_json = json.dumps(approver)
-                    Approvers.append(json.loads(output_json))
+            fullname = request.session['User_ID']
+            year = request.session['years']
+            empNo =request.session['Employee_No_']
+
+            Access_Point = config.O_DATA.format(f"/QySalaryAdvances?$filter=Employee_No%20eq%20%27{empNo}%27%20and%20Loan_No%20eq%20%27{pk}%27")
+            response = self.get_object(Access_Point)
             for advance in response['value']:
-                if advance['Employee_No'] == request.session['Employee_No_'] and advance['Loan_No'] == pk:
-                    res = advance
-                    state = advance['Loan_Status']
-            RejectComments = config.O_DATA.format("/QyApprovalCommentLines")
-            RejectedResponse = session.get(RejectComments, timeout=10).json()
-            Comments = []
-            for comment in RejectedResponse['value']:
-                if comment['Document_No_'] == pk:
-                    output_json = json.dumps(comment)
-                    Comments.append(json.loads(output_json))
+                res = advance
+                state = advance['Loan_Status']
+
+            Approver = config.O_DATA.format(f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
+            res_approver = self.get_object(Approver)
+            Approvers = [x for x in res_approver['value']]
+
+            RejectComments = config.O_DATA.format(f"/QyApprovalCommentLines?$filter=Document_No_%20eq%20%27{pk}%27")
+            RejectedResponse = self.get_object(RejectComments)
+            Comments = [x for x in RejectedResponse['value']]
+
         except requests.exceptions.ConnectionError as e:
             print(e)
             messages.error(request,e)
             return redirect('advance')
+        except KeyError as e:
+            messages.info(request, "Session Expired. Please Login")
+            print(e)
+            return redirect('auth')
+        except Exception as e:
+                messages.error(request, e)
+                print(e)
+        ctx = {"today": self.todays_date, "res": res,
+                "Approvers": Approvers, "state": state,
+                "year": year, "full": fullname,"Comments":Comments}
 
-        todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-        ctx = {"today": todays_date, "res": res,
-            "Approvers": Approvers, "state": state,
-            "year": year, "full": fullname,"Comments":Comments}
-    except KeyError as e:
-        messages.info(request, "Session Expired. Please Login")
-        print(e)
-        return redirect('auth')
-
-    return render(request,"advanceDetails.html",ctx)
+        return render(request,"advanceDetails.html",ctx)
 
 def FnRequestSalaryAdvanceApproval(request,pk):
     Username = request.session['User_ID']
