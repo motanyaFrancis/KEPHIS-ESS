@@ -2,10 +2,9 @@ import base64
 from ctypes.wintypes import PHKEY
 from urllib.parse import parse_qs
 from django.shortcuts import render, redirect
-from datetime import date, datetime
+from datetime import  datetime
 import requests
 from requests import Session
-from requests_ntlm import HttpNtlmAuth
 import json
 from django.conf import settings as config
 import datetime as dt
@@ -19,187 +18,170 @@ from zeep import Client
 from zeep.transports import Transport
 from requests.auth import HTTPBasicAuth
 from django.http import JsonResponse
+from django.views import View
 
 # Create your views here.
+class UserObjectMixin(object):
+    model =None
+    session = requests.Session()
+    session.auth = config.AUTHS
+    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
+    def get_object(self,endpoint):
+        response = self.session.get(endpoint, timeout=10).json()
+        return response
 
-
-def PurchaseRequisition(request):
-    try:
-        fullname = request.session['User_ID']
-        year = request.session['years']
-        session = requests.Session()
-        session.auth = config.AUTHS
-        Access_Point = config.O_DATA.format("/QyPurchaseRequisitionHeaders")
+class PurchaseRequisition(UserObjectMixin,View):
+    def get(self,request):
         try:
-            response = session.get(Access_Point, timeout=10).json()
-            open = []
-            Approved = []
-            Pending = []
-            for document in response['value']:
-                if document['Status'] == 'Open' and document['Employee_No_'] == request.session['Employee_No_']:
-                    output_json = json.dumps(document)
-                    open.append(json.loads(output_json))
-                if document['Status'] == 'Released' and document['Employee_No_'] == request.session['Employee_No_']:
-                    output_json = json.dumps(document)
-                    Approved.append(json.loads(output_json))
-                if document['Status'] == "Pending Approval" and document['Employee_No_'] == request.session['Employee_No_']:
-                    output_json = json.dumps(document)
-                    Pending.append(json.loads(output_json))
-            counts = len(open)
+            userID = request.session['User_ID']
+            year = request.session['years']
+            empNo = request.session['Employee_No_']
+
+            Access_Point = config.O_DATA.format(f"/QyPurchaseRequisitionHeaders?$filter=Employee_No_%20eq%20%27{empNo}%27")
+            response = self.get_object(Access_Point)
+            openPurchase = [x for x in response['value'] if x['Status'] == 'Open']
+            Pending = [x for x in response['value'] if x['Status'] == 'Pending Approval']
+            Approved = [x for x in response['value'] if x['Status'] == 'Released']
+
+            counts = len(openPurchase)
             counter = len(Approved)
             pend = len(Pending)
+
         except requests.exceptions.RequestException as e:
             print(e)
             messages.info(request, "Whoops! Something went wrong. Please Login to Continue")
             return redirect('auth')
+        except KeyError as e:
+            print(e)
+            messages.info(request, e)
+            return redirect('auth')
+        
 
-        todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-    
-
-        ctx = {"today": todays_date, "res": open,
+        ctx = {"today": self.todays_date, "res": openPurchase,
             "count": counts, "response": Approved,
             "counter": counter, "pend": pend,
             "pending": Pending, "year": year,
-            "full": fullname}
-    except KeyError as e:
-        print(e)
-        messages.info(request, e)
-        return redirect('auth')
-    return render(request, 'purchaseReq.html', ctx)
+            "full": userID}
+    
+        return render(request, 'purchaseReq.html', ctx)
+    def post(self, request):
+        if request.method == 'POST':
+            try:
+                requisitionNo = request.POST.get('requisitionNo')
+                myUserId = request.session['User_ID']
+                employeeNo = request.session['Employee_No_']
+                orderDate = datetime.strptime(
+                    request.POST.get('orderDate'), '%Y-%m-%d').date()
+                myAction = request.POST.get('myAction')
+            except ValueError:
+                messages.error(request, "Missing Input")
+                return redirect('purchase')
+            except KeyError:
+                messages.info(request, "Session Expired. Please Login")
+                return redirect('auth')
+            if not requisitionNo:
+                requisitionNo = " "
+            try:
+                response = config.CLIENT.service.FnPurchaseRequisitionHeader(
+                    requisitionNo, orderDate, employeeNo, myUserId, myAction)
+                messages.success(request, "Request Successful")
+                print(response)
+            except Exception as e:
+                messages.info(request, e)
+                print(e)
+                return redirect('purchase')
+        return redirect('purchase')
 
-
-def CreatePurchaseRequisition(request):
-    requisitionNo = ''
-    orderDate = ''
-    myAction = ' '
-    if request.method == 'POST':
+class PurchaseRequestDetails(UserObjectMixin,View):
+    def get(self, request,pk):
         try:
-            requisitionNo = request.POST.get('requisitionNo')
-            myUserId = request.session['User_ID']
-            employeeNo = request.session['Employee_No_']
-            orderDate = datetime.strptime(
-                request.POST.get('orderDate'), '%Y-%m-%d').date()
-            myAction = request.POST.get('myAction')
-        except ValueError:
-            messages.error(request, "Missing Input")
-            return redirect('purchase')
-        except KeyError:
-            messages.info(request, "Session Expired. Please Login")
-            return redirect('auth')
-        if not requisitionNo:
-            requisitionNo = " "
-        try:
-            response = config.CLIENT.service.FnPurchaseRequisitionHeader(
-                requisitionNo, orderDate, employeeNo, myUserId, myAction)
-            messages.success(request, "Request Successful")
-            print(response)
-        except Exception as e:
-            messages.info(request, e)
-            print(e)
-            return redirect('purchase')
-    return redirect('purchase')
+            Dpt = request.session['Department']
+            empNo = request.session['Employee_No_']
 
-
-def PurchaseRequestDetails(request, pk):
-    try:
-        session = requests.Session()
-        session.auth = config.AUTHS
-        state = ''
-        res = ''
-        Access_Point = config.O_DATA.format("/QyPurchaseRequisitionHeaders")
-        Approver = config.O_DATA.format("/QyApprovalEntries")
-        ProcPlan = config.O_DATA.format("/QyProcurementPlans")
-        itemNo = config.O_DATA.format("/QyItems")
-        GL_Acc = config.O_DATA.format("/QyGLAccounts")
-        Lines_Res = config.O_DATA.format("/QyPurchaseRequisitionLines")
-        try:
-            response = session.get(Access_Point, timeout=10).json()
-            res_approver = session.get(Approver, timeout=10).json()
-            Res_Proc = session.get(ProcPlan, timeout=10).json()
-            Res_itemNo = session.get(itemNo, timeout=10).json()
-            Res_GL = session.get(GL_Acc, timeout=10).json()
-            response_Lines = session.get(Lines_Res, timeout=10).json()
-            openLines = []
-            openImp = []
-            res_type = []
-            Pending = []
-            Approvers = []
-            Proc = []
-            Items = Res_itemNo['value']
-            Gl_Accounts = Res_GL['value']
-            planitem = []
-            for plans in Res_Proc['value']:
-                if plans['Shortcut_Dimension_2_Code'] == request.session['Department']:
-                    output_json = json.dumps(plans)
-                    planitem.append(json.loads(output_json))
-            for approver in res_approver['value']:
-                if approver['Document_No_'] == pk:
-                    output_json = json.dumps(approver)
-                    Approvers.append(json.loads(output_json))
+            Access_Point = config.O_DATA.format(f"/QyPurchaseRequisitionHeaders?$filter=No_%20eq%20%27{pk}%27%20and%20Employee_No_%20eq%20%27{empNo}%27")
+            response = self.get_object(Access_Point)
             for document in response['value']:
-                if document['Status'] == 'Disapproved' and document['Employee_No_'] == request.session['Employee_No_']:
-                    output_json = json.dumps(document)
-                    openImp.append(json.loads(output_json))
-                    for document in openImp:
-                        if document['No_'] == pk:
-                            res = document
-                if document['Status'] == 'Open' and document['Employee_No_'] == request.session['Employee_No_']:
-                    output_json = json.dumps(document)
-                    openImp.append(json.loads(output_json))
-                    for document in openImp:
-                        if document['No_'] == pk:
-                            res = document
-                            if document['Status'] == 'Open':
-                                state = 1
-                if document['Status'] == 'Released' and document['Employee_No_'] == request.session['Employee_No_']:
-                    output_json = json.dumps(document)
-                    openImp.append(json.loads(output_json))
-                    for document in openImp:
-                        if document['No_'] == pk:
-                            res = document
-                            if document['Status'] == 'Released':
-                                state = 3
-                if document['Status'] == "Pending Approval" and document['Employee_No_'] == request.session['Employee_No_']:
-                    output_json = json.dumps(document)
-                    Pending.append(json.loads(output_json))
-                    for document in Pending:
-                        if document['No_'] == pk:
-                            res = document
-                            if document['Status'] == 'Pending Approval':
-                                state = 2
-            for document in response_Lines['value']:
-                if document['AuxiliaryIndex1'] == pk:
-                    output_json = json.dumps(document)
-                    openLines.append(json.loads(output_json))
-            Access_File = config.O_DATA.format("/QyDocumentAttachments")
-            res_file = session.get(Access_File, timeout=10).json()
-            allFiles = []
-            for file in res_file['value']:
-                if file['No_'] == pk:
-                    output_json = json.dumps(file)
-                    allFiles.append(json.loads(output_json))
-            RejectComments = config.O_DATA.format("/QyApprovalCommentLines")
-            RejectedResponse = session.get(RejectComments, timeout=10).json()
-            Comments = []
-            for comment in RejectedResponse['value']:
-                if comment['Document_No_'] == pk:
-                    output_json = json.dumps(comment)
-                    Comments.append(json.loads(output_json))
+                res = document
+
+            Approver = config.O_DATA.format(f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
+            res_approver = self.get_object(Approver)
+            Approvers = [x for x in res_approver['value']]
+
+            ProcPlan = config.O_DATA.format(f"/QyProcurementPlans?$filter=Shortcut_Dimension_2_Code%20eq%20%27{Dpt}%27")
+            Res_Proc = self.get_object(ProcPlan)
+            planitem = [x for x in Res_Proc['value']]
+
+            itemNo = config.O_DATA.format("/QyItems")
+            Res_itemNo = self.get_object(itemNo)
+            Items = Res_itemNo['value']
+
+            GL_Acc = config.O_DATA.format("/QyGLAccounts")
+            Res_GL = self.get_object(GL_Acc)
+            Gl_Accounts = Res_GL['value']
+
+            Lines_Res = config.O_DATA.format(f"/QyPurchaseRequisitionLines?$filter=AuxiliaryIndex1%20eq%20%27{pk}%27")
+            response_Lines = self.get_object(Lines_Res)
+            openLines = [x for x in response_Lines['value'] if x['AuxiliaryIndex1'] == pk]
+
+            Access_File = config.O_DATA.format(f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27")
+            res_file = self.get_object(Access_File)
+            allFiles = [x for x in res_file['value']]
+
+            RejectComments = config.O_DATA.format(f"/QyApprovalCommentLines?$filter=Document_No_%20eq%20%27{pk}%27")
+            RejectedResponse = self.get_object(RejectComments)
+            Comments = [x for x in RejectedResponse['value']]
+ 
         except requests.exceptions.RequestException as e:
             print(e)
             messages.info(request, "Whoops! Something went wrong. Please Login to Continue")
             return redirect('purchase')
-        todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-        ctx = {"today": todays_date, "res": res,
-            "state": state, "line": openLines,
-            "type": res_type, "Approvers": Approvers,
-            "plans": planitem, "items": Items,
+        except KeyError as e:
+            print(e)
+            messages.info(request, "Session Expired. Please Login")
+            return redirect('auth')
+
+        ctx = {"today": self.todays_date, "res": res, "line": openLines,
+             "Approvers": Approvers,"plans": planitem, "items": Items,
             "gl": Gl_Accounts,"file":allFiles,"Comments":Comments}
-    except KeyError as e:
-        print(e)
-        messages.info(request, "Session Expired. Please Login")
-        return redirect('auth')
-    return render(request, 'purchaseDetail.html', ctx)
+        return render(request, 'purchaseDetail.html', ctx)
+    def post(self, request,pk):
+        if request.method == 'POST':
+            try:
+                myUserId = request.session['User_ID']
+                lineNo = int(request.POST.get('lineNo'))
+                procPlanItem = request.POST.get('procPlanItem')
+                itemTypes = request.POST.get('itemTypes')
+                itemNo = request.POST.get('itemNo')
+                specification = request.POST.get('specification')
+                quantity = int(request.POST.get('quantity'))
+                Unit_of_Measure = request.POST.get('Unit_of_Measure')
+                myAction = request.POST.get('myAction')
+
+            except ValueError:
+                messages.error(request, "Missing Input")
+                return redirect('PurchaseDetail', pk=pk)
+            except KeyError:
+                messages.info(request, "Session Expired. Please Login")
+                return redirect('auth')
+            class Data(enum.Enum):
+                values = itemTypes
+            itemType = (Data.values).value
+
+            if not procPlanItem:
+                procPlanItem = ""
+            if not Unit_of_Measure:
+                Unit_of_Measure = ''
+            try:
+                response = config.CLIENT.service.FnPurchaseRequisitionLine(
+                    pk, lineNo, procPlanItem, itemType, itemNo, specification, quantity, myUserId, myAction,Unit_of_Measure)
+                messages.success(request, "Request Successful")
+                print(response)
+                return redirect('PurchaseDetail', pk=pk)
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+                return redirect('PurchaseDetail', pk=pk)
+        return redirect('PurchaseDetail', pk=pk)
 
 def RequisitionCategory(request):
     session = requests.Session()
@@ -220,53 +202,7 @@ def RequisitionCategory(request):
             return JsonResponse(Asset_res)
     except  Exception as e:
         print(e)
-    return redirect('purchase')
-
-def CreatePurchaseLines(request, pk):
-    lineNo = ""
-    procPlanItem = ''
-    itemTypes = ""
-    itemNo = ""
-    specification = ''
-    quantity = 1
-    myAction = ''
-    if request.method == 'POST':
-        try:
-            myUserId = request.session['User_ID']
-            lineNo = int(request.POST.get('lineNo'))
-            procPlanItem = request.POST.get('procPlanItem')
-            itemTypes = request.POST.get('itemTypes')
-            itemNo = request.POST.get('itemNo')
-            specification = request.POST.get('specification')
-            quantity = int(request.POST.get('quantity'))
-            Unit_of_Measure = request.POST.get('Unit_of_Measure')
-            myAction = request.POST.get('myAction')
-
-        except ValueError:
-            messages.error(request, "Missing Input")
-            return redirect('PurchaseDetail', pk=pk)
-        except KeyError:
-            messages.info(request, "Session Expired. Please Login")
-            return redirect('auth')
-        class Data(enum.Enum):
-            values = itemTypes
-        itemType = (Data.values).value
-
-        if not procPlanItem:
-            procPlanItem = ""
-        if not Unit_of_Measure:
-            Unit_of_Measure = ''
-        try:
-            response = config.CLIENT.service.FnPurchaseRequisitionLine(
-                pk, lineNo, procPlanItem, itemType, itemNo, specification, quantity, myUserId, myAction,Unit_of_Measure)
-            messages.success(request, "Request Successful")
-            print(response)
-            return redirect('PurchaseDetail', pk=pk)
-        except Exception as e:
-            messages.error(request, e)
-            print(e)
-            return redirect('PurchaseDetail', pk=pk)
-    return redirect('PurchaseDetail', pk=pk)
+    return redirect('purchase') 
 
 
 def PurchaseApproval(request, pk):
@@ -402,179 +338,150 @@ def FnDeletePurchaseRequisitionLine(request, pk):
     return redirect('PurchaseDetail', pk=pk)
 
 
-def RepairRequest(request):
-    try:
-        fullname = request.session['User_ID']
-        year = request.session['years']
-        session = requests.Session()
-        session.auth = config.AUTHS
-
-        Access_Point = config.O_DATA.format("/QyRepairRequisitionHeaders")
+class RepairRequest(UserObjectMixin,View):
+    def get(self, request):
         try:
-            response = session.get(Access_Point, timeout=10).json()
-            open = []
-            Approved = []
-            Pending = []
-            for document in response['value']:
-                if document['Status'] == 'Open' and document['Requested_By'] == request.session['User_ID']:
-                    output_json = json.dumps(document)
-                    open.append(json.loads(output_json))
-                if document['Status'] == 'Released' and document['Requested_By'] == request.session['User_ID']:
-                    output_json = json.dumps(document)
-                    Approved.append(json.loads(output_json))
-                if document['Status'] == "Pending Approval" and document['Requested_By'] == request.session['User_ID']:
-                    output_json = json.dumps(document)
-                    Pending.append(json.loads(output_json))
-            counts = len(open)
+            userID = request.session['User_ID']
+            year = request.session['years']
+
+            Access_Point = config.O_DATA.format(f"/QyRepairRequisitionHeaders?$filter=Requested_By%20eq%20%27{userID}%27")
+            response = self.get_object(Access_Point)
+            openRepair = [x for x in response['value'] if x['Status'] == 'Open']
+            Pending = [x for x in response['value'] if x['Status'] == 'Pending Approval']
+            Approved = [x for x in response['value'] if x['Status'] == 'Released']
+
+            counts = len(openRepair)
             counter = len(Approved)
             pend = len(Pending)
+
         except requests.exceptions.RequestException as e:
             print(e)
             messages.info(request, "Whoops! Something went wrong. Please Login to Continue")
             return redirect('auth')
+        except KeyError:
+            messages.info(request, "Session Expired. Please Login")
+            return redirect('auth')
 
-        todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-        ctx = {"today": todays_date, "res": open,
-            "count": counts, "response": Approved,
-            "counter": counter,"pend": pend,
-            "year": year, "full": fullname,
-            "pending": Pending
-            }
-    except KeyError:
-        messages.info(request, "Session Expired. Please Login")
-        return redirect('auth')
-    return render(request, 'repairReq.html', ctx)
+        ctx = {"today": self.todays_date, "res": openRepair,"count": counts, "response": Approved,
+            "counter": counter,"pend": pend,"year": year, "full": userID,"pending": Pending}
+        
+        return render(request, 'repairReq.html', ctx)
+    def post(self, request):
+        if request.method == 'POST':
+            try:
+                employeeNo = request.session['Employee_No_']
+                myUserId = request.session['User_ID']
+                requisitionNo = request.POST.get('requisitionNo')
+                orderDate = datetime.strptime(
+                    request.POST.get('orderDate'), '%Y-%m-%d').date()
+                reason = request.POST.get('reason')
+                myAction = request.POST.get('myAction')
+            except ValueError:
+                messages.error(request, "Missing Input")
+                return redirect('repair')
+            except KeyError:
+                messages.info(request, "Session Expired. Please Login")
+                return redirect('auth')
+            if not requisitionNo:
+                requisitionNo = " "
+            try:
+                response = config.CLIENT.service.FnRepairRequisitionHeader(
+                    requisitionNo, orderDate, employeeNo, reason, myUserId, myAction)
+                messages.success(request, "Request Successful")
+                print(response)
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+                return redirect('repair')
+        return redirect('repair')
 
-
-def CreateRepairRequest(request):
-    requisitionNo = ''
-    orderDate = ''
-    reason = ""
-    myAction = ' '
-    if request.method == 'POST':
+class RepairRequestDetails(UserObjectMixin,View):
+    def get(self, request,pk):
         try:
-            employeeNo = request.session['Employee_No_']
-            myUserId = request.session['User_ID']
-            requisitionNo = request.POST.get('requisitionNo')
-            orderDate = datetime.strptime(
-                request.POST.get('orderDate'), '%Y-%m-%d').date()
-            reason = request.POST.get('reason')
-            myAction = request.POST.get('myAction')
-        except ValueError:
-            messages.error(request, "Missing Input")
+            empNo = request.session['Employee_No_']
+            userID = request.session['User_ID']
+            year = request.session['years']
+
+            Access_Point = config.O_DATA.format(f"/QyRepairRequisitionHeaders?$filter=No_%20eq%20%27{pk}%27%20and%20Requested_By%20eq%20%27{userID}%27")
+            response = self.get_object(Access_Point)
+            for document in response['value']:
+                res = document
+
+            Assets = config.O_DATA.format(f"/QyFixedAssets?$filter=Responsible_Employee%20eq%20%27{empNo}%27")
+            Assest_res = self.get_object(Assets)
+            my_asset = [x for x in Assest_res['value']]
+
+            Approver = config.O_DATA.format(f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
+            res_approver = self.get_object(Approver)
+            Approvers = [x for x in res_approver['value']]
+
+            Lines_Res = config.O_DATA.format(f"/QyRepairRequisitionLines?$filter=AuxiliaryIndex1%20eq%20%27{pk}%27")
+            response_Lines = self.get_object(Lines_Res)
+            openLines = [x for x in response_Lines['value'] if x['AuxiliaryIndex1'] == pk]
+
+            Access_File = config.O_DATA.format(f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27")
+            res_file = self.get_object(Access_File)
+            allFiles = [x for x in res_file['value']]
+
+            RejectComments = config.O_DATA.format(f"/QyApprovalCommentLines?$filter=Document_No_%20eq%20%27{pk}%27")
+            RejectedResponse = self.get_object(RejectComments)
+            Comments = [x for x in RejectedResponse['value']]
+
+        except requests.exceptions.RequestException as e:
+            print(e)
+            messages.info(request, "Whoops! Something went wrong. Please Login to Continue")
             return redirect('repair')
         except KeyError:
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
-        if not requisitionNo:
-            requisitionNo = " "
-        try:
-            response = config.CLIENT.service.FnRepairRequisitionHeader(
-                requisitionNo, orderDate, employeeNo, reason, myUserId, myAction)
-            messages.success(request, "Request Successful")
-            print(response)
-        except Exception as e:
-            messages.error(request, e)
-            print(e)
-            return redirect('repair')
-    return redirect('repair')
-
-
-def RepairRequestDetails(request, pk):
-    try:
-        fullname = request.session['User_ID']
-        year = request.session['years']
-        session = requests.Session()
-        session.auth = config.AUTHS
-        state = ''
-        res = ''
-        output_json = ''
-        Access_Point = config.O_DATA.format("/QyRepairRequisitionHeaders")
-        Assets = config.O_DATA.format("/QyFixedAssets")
-        Approver = config.O_DATA.format("/QyApprovalEntries")
-        Lines_Res = config.O_DATA.format("/QyRepairRequisitionLines")
-        try:
-            response = session.get(Access_Point, timeout=10).json()
-            Assest_res = session.get(Assets, timeout=10).json()
-            res_approver = session.get(Approver, timeout=10).json()
-            response_Lines = session.get(Lines_Res, timeout=10).json()
-            openLines = []
-            openImp = []
-            res_type = []
-            Approvers = []
-            my_asset =[]
-
-            for assest in Assest_res['value']:
-                if assest['Responsible_Employee'] == request.session['Employee_No_']:
-                    output_json = json.dumps(assest)
-                    my_asset.append(json.loads(output_json))
-            for approver in res_approver['value']:
-                if approver['Document_No_'] == pk:
-                    output_json = json.dumps(approver)
-                    Approvers.append(json.loads(output_json))
-            for document in response['value']:
-                if document['Status'] == 'Open' and document['Requested_By'] == request.session['User_ID']:
-                    output_json = json.dumps(document)
-                    openImp.append(json.loads(output_json))
-                    for document in openImp:
-                        if document['No_'] == pk:
-                            res = document
-                            if document['Status'] == 'Open':
-                                state = 1
-                if document['Status'] == 'Released' and document['Requested_By'] == request.session['User_ID']:
-                    output_json = json.dumps(document)
-                    openImp.append(json.loads(output_json))
-                    for document in openImp:
-                        if document['No_'] == pk:
-                            res = document
-                            if document['Status'] == 'Released':
-                                state = 3
-
-                if document['Status'] == 'Disapproved' and document['Requested_By'] == request.session['User_ID']:
-                    output_json = json.dumps(document)
-                    openImp.append(json.loads(output_json))
-                    for document in openImp:
-                        if document['No_'] == pk:
-                            res = document
-                if document['Status'] == "Pending Approval" and document['Requested_By'] == request.session['User_ID']:
-                    output_json = json.dumps(document)
-                    openImp.append(json.loads(output_json))
-                    for document in openImp:
-                        if document['No_'] == pk:
-                            res = document
-                            if document['Status'] == 'Pending Approval':
-                                state = 2
-            for document in response_Lines['value']:
-                if document['AuxiliaryIndex1'] == pk:
-                    output_json = json.dumps(document)
-                    openLines.append(json.loads(output_json))
-            Access_File = config.O_DATA.format("/QyDocumentAttachments")
-            res_file = session.get(Access_File, timeout=10).json()
-            allFiles = []
-            for file in res_file['value']:
-                if file['No_'] == pk:
-                    output_json = json.dumps(file)
-                    allFiles.append(json.loads(output_json))
-            RejectComments = config.O_DATA.format("/QyApprovalCommentLines")
-            RejectedResponse = session.get(RejectComments, timeout=10).json()
-            Comments = []
-            for comment in RejectedResponse['value']:
-                if comment['Document_No_'] == pk:
-                    output_json = json.dumps(comment)
-                    Comments.append(json.loads(output_json))
-        except requests.exceptions.RequestException as e:
-            print(e)
-            messages.info(request, "Whoops! Something went wrong. Please Login to Continue")
-            return redirect('repair')
-        ctx = {"res": res,
-            "state": state, "line": openLines,
-            "type": res_type, "Approvers": Approvers,
-            "asset": my_asset, "full": fullname,
+        ctx = {"res": res,"line": openLines,"Approvers": Approvers,
+            "asset": my_asset, "full": userID,
             "year": year,"file":allFiles,"Comments":Comments}
-    except KeyError:
-        messages.info(request, "Session Expired. Please Login")
-        return redirect('auth')
-    return render(request, 'repairDetail.html', ctx)
+        return render(request, 'repairDetail.html', ctx)
+    def post(self, request,pk):
+        if request.method == 'POST':
+            try:
+                lineNo = int(request.POST.get('lineNo'))
+                assetCode = request.POST.get('assetCode')
+                OtherAsset = request.POST.get('OtherAsset')
+                description = request.POST.get('description')
+                attach = request.FILES.getlist('attachment')
+                myAction = request.POST.get('myAction')
+                tableID = 52177433
+            except ValueError:
+                messages.error(request, "Missing Input")
+                return redirect('RepairDetail', pk=pk)
+
+            if not OtherAsset:
+                OtherAsset = ''
+            try:
+                response = config.CLIENT.service.FnRepairRequisitionLine(
+                    pk, lineNo, assetCode, description, myAction,OtherAsset)
+                print(response)
+                if response !=0 and not attach:
+                    messages.success(request, "Request Successful")
+                    return redirect('RepairDetail', pk=pk)
+                if attach and response != 0:
+                    for files in attach:
+                        fileName = request.FILES['attachment'].name
+                        attachment = base64.b64encode(files.read())
+                        try:
+                            responses = config.CLIENT.service.FnUploadAttachedDocument(
+                                pk +'#'+str(response), fileName, attachment, tableID,request.session['User_ID'])
+                            if responses == True:
+                                messages.success(request, "Request Successful")
+                                return redirect('RepairDetail', pk=pk)
+                            else:
+                                messages.error(request, "Failed, Try Again")
+                                return redirect('RepairDetail', pk=pk)
+                        except Exception as e:
+                            messages.error(request, e)
+                            print(e)
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+                return redirect('RepairDetail', pk=pk)
+        return redirect('RepairDetail', pk=pk)
 
 
 def RepairApproval(request, pk):
@@ -641,55 +548,6 @@ def DeleteRepairAttachment(request,pk):
     return redirect('RepairDetail', pk=pk)
 
 
-def CreateRepairLines(request, pk):
-    lineNo = ""
-    assetCode = ''
-    description = ''
-    myAction = ''
-    if request.method == 'POST':
-        try:
-            lineNo = int(request.POST.get('lineNo'))
-            assetCode = request.POST.get('assetCode')
-            OtherAsset = request.POST.get('OtherAsset')
-            description = request.POST.get('description')
-            attach = request.FILES.getlist('attachment')
-            myAction = request.POST.get('myAction')
-            tableID = 52177433
-        except ValueError:
-            messages.error(request, "Missing Input")
-            return redirect('RepairDetail', pk=pk)
-
-        if not OtherAsset:
-            OtherAsset = ''
-        try:
-            response = config.CLIENT.service.FnRepairRequisitionLine(
-                pk, lineNo, assetCode, description, myAction,OtherAsset)
-            print(response)
-            if response !=0 and not attach:
-                messages.success(request, "Request Successful")
-                return redirect('RepairDetail', pk=pk)
-            if attach and response != 0:
-                for files in attach:
-                    fileName = request.FILES['attachment'].name
-                    attachment = base64.b64encode(files.read())
-                    try:
-                        responses = config.CLIENT.service.FnUploadAttachedDocument(
-                            pk +'#'+str(response), fileName, attachment, tableID,request.session['User_ID'])
-                        if responses == True:
-                            messages.success(request, "Request Successful")
-                            return redirect('RepairDetail', pk=pk)
-                        else:
-                            messages.error(request, "Failed, Try Again")
-                            return redirect('RepairDetail', pk=pk)
-                    except Exception as e:
-                        messages.error(request, e)
-                        print(e)
-        except Exception as e:
-            messages.error(request, e)
-            print(e)
-            return redirect('RepairDetail', pk=pk)
-    return redirect('RepairDetail', pk=pk)
-
 def FnDeleteRepairRequisitionLine(request, pk):
     lineNo = ""
     if request.method == 'POST':
@@ -706,174 +564,136 @@ def FnDeleteRepairRequisitionLine(request, pk):
     return redirect('RepairDetail', pk=pk)
 
 
-def StoreRequest(request):
-    try:
-        fullname = request.session['User_ID']
-        year = request.session['years']
-        session = requests.Session()
-        session.auth = config.AUTHS
-
-        Access_Point = config.O_DATA.format("/QyStoreRequisitionHeaders")
+class StoreRequest(UserObjectMixin,View):
+    def get(self, request):
         try:
-            response = session.get(Access_Point, timeout=10).json()
-            open = []
-            Approved = []
-            Pending = []
-            for document in response['value']:
-                if document['Status'] == 'Open' and document['Requested_By'] == request.session['User_ID']:
-                    output_json = json.dumps(document)
-                    open.append(json.loads(output_json))
-                if document['Status'] == 'Released' and document['Requested_By'] == request.session['User_ID']:
-                    output_json = json.dumps(document)
-                    Approved.append(json.loads(output_json))
-                if document['Status'] == "Pending Approval" and document['Requested_By'] == request.session['User_ID']:
-                    output_json = json.dumps(document)
-                    Pending.append(json.loads(output_json))
-            counts = len(open)
+            userID = request.session['User_ID']
+            year = request.session['years']
+
+            Access_Point = config.O_DATA.format(f"/QyStoreRequisitionHeaders?$filter=Requested_By%20eq%20%27{userID}%27")
+            response = self.get_object(Access_Point)
+            openStore = [x for x in response['value'] if x['Status'] == 'Open']
+            Pending = [x for x in response['value'] if x['Status'] == 'Pending Approval']
+            Approved = [x for x in response['value'] if x['Status'] == 'Released']
+
+            counts = len(openStore)
             counter = len(Approved)
             pend = len(Pending)
+
         except requests.exceptions.RequestException as e:
             print(e)
             messages.info(request, "Whoops! Something went wrong. Please Login to Continue")
             return redirect('auth')
-
-        todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-        ctx = {"today": todays_date, "res": open,
-            "count": counts, "response": Approved,
-            "counter": counter,"pend": pend, "pending": Pending,
-            "full": fullname, "year": year}
-    except KeyError:
-        messages.info(request, "Session Expired. Please Login")
-        return redirect('auth')
-    return render(request, 'storeReq.html', ctx)
-
-
-def CreateStoreRequisition(request):
-    requisitionNo = ''
-    reason = ""
-    myAction = ''
-    if request.method == 'POST':
-        try:
-            requisitionNo = request.POST.get('requisitionNo')
-            reason = request.POST.get('reason')
-            myAction = request.POST.get('myAction')
-            myUserId = request.session['User_ID']
-            employeeNo = request.session['Employee_No_']
-        except ValueError:
-            messages.error(request, "Missing Input")
-            return redirect('store')
         except KeyError:
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
-        if not requisitionNo:
-            requisitionNo = " "
 
+        ctx = {"today": self.todays_date, "res": openStore,
+            "count": counts, "response": Approved,
+            "counter": counter,"pend": pend, "pending": Pending,
+            "full": userID, "year": year}
+        return render(request, 'storeReq.html', ctx)
+    def post(self, request):
+        if request.method == 'POST':
+            try:
+                requisitionNo = request.POST.get('requisitionNo')
+                reason = request.POST.get('reason')
+                myAction = request.POST.get('myAction')
+                myUserId = request.session['User_ID']
+                employeeNo = request.session['Employee_No_']
+            except ValueError:
+                messages.error(request, "Missing Input")
+                return redirect('store')
+            except KeyError:
+                messages.info(request, "Session Expired. Please Login")
+                return redirect('auth')
+            if not requisitionNo:
+                requisitionNo = " "
+
+            try:
+                response = config.CLIENT.service.FnStoreRequisitionHeader(
+                    requisitionNo, employeeNo, reason, myUserId, myAction)
+                messages.success(request, "Request Successful")
+                print(response)
+            except Exception as e:
+                print(e)
+                messages.info(request, e)
+                return redirect('store')
+        return redirect('store')
+
+class StoreRequestDetails(UserObjectMixin, View):
+    def get(self, request,pk):
         try:
-            response = config.CLIENT.service.FnStoreRequisitionHeader(
-                requisitionNo, employeeNo, reason, myUserId, myAction)
-            messages.success(request, "Request Successful")
-            print(response)
-        except Exception as e:
-            print(e)
-            messages.info(request, e)
-            return redirect('store')
-    return redirect('store')
+            userID = request.session['User_ID']
+            year = request.session['years']
 
-
-def StoreRequestDetails(request, pk):
-    try:
-        fullname = request.session['User_ID']
-        year = request.session['years']
-        session = requests.Session()
-        session.auth = config.AUTHS
-        state = ''
-        res = ''
-        Access_Point = config.O_DATA.format("/QyStoreRequisitionHeaders")
-        ItemCategory = config.O_DATA.format("/QyItemCategories")
-        Location = config.O_DATA.format("/QyLocations")
-        Approver = config.O_DATA.format("/QyApprovalEntries")
-        Lines_Res = config.O_DATA.format("/QyStoreRequisitionLines")
-        try:
-            response = session.get(Access_Point, timeout=10).json()
-            Loc_res = session.get(Location, timeout=10).json()
-            res_approver = session.get(Approver, timeout=10).json()
-            response_Lines = session.get(Lines_Res, timeout=10).json()
-            openLines = []
-            openImp = []
-            res_type = []
-            Approvers = []
-            Item_Cat = session.get(ItemCategory, timeout=10).json()
-            itemsCategory = Item_Cat['value']
-            Location = Loc_res['value']
-            for approver in res_approver['value']:
-                if approver['Document_No_'] == pk:
-                    output_json = json.dumps(approver)
-                    Approvers.append(json.loads(output_json))
+            Access_Point = config.O_DATA.format(f"/QyStoreRequisitionHeaders?$filter=No_%20eq%20%27{pk}%27%20and%20Requested_By%20eq%20%27{userID}%27")
+            response = self.get_object(Access_Point)
             for document in response['value']:
-                if document['Status'] == 'Released' and document['Requested_By'] == request.session['User_ID']:
-                    output_json = json.dumps(document)
-                    openImp.append(json.loads(output_json))
-                    for document in openImp:
-                        if document['No_'] == pk:
-                            res = document
-                            if document['Status'] == 'Released':
-                                state = 3
-                if document['Status'] == 'Open' and document['Requested_By'] == request.session['User_ID']:
-                    output_json = json.dumps(document)
-                    openImp.append(json.loads(output_json))
-                    for document in openImp:
-                        if document['No_'] == pk:
-                            res = document
-                            if document['Status'] == 'Open':
-                                state = 1
-                if document['Status'] == 'Disapproved' and document['Requested_By'] == request.session['User_ID']:
-                    output_json = json.dumps(document)
-                    openImp.append(json.loads(output_json))
-                    for document in openImp:
-                        if document['No_'] == pk:
-                            res = document
-                if document['Status'] == "Pending Approval" and document['Requested_By'] == request.session['User_ID']:
-                    output_json = json.dumps(document)
-                    openImp.append(json.loads(output_json))
-                    for document in openImp:
-                        if document['No_'] == pk:
-                            res = document
-                            if document['Status'] == 'Pending Approval':
-                                state = 2                
-            for document in response_Lines['value']:
-                if document['AuxiliaryIndex1'] == pk:
-                    output_json = json.dumps(document)
-                    openLines.append(json.loads(output_json))
-            Access_File = config.O_DATA.format("/QyDocumentAttachments")
-            res_file = session.get(Access_File, timeout=10).json()
-            allFiles = []
-            for file in res_file['value']:
-                if file['No_'] == pk:
-                    output_json = json.dumps(file)
-                    allFiles.append(json.loads(output_json))
-            RejectComments = config.O_DATA.format("/QyApprovalCommentLines")
-            RejectedResponse = session.get(RejectComments, timeout=10).json()
-            Comments = []
-            for comment in RejectedResponse['value']:
-                if comment['Document_No_'] == pk:
-                    output_json = json.dumps(comment)
-                    Comments.append(json.loads(output_json))
+                res = document
+
+            ItemCategory = config.O_DATA.format("/QyItemCategories")
+            Item_Cat = self.get_object(ItemCategory)
+            itemsCategory = Item_Cat['value']
+
+            Location = config.O_DATA.format("/QyLocations")
+            Loc_res = self.get_object(Location)
+            Location = Loc_res['value']
+
+            Approver = config.O_DATA.format(f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
+            res_approver = self.get_object(Approver)
+            Approvers = [x for x in res_approver['value']]
+
+            Lines_Res = config.O_DATA.format(f"/QyStoreRequisitionLines?$filter=AuxiliaryIndex1%20%20eq%20%27{pk}%27")
+            response_Lines = self.get_object(Lines_Res)
+            openLines = [x for x in response_Lines['value'] if x['AuxiliaryIndex1'] == pk]
+
+            Access_File = config.O_DATA.format(f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27")
+            res_file = self.get_object(Access_File)
+            allFiles = [x for x in res_file['value']]
+
+            RejectComments = config.O_DATA.format(f"/QyApprovalCommentLines?$filter=Document_No_%20eq%20%27{pk}%27")
+            RejectedResponse = self.get_object(RejectComments)
+            Comments = [x for x in RejectedResponse['value']]
+
         except requests.exceptions.RequestException as e:
             print(e)
             messages.info(request, "Whoops! Something went wrong. Please Login to Continue")
             return redirect('auth')
-        todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-        ctx = {"today": todays_date, "res": res,
-            "state": state, "line": openLines,
-            "type": res_type, 
-            "Approvers": Approvers, "loc": Location,
-            "year": year, "full": fullname,
+        except KeyError:
+            messages.info(request, "Session Expired. Please Login")
+            return redirect('auth')
+
+        ctx = {"today": self.todays_date, "res": res,"line": openLines,
+            "Approvers": Approvers, "loc": Location,"year": year, "full": userID,
             "itemsCategory": itemsCategory,"file":allFiles,
             "Comments":Comments}
-    except KeyError:
-        messages.info(request, "Session Expired. Please Login")
-        return redirect('auth')
-    return render(request, 'storeDetail.html', ctx)
+        return render(request, 'storeDetail.html', ctx)
+    def post(self, request,pk):
+        if request.method == 'POST':
+            try:
+                requisitionNo = pk
+                lineNo = int(request.POST.get('lineNo'))
+                itemCode = request.POST.get('itemCode')
+                quantity = int(request.POST.get('quantity'))
+                myAction = request.POST.get('myAction')
+                Unit_of_Measure = request.POST.get('Unit_of_Measure')
+            except ValueError:
+                messages.error(request, "Missing Input")
+                return redirect('StoreDetail', pk=pk)
+            if not Unit_of_Measure:
+                Unit_of_Measure = ''
+            try:
+                response = config.CLIENT.service.FnStoreRequisitionLine(
+                    requisitionNo, lineNo, itemCode, quantity, myAction,Unit_of_Measure)
+                messages.success(request, "Request Successful")
+                print(response)
+                return redirect('StoreDetail', pk=pk)
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+                return redirect('StoreDetail', pk=pk)
+        return redirect('StoreDetail', pk=pk)
 
 
 
@@ -951,36 +771,7 @@ def FnCancelStoreApproval(request, pk):
             return redirect('StoreDetail', pk=pk)
     return redirect('StoreDetail', pk=pk)
 
-
-def CreateStoreLines(request, pk):
-    lineNo = ""
-    itemCode = ""
-    quantity = ""
-    myAction = ''
-    if request.method == 'POST':
-        try:
-            requisitionNo = pk
-            lineNo = int(request.POST.get('lineNo'))
-            itemCode = request.POST.get('itemCode')
-            quantity = int(request.POST.get('quantity'))
-            myAction = request.POST.get('myAction')
-            Unit_of_Measure = request.POST.get('Unit_of_Measure')
-        except ValueError:
-            messages.error(request, "Missing Input")
-            return redirect('StoreDetail', pk=pk)
-        if not Unit_of_Measure:
-            Unit_of_Measure = ''
-        try:
-            response = config.CLIENT.service.FnStoreRequisitionLine(
-                requisitionNo, lineNo, itemCode, quantity, myAction,Unit_of_Measure)
-            messages.success(request, "Request Successful")
-            print(response)
-            return redirect('StoreDetail', pk=pk)
-        except Exception as e:
-            messages.error(request, e)
-            print(e)
-            return redirect('StoreDetail', pk=pk)
-    return redirect('StoreDetail', pk=pk)
+    
 
 # Delete Store Header
 

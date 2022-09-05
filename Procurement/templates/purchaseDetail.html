@@ -7,7 +7,7 @@
     <div class="content-wrapper">
         <div class="d-xl-flex justify-content-between align-items-start">
             <h2 class="text-dark font-weight-bold mb-2"> Purchase Requisition
-                {% if state == 1 %}
+                {% if res.Status == "Open" %}
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Attachment"> <i
                         class="las la-plus"></i> Upload Attachment</button>
                 {% endif %}
@@ -15,13 +15,13 @@
 
             <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
                 <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
-                    {% if state == 1 %}
+                    {% if res.Status == "Open" %}
                     <button class="btn btn-successs p-3 d-flex align-items-center" data-bs-toggle="modal"
                         data-bs-target="#staticBackdrop" type="button"> <i class="las la-plus text-white"
                             style="font-size:15px;"></i> Add Requisition
                         Lines
                     </button>
-                    {% elif state == 3 %}
+                    {% elif res.Status == "Released" %}
                     <form action="{% url 'FnGeneratePurchaseReport' res.No_ %}" method="post"
                         style="display:inline-block">
                         {% csrf_token %}
@@ -164,24 +164,24 @@
                                     <th>Type</th>
                                     <th>Description</th>
                                     <th>Quantity</th>
-                                    {% if state == 1%}
+                                    {% if res.Status == "Open"%}
                                     <th>Actions</th>
                                     {% endif %}
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for res in line %}
+                                {% for line in line %}
                                 <tr>
-                                    <td>{{res.Procurement_Plan}}</td>
-                                    <td>{{res.Type}}</td>
-                                    <td>{{res.Description}}</td>
-                                    <td>{{res.Quantity}}</td>
-                                    {% if state == 1%}
+                                    <td>{{line.Procurement_Plan}}</td>
+                                    <td>{{line.Type}}</td>
+                                    <td>{{line.Description}}</td>
+                                    <td>{{line.Quantity}}</td>
+                                    {% if res.Status == "Open"%}
                                     <td>
-                                        <form action="{% url 'FnDeletePurchaseRequisitionLine' res.AuxiliaryIndex1 %}"
+                                        <form action="{% url 'FnDeletePurchaseRequisitionLine' line.AuxiliaryIndex1 %}"
                                             method="post" style="display: inline-block;">
                                             {% csrf_token %}
-                                            <input type="hidden" name="lineNo" value="{{res.Line_No_}}">
+                                            <input type="hidden" name="lineNo" value="{{line.Line_No_}}">
                                             <button type="submit" class="btn btn-danger" data-toggle="tooltip"
                                                 data-placement="top" title="Delete"><i class="fas fa-trash-alt"></i>
                                             </button>
@@ -285,7 +285,7 @@
         {% endif %}
         <div class="row">
             <div class="col-md-12">
-                {% if state == 1 %}
+                {% if res.Status == "Open" %}
                 <div class="myForm my-3">
                     <form action="{% url 'PurchaseApprove' res.No_ %}" method="POST" style="display: inline-block;">
                         {% csrf_token %}
@@ -295,7 +295,7 @@
                         <button class="btn btn-info" type="submit">Request For Approval</button>
                     </form>
                 </div>
-                {% elif state == 2 %}
+                {% elif res.Status == "Pending Approval" %}
                 <div class="d-grid gap-2 my-3">
                     <form action="{% url 'PurchaseCancel' res.No_ %}" method="POST" class="myForm" id="approvalForm">
                         {% csrf_token %}
@@ -308,7 +308,7 @@
                 {% endif %}
             </div>
         </div>
-        {% if state == 2 %}
+        {% if res.Status == "Pending Approval" %}
         <div class="row mt-4">
             <div class="col-md-12">
                 <div class="card" id="d-card">
@@ -352,7 +352,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="myForm" action="{% url 'PurchaseLines' res.No_ %}" method="post" id="PurchaseForm"
+                    <form class="myForm" action="{% url 'PurchaseDetail' res.No_ %}" method="post" id="PurchaseForm"
                         novalidate>
                         {% csrf_token %}
                         <div class="row">

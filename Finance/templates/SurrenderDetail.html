@@ -9,12 +9,12 @@
             </h2>
             <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
                 <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
-                    {% if state == 1 %}
+                    {% if res.Status == "Open" %}
                     <button class="btn btn-successs p-3 d-flex align-items-center" data-bs-toggle="modal"
                         data-bs-target="#Attachment" type="button"> <i class="las la-plus text-white"
                             style="font-size:15px;"></i> Upload Attachment
                     </button>
-                    {% elif state == 3 %}
+                    {% elif res.Status == "Released" %}
                     <form action="{% url 'FnGenerateImprestSurrenderReport' res.No_%}" method="post"
                         style="display:inline-block">
                         {% csrf_token %}
@@ -188,20 +188,20 @@
                                     <th>Actual Spent</th>
                                     <th>Remaining Amount</th>
                                     <th>Amount</th>
-                                    {% if state == 1 %}
+                                    {% if res.Status == "Open" %}
                                     <th>Action</th>
                                     {% endif %}
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for res in line %}
+                                {% for line in line %}
                                 <tr>
-                                    <td>{{res.Expenditure_Type}}</td>
-                                    <td>{{res.Description}}</td>
-                                    <td>{{res.Actual_Spent}}</td>
-                                    <td>{{res.Remaining_Amount}}</td>
-                                    <td>{{res.Amount}}</td>
-                                    {% if state == 1 %}
+                                    <td>{{line.Expenditure_Type}}</td>
+                                    <td>{{line.Description}}</td>
+                                    <td>{{line.Actual_Spent}}</td>
+                                    <td>{{line.Remaining_Amount}}</td>
+                                    <td>{{line.Amount}}</td>
+                                    {% if res.Status == "Open" %}
                                     <td>
 
                                         <a href="" class="btn btn-primary" data-toggle="tooltip" data-placement="top"
@@ -218,15 +218,15 @@
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                         <h5 class="modal-title" id="staticBackdropLabel">Surrender
-                                                            Amount{{res.AuxiliaryIndex2}}
+                                                            Amount{{line.AuxiliaryIndex2}}
                                                         </h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                             aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
                                                         <form class="myForm needs-validation"
-                                                            action="{% url 'CreateSurrenderLines' res.No %}"
-                                                            method="post" novalidate>
+                                                            action="{% url 'IMPSurrender' line.No %}" method="post"
+                                                            novalidate>
                                                             {% csrf_token %}
                                                             <div class="mb-2"> <span class="w-name">
                                                                     Imprest Surrender Amount:
@@ -234,7 +234,7 @@
                                                                 <div class="row">
                                                                     <div class="col-md-12">
                                                                         <input type="hidden" name="lineNo"
-                                                                            value="{{res.AuxiliaryIndex2}}">
+                                                                            value="{{line.AuxiliaryIndex2}}">
                                                                     </div>
                                                                 </div>
                                                                 <div class="row">
@@ -361,7 +361,7 @@
         {% endif %}
         <div class="row">
             <div class="col-md-12">
-                {% if state == 1 %}
+                {% if res.Status == "Open" %}
                 <div class="myForm my-3">
                     <form action="{% url 'SurrenderApprove' res.No_ %}" method="POST" style="display: inline-block;">
                         {% csrf_token %}
@@ -371,7 +371,7 @@
                         <button class="btn btn-info" type="submit">Request For Approval</button>
                     </form>
                 </div>
-                {% elif state == 2 %}
+                {% elif res.Status == "Pending Approval" %}
                 <div class="d-grid gap-2 my-3">
                     <form action="{% url 'CancelSurrenderApproval' res.No_ %}" method="POST" class="myForm"
                         id="approvalForm">
@@ -385,7 +385,7 @@
                 {% endif %}
             </div>
         </div>
-        {% if state == 2 %}
+        {% if res.Status == "Pending Approval" %}
         <div class="row mt-4">
             <div class="col-md-12">
                 <div class="card" id="d-card">

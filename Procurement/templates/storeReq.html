@@ -89,8 +89,8 @@
                                                                 </div>
                                                                 <div class="modal-body">
                                                                     <form class="myForm needs-validation"
-                                                                        action="{% url 'CreateStoreRequest' %}"
-                                                                        method="post" novalidate>
+                                                                        action="{% url 'store' %}" method="post"
+                                                                        novalidate>
                                                                         {% csrf_token %}
                                                                         <div class="mb-2"> <span class="w-name">
                                                                                 Store Request Header:
@@ -165,8 +165,8 @@
                                                                 </div>
                                                                 <div class="modal-body">
                                                                     <form class="myForm needs-validation"
-                                                                        action="{% url 'CreateStoreRequest' %}"
-                                                                        method="post" novalidate>
+                                                                        action="{% url 'store' %}" method="post"
+                                                                        novalidate>
                                                                         {% csrf_token %}
                                                                         <div class="mb-2"> <span class="w-name">
                                                                                 Store Request Header:
@@ -301,8 +301,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="myForm needs-validation" action="{% url 'CreateStoreRequest' %}" method="post"
-                        novalidate>
+                    <form class="myForm needs-validation" action="{% url 'store' %}" method="post" novalidate>
                         {% csrf_token %}
                         <div class="mb-2">
                             <div class="row">

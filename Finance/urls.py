@@ -19,14 +19,11 @@ urlpatterns = [
          views.DeleteImprestAttachment, name='DeleteImprestAttachment'),
 
 
-    path('ImprestSurrender', views.ImprestSurrender, name='imprestSurr'),
-    path('CreateSurrender', views.CreateSurrender, name="CreateSurrender"),
+    path('ImprestSurrender', views.ImprestSurrender.as_view(), name='imprestSurr'),
     path('ImpSurrender/<str:pk>',
-         views.SurrenderDetails, name='IMPSurrender'),
+         views.SurrenderDetails.as_view(), name='IMPSurrender'),
     path('SurrenderApprove/<str:pk>',
          views.SurrenderApproval, name='SurrenderApprove'),
-    path('ImpSurrenderLines/<str:pk>',
-         views.CreateSurrenderLines, name='CreateSurrenderLines'),
     path('CancelSurrenderApproval/<str:pk>',
          views.FnCancelSurrenderApproval, name='CancelSurrenderApproval'),
     path('UploadSurrenderAttachment/<str:pk>',
@@ -36,9 +33,8 @@ urlpatterns = [
     path('DeleteSurrenderAttachment/<str:pk>',
          views.DeleteSurrenderAttachment, name='DeleteSurrenderAttachment'),
 
-    path('StaffClaim', views.StaffClaim, name='claim'),
-    path("NewClaim", views.CreateClaim, name="NewClaim"),
-    path('Claim/<str:pk>', views.ClaimDetails, name='ClaimDetail'),
+    path('StaffClaim', views.StaffClaim.as_view(), name='claim'),
+    path('Claim/<str:pk>', views.ClaimDetails.as_view(), name='ClaimDetail'),
     path('ClaimLines/<str:pk>', views.CreateClaimLines, name='ClaimLines'),
     path('ClaimApprove/<str:pk>', views.ClaimApproval, name='ClaimApprove'),
     path('ClaimCancel/<str:pk>', views.FnCancelClaimApproval, name='ClaimCancel'),

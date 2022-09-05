@@ -10,12 +10,12 @@
 
             <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
                 <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
-                    {% if state == 1 %}
+                    {% if res.Status == "Open" %}
                     <button class="btn btn-successs p-3 d-flex align-items-center" type="button" data-bs-toggle="modal"
                         data-bs-target="#staticBackdrop"> <i class="las la-plus"></i> Add Claim
                         Lines
                     </button>
-                    {% elif state == 3 %}
+                    {% elif res.Status == "Released" %}
                     <form action="{% url 'FnGenerateStaffClaimReport' res.No_ %}" method="post"
                         style="display:inline-block">
                         {% csrf_token %}
@@ -184,25 +184,25 @@
                                     <th>Description</th>
                                     <th>Amount</th>
                                     <th>Expenditure Date</th>
-                                    {% if state == 1 %}
+                                    {% if res.Status == "Open" %}
                                     <th>Action</th>
                                     {% endif %}
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for res in line %}
+                                {% for line in line %}
                                 <tr>
-                                    <td>{{res.Claim_Type}}</td>
-                                    <td>{{res.Payment_Type}}</td>
-                                    <td>{{res.Description}}</td>
-                                    <td>{{res.Amount__LCY_}}</td>
-                                    <td>{{res.Expenditure_Date}}</td>
-                                    {% if state == 1 %}
+                                    <td>{{line.Claim_Type}}</td>
+                                    <td>{{line.Payment_Type}}</td>
+                                    <td>{{line.Description}}</td>
+                                    <td>{{line.Amount__LCY_}}</td>
+                                    <td>{{line.Expenditure_Date}}</td>
+                                    {% if res.Status == "Open" %}
                                     <td>
-                                        <form action="{% url 'FnDeleteStaffClaimLine' res.No %}" method="post"
+                                        <form action="{% url 'FnDeleteStaffClaimLine' line.No %}" method="post"
                                             style="display: inline-block;">
                                             {% csrf_token %}
-                                            <input type="hidden" name="lineNo" value="{{res.Line_No}}">
+                                            <input type="hidden" name="lineNo" value="{{line.Line_No}}">
                                             <button type="submit" class="btn btn-danger" data-toggle="tooltip"
                                                 data-placement="top" title="Delete"><i class="fas fa-trash-alt"></i>
                                             </button>
@@ -306,7 +306,7 @@
         {% endif %}
         <div class="row">
             <div class="col-md-12">
-                {% if state == 1 %}
+                {% if res.Status == "Open" %}
                 <div class="myForm my-3">
                     <form action="{% url 'ClaimApprove' res.No_ %}" method="POST" style="display: inline-block;">
                         {% csrf_token %}
@@ -316,7 +316,7 @@
                         <button class="btn btn-info" type="submit">Request For Approval</button>
                     </form>
                 </div>
-                {% elif state == 2 %}
+                {% elif res.Status == "Pending Approval" %}
                 <div class="d-grid gap-2 my-3">
                     <form action="{% url 'ClaimCancel' res.No_ %}" method="POST" class="myForm" id="approvalForm">
                         {% csrf_token %}
@@ -329,7 +329,7 @@
                 {% endif %}
             </div>
         </div>
-        {% if state == 2 %}
+        {% if res.Status == "Pending Approval" %}
         <div class="row mt-4">
             <div class="col-md-12">
                 <div class="card" id="d-card">
