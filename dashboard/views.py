@@ -91,5 +91,7 @@ class Dashboard(UserObjectMixin,View):
                 }
         return render(request, 'main/dashboard.html', ctx)
 
-
+class Manual(View):
+    def get(self, request):
+        return render(request,"manual.html")
 

@@ -7,11 +7,12 @@ from django.contrib import messages
 from requests.auth import HTTPBasicAuth
 from django.views import View
 from datetime import date
-
+import datetime
 # Create your views here.
 class UserObjectMixin(object):
     model =None
     user = Session()
+    todays_date = datetime.datetime.now().strftime("%b. %d, %Y %A")
     def get_object(self,username,password,endpoint):
         self.user.auth = HTTPBasicAuth(username, password)
         response = self.user.get(endpoint, timeout=10).json()
@@ -56,10 +57,23 @@ def logout(request):
         del request.session['User_Responsibility_Center']
         del request.session['Department']
         del request.session['years']
+        del request.session['E_Mail']
         messages.success(request,"Logged out successfully")
     except KeyError:
         print(False)
     return redirect('auth')
 
-def profile(request):
-    return render(request,"profile.html")
+class profile(UserObjectMixin,View):
+    def get(self, request):
+        try:
+            year =request.session['years']
+            fullname =request.session['User_ID']
+            empNo =request.session['Employee_No_']
+            Dpt =request.session['Department']
+            mail =request.session['E_Mail']
+        except KeyError as e:
+            messages.error(request, e)
+            return redirect('auth')
+
+        ctx = {"today": self.todays_date,"year": year,"full": fullname,"empNo":empNo,"Dpt":Dpt,"mail":mail}
+        return render(request,"profile.html",ctx)

@@ -149,6 +149,7 @@ input.invalid {
 .general-bg {
     background: url(../img/bg/1.jpg) !important;
     background-attachment: fixed !important;
+    
 }
 
 .content-wrapper {

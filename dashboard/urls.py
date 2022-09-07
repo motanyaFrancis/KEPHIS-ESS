@@ -6,6 +6,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 urlpatterns = [
     path('dashboard', views.Dashboard.as_view(), name="dashboard"),
+    path('Manual', views.Manual.as_view(), name="Manual"),
 
 ]
 if settings.DEBUG:
