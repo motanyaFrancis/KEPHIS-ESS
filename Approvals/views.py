@@ -1,3 +1,4 @@
+from typing_extensions import Self
 from django.shortcuts import render, redirect
 from datetime import date
 import requests
@@ -13,129 +14,67 @@ from django.http import HttpResponse
 from zeep import Client
 from zeep.transports import Transport
 from requests.auth import HTTPBasicAuth
-
-from HR.views import Training_Request
+from django.views import View
 
 # Create your views here.
+class UserObjectMixin(object):
+    model =None
+    session = requests.Session()
+    session.auth = config.AUTHS
+    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
+    def get_object(self,endpoint):
+        response = self.session.get(endpoint, timeout=10).json()
+        return response
 
-
-def Approve(request):
-    try:
-        fullname = request.session['User_ID']
-        year = request.session['years']
-        session = requests.Session()
-        session.auth = config.AUTHS
-
-        Access_Point = config.O_DATA.format("/QyApprovalEntries")
+class Approve(UserObjectMixin,View):
+    def get(self,request):
         try:
-            response = session.get(Access_Point, timeout=10).json()
-            openLeave = []
-            approvedLeave = []
-            rejectedLeave = []
-            openSurrender = []
-            approveSurrender = []
-            rejectSurrender = []
-            openClaim = []
-            approveClaim = []
-            rejectClaim = []
-            openPurchase = []
-            approvePurchase = []
-            rejectPurchase = []
-            openRepair = []
-            appRepair = []
-            rejRepair = []
-            openStore = []
-            appStore = []
-            rejStore = []
+            userID = request.session['User_ID']
+            year = request.session['years']
+ 
 
-            openImp = []
-            approvedImp = []
-            rejectedImp = []
-            openOther = []
-            appOther = []
-            rejOther = []
-            for approve in response['value']:
-                # HR
-                if  (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Open'  and approve['Document_Type'] == 'LeaveApplication') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Open' and approve['Document_Type'] == 'TrainingRequest'):
-                    output_json = json.dumps(approve)
-                    openLeave.append(json.loads(output_json))
-                if (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Approved' and approve['Document_Type'] == 'LeaveApplication') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Open' and approve['Document_Type'] == 'TrainingRequest'):
-                    output_json = json.dumps(approve)
-                    approvedLeave.append(json.loads(output_json))
-                if (approve['Approver_ID'] == request.session['User_ID'] and  approve['Status'] == 'Rejected' and approve['Document_Type'] == 'LeaveApplication') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Open' and approve['Document_Type'] == 'TrainingRequest'):
-                    output_json = json.dumps(approve)
-                    rejectedLeave.append(json.loads(output_json))
+            Access_Point = config.O_DATA.format(f"/QyApprovalEntries?$filter=Approver_ID%20eq%20%27{userID}%27")
+            response = self.get_object(Access_Point)
 
-                # Imprests
-                if approve['Status'] == 'Open' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Imprest':
-                    output_json = json.dumps(approve)
-                    openImp.append(json.loads(output_json))
-                if approve['Status'] == 'Approved' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Imprest':
-                    output_json = json.dumps(approve)
-                    approvedImp.append(json.loads(output_json))
-                if approve['Status'] == 'Rejected' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Imprest':
-                    output_json = json.dumps(approve)
-                    rejectedImp.append(json.loads(output_json))
-                # Surrender
-                if approve['Status'] == 'Open' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Imprest Surrender':
-                    output_json = json.dumps(approve)
-                    openSurrender.append(json.loads(output_json))
-                if approve['Status'] == 'Approved' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Imprest Surrender':
-                    output_json = json.dumps(approve)
-                    approveSurrender.append(json.loads(output_json))
-                if approve['Status'] == 'Rejected' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Imprest Surrender':
-                    output_json = json.dumps(approve)
-                    rejectSurrender.append(json.loads(output_json))
-                # Staff Claim
-                if approve['Status'] == 'Open' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Staff Claim':
-                    output_json = json.dumps(approve)
-                    openClaim.append(json.loads(output_json))
-                if approve['Status'] == 'Approved' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Staff Claim':
-                    output_json = json.dumps(approve)
-                    approveClaim.append(json.loads(output_json))
-                if approve['Status'] == 'Rejected' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Staff Claim':
-                    output_json = json.dumps(approve)
-                    rejectClaim.append(json.loads(output_json))
-                # Purchase Request
-                if approve['Status'] == 'Open' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Purchase Requisitions':
-                    output_json = json.dumps(approve)
-                    openPurchase.append(json.loads(output_json))
-                if approve['Status'] == 'Approved' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Purchase Requisitions':
-                    output_json = json.dumps(approve)
-                    approvePurchase.append(json.loads(output_json))
-                if approve['Status'] == 'Rejected' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Purchase Requisitions':
-                    output_json = json.dumps(approve)
-                    rejectPurchase.append(json.loads(output_json))
-                # Repair Request
-                if approve['Status'] == 'Open' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Repair':
-                    output_json = json.dumps(approve)
-                    openRepair.append(json.loads(output_json))
-                if approve['Status'] == 'Approved' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Repair':
-                    output_json = json.dumps(approve)
-                    appRepair.append(json.loads(output_json))
-                if approve['Status'] == 'Rejected' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Repair':
-                    output_json = json.dumps(approve)
-                    rejRepair.append(json.loads(output_json))
-                # Store Request
-                if approve['Status'] == 'Open' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Store Requisitions':
-                    output_json = json.dumps(approve)
-                    openStore.append(json.loads(output_json))
-                if approve['Status'] == 'Approved' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Store Requisitions':
-                    output_json = json.dumps(approve)
-                    appStore.append(json.loads(output_json))
-                if approve['Status'] == 'Rejected' and approve['Approver_ID'] == request.session['User_ID'] and approve['Document_Type'] == 'Store Requisitions':
-                    output_json = json.dumps(approve)
-                    rejRepair.append(json.loads(output_json))
-                # Other Request
-                if (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Open' and approve['Document_Type'] == 'Payment Voucher') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Open' and  approve['Document_Type'] == 'Petty Cash') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Open' and approve['Document_Type'] == 'Petty Cash Surrender') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Open' and approve['Document_Type'] == 'Staff Payroll Approval') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Open'  and approve['Document_Type'] == 'Invoice') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Open' and approve['Document_Type'] == 'Order'):
-                    output_json = json.dumps(approve)
-                    openOther.append(json.loads(output_json))
-                if (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Approved' and approve['Document_Type'] == 'Payment Voucher') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Approved' and  approve['Document_Type'] == 'Petty Cash') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Approved' and approve['Document_Type'] == 'Petty Cash Surrender') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Approved' and approve['Document_Type'] == 'Staff Payroll Approval') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Approved'  and approve['Document_Type'] == 'Invoice') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Approved' and approve['Document_Type'] == 'Order'):
-                    output_json = json.dumps(approve)
-                    appOther.append(json.loads(output_json))
-                if (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Rejected' and approve['Document_Type'] == 'Payment Voucher') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Rejected' and  approve['Document_Type'] == 'Petty Cash') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Rejected' and approve['Document_Type'] == 'Petty Cash Surrender') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Rejected' and approve['Document_Type'] == 'Staff Payroll Approval') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Rejected'  and approve['Document_Type'] == 'Invoice') or (approve['Approver_ID'] == request.session['User_ID'] and approve['Status'] == 'Rejected' and approve['Document_Type'] == 'Order'):
-                    output_json = json.dumps(approve)
-                    rejOther.append(json.loads(output_json))
+            openLeave = [x for x in response['value'] if (x['Status'] == 'Open' and x['Document_Type']=='LeaveApplication') or (x['Status']=='Open' and x['Document_Type']=='TrainingRequest')]
+            approvedLeave = [x for x in response['value'] if (x['Status'] == 'Approved' and x['Document_Type']=='LeaveApplication') or (x['Status']=='Approved' and x['Document_Type']=='TrainingRequest')]
+            rejectedLeave = [x for x in response['value'] if (x['Status'] == 'Rejected' and x['Document_Type']=='LeaveApplication') or (x['Status']=='Rejected' and x['Document_Type']=='TrainingRequest')]
+
+            # Imprests
+            openImp = [x for x in response['value'] if x['Status'] == 'Open' and x['Document_Type']=='Imprest']
+            approvedImp = [x for x in response['value'] if x['Status'] == 'Approved' and x['Document_Type']=='Imprest']
+            rejectedImp = [x for x in response['value'] if x['Status'] == 'Rejected' and x['Document_Type']=='Imprest']
+
+            # Surrender
+            openSurrender = [x for x in response['value'] if x['Status'] == 'Open' and x['Document_Type']=='Imprest Surrender']
+            approveSurrender = [x for x in response['value'] if x['Status'] == 'Approved' and x['Document_Type']=='Imprest Surrender']
+            rejectSurrender = [x for x in response['value'] if x['Status'] == 'Rejected' and x['Document_Type']=='Imprest Surrender']
+
+            # Staff Claim
+            openClaim = [x for x in response['value'] if x['Status'] == 'Open' and x['Document_Type']=='Staff Claim']
+            approveClaim = [x for x in response['value'] if x['Status'] == 'Approved' and x['Document_Type']=='Staff Claim']
+            rejectClaim = [x for x in response['value'] if x['Status'] == 'Rejected' and x['Document_Type']=='Staff Claim']
+
+            # Purchase Request
+            openPurchase = [x for x in response['value'] if x['Status'] == 'Open' and x['Document_Type']=='Purchase Requisitions']
+            approvePurchase = [x for x in response['value'] if x['Status'] == 'Approved' and x['Document_Type']=='Purchase Requisitions']
+            rejectPurchase = [x for x in response['value'] if x['Status'] == 'Rejected' and x['Document_Type']=='Purchase Requisitions']
+
+            # Repair Request
+            openRepair = [x for x in response['value'] if x['Status'] == 'Open' and x['Document_Type']=='Repair']
+            appRepair = [x for x in response['value'] if x['Status'] == 'Approved' and x['Document_Type']=='Repair']
+            rejRepair = [x for x in response['value'] if x['Status'] == 'Rejected' and x['Document_Type']=='Repair']
+
+            # Store Request
+            openStore = [x for x in response['value'] if x['Status'] == 'Open' and x['Document_Type']=='Store Requisitions']
+            appStore = [x for x in response['value'] if x['Status'] == 'Approved' and x['Document_Type']=='Store Requisitions']
+            rejStore = [x for x in response['value'] if x['Status'] == 'Rejected' and x['Document_Type']=='Store Requisitions']
+
+            # Other Request
+            openOther = [x for x in response['value'] if (x['Status'] == 'Open' and x['Document_Type']=='Payment Voucher') or (x['Status']=='Open' and x['Document_Type']=='Petty Cash') or (x['Status']=='Open' and x['Document_Type']=='Petty Cash Surrender') or (x['Status']=='Open' and x['Document_Type']=='Staff Payroll Approval') or (x['Status']=='Open' and x['Document_Type']=='Invoice') or (x['Status']=='Open' and x['Document_Type']=='Order')]
+            appOther = [x for x in response['value'] if (x['Status'] == 'Approved' and x['Document_Type']=='Payment Voucher') or (x['Status']=='Approved' and x['Document_Type']=='Petty Cash') or (x['Status']=='Approved' and x['Document_Type']=='Petty Cash Surrender') or (x['Status']=='Approved' and x['Document_Type']=='Staff Payroll Approval') or (x['Status']=='Approved' and x['Document_Type']=='Invoice') or (x['Status']=='Approved' and x['Document_Type']=='Order')]
+            rejOther = [x for x in response['value'] if (x['Status'] == 'Rejected' and x['Document_Type']=='Payment Voucher') or (x['Status']=='Rejected' and x['Document_Type']=='Petty Cash') or (x['Status']=='Rejected' and x['Document_Type']=='Petty Cash Surrender') or (x['Status']=='Rejected' and x['Document_Type']=='Staff Payroll Approval') or (x['Status']=='Rejected' and x['Document_Type']=='Invoice') or (x['Status']=='Rejected' and x['Document_Type']=='Order')]
+ 
             countIMP = len(openImp)
             CountLeave = len(openLeave)
             countSurrender = len(openSurrender)
@@ -149,9 +88,12 @@ def Approve(request):
             print(e)
             messages.info(request, e)
             return redirect('auth')
+        except KeyError as e:
+            print (e)
+            messages.info(request, "Session Expired. Please Login")
+            return redirect('auth') 
 
-        todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-        ctx = {"today": todays_date, "imprest": openImp,"year": year, "full": fullname,
+        ctx = {"today": self.todays_date, "imprest": openImp,"year": year, "full": userID,
             "countIMP": countIMP, "approvedIMP":approvedImp,"rejectedImp":rejectedImp,
             "openLeave":openLeave,"CountLeave":CountLeave,"approvedLeave":approvedLeave,
             "rejectedLeave":rejectedLeave,"openSurrender":openSurrender,"countSurrender":countSurrender,"approveSurrender":approveSurrender,"rejectSurrender":rejectSurrender,
@@ -160,250 +102,149 @@ def Approve(request):
             "rejectPurchase":rejectPurchase, "countRepair":countRepair,"appRepair":appRepair,"rejRepair":rejRepair,
             "countStore":countStore,"openStore":openStore,"appStore":appStore,"rejStore":rejStore,
             "openOther":openOther,"appOther":appOther,"rejOther":rejOther,"countOther":countOther}
-    except KeyError as e:
-        print (e)
-        messages.info(request, "Session Expired. Please Login")
-        return redirect('auth')       
-    return render(request, 'Approve.html', ctx)
+              
+        return render(request, 'Approve.html', ctx)
 
 
-def ApproveDetails(request, pk):
-    try:
-        fullname = request.session['User_ID']
-        year = request.session['years']
-        session = requests.Session()
-        session.auth = config.AUTHS
-        res = ''
-        data =''
-        state =''
-        Access_Point = config.O_DATA.format("/QyApprovalEntries")
-        Access_File = config.O_DATA.format("/QyDocumentAttachments")
-        Imprest = config.O_DATA.format("/Imprests")
-        Leave_Request = config.O_DATA.format("/QyLeaveApplications")
-        TrainingRequest = config.O_DATA.format("/QyTrainingRequests")
-        SurrenderRequest = config.O_DATA.format("/QyImprestSurrenders")
-        ClaimRequest = config.O_DATA.format("/QyStaffClaims")
-        PurchaseRequest = config.O_DATA.format("/QyPurchaseRequisitionHeaders")
-        ImprestLineRequest=config.O_DATA.format("/QyImprestLines")
-        TrainingLineRequest=config.O_DATA.format("/QyTrainingNeedsRequest")
-
+class ApproveDetails(UserObjectMixin, View):
+    def get(self, request,pk):
         try:
-            response = session.get(Access_Point, timeout=10).json()
-            Approves = []
-            Imprests = []
-            Leaves = []
-            Training = []
-            Surrender = []
-            Claims = []
-            ImprestLine = []
-            TrainLine = []
-    
+            userID = request.session['User_ID']
+            year = request.session['years']
+  
+            Access_Point = config.O_DATA.format(f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27%20and%20Approver_ID%20eq%20%27{userID}%27")
+            response = self.get_object(Access_Point)
             for approve in response['value']:
-                if approve['Status'] == 'Open' and approve['Approver_ID'] == request.session['User_ID']:
-                    output_json = json.dumps(approve)
-                    Approves.append(json.loads(output_json))
-                    for claim in Approves:
-                        if claim['Document_No_'] == pk:
-                            res = claim
-                if approve['Status'] == 'Approved' and approve['Approver_ID'] == request.session['User_ID']:
-                    output_json = json.dumps(approve)
-                    Approves.append(json.loads(output_json))
-                    for claim in Approves:
-                        if claim['Document_No_'] == pk:
-                            res = claim
-                if approve['Status'] == 'Rejected' and approve['Approver_ID'] == request.session['User_ID']:
-                    output_json = json.dumps(approve)
-                    Approves.append(json.loads(output_json))
-                    for claim in Approves:
-                        if claim['Document_No_'] == pk:
-                            res = claim
-            allFiles = []
+                res = approve
+            Access_File = config.O_DATA.format(f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27")
+            res_file = self.get_object(Access_File)
+            allFiles = [x for x in res_file['value']]
 
-            res_file = session.get(Access_File, timeout=10).json()
-            for file in res_file['value']:
-                if file['No_'] == pk:
-                    output_json = json.dumps(file)
-                    allFiles.append(json.loads(output_json))
-            ImprestResponse = session.get(Imprest, timeout=10).json()
+            Imprest = config.O_DATA.format(f"/Imprests?$filter=No_%20eq%20%27{pk}%27%20and%20Status%20eq%20%27Pending%20Approval%27")
+            ImprestResponse = self.get_object(Imprest)
             for imprest in ImprestResponse['value']:
-                if imprest['Status'] == "Pending Approval":
-                    output_json = json.dumps(imprest)
-                    Imprests.append(json.loads(output_json))
-                    for imprest in Imprests:
-                        if imprest['No_'] == pk:
-                            data = imprest
-                            if imprest['Status'] == 'Pending Approval':
-                                state = 1
-            ImpLineResponse = session.get(ImprestLineRequest, timeout=10).json()
-            for imprest in ImpLineResponse['value']:
-                if imprest['AuxiliaryIndex1'] == pk:
-                    output_json = json.dumps(imprest)
-                    ImprestLine.append(json.loads(output_json))
+                data = imprest
+                state = 1
 
-            LeaveResponse = session.get(Leave_Request, timeout=10).json()
+            Leave_Request = config.O_DATA.format(f"/QyLeaveApplications?$filter=Application_No%20eq%20%27{pk}%27%20and%20Status%20eq%20%27Pending%20Approval%27")
+            LeaveResponse = self.get_object(Leave_Request)
             for leave in LeaveResponse['value']:
-                if leave['Status'] == "Pending Approval":
-                    output_json = json.dumps(leave)
-                    Leaves.append(json.loads(output_json))
-                    for myLeave in Leaves:
-                        if myLeave['Application_No'] == pk:
-                            data = myLeave
-                            if myLeave['Status'] == 'Pending Approval':
-                                state = 2
+                data = leave
+                state = 2
 
-            TrainResponse = session.get(TrainingRequest, timeout=10).json()
+            TrainingRequest = config.O_DATA.format(f"/QyTrainingRequests?$filter=Request_No_%20eq%20%27{pk}%27%20and%20Status%20eq%20%27Pending%20Approval%27")
+            TrainResponse = self.get_object(TrainingRequest)
             for train in TrainResponse['value']:
-                if train['Status'] == 'Pending Approval':
-                    output_json = json.dumps(train)
-                    Training.append(json.loads(output_json))
-                    for trains in Training:
-                        if trains['Request_No_'] == pk:
-                            data = trains
-                            if trains['Status'] == 'Pending Approval':
-                                state = 3
-            TrainLineResponse = session.get(TrainingLineRequest, timeout=10).json()
-            for trainLine in TrainLineResponse['value']:
-                if trainLine['Source_Document_No'] == pk :
-                    output_json = json.dumps(trainLine)
-                    TrainLine.append(json.loads(output_json))
-            SurrenderResponse = session.get(SurrenderRequest, timeout=10).json()
+                data = train
+                state = 3
+
+            SurrenderRequest = config.O_DATA.format(f"/QyImprestSurrenders?$filter=No_%20eq%20%27{pk}%27%20and%20Status%20eq%20%27Pending%20Approval%27")
+            SurrenderResponse = self.get_object(SurrenderRequest)
             for imprest in SurrenderResponse['value']:
-                if imprest['Status'] == "Pending Approval":
-                    output_json = json.dumps(imprest)
-                    Surrender.append(json.loads(output_json))
-                    for imprest in Surrender:
-                        if imprest['No_'] == pk:
-                            data = imprest
-                            if imprest['Status'] == 'Pending Approval':
-                                state = 4
-            Lines_Surrender = config.O_DATA.format("/QyImprestSurrenderLines")
-            SurrenderLinesResponse = session.get(Lines_Surrender, timeout=10).json()
-            SurrenderLines = []
-            for imprest in SurrenderLinesResponse['value']:
-                if imprest['No'] == pk:
-                    output_json = json.dumps(imprest)
-                    SurrenderLines.append(json.loads(output_json))
-            ClaimResponse = session.get(ClaimRequest, timeout=10).json()
+                data = imprest
+                state = 4
+            Lines_Surrender = config.O_DATA.format(f"/QyImprestSurrenderLines?$filter=No%20eq%20%27{pk}%27")
+            ResponseSurrenderLines = self.get_object(Lines_Surrender)
+            SurrenderLines = [x for x in ResponseSurrenderLines['value'] if x['No'] == pk]
+
+            ClaimRequest = config.O_DATA.format(f"/QyStaffClaims?$filter=No_%20eq%20%27{pk}%27%20and%20Status%20eq%20%27Pending%20Approval%27")
+            ClaimResponse = self.get_object(ClaimRequest)
             for claim in ClaimResponse['value']:
-                if claim['Status'] == "Pending Approval":
-                    output_json = json.dumps(claim)
-                    Claims.append(json.loads(output_json))
-                    for claim in Claims:
-                        if claim['No_'] == pk:
-                            data = claim
-                            if claim['Status'] == 'Pending Approval':
-                                state = 5
-            Lines_Claim = config.O_DATA.format("/QyStaffClaimLines")
-            ClaimLineResponse = session.get(Lines_Claim, timeout=10).json()
-            ClaimLines = []
-            for claim in ClaimLineResponse['value']:
-                if claim['No'] == pk:
-                    output_json = json.dumps(claim)
-                    ClaimLines.append(json.loads(output_json))
-            PurchaseResponse = session.get(PurchaseRequest, timeout=10).json()
+                data = claim
+                state = 5
+            Lines_Claim = config.O_DATA.format(f"/QyStaffClaimLines?$filter=No%20eq%20%27{pk}%27")
+            ClaimLineResponse = self.get_object(Lines_Claim)
+            ClaimLines = [x for x in ClaimLineResponse['value'] if x['No'] == pk]
+
+            PurchaseRequest = config.O_DATA.format(f"/QyPurchaseRequisitionHeaders?$filter=No_%20eq%20%27{pk}%27%20and%20Status%20eq%20%27Pending%20Approval%27")
+            PurchaseResponse = self.get_object(PurchaseRequest)
             for purchase in PurchaseResponse['value']:
-                if purchase['No_'] == pk:
-                    data = purchase
-                    state = 6
-            Lines_Purchase = config.O_DATA.format("/QyPurchaseRequisitionLines")
-            PurchaseLineResponse = session.get(Lines_Purchase, timeout=10).json()
-            PurchaseLines = []
-            for document in PurchaseLineResponse['value']:
-                if document['AuxiliaryIndex1'] == pk:
-                    output_json = json.dumps(document)
-                    PurchaseLines.append(json.loads(output_json))
-            RepairRequest = config.O_DATA.format("/QyRepairRequisitionHeaders")
-            RepairResponse = session.get(RepairRequest, timeout=10).json()
-            Repair = []
+                data = purchase
+                state = 6
+            Lines_Purchase = config.O_DATA.format(f"/QyPurchaseRequisitionLines?$filter=AuxiliaryIndex1%20eq%20%27{pk}%27")
+            PurchaseLineResponse = self.get_object(Lines_Purchase)
+            PurchaseLines = [x for x in PurchaseLineResponse['value'] if x['AuxiliaryIndex1'] == pk]
+            
+
+            ImprestLineRequest=config.O_DATA.format(f"/QyImprestLines?$filter=AuxiliaryIndex1%20eq%20%27{pk}%27")
+            ResponseImprestLine = self.get_object(ImprestLineRequest)
+            ImprestLine = [x for x in ResponseImprestLine['value'] if x['AuxiliaryIndex1'] == pk]
+
+
+            TrainingLineRequest=config.O_DATA.format(f"/QyTrainingNeedsRequest?$filter=Source_Document_No%20eq%20%27{pk}%27")
+            TrainLineResponse = self.get_object(TrainingLineRequest)
+            TrainLine = [x for x in TrainLineResponse['value'] if x['Source_Document_No'] == pk]
+
+            RepairRequest = config.O_DATA.format(f"/QyRepairRequisitionHeaders?$filter=No_%20eq%20%27{pk}%27%20and%20Status%20eq%20%27Pending%20Approval%27")
+            RepairResponse = self.get_object(RepairRequest)
             for repair in RepairResponse['value']:
-                if repair['Status'] == "Pending Approval":
-                    output_json = json.dumps(repair)
-                    Repair.append(json.loads(output_json))
-                    for repair in Repair:
-                        if repair['No_'] == pk:
-                            data = repair
-                            if repair['Status'] == 'Pending Approval':
-                                state = 7
-            Lines_Repair = config.O_DATA.format("/QyRepairRequisitionLines")
-            RepairLineResponse = session.get(Lines_Repair, timeout=10).json()
-            RepairLines = []
-            for document in RepairLineResponse['value']:
-                if document['AuxiliaryIndex1'] == pk:
-                    output_json = json.dumps(document)
-                    RepairLines.append(json.loads(output_json))
-            StoreRequest = config.O_DATA.format("/QyStoreRequisitionHeaders?$filter=No_%20eq%20%27{pk}%27%20").format(pk=pk)
-            StoreResponse = session.get(StoreRequest, timeout=10).json()
+                data = repair
+                state = 7
+            Lines_Repair = config.O_DATA.format(f"/QyRepairRequisitionLines?$filter=AuxiliaryIndex1%20eq%20%27{pk}%27")
+            RepairLineResponse = self.get_object(Lines_Repair)
+            RepairLines = [x for x in RepairLineResponse['value'] if x['AuxiliaryIndex1'] == pk]
+
+            StoreRequest = config.O_DATA.format(f"/QyStoreRequisitionHeaders?$filter=No_%20eq%20%27{pk}%27%20and%20Status%20eq%20%27Pending%20Approval%27")
+            StoreResponse = self.get_object(StoreRequest)
             for store in StoreResponse['value']:
                 data = store
-                state = 8                                 
-            Lines_Store = config.O_DATA.format("/QyStoreRequisitionLines")
-            StoreLineResponse = session.get(Lines_Store, timeout=10).json()
-            StoreLines = []
-            for document in StoreLineResponse['value']:
-                if document['AuxiliaryIndex1'] == pk:
-                    output_json = json.dumps(document)
-                    StoreLines.append(json.loads(output_json))
+                state = 8 
+            Lines_Store = config.O_DATA.format(f"/QyStoreRequisitionLines?$filter=AuxiliaryIndex1%20%20eq%20%27{pk}%27")
+            StoreLineResponse = self.get_object(Lines_Store)
+            StoreLines =  [x for x in StoreLineResponse['value'] if x['AuxiliaryIndex1'] == pk]
 
-            VoucherRequest = config.O_DATA.format("/QyPaymentVoucherHeaders")
-            VoucherResponse = session.get(VoucherRequest, timeout=10).json()
+            VoucherRequest = config.O_DATA.format(f"/QyPaymentVoucherHeaders?$filter=No_%20eq%20%27{pk}%27")
+            VoucherResponse = self.get_object(VoucherRequest)
             for voucher in VoucherResponse['value']:
-                if voucher['No_'] == pk:
-                    data = voucher
-                    state = "voucher"
-            Lines_Voucher = config.O_DATA.format("/QyPaymentVoucherLines")
-            VoucherLineResponse = session.get(Lines_Voucher, timeout=10).json()
-            VoucherLines = []
-            for document in VoucherLineResponse['value']:
-                if document['No'] == pk:
-                    output_json = json.dumps(document)
-                    VoucherLines.append(json.loads(output_json))
-            PettyRequest = config.O_DATA.format("/QyPettyCashHeaders")
-            PettyResponse = session.get(PettyRequest, timeout=10).json()
+                data = voucher
+                state = "voucher"
+            Lines_Voucher = config.O_DATA.format(f"/QyPaymentVoucherLines?$filter=No%20eq%20%27{pk}%27")
+            VoucherLineResponse = self.get_object(Lines_Voucher)
+            VoucherLines = [x for x in VoucherLineResponse['value'] if x['No'] == pk]
+
+            PettyRequest = config.O_DATA.format(f"/QyPettyCashHeaders?$filter=No_%20eq%20%27{pk}%27%20and%20Status%20eq%20%27Pending%20Approval%27")
+            PettyResponse = self.get_object(PettyRequest)
             for petty in PettyResponse['value']:
-                if petty['No_'] == pk:
-                    data = petty
-                    state = "petty cash"
+                data = petty
+                state = "petty cash"
             Lines_Petty = config.O_DATA.format("/QyPettyCashLines")
-            PettyLineResponse = session.get(Lines_Petty, timeout=10).json()
-            PettyLines = []
-            for document in PettyLineResponse['value']:
-                if document['No'] == pk:
-                    output_json = json.dumps(document)
-                    PettyLines.append(json.loads(output_json))
-            PettySurrenderRequest = config.O_DATA.format("/QyPettyCashSurrenderHeaders")
-            PettySurrenderResponse = session.get(PettySurrenderRequest, timeout=10).json()
+            PettyLineResponse = self.get_object(Lines_Petty)
+            PettyLines = [x for x in PettyLineResponse['value'] if x['No'] == pk]
+
+            PettySurrenderRequest = config.O_DATA.format(f"/QyPettyCashSurrenderHeaders?$filter=No_%20eq%20%27{pk}%27%20and%20Status%20eq%20%27Pending%20Approval%27")
+            PettySurrenderResponse = self.get_object(PettySurrenderRequest)
             for pettySurrender in PettySurrenderResponse['value']:
-                if pettySurrender['No_'] == pk:
-                    data = pettySurrender
-                    state = "petty cash surrender"
-            Lines_PettySurrender = config.O_DATA.format("/QyPettyCashSurrenderLines")
-            PettySurrenderLineResponse = session.get(Lines_PettySurrender, timeout=10).json()
-            PettySurrenderLines = []
-            for document in PettySurrenderLineResponse['value']:
-                if document['No'] == pk:
-                    output_json = json.dumps(document)
-                    PettySurrenderLines.append(json.loads(output_json))
-            advanceRequest = config.O_DATA.format("/QySalaryAdvances")
-            advanceResponse = session.get(advanceRequest, timeout=10).json()
+                data = pettySurrender
+                state = "petty cash surrender"
+            Lines_PettySurrender = config.O_DATA.format(f"/QyPettyCashSurrenderLines?$filter=No%20eq%20%27{pk}%27")
+            PettySurrenderLineResponse = self.get_object(Lines_PettySurrender)
+            PettySurrenderLines = [x for x in PettySurrenderLineResponse['value'] if x['No'] == pk]
+
+            advanceRequest = config.O_DATA.format(f"/QySalaryAdvances?$filter=Loan_No%20eq%20%27{pk}%27")
+            advanceResponse = self.get_object(advanceRequest)
             for advance in advanceResponse['value']:
-                if advance['Loan_No'] == pk:
-                    data = advance
-                    state = "advance"
+                data = advance
+                state = "advance"               
+                
+                
         except requests.exceptions.RequestException as e:
             print(e)
             messages.info(request, e)
             return redirect('approve')
-        todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-        ctx = {"today": todays_date, "res": res, "full": fullname, "year": year,
+        except KeyError as e:
+            messages.info(request, e)
+            print(e)
+            return redirect('auth')
+        except Exception as e:
+            messages.info(request,e)
+            return redirect('auth')
+
+        ctx = {"today": self.todays_date, "res": res, "full": userID, "year": year,
         "file":allFiles,"data":data,"state":state,"ImpLine":ImprestLine,"TrainLine":TrainLine,
         "SurrenderLines":SurrenderLines,"ClaimLines":ClaimLines,"PurchaseLines":PurchaseLines,
         "RepairLines":RepairLines,"StoreLines":StoreLines,"VoucherLines":VoucherLines,
         "PettyLines":PettyLines,"PettySurrenderLines":PettySurrenderLines}
-    except KeyError as e:
-        messages.info(request, e)
-        print(e)
-        return redirect('auth')
-    return render(request, 'approveDetails.html', ctx)
+        return render(request, 'approveDetails.html', ctx)
 
 
 def All_Approved(request, pk):
@@ -475,7 +316,7 @@ def viewDocs(request,pk,id):
         File_Name = request.POST.get('File_Name')
         File_Extension = request.POST.get('File_Extension')
         tableID = int(id)
-         
+
         try:
             response = config.CLIENT.service.FnGetDocumentAttachment(
                 docNo, attachmentID, tableID)
@@ -492,5 +333,5 @@ def viewDocs(request,pk,id):
             return responses
         except Exception as e:
             messages.info(request, e)
-            return redirect('ApproveData', pk=pk)
-    return redirect('ApproveData', pk=pk)
+            return redirect('auth')
+    return redirect('auth')

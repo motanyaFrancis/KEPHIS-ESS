@@ -1,0 +1,359 @@
+{% extends 'offcanvas.html' %}
+{% load bootstrap5 %}
+{% load static %}
+{% block main %}
+<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<section class="dash2">
+    <div class="content-wrapper general-bg" style="padding-bottom: 5rem;">
+        <div class="row" id="proBanner">
+            <div class="col-12">
+                <span class="d-flex align-items-center purchase-popup">
+                    <img src="../../../static/img/logo/fav.png" width="70px" class="img-fluid" alt="" srcset="">
+                    <h2 class="text-dark font-weight-bold ml-3">General Requisition</h2>
+                    <button class="btn btn-successs align-items-center p-3" data-bs-toggle="modal"
+                        data-bs-target="#staticBackdrop"
+                        style="margin-left: auto;margin-right:0;outline: none;border: none;"><i
+                            class="las la-plus text-white" style="font-size:15px;"></i> New Requisition</button>
+                </span>
+
+            </div>
+        </div>
+        <!--alert -->
+        {% include 'alerts.html' %}
+        <div class="row my-2">
+            <div class="col-md-12">
+                <div class="card" id="d-card">
+                    <div class="m-4">
+                        <ul class="nav nav-tabs d-flex" id="myTab">
+                            <li class="nav-item flex-fill">
+                                <a href="#home" class="nav-link active" data-bs-toggle="tab">Open
+                                    ({{count}})</a>
+                            </li>
+                            <li class="nav-item flex-fill">
+                                <a href="#pending" class="nav-link" data-bs-toggle="tab">Pending Approval
+                                    ({{pend}})</a>
+                            </li>
+                            <li class="nav-item flex-fill">
+                                <a href="#profile" class="nav-link" data-bs-toggle="tab">Approved
+                                    ({{counter}})</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="home">
+                                <h4 class="mt-2 text-dark">Open Requests</h4>
+                                <div class="card-body">
+                                    <table id="example"
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Request No.</th>
+                                                <th>Document Date</th>
+                                                <th>Order Date</th>
+                                                <th>Status</th>
+                                                <th>Requested By</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for res in res %}
+                                            {% if res.Rejected_By_Approver == True and res.Status == 'Open' %}
+                                            <tr style="background: #fee36e !important;">
+                                                <td>{{res.No_}}</td>
+                                                <td>{{res.Document_Date}}</td>
+                                                <td>{{res.Order_Date}}</td>
+                                                <td>{{res.Status}}</td>
+                                                <td>{{res.Requested_By}}</td>
+                                                <td>
+                                                    <button class="btn btn-primary" data-bs-toggle="modal"
+                                                        data-bs-target="#trainedit{{res.No_}}" data-toggle="tooltip"
+                                                        data-placement="top" title="edit">Edit <i
+                                                            class="fas fa-edit"></i>
+                                                    </button>
+                                                    <a href="{% url 'GeneralRequisitionDetails' res.No_ %} "
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top"
+                                                        title="Click to View"> View <i class="far fa-eye"></i>
+                                                    </a>
+                                                    <!-- Modal -->
+                                                    <div class="modal fade" id="trainedit{{res.No_}}"
+                                                        data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                                        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                        <div
+                                                            class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="staticBackdropLabel">
+                                                                        Edit Request {{res.No_}}
+                                                                    </h5>
+                                                                    <button type="button"
+                                                                        class="btn-close btn-close-white"
+                                                                        data-bs-dismiss="modal"
+                                                                        aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <form class="myForm "
+                                                                        action="{% url 'GeneralRequisition' %}"
+                                                                        method="post" novalidate>
+                                                                        {% csrf_token %}
+                                                                        <div class="mb-2">
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <input type="hidden"
+                                                                                        name="requisitionNo"
+                                                                                        value="{{res.No_}}">
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <input type="hidden" name="myAction"
+                                                                                        value="modify">
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <label for=""
+                                                                                        class="form-label">Order
+                                                                                        Date</label>
+                                                                                    <input type="date" name="orderDate"
+                                                                                        class="form-control" required>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <label for=""
+                                                                                        class="form-label">Detail</label>
+                                                                                    <textarea class="form-control"
+                                                                                        name="reason" rows="3"
+                                                                                        required></textarea>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <button type="button" class="btn btn-danger"
+                                                                                data-bs-dismiss="modal">Discard</button>
+                                                                            <button type="submit"
+                                                                                class="btn btn-primary">Submit</button>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {% else %}
+                                            <tr>
+                                                <td>{{res.No_}}</td>
+                                                <td>{{res.Document_Date}}</td>
+                                                <td>{{res.Order_Date}}</td>
+                                                <td>{{res.Status}}</td>
+                                                <td>{{res.Requested_By}}</td>
+                                                <td>
+                                                    <button class="btn btn-primary" data-bs-toggle="modal"
+                                                        data-bs-target="#trainedit{{res.No_}}" data-toggle="tooltip"
+                                                        data-placement="top" title="edit">Edit <i
+                                                            class="fas fa-edit"></i>
+                                                    </button>
+                                                    <a href="{% url 'GeneralRequisitionDetails' res.No_ %} "
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top"
+                                                        title="Click to View"> View <i class="far fa-eye"></i>
+                                                    </a>
+                                                    <!-- Modal -->
+                                                    <div class="modal fade" id="trainedit{{res.No_}}"
+                                                        data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                                        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                        <div
+                                                            class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="staticBackdropLabel">
+                                                                        Edit Request {{res.No_}}
+                                                                    </h5>
+                                                                    <button type="button"
+                                                                        class="btn-close btn-close-white"
+                                                                        data-bs-dismiss="modal"
+                                                                        aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <form class="myForm"
+                                                                        action="{% url 'GeneralRequisition' %}"
+                                                                        method="post" novalidate>
+                                                                        {% csrf_token %}
+                                                                        <div class="mb-2">
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <input type="hidden"
+                                                                                        name="requisitionNo"
+                                                                                        value="{{res.No_}}">
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <input type="hidden" name="myAction"
+                                                                                        value="modify">
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <label for=""
+                                                                                        class="form-label">Order
+                                                                                        Date</label>
+                                                                                    <input type="date" name="orderDate"
+                                                                                        class="form-control" required>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <label for=""
+                                                                                        class="form-label">Detail</label>
+                                                                                    <textarea class="form-control"
+                                                                                        name="reason" rows="3"
+                                                                                        required></textarea>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <button type="button" class="btn btn-danger"
+                                                                                data-bs-dismiss="modal">Discard</button>
+                                                                            <button type="submit"
+                                                                                class="btn btn-primary">Submit</button>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="profile">
+                                <h4 class="mt-2">Approved Requests</h4>
+                                <div class="card-body">
+                                    <table id="example"
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Request No.</th>
+                                                <th>Document Date</th>
+                                                <th>Order Date</th>
+                                                <th>Status</th>
+                                                <th>Requested By</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for res in response %}
+                                            <tr>
+                                                <td>{{res.No_}}</td>
+                                                <td>{{res.Document_Date}}</td>
+                                                <td>{{res.Order_Date}}</td>
+                                                <td>{{res.Status}}</td>
+                                                <td>{{res.Requested_By}}</td>
+                                                <td>
+                                                    <a href="{% url 'GeneralRequisitionDetails' res.No_ %} "
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top"
+                                                        title="Click to View"> View <i class="far fa-eye"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="pending">
+                                <h4 class="mt-2">Pending Requests</h4>
+                                <div class="card-body">
+                                    <table id="example"
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Request No.</th>
+                                                <th>Document Date</th>
+                                                <th>Order Date</th>
+                                                <th>Status</th>
+                                                <th>Requested By</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for res in pending %}
+                                            <tr>
+                                                <td>{{res.No_}}</td>
+                                                <td>{{res.Document_Date}}</td>
+                                                <td>{{res.Order_Date}}</td>
+                                                <td>{{res.Status}}</td>
+                                                <td>{{res.Requested_By}}</td>
+                                                <td>
+                                                    <a href="{% url 'GeneralRequisitionDetails' res.No_ %} "
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top"
+                                                        title="Click to View"> View <i class="far fa-eye"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Raise Request
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="myForm needs-validation" action="{% url 'GeneralRequisition' %}" method="post"
+                        novalidate>
+                        {% csrf_token %}
+                        <input type="hidden" name="myAction" value="insert">
+                        <input type="hidden" name="requisitionNo" value="">
+                        <div class="mb-2">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label for="" class="form-label">Order Date <span
+                                            class="text-danger">*</span></label>
+                                    <input type="date" name="orderDate" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label for="" class="form-label">Detail</label>
+                                    <textarea class="form-control" name="reason" rows="3" required></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

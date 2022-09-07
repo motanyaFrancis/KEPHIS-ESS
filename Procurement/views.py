@@ -563,6 +563,28 @@ def FnDeleteRepairRequisitionLine(request, pk):
             return redirect('RepairDetail', pk=pk)
     return redirect('RepairDetail', pk=pk)
 
+def FnGenerateRepairReport(request, pk):
+    nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
+                        for i in range(5))
+    if request.method == 'POST':
+        filenameFromApp = pk + str(nameChars) + ".pdf"
+        try:
+            response = config.CLIENT.service.FnGenerateRequisitionReport(
+                pk, filenameFromApp)
+            buffer = BytesIO.BytesIO()
+            content = base64.b64decode(response)
+            buffer.write(content)
+            responses = HttpResponse(
+                buffer.getvalue(),
+                content_type="application/pdf",
+            )
+            responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
+            return responses
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+            return redirect('RepairDetail', pk=pk)
+    return redirect('RepairDetail', pk=pk)
 
 class StoreRequest(UserObjectMixin,View):
     def get(self, request):
@@ -771,10 +793,6 @@ def FnCancelStoreApproval(request, pk):
             return redirect('StoreDetail', pk=pk)
     return redirect('StoreDetail', pk=pk)
 
-    
-
-# Delete Store Header
-
 def FnDeleteStoreRequisitionLine(request, pk):
     lineNo = ""
     if request.method == 'POST':
@@ -860,3 +878,276 @@ def DeleteStoreAttachment(request,pk):
             print(e)
     return redirect('StoreDetail', pk=pk)
 
+class GeneralRequisition(UserObjectMixin,View):
+    def get(self, request):
+        try:
+            userID = request.session['User_ID']
+            year = request.session['years']
+
+            Access_Point = config.O_DATA.format(f"/QyGeneralRequisitionHeaders?$filter=Requested_By%20eq%20%27{userID}%27")
+            response = self.get_object(Access_Point)
+            openRequest = [x for x in response['value'] if x['Status'] == 'Open']
+            Pending = [x for x in response['value'] if x['Status'] == 'Pending Approval']
+            Approved = [x for x in response['value'] if x['Status'] == 'Released']
+
+            counts = len(openRequest)
+            counter = len(Approved)
+            pend = len(Pending)
+
+        except requests.exceptions.RequestException as e:
+            print(e)
+            messages.info(request, "Whoops! Something went wrong. Please Login to Continue")
+            return redirect('auth')
+        except KeyError as e:
+            print(e)
+            messages.info(request, e)
+            return redirect('auth')
+        
+
+        ctx = {"today": self.todays_date, "res": openRequest,
+            "count": counts, "response": Approved,
+            "counter": counter, "pend": pend,
+            "pending": Pending, "year": year,
+            "full": userID}
+        return render(request,"generalReq.html",ctx)
+    def post(self,request):
+        if request.method == 'POST':
+            try:
+                requisitionNo = request.POST.get('requisitionNo')
+                myUserId = request.session['User_ID']
+                orderDate = datetime.strptime(
+                    request.POST.get('orderDate'), '%Y-%m-%d').date()
+                reason = request.POST.get('reason')
+                myAction = request.POST.get('myAction')
+            except ValueError:
+                messages.error(request, "Missing Input")
+                return redirect('GeneralRequisition')
+            except KeyError:
+                messages.info(request, "Session Expired. Please Login")
+                return redirect('auth')
+            try:
+                response = config.CLIENT.service.FnGeneralRequisitionHeader(
+                    requisitionNo, orderDate, reason, myUserId, myAction)
+                print(response)
+                if response == True:
+                    messages.success(request, "Request Successful")
+                    return redirect('GeneralRequisition')
+                else:
+                    messages.success(request, "False")
+                    return redirect('GeneralRequisition')
+            except Exception as e:
+                messages.info(request, e)
+                print(e)
+                return redirect('GeneralRequisition')
+        return redirect('GeneralRequisition')
+
+class GeneralRequisitionDetails(UserObjectMixin,View):
+    def get(self, request,pk):
+        try:
+            userID = request.session['User_ID']
+
+            Access_Point = config.O_DATA.format(f"/QyGeneralRequisitionHeaders?$filter=No_%20eq%20%27{pk}%27%20and%20Requested_By%20eq%20%27{userID}%27")
+            response = self.get_object(Access_Point)
+            for document in response['value']:
+                res = document
+            
+            ItemCategory = config.O_DATA.format("/QyItemCategories")
+            Item_Cat = self.get_object(ItemCategory)
+            itemsCategory = Item_Cat['value']
+
+            Approver = config.O_DATA.format(f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
+            res_approver = self.get_object(Approver)
+            Approvers = [x for x in res_approver['value']]
+
+
+            Access_File = config.O_DATA.format(f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27")
+            res_file = self.get_object(Access_File)
+            allFiles = [x for x in res_file['value']]
+
+            RejectComments = config.O_DATA.format(f"/QyApprovalCommentLines?$filter=Document_No_%20eq%20%27{pk}%27")
+            RejectedResponse = self.get_object(RejectComments)
+            Comments = [x for x in RejectedResponse['value']]
+
+            Lines_Res = config.O_DATA.format(f"/QyGeneralRequisitionLines?$filter=AuxiliaryIndex1%20eq%20%27{pk}%27")
+            response_Lines = self.get_object(Lines_Res)
+            openLines = [x for x in response_Lines['value'] if x['AuxiliaryIndex1'] == pk]
+ 
+        except requests.exceptions.RequestException as e:
+            print(e)
+            messages.info(request, "Whoops! Something went wrong. Please Login to Continue")
+            return redirect('purchase')
+        except KeyError as e:
+            print(e)
+            messages.info(request, "Session Expired. Please Login")
+            return redirect('auth')
+
+        ctx = {"today": self.todays_date, "res": res,"Approvers": Approvers,"file":allFiles,"Comments":Comments,
+               "itemsCategory":itemsCategory,"openLines":openLines}
+        return render(request,"generalDetails.html",ctx)
+    def post(self,request,pk):
+        if request.method == 'POST':
+            try:
+                requisitionNo = pk
+                lineNo = int(request.POST.get('lineNo'))
+                itemTypes = request.POST.get('itemTypes')
+                itemNo = request.POST.get('itemNo')
+                specification = request.POST.get('specification')
+                quantity = int(request.POST.get('quantity'))
+                myUserId = request.session['User_ID']
+                myAction = request.POST.get('myAction')
+                Unit_of_Measure = request.POST.get('Unit_of_Measure')
+            except ValueError:
+                messages.error(request, "Missing Input")
+                return redirect('GeneralRequisitionDetails', pk=pk)
+
+            class Data(enum.Enum):
+                values = itemTypes
+            itemType = (Data.values).value
+
+            if not Unit_of_Measure:
+                Unit_of_Measure = ''
+            try:
+                response = config.CLIENT.service.FnGeneralRequisitionLine(
+                    requisitionNo, lineNo,itemType,itemNo,specification, quantity,myUserId, myAction,Unit_of_Measure)
+                print(response)
+                if response == True:
+                    messages.success(request, "Request Successful")
+                    return redirect('GeneralRequisitionDetails', pk=pk)
+                else:
+                    messages.error(request, "Not Sent")
+                    return redirect('GeneralRequisitionDetails', pk=pk)
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+                return redirect('GeneralRequisitionDetails', pk=pk)
+        return redirect('GeneralRequisitionDetails', pk=pk)
+
+def FnDeleteGeneralRequisitionLine(request, pk):
+    if request.method == 'POST':
+        lineNo = int(request.POST.get('lineNo'))
+        requisitionNo = pk
+        try:
+            response = config.CLIENT.service.FnDeleteGeneralRequisitionLine(
+                requisitionNo, lineNo)
+            print(response)
+            if response == True:
+                messages.success(request, "Successfully Deleted")
+                return redirect('GeneralRequisitionDetails', pk=pk)
+            else:
+                messages.error(request, "Not Sent")
+                return redirect('GeneralRequisitionDetails', pk=pk)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+            return redirect('GeneralRequisitionDetails', pk=pk)
+    return redirect('GeneralRequisitionDetails', pk=pk)
+
+def UploadGeneralAttachment(request, pk):   
+    if request.method == "POST":
+        try:
+            attach = request.FILES.getlist('attachment')
+            tableID = 52177432
+        except Exception as e:
+            return redirect('GeneralRequisitionDetails', pk=pk)
+        for files in attach:
+            fileName = request.FILES['attachment'].name
+            attachment = base64.b64encode(files.read())
+            try:
+                response = config.CLIENT.service.FnUploadAttachedDocument(
+                    pk, fileName, attachment, tableID,request.session['User_ID'])
+                if response == True:
+                    messages.success(request, "File(s) Uploaded Successfully")
+                    return redirect('GeneralRequisitionDetails', pk=pk)
+                else:
+                    messages.error(request, "Failed, Try Again.")
+                    return redirect('GeneralRequisitionDetails', pk=pk)
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+    return redirect('GeneralRequisitionDetails', pk=pk)
+
+def DeleteGeneralAttachment(request,pk):
+    if request.method == "POST":
+        docID = int(request.POST.get('docID'))
+        tableID= int(request.POST.get('tableID'))
+        try:
+            response = config.CLIENT.service.FnDeleteDocumentAttachment(
+                pk,docID,tableID)
+            print(response)
+            if response == True:
+                messages.success(request, "Deleted Successfully ")
+                return redirect('GeneralRequisitionDetails', pk=pk)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+    return redirect('GeneralRequisitionDetails', pk=pk)
+
+def GeneralApproval(request, pk):
+    Username = request.session['User_ID']
+    Password = request.session['password']
+    AUTHS = Session()
+    AUTHS.auth = HTTPBasicAuth(Username, Password)
+    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
+    requistionNo = ""
+    if request.method == 'POST':
+        try:
+            requistionNo = request.POST.get('requistionNo')
+            myUserID = request.session['User_ID']
+        except ValueError as e:
+            messages.error(request, "Missing Input")
+            return redirect('GeneralRequisitionDetails', pk=pk)
+        except KeyError:
+            messages.info(request, "Session Expired. Please Login")
+            return redirect('auth')
+        try:
+            response = CLIENT.service.FnRequestInternalRequestApproval(
+                myUserID, requistionNo)
+            messages.success(request, "Approval Request Sent Successfully")
+            print(response)
+            return redirect('GeneralRequisitionDetails', pk=pk)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+            return redirect('GeneralRequisitionDetails', pk=pk)
+    return redirect('GeneralRequisitionDetails', pk=pk)
+
+def FnCancelGeneralApproval(request, pk):
+    if request.method == 'POST':
+        requistionNo = request.POST.get('requistionNo')
+        try:
+            response = config.CLIENT.service.FnCancelInternalRequestApproval(
+                request.session['User_ID'], requistionNo)
+            messages.success(request, "Cancel Approval Successful")
+            print(response)
+            return redirect('GeneralRequisitionDetails', pk=pk)
+        except KeyError:
+            messages.info(request, "Session Expired. Please Login")
+            return redirect('auth')
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+            return redirect('GeneralRequisitionDetails', pk=pk)
+    return redirect('GeneralRequisitionDetails', pk=pk)
+
+def FnGenerateGeneralReport(request, pk):
+    nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
+                        for i in range(5))
+    if request.method == 'POST':
+        filenameFromApp = pk + str(nameChars) + ".pdf"
+        try:
+            response = config.CLIENT.service.FnGenerateRequisitionReport(
+                pk, filenameFromApp)
+            buffer = BytesIO.BytesIO()
+            content = base64.b64decode(response)
+            buffer.write(content)
+            responses = HttpResponse(
+                buffer.getvalue(),
+                content_type="application/pdf",
+            )
+            responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
+            return responses
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+            return redirect('GeneralRequisitionDetails', pk=pk)
+    return redirect('GeneralRequisitionDetails', pk=pk)

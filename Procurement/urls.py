@@ -51,4 +51,11 @@ urlpatterns = [
     path('DeleteStoreAttachment/<str:pk>',
          views.DeleteStoreAttachment, name='DeleteStoreAttachment'),
     path('itemUnitOfMeasure',views.itemUnitOfMeasure, name='itemUnitOfMeasure'),
+    path('general',views.GeneralRequisition.as_view(), name='GeneralRequisition'),
+    path('GeneralRequisitionDetails/<str:pk>',views.GeneralRequisitionDetails.as_view(), name='GeneralRequisitionDetails'),
+    path('FnDeleteGeneralRequisitionLine/<str:pk>',views.FnDeleteGeneralRequisitionLine, name='FnDeleteGeneralRequisitionLine'),
+    path('UploadGeneralAttachment/<str:pk>',views.UploadGeneralAttachment, name='UploadGeneralAttachment'),
+    path('DeleteGeneralAttachment/<str:pk>',views.DeleteGeneralAttachment, name='DeleteGeneralAttachment'),
+    path('GeneralApproval/<str:pk>',views.GeneralApproval, name='GeneralApproval'),
+    path('FnCancelGeneralApproval/<str:pk>',views.FnCancelGeneralApproval, name='FnCancelGeneralApproval'),
 ]
