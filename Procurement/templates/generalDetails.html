@@ -22,7 +22,8 @@
                         Lines
                     </button>
                     {% elif res.Status == "Released" %}
-                    <form action="" method="post" style="display:inline-block">
+                    <form action="{% url 'FnGenerateGeneralReport' res.No_ %}" method="post"
+                        style="display:inline-block">
                         {% csrf_token %}
                         <button class="btn btn-successs" type="submit"> Preview
                             Report</button>

@@ -58,4 +58,5 @@ urlpatterns = [
     path('DeleteGeneralAttachment/<str:pk>',views.DeleteGeneralAttachment, name='DeleteGeneralAttachment'),
     path('GeneralApproval/<str:pk>',views.GeneralApproval, name='GeneralApproval'),
     path('FnCancelGeneralApproval/<str:pk>',views.FnCancelGeneralApproval, name='FnCancelGeneralApproval'),
+    path('FnGenerateGeneralReport/<str:pk>',views.FnGenerateGeneralReport, name='FnGenerateGeneralReport'),
 ]
