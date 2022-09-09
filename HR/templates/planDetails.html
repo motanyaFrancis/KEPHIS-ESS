@@ -176,15 +176,13 @@
             <div class="modal-header">
                 <h5 class="modal-title" id="staticBackdropLabel">Leave Planner Lines
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form class="myForm needs-validation" action="{% url 'PlanDetail' res.No_ %}" method="post" novalidate>
+                <form class="myForm" action="{% url 'PlanDetail' res.No_ %}" method="post" novalidate>
                     {% csrf_token %}
                     <div class="mb-2">
-                        <span class="w-name">
-                            Leave Plan Lines:
-                        </span>
                         <div class="row">
                             <div class="col-md-12">
                                 <input type="hidden" name="lineNo" value="0">
@@ -195,9 +193,6 @@
                                 <label for="" class="form-label">Start
                                     Date:</label>
                                 <input type="date" class="form-control" name="startDate" required>
-                                <div class="invalid-feedback">
-                                    Please select a valid Start Date.
-                                </div>
                             </div>
                         </div>
                         <div class="row">
@@ -205,23 +200,18 @@
                                 <label for="" class="form-label">End
                                     Date:</label>
                                 <input type="date" class="form-control" name="endDate" required>
-                                <div class="invalid-feedback">
-                                    Please select a valid End Date.
-                                </div>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row my-3">
                             <div class="col-md-12">
                                 <input type="hidden" name="myAction" value="insert">
                             </div>
                         </div>
+
+                        <button type="submit" id="sasa" class="btn btn-success w-100">Submit</button>
                     </div>
+                </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
-                <button type="submit" id="sasa" class="btn btn-primary">Submit</button>
-            </div>
-            </form>
         </div>
     </div>
 </div>

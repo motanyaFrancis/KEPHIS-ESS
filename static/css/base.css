@@ -24,6 +24,10 @@
 .avail{
     color: red !important;
 }
+.editSpan{
+    color:var(--sand-tan);
+    text-transform: bold;
+}
 
 body {
     background: #181824;
@@ -507,7 +511,10 @@ ul.tasks::after {
 }
 
 .file-man-box .file-man-title {
-    padding-right: 15px
+    padding-right: 10px
+}
+.file-man-title h5{
+    font-size: 10px !important;
 }
 
 .file-man-box:hover {

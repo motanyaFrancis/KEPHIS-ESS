@@ -335,10 +335,10 @@
     </div>
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Requisition Line
+                    <h5 class="modal-title" id="staticBackdropLabel">General Requisition Line
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                         aria-label="Close"></button>
@@ -354,7 +354,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <label class="form-label">Requisition Type <span class="text-danger">*</span></label>
                                 <select class="form-select" id="itemType" name="itemTypes" required>
                                     <option selected disabled value="0">--Select--</option>
@@ -363,9 +363,7 @@
                                     <option value="3">Fixed Asset</option>
                                 </select>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <label class="form-label">Requisition Item</label>
                                 <select class="form-select" name="itemNo" id="allItems">
                                     <option class="after" value="" disabled>--Select--</option>
@@ -393,8 +391,7 @@
                                 <textarea class="form-control" name="specification" rows="3" required></textarea>
                             </div>
                         </div>
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
-                        <button type="submit" id="sasa" class="btn btn-primary">Submit</button>
+                        <button type="submit" class="btn btn-success my-3 w-100">Submit</button>
                     </form>
                 </div>
             </div>
@@ -418,14 +415,10 @@
                         <label class="form-label">Attachments</label>
                         <input class="form-control" name="attachment" type="file" multiple>
                     </div>
+                    <button type="submit" class="btn btn-success my-3 w-100">Submit</button>
+                </form>
 
             </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </div>
-            </form>
         </div>
     </div>
 </div>

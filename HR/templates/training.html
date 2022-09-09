@@ -100,10 +100,13 @@
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title" id="staticBackdropLabel">
-                                                                        Edit
-                                                                        Training Request {{res.Request_No_}}
+                                                                        <i class="las la-edit"></i> Edit Training
+                                                                        <span
+                                                                            class="editSpan">{{res.Request_No_}}</span>
+
                                                                     </h5>
-                                                                    <button type="button" class="btn-close"
+                                                                    <button type="button"
+                                                                        class="btn-close btn-close-white"
                                                                         data-bs-dismiss="modal"
                                                                         aria-label="Close"></button>
                                                                 </div>
@@ -167,13 +170,8 @@
                                                                                         value="{{res.Request_No_}}">
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="modal-footer">
-                                                                                <button type="button"
-                                                                                    class="btn btn-danger"
-                                                                                    data-bs-dismiss="modal">Discard</button>
-                                                                                <button type="submit" id="sasa"
-                                                                                    class="btn btn-primary">Submit</button>
-                                                                            </div>
+                                                                            <button type="submit"
+                                                                                class="btn btn-success my-3 w-100">Submit</button>
                                                                         </div>
                                                                     </form>
                                                                 </div>
@@ -223,10 +221,12 @@
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title" id="staticBackdropLabel">
-                                                                        Edit
-                                                                        Training Request {{res.Request_No_}}
+                                                                        <i class="las la-edit"></i> Edit Training
+                                                                        <span
+                                                                            class="editSpan">{{res.Request_No_}}</span>
                                                                     </h5>
-                                                                    <button type="button" class="btn-close"
+                                                                    <button type="button"
+                                                                        class="btn-close btn-close-white"
                                                                         data-bs-dismiss="modal"
                                                                         aria-label="Close"></button>
                                                                 </div>
@@ -290,13 +290,8 @@
                                                                                         value="{{res.Request_No_}}">
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="modal-footer">
-                                                                                <button type="button"
-                                                                                    class="btn btn-danger"
-                                                                                    data-bs-dismiss="modal">Discard</button>
-                                                                                <button type="submit" id="sasa"
-                                                                                    class="btn btn-primary">Submit</button>
-                                                                            </div>
+                                                                            <button type="submit"
+                                                                                class="btn btn-success my-3 w-100">Submit</button>
                                                                         </div>
                                                                     </form>
                                                                 </div>
@@ -427,7 +422,8 @@
                 <div class="modal-header">
                     <h5 class="modal-title" id="staticBackdropLabel">New Training Request
                     </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form class="myForm" action="{% url 'training_request' %}" method="post">
@@ -467,10 +463,7 @@
                                 </div>
                             </div>
 
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
-                                <button type="submit" id="sasa" class="btn btn-primary">Submit</button>
-                            </div>
+                            <button type="submit" id="sasa" class="btn btn-success my-3 w-100">Submit</button>
                         </div>
                     </form>
                 </div>

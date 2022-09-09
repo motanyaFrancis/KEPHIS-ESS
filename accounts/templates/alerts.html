@@ -7,7 +7,7 @@
     <div class="a-icon mx-2">
         {{message}}
     </div>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 {% elif message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
 <div class="alert alert-danger d-flex align-items-center alert-dismissible alert-warn" role="alert">
@@ -15,7 +15,7 @@
     <div class="a-icon mx-2">
         {{message}}
     </div>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 {% elif message.level == DEFAULT_MESSAGE_LEVELS.INFO %}
 <div class="alert alert-info d-flex align-items-center alert-dismissible" role="alert">
@@ -23,7 +23,7 @@
     <div class="a-icon mx-2">
         {{message}}
     </div>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 {% endif %}
 {% endfor %}

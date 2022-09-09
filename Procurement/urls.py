@@ -28,8 +28,8 @@ urlpatterns = [
          views.FnCancelRepairApproval, name='RepairCancel'),
     path('FnDeleteRepair/<str:pk>',
          views.FnDeleteRepairRequisitionLine, name='FnDeleteRepairRequisitionLine'),
-    path('DeleteRepairAttachment/<str:pk>',
-         views.DeleteRepairAttachment, name='DeleteRepairAttachment'),
+    path('DeleteRepairAttachment/<str:pk>',views.DeleteRepairAttachment, name='DeleteRepairAttachment'),
+    path('FnGenerateRepairReport/<str:pk>',views.FnGenerateRepairReport, name='FnGenerateRepairReport'),
 
 
 

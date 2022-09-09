@@ -81,16 +81,18 @@
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title" id="staticBackdropLabel">
-                                                                        Raise Store Request
+                                                                        <i class="las la-edit"></i> Edit Store Request
+                                                                        <span class="editSpan">{{res.No_}}</span>
+
                                                                     </h5>
-                                                                    <button type="button" class="btn-close"
+                                                                    <button type="button"
+                                                                        class="btn-close btn-close-white"
                                                                         data-bs-dismiss="modal"
                                                                         aria-label="Close"></button>
                                                                 </div>
                                                                 <div class="modal-body">
-                                                                    <form class="myForm needs-validation"
-                                                                        action="{% url 'store' %}" method="post"
-                                                                        novalidate>
+                                                                    <form class="myForm " action="{% url 'store' %}"
+                                                                        method="post" novalidate>
                                                                         {% csrf_token %}
                                                                         <div class="mb-2"> <span class="w-name">
                                                                                 Store Request Header:
@@ -119,12 +121,8 @@
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-                                                                        <div class="modal-footer">
-                                                                            <button type="button" class="btn btn-danger"
-                                                                                data-bs-dismiss="modal">Discard</button>
-                                                                            <button type="submit"
-                                                                                class="btn btn-primary">Submit</button>
-                                                                        </div>
+                                                                        <button type="submit"
+                                                                            class="btn btn-success my-3 w-100">Submit</button>
                                                                     </form>
                                                                 </div>
                                                             </div>
@@ -157,33 +155,26 @@
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title" id="staticBackdropLabel">
-                                                                        Raise Store Request
+                                                                        <i class="las la-edit"></i> Edit Store Request
+                                                                        <span class="editSpan">{{res.No_}}</span>
                                                                     </h5>
-                                                                    <button type="button" class="btn-close"
+                                                                    <button type="button"
+                                                                        class="btn-close btn-close-white"
                                                                         data-bs-dismiss="modal"
                                                                         aria-label="Close"></button>
                                                                 </div>
                                                                 <div class="modal-body">
-                                                                    <form class="myForm needs-validation"
-                                                                        action="{% url 'store' %}" method="post"
-                                                                        novalidate>
+                                                                    <form class="myForm" action="{% url 'store' %}"
+                                                                        method="post" novalidate>
                                                                         {% csrf_token %}
+                                                                        <input type="hidden" name="requisitionNo"
+                                                                            value="{{res.No_}}">
+                                                                        <input type="hidden" name="myAction"
+                                                                            value="modify">
                                                                         <div class="mb-2"> <span class="w-name">
                                                                                 Store Request Header:
                                                                             </span>
-                                                                            <div class="row">
-                                                                                <div class="col-md-12">
-                                                                                    <input type="hidden"
-                                                                                        name="requisitionNo"
-                                                                                        value="{{res.No_}}">
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="row">
-                                                                                <div class="col-md-12">
-                                                                                    <input type="hidden" name="myAction"
-                                                                                        value="modify">
-                                                                                </div>
-                                                                            </div>
+
                                                                             <div class="row">
                                                                                 <div class="col-md-12">
                                                                                     <label for=""
@@ -195,12 +186,8 @@
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-                                                                        <div class="modal-footer">
-                                                                            <button type="button" class="btn btn-danger"
-                                                                                data-bs-dismiss="modal">Discard</button>
-                                                                            <button type="submit"
-                                                                                class="btn btn-primary">Submit</button>
-                                                                        </div>
+                                                                        <button type="submit"
+                                                                            class="btn btn-success my-3 w-100">Submit</button>
                                                                     </form>
                                                                 </div>
                                                             </div>
@@ -298,10 +285,11 @@
                 <div class="modal-header">
                     <h5 class="modal-title" id="staticBackdropLabel">Raise Store Request
                     </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="myForm needs-validation" action="{% url 'store' %}" method="post" novalidate>
+                    <form class="myForm" action="{% url 'store' %}" method="post" novalidate>
                         {% csrf_token %}
                         <div class="mb-2">
                             <div class="row">
@@ -320,10 +308,7 @@
                                     <textarea class="form-control" name="reason" rows="3" required></textarea>
                                 </div>
                             </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
-                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <button type="submit" class="btn btn-success my-3 w-100">Submit</button>
                         </div>
                     </form>
                 </div>

@@ -569,7 +569,7 @@ def FnGenerateRepairReport(request, pk):
     if request.method == 'POST':
         filenameFromApp = pk + str(nameChars) + ".pdf"
         try:
-            response = config.CLIENT.service.FnGenerateRequisitionReport(
+            response = config.CLIENT.service.FnGenerateRepairReport(
                 pk, filenameFromApp)
             buffer = BytesIO.BytesIO()
             content = base64.b64decode(response)

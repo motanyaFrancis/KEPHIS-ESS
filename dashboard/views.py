@@ -93,5 +93,13 @@ class Dashboard(UserObjectMixin,View):
 
 class Manual(View):
     def get(self, request):
-        return render(request,"manual.html")
+        try:
+            userId =  request.session['User_ID']
+            todays_date = datetime.datetime.now().strftime("%b. %d, %Y %A")
+        except KeyError as e:
+            print (e)
+            messages.success(request, "Session Expired. Please Login")
+            return redirect('auth')
+        ctx = {"today": todays_date,"full": userId,}
+        return render(request,"manual.html",ctx)
 

@@ -83,10 +83,12 @@
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title" id="staticBackdropLabel">
-                                                                        Edit
-                                                                        Staff Claim {{res.No_}}
+                                                                        <i class="las la-edit"></i> Edit Staff Claim
+                                                                        <span class="editSpan">{{res.No_}}</span>
+
                                                                     </h5>
-                                                                    <button type="button" class="btn-close"
+                                                                    <button type="button"
+                                                                        class="btn-close  btn-close-white"
                                                                         data-bs-dismiss="modal" aria-label="Close">
                                                                     </button>
                                                                 </div>
@@ -156,15 +158,11 @@
 
                                                                             </div>
                                                                         </div>
+                                                                        <button type="submit"
+                                                                            class="btn btn-success my-3 w-100">Submit</button>
+                                                                    </form>
 
                                                                 </div>
-                                                                <div class="modal-footer">
-                                                                    <button type="button" class="btn btn-danger"
-                                                                        data-bs-dismiss="modal">Discard</button>
-                                                                    <button type="submit"
-                                                                        class="btn btn-primary">Submit</button>
-                                                                </div>
-                                                                </form>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -196,10 +194,11 @@
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title" id="staticBackdropLabel">
-                                                                        Edit
-                                                                        Staff Claim {{res.No_}}
+                                                                        <i class="las la-edit"></i> Edit Staff Claim
+                                                                        <span class="editSpan">{{res.No_}}</span>
                                                                     </h5>
-                                                                    <button type="button" class="btn-close"
+                                                                    <button type="button"
+                                                                        class="btn-close btn-close-white"
                                                                         data-bs-dismiss="modal" aria-label="Close">
                                                                     </button>
                                                                 </div>
@@ -269,15 +268,11 @@
 
                                                                             </div>
                                                                         </div>
+                                                                        <button type="submit"
+                                                                            class="btn btn-success my-3 w-100">Submit</button>
+                                                                    </form>
 
                                                                 </div>
-                                                                <div class="modal-footer">
-                                                                    <button type="button" class="btn btn-danger"
-                                                                        data-bs-dismiss="modal">Discard</button>
-                                                                    <button type="submit"
-                                                                        class="btn btn-primary">Submit</button>
-                                                                </div>
-                                                                </form>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -369,7 +364,8 @@
                 <div class="modal-header">
                     <h5 class="modal-title" id="staticBackdropLabel">New Staff Claim
                     </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form class="myForm needs-validation" action="{% url 'claim' %}" method="post" novalidate>
@@ -414,13 +410,9 @@
                                 <textarea class="form-control" name="purpose" rows="3" required></textarea>
                             </div>
                         </div>
-
+                        <button type="submit" class="btn btn-success my-3 w-100">Submit</button>
+                    </form>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </div>
-                </form>
             </div>
         </div>
     </div>

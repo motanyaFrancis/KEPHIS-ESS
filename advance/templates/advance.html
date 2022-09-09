@@ -78,10 +78,12 @@
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title" id="staticBackdropLabel">
-                                                                        Edit
-                                                                        Loan No : {{res.Loan_No}}
+                                                                        <i class="las la-edit"></i> Edit Loan No
+                                                                        <span class="editSpan">{{res.Loan_No}}</span>
+
                                                                     </h5>
-                                                                    <button type="button" class="btn-close"
+                                                                    <button type="button"
+                                                                        class="btn-close btn-close-white"
                                                                         data-bs-dismiss="modal"
                                                                         aria-label="Close"></button>
                                                                 </div>
@@ -130,16 +132,12 @@
                                                                                         placeholder="000.000" required>
                                                                                 </div>
                                                                             </div>
-
+                                                                            <button type="submit"
+                                                                                class="btn btn-success my-3 w-100">Submit</button>
                                                                         </div>
-                                                                        <div class="modal-footer">
-                                                                            <button type="button" class="btn btn-danger"
-                                                                                data-bs-dismiss="modal">Discard</button>
-                                                                            <button type="submit" id="sasa"
-                                                                                class="btn btn-primary">Submit</button>
-                                                                        </div>
+                                                                    </form>
                                                                 </div>
-                                                                </form>
+
                                                             </div>
                                                         </div>
                                                     </div>
@@ -171,17 +169,17 @@
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title" id="staticBackdropLabel">
-                                                                        Edit
-                                                                        Loan No : {{res.Loan_No}}
+                                                                        <i class="las la-edit"></i> Edit Loan No
+                                                                        <span class="editSpan">{{res.Loan_No}}</span>
                                                                     </h5>
-                                                                    <button type="button" class="btn-close"
+                                                                    <button type="button"
+                                                                        class="btn-close btn-close-white"
                                                                         data-bs-dismiss="modal"
                                                                         aria-label="Close"></button>
                                                                 </div>
                                                                 <div class="modal-body">
-                                                                    <form class="myForm needs-validation"
-                                                                        action="{% url 'advance' %}" method="post"
-                                                                        novalidate>
+                                                                    <form class="myForm" action="{% url 'advance' %}"
+                                                                        method="post" novalidate>
                                                                         {% csrf_token %}
                                                                         <div class="mb-2 myForm">
                                                                             <div class="row">
@@ -223,108 +221,103 @@
                                                                                         placeholder="000.000" required>
                                                                                 </div>
                                                                             </div>
+                                                                            <button type="submit"
+                                                                                class="btn btn-success my-3 w-100">Submit</button>
+                                                                    </form>
 
-                                                                        </div>
-                                                                        <div class="modal-footer">
-                                                                            <button type="button" class="btn btn-danger"
-                                                                                data-bs-dismiss="modal">Discard</button>
-                                                                            <button type="submit" id="sasa"
-                                                                                class="btn btn-primary">Submit</button>
-                                                                        </div>
                                                                 </div>
-                                                                </form>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <a href="{% url 'advanceDetail' res.Loan_No %}"
-                                                        class="btn btn-success btn-icon-text" type="button"
-                                                        data-toggle="tooltip" data-placement="top"
-                                                        title="Click to View"> View <i class="far fa-eye"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                            {% endif %}
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
                                 </div>
+                                <a href="{% url 'advanceDetail' res.Loan_No %}" class="btn btn-success btn-icon-text"
+                                    type="button" data-toggle="tooltip" data-placement="top" title="Click to View"> View
+                                    <i class="far fa-eye"></i>
+                                </a>
+                                </td>
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                                </tbody>
+                                </table>
                             </div>
-                            <div class="tab-pane fade" id="pending">
+                        </div>
+                        <div class="tab-pane fade" id="pending">
 
-                                <div class="card-body">
-                                    <table id="example"
-                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                                        style="width:100%">
-                                        <thead>
-                                            <tr id="tops">
-                                                <th id="long">Loan No</th>
-                                                <th>Application Date</th>
-                                                <th>Loan Product</th>
-                                                <th>Loan Status</th>
-                                                <th>Amount Requested</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for res in pending %}
-                                            <tr>
-                                                <td>{{res.Loan_No}}</td>
-                                                <td>{{res.Application_Date}}</td>
-                                                <td id="rap">{{res.Loan_Product_Name}}</td>
-                                                <td>{{res.Loan_Status}}</td>
-                                                <td>{{res.Amount_Requested}}</td>
-                                                <td>
-                                                    <a href="{% url 'advanceDetail' res.Loan_No %}"
-                                                        class="btn btn-success btn-icon-text" type="button"
-                                                        data-toggle="tooltip" data-placement="top"
-                                                        title="Click to View"> View <i class="far fa-eye"></i></a>
-                                                </td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
+                            <div class="card-body">
+                                <table id="example"
+                                    class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                    style="width:100%">
+                                    <thead>
+                                        <tr id="tops">
+                                            <th id="long">Loan No</th>
+                                            <th>Application Date</th>
+                                            <th>Loan Product</th>
+                                            <th>Loan Status</th>
+                                            <th>Amount Requested</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for res in pending %}
+                                        <tr>
+                                            <td>{{res.Loan_No}}</td>
+                                            <td>{{res.Application_Date}}</td>
+                                            <td id="rap">{{res.Loan_Product_Name}}</td>
+                                            <td>{{res.Loan_Status}}</td>
+                                            <td>{{res.Amount_Requested}}</td>
+                                            <td>
+                                                <a href="{% url 'advanceDetail' res.Loan_No %}"
+                                                    class="btn btn-success btn-icon-text" type="button"
+                                                    data-toggle="tooltip" data-placement="top" title="Click to View">
+                                                    View <i class="far fa-eye"></i></a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
                             </div>
-                            <div class="tab-pane fade" id="profile">
-                                <div class="card-body">
-                                    <table id="example"
-                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                                        style="width:100%">
-                                        <thead>
-                                            <tr id="tops">
-                                                <th id="long">Loan No</th>
-                                                <th>Application Date</th>
-                                                <th>Loan Product</th>
-                                                <th>Loan Status</th>
-                                                <th>Amount Requested</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for res in response %}
-                                            <tr>
-                                                <td>{{res.Loan_No}}</td>
-                                                <td>{{res.Application_Date}}</td>
-                                                <td id="rap">{{res.Loan_Product_Name}}</td>
-                                                <td>{{res.Loan_Status}}</td>
-                                                <td>{{res.Amount_Requested}}</td>
-                                                <td>
-                                                    <a href="{% url 'advanceDetail' res.Loan_No %}"
-                                                        class="btn btn-success btn-icon-text" type="button"
-                                                        data-toggle="tooltip" data-placement="top"
-                                                        title="Click to View"> View <i class="far fa-eye"></i></a>
-                                                </td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
+                        </div>
+                        <div class="tab-pane fade" id="profile">
+                            <div class="card-body">
+                                <table id="example"
+                                    class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                    style="width:100%">
+                                    <thead>
+                                        <tr id="tops">
+                                            <th id="long">Loan No</th>
+                                            <th>Application Date</th>
+                                            <th>Loan Product</th>
+                                            <th>Loan Status</th>
+                                            <th>Amount Requested</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for res in response %}
+                                        <tr>
+                                            <td>{{res.Loan_No}}</td>
+                                            <td>{{res.Application_Date}}</td>
+                                            <td id="rap">{{res.Loan_Product_Name}}</td>
+                                            <td>{{res.Loan_Status}}</td>
+                                            <td>{{res.Amount_Requested}}</td>
+                                            <td>
+                                                <a href="{% url 'advanceDetail' res.Loan_No %}"
+                                                    class="btn btn-success btn-icon-text" type="button"
+                                                    data-toggle="tooltip" data-placement="top" title="Click to View">
+                                                    View <i class="far fa-eye"></i></a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
     </div>
     <!-- Modal -->
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
@@ -334,10 +327,11 @@
                 <div class="modal-header">
                     <h5 class="modal-title" id="staticBackdropLabel">New Salary Advance
                     </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="myForm needs-validation" action="{% url 'advance' %}" method="post" novalidate>
+                    <form class="myForm " action="{% url 'advance' %}" method="post" novalidate>
                         {% csrf_token %}
                         <div class="row">
                             <div class="col-md-12">
@@ -368,14 +362,12 @@
                                 <input type="hidden" name="myAction" value="insert">
                             </div>
                         </div>
+                        <button type="submit" class="btn btn-success my-3 w-100">Submit</button>
+                    </form>
 
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
-                    <button type="submit" id="sasa" class="btn btn-primary">Submit</button>
-                </div>
+
             </div>
-            </form>
         </div>
     </div>
     </div>

@@ -422,24 +422,23 @@
                 <div class="modal-header">
                     <h5 class="modal-title" id="staticBackdropLabel">New Training Line
                     </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form class="myForm needs-validation" action="{% url 'TrainingDetail' res.Request_No_ %}"
                         method="post" novalidate>
                         {% csrf_token %}
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label class="form-label">Training Course</label>
                                 <input type="text" class="form-control" name="trainingName" required>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label for="" class="form-label">Field of Training</label>
                                 <input type="text" class="form-control" name="trainingArea" required>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-4">
                                 <label class="form-label">Training Type</label>
                                 <select class="form-select" name="trainType" id="trainType" required>
                                     <option selected disabled value="">Select </option>
@@ -528,12 +527,9 @@
                                 <textarea class="form-control" name="trainingObjectives" rows="3" required></textarea>
                             </div>
                         </div>
+                        <button type="submit" class="btn btn-success my-3 w-100">Submit</button>
+                    </form>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
-                    <button type="submit" id="sasa" class="btn btn-primary">Submit</button>
-                </div>
-                </form>
             </div>
         </div>
     </div>

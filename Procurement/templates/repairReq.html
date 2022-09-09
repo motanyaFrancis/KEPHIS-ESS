@@ -79,14 +79,17 @@
                                                     <div class="modal fade" id="trainedit{{res.No_}}"
                                                         data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
                                                         aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                                                        <div
-                                                            class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                                        <div class="modal-dialog modal-dialog-scrollable">
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title" id="staticBackdropLabel">
-                                                                        Edit Repair Request and Maintenance
+                                                                        <i class="las la-edit"></i> Edit Repair Request
+                                                                        and Maintenance
+                                                                        <span class="editSpan">{{res.No_}}</span>
+
                                                                     </h5>
-                                                                    <button type="button" class="btn-close"
+                                                                    <button type="button"
+                                                                        class="btn-close btn-close-white"
                                                                         data-bs-dismiss="modal"
                                                                         aria-label="Close"></button>
                                                                 </div>
@@ -130,12 +133,8 @@
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-                                                                        <div class="modal-footer">
-                                                                            <button type="button" class="btn btn-danger"
-                                                                                data-bs-dismiss="modal">Discard</button>
-                                                                            <button type="submit"
-                                                                                class="btn btn-primary">Submit</button>
-                                                                        </div>
+                                                                        <button type="submit"
+                                                                            class="btn btn-success my-3 w-100">Submit</button>
                                                                     </form>
                                                                 </div>
                                                             </div>
@@ -170,16 +169,18 @@
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title" id="staticBackdropLabel">
-                                                                        Edit Repair Request and Maintenance
+                                                                        <i class="las la-edit"></i> Edit Repair Request
+                                                                        and Maintenance
+                                                                        <span class="editSpan">{{res.No_}}</span>
                                                                     </h5>
-                                                                    <button type="button" class="btn-close"
+                                                                    <button type="button"
+                                                                        class="btn-close btn-close-white"
                                                                         data-bs-dismiss="modal"
                                                                         aria-label="Close"></button>
                                                                 </div>
                                                                 <div class="modal-body">
-                                                                    <form class=" needs-validation"
-                                                                        action="{% url 'repair' %}" method="post"
-                                                                        novalidate>
+                                                                    <form class="" action="{% url 'repair' %}"
+                                                                        method="post" novalidate>
                                                                         {% csrf_token %}
                                                                         <div class="mb-2 myForm">
                                                                             <div class="row">
@@ -216,12 +217,8 @@
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-                                                                        <div class="modal-footer">
-                                                                            <button type="button" class="btn btn-danger"
-                                                                                data-bs-dismiss="modal">Discard</button>
-                                                                            <button type="submit"
-                                                                                class="btn btn-primary">Submit</button>
-                                                                        </div>
+                                                                        <button type="submit"
+                                                                            class="btn btn-success my-3 w-100">Submit</button>
                                                                     </form>
                                                                 </div>
                                                             </div>
@@ -320,10 +317,11 @@
                 <div class="modal-header">
                     <h5 class="modal-title" id="staticBackdropLabel">Raise Repair/Maintenance Request
                     </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="myForm needs-validation" action="{% url 'repair' %}" method="post" novalidate>
+                    <form class="myForm" action="{% url 'repair' %}" method="post" novalidate>
                         {% csrf_token %}
                         <div class="mb-2">
                             <div class="row">
@@ -350,10 +348,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
-                            <button type="submit" class="btn btn-primary">Submit</button>
-                        </div>
+                        <button type="submit" class="btn btn-success my-3 w-100">Submit</button>
                     </form>
                 </div>
             </div>

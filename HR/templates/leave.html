@@ -84,17 +84,18 @@
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title" id="staticBackdropLabel">
-                                                                        Edit Leave
-                                                                        Request NO {{res.Application_No}}
+                                                                        <i class="las la-edit"></i> Edit Leave
+                                                                        Request <span
+                                                                            class="editSpan">{{res.Application_No}}</span>
                                                                     </h5>
-                                                                    <button type="button" class="btn-close"
+                                                                    <button type="button"
+                                                                        class="btn-close btn-close-white"
                                                                         data-bs-dismiss="modal"
                                                                         aria-label="Close"></button>
                                                                 </div>
                                                                 <div class="modal-body">
-                                                                    <form class="myForm needs-validation"
-                                                                        action="{% url 'leave' %}" method="post"
-                                                                        novalidate>
+                                                                    <form class="myForm" action="{% url 'leave' %}"
+                                                                        method="post" novalidate>
                                                                         {% csrf_token %}
                                                                         <div class="mb-2 myForm">
                                                                             <div class="row">
@@ -205,12 +206,8 @@
                                                                                         disabled>
                                                                                 </div>
                                                                             </div>
-                                                                        </div>
-                                                                        <div class="modal-footer">
-                                                                            <button type="button" class="btn btn-danger"
-                                                                                data-bs-dismiss="modal">Discard</button>
-                                                                            <button type="submit"
-                                                                                class="btn btn-primary">Submit</button>
+                                                                            <button type="submit" id="sasa"
+                                                                                class="btn btn-success my-3 w-100">Submit</button>
                                                                         </div>
                                                                     </form>
                                                                 </div>
@@ -245,17 +242,18 @@
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title" id="staticBackdropLabel">
-                                                                        Edit Leave
-                                                                        Request NO {{res.Application_No}}
+                                                                        <i class="las la-edit"></i> Edit Leave
+                                                                        Request <span
+                                                                            class="editSpan">{{res.Application_No}}</span>
                                                                     </h5>
-                                                                    <button type="button" class="btn-close"
+                                                                    <button type="button"
+                                                                        class="btn-close btn-close-white"
                                                                         data-bs-dismiss="modal"
                                                                         aria-label="Close"></button>
                                                                 </div>
                                                                 <div class="modal-body">
-                                                                    <form class="myForm needs-validation"
-                                                                        action="{% url 'leave' %}" method="post"
-                                                                        novalidate>
+                                                                    <form class="myForm" action="{% url 'leave' %}"
+                                                                        method="post" novalidate>
                                                                         {% csrf_token %}
                                                                         <div class="mb-2 myForm">
 
@@ -358,13 +356,10 @@
                                                                                         disabled>
                                                                                 </div>
                                                                             </div>
+                                                                            <button type="submit" id="sasa"
+                                                                                class="btn btn-success my-3 w-100">Submit</button>
                                                                         </div>
-                                                                        <div class="modal-footer">
-                                                                            <button type="button" class="btn btn-danger"
-                                                                                data-bs-dismiss="modal">Discard</button>
-                                                                            <button type="submit"
-                                                                                class="btn btn-primary">Submit</button>
-                                                                        </div>
+
                                                                     </form>
                                                                 </div>
                                                             </div>
@@ -464,10 +459,11 @@
                 <div class="modal-header">
                     <h5 class="modal-title" id="staticBackdropLabel">Raise Leave Request
                     </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="myForm needs-validation" action="{% url 'leave' %}" method="post" novalidate>
+                    <form class="myForm" action="{% url 'leave' %}" method="post" novalidate>
                         {% csrf_token %}
                         <div class="mb-2">
                             <input type="hidden" name="applicationNo" value="">
@@ -502,8 +498,6 @@
                                         <option value="{{res.Start_Date}}">{{res.Start_Date}}</option>
                                         {% endfor %}
                                     </select>
-                                    <div class="form-text small">Select your annual leave plan start date
-                                    </div>
                                 </div>
                             </div>
                             <div class="row" id="LeaveStartDateRow" style="display:none">
@@ -530,10 +524,7 @@
                                         disabled>
                                 </div>
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
-                                <button type="submit" class="btn btn-primary">Submit</button>
-                            </div>
+                            <button type="submit" id="sasa" class="btn btn-success my-3 w-100">Submit</button>
                         </div>
                     </form>
                 </div>

@@ -105,6 +105,7 @@ class ImprestDetails(UserObjectMixin, View):
             userID = request.session['User_ID']
             year = request.session['years']
 
+
             Access_Point = config.O_DATA.format(f"/Imprests?$filter=No_%20eq%20%27{pk}%27%20and%20User_Id%20eq%20%27{userID}%27")
             response = self.get_object(Access_Point)
             for imprest in response['value']:
@@ -139,16 +140,10 @@ class ImprestDetails(UserObjectMixin, View):
             RejectComments = config.O_DATA.format(f"/QyApprovalCommentLines?$filter=Document_No_%20eq%20%27{pk}%27")
             RejectedResponse = self.get_object(RejectComments)
             Comments = [x for x in RejectedResponse['value']]
-
-
-        except requests.exceptions.RequestException as e:
+        except Exception as e:
             print(e)
-            messages.info(request, "Whoops! Something went wrong. Please Login to Continue")
+            messages.info(request, "Wrong UserID")
             return redirect('imprestReq')
-        except KeyError as e:
-            print(e)
-            messages.info(request, "Session Expired. Please Login")
-            return redirect('auth')
                         
         ctx = {"today": self.todays_date, "res": res,"line": openLines,"Approvers": Approvers,
                "type": res_type,"area": Area, "biz": BizGroup,"Local": Local, "year": year,

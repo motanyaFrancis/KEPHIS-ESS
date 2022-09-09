@@ -190,46 +190,30 @@
                                 </h4>
                                 <div class="row">
                                     {% for data in file %}
-                                    <div class="col-md-3">
-                                        <div class="drive-item module text-center">
-                                            <div class="drive-item-inner module-inner">
-                                                <div class="drive-item-title"><a
-                                                        href="#">{{data.File_Name}}.{{data.File_Extension}}</a></div>
-                                                <div class="drive-item-thumb">
-                                                    <i class="fas fa-file-alt"></i>
-                                                </div>
-                                            </div>
-                                            <div class="drive-item-footer module-footer">
-                                                <ul class="utilities my-2 list-inline">
-                                                    <li>
-                                                        <form action="{% url 'getDocs' data.No_ data.Table_ID %}"
-                                                            method="post">
-                                                            {% csrf_token %}
-                                                            <input type="hidden" name="attachmentID"
-                                                                value="{{data.AuxiliaryIndex2}}">
-                                                            <input type="hidden" name="File_Name"
-                                                                value="{{data.File_Name}}">
-                                                            <input type="hidden" name="File_Extension"
-                                                                value="{{data.File_Extension}}">
-                                                            <button type="submit" data-toggle="tooltip"
-                                                                data-placement="top" title="Click to Download"><i
-                                                                    class="fa fa-download text-success"></i></button>
-                                                        </form>
-                                                    </li>
-                                                    <li>
-                                                        <form action="{% url 'DeleteLeaveAttachment' data.No_  %}"
-                                                            method="post">
-                                                            {% csrf_token %}
-                                                            <input type="hidden" name="docID"
-                                                                value="{{data.AuxiliaryIndex2}}">
-                                                            <input type="hidden" name="tableID"
-                                                                value="{{data.Table_ID}}">
-                                                            <button type="submit" data-toggle="tooltip"
-                                                                data-placement="top" title="Click to Delete"><i
-                                                                    class="fa fa-trash text-danger"></i></button>
-                                                        </form>
-                                                    </li>
-                                                </ul>
+                                    <div class="col-lg-4 col-xl-3">
+                                        <div class="file-man-box">
+                                            <form action="{% url 'DeleteLeaveAttachment' data.No_  %}" method="POST">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="docID" value="{{data.AuxiliaryIndex2}}">
+                                                <input type="hidden" name="tableID" value="{{data.Table_ID}}">
+                                                <button class="file-close" id="file-close"><i
+                                                        class="fa fa-times-circle"></i></button>
+                                            </form>
+                                            <div class="file-img-box"><img src="../../static/img/logo/f1.png"
+                                                    alt="icon"></div>
+                                            <form action="{% url 'getDocs' data.No_ data.Table_ID %}" method="POST">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="attachmentID"
+                                                    value="{{data.AuxiliaryIndex2}}">
+                                                <input type="hidden" name="File_Name" value="{{data.File_Name}}">
+                                                <input type="hidden" name="File_Extension"
+                                                    value="{{data.File_Extension}}">
+                                                <button class="file-download mx-1"><i
+                                                        class="fa fa-download text-success"></i></button>
+                                            </form>
+                                            <div class="file-man-title">
+                                                <h5 class="mb-0 text-overflow">
+                                                    {{data.File_Name}}.{{data.File_Extension}}</h5>
                                             </div>
                                         </div>
                                     </div>
@@ -338,8 +322,10 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Upload Attachment</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title" id="exampleModalLabel"><i class="las la-cloud-upload-alt"></i> Upload
+                        Attachment</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form action="{% url 'LeaveDetail' res.Application_No %}" method="post" class="myForm"
@@ -349,14 +335,9 @@
                             <label class="form-label">Attachments</label>
                             <input class="form-control" name="attachment" type="file" multiple>
                         </div>
-
+                        <button type="submit" id="sasa" class="btn btn-success my-3 w-100">Submit</button>
+                    </form>
                 </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </div>
-                </form>
             </div>
         </div>
     </div>

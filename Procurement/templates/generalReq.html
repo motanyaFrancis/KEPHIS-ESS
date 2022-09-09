@@ -84,7 +84,8 @@
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title" id="staticBackdropLabel">
-                                                                        Edit Request {{res.No_}}
+                                                                        <i class="las la-edit"></i> Edit Request
+                                                                        <span class="editSpan">{{res.No_}}</span>
                                                                     </h5>
                                                                     <button type="button"
                                                                         class="btn-close btn-close-white"
@@ -129,12 +130,8 @@
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-                                                                        <div class="modal-footer">
-                                                                            <button type="button" class="btn btn-danger"
-                                                                                data-bs-dismiss="modal">Discard</button>
-                                                                            <button type="submit"
-                                                                                class="btn btn-primary">Submit</button>
-                                                                        </div>
+                                                                        <button type="submit"
+                                                                            class="btn btn-success my-3 w-100">Submit</button>
                                                                     </form>
                                                                 </div>
                                                             </div>
@@ -169,7 +166,9 @@
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title" id="staticBackdropLabel">
-                                                                        Edit Request {{res.No_}}
+                                                                        <i class="las la-edit"></i> Edit Request
+                                                                        <span class="editSpan">{{res.No_}}</span>
+
                                                                     </h5>
                                                                     <button type="button"
                                                                         class="btn-close btn-close-white"
@@ -214,12 +213,8 @@
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-                                                                        <div class="modal-footer">
-                                                                            <button type="button" class="btn btn-danger"
-                                                                                data-bs-dismiss="modal">Discard</button>
-                                                                            <button type="submit"
-                                                                                class="btn btn-primary">Submit</button>
-                                                                        </div>
+                                                                        <button type="submit"
+                                                                            class="btn btn-success my-3 w-100">Submit</button>
                                                                     </form>
                                                                 </div>
                                                             </div>
@@ -325,8 +320,7 @@
                         aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="myForm needs-validation" action="{% url 'GeneralRequisition' %}" method="post"
-                        novalidate>
+                    <form class="myForm" action="{% url 'GeneralRequisition' %}" method="post" novalidate>
                         {% csrf_token %}
                         <input type="hidden" name="myAction" value="insert">
                         <input type="hidden" name="requisitionNo" value="">
@@ -345,10 +339,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard</button>
-                            <button type="submit" class="btn btn-primary">Submit</button>
-                        </div>
+                        <button type="submit" class="btn btn-success my-3 w-100">Submit</button>
                     </form>
                 </div>
             </div>
