@@ -9,6 +9,7 @@ from zeep import Client
 from zeep.transports import Transport
 from requests import Session
 from django.views import View
+import base64
 
 # Create your views here.
 class UserObjectMixin(object):
@@ -110,6 +111,10 @@ class advanceDetail(UserObjectMixin,View):
             RejectedResponse = self.get_object(RejectComments)
             Comments = [x for x in RejectedResponse['value']]
 
+            Access_File = config.O_DATA.format(f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27")
+            res_file = self.get_object(Access_File)
+            allFiles = [x for x in res_file['value']]
+
         except requests.exceptions.ConnectionError as e:
             print(e)
             messages.error(request,e)
@@ -122,7 +127,7 @@ class advanceDetail(UserObjectMixin,View):
                 messages.error(request, e)
                 print(e)
         ctx = {"today": self.todays_date, "res": res,
-                "Approvers": Approvers, "state": state,
+                "Approvers": Approvers, "state": state,"file":allFiles,
                 "year": year, "full": fullname,"Comments":Comments}
 
         return render(request,"advanceDetails.html",ctx)
@@ -163,4 +168,44 @@ def FnCancelSalaryAdvanceApproval(request,pk):
         except Exception as e:
             messages.error(request, e)
             print(e)        
+    return redirect('advanceDetail', pk=pk)
+
+def UploadAdvanceAttachment(request, pk):
+    if request.method == "POST":
+        try:
+            tableID = 52177630
+            attach = request.FILES.getlist('attachment')
+        except Exception as e:
+            return redirect('advanceDetail', pk=pk)
+        for files in attach:
+            fileName = request.FILES['attachment'].name
+            attachment = base64.b64encode(files.read())
+            try:
+                response = config.CLIENT.service.FnUploadAttachedDocument(
+                    pk, fileName, attachment, tableID,request.session['User_ID'])
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+        if response == True:
+            messages.success(request, "File(s) Upload Successful")
+            return redirect('advanceDetail', pk=pk)
+        else:
+            messages.error(request, "Failed, Try Again")
+            return redirect('advanceDetail', pk=pk)
+    return redirect('advanceDetail', pk=pk)
+
+def DeleteAdvanceAttachment(request,pk):
+    if request.method == "POST":
+        docID = int(request.POST.get('docID'))
+        tableID= int(request.POST.get('tableID'))
+        try:
+            response = config.CLIENT.service.FnDeleteDocumentAttachment(
+                pk,docID,tableID)
+            print(response)
+            if response == True:
+                messages.success(request, "Deleted Successfully")
+                return redirect('advanceDetail', pk=pk)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
     return redirect('advanceDetail', pk=pk)

@@ -16,6 +16,7 @@ from zeep.transports import Transport
 from requests.auth import HTTPBasicAuth
 from django.views import View
 
+
 # Create your views here.
 class UserObjectMixin(object):
     model =None
