@@ -2,7 +2,7 @@ import base64
 from ctypes.wintypes import PHKEY
 from urllib.parse import parse_qs
 from django.shortcuts import render, redirect
-from datetime import  datetime
+from datetime import datetime
 import requests
 from requests import Session
 import json
@@ -21,27 +21,35 @@ from django.http import JsonResponse
 from django.views import View
 
 # Create your views here.
+
+
 class UserObjectMixin(object):
-    model =None
+    model = None
     session = requests.Session()
     session.auth = config.AUTHS
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-    def get_object(self,endpoint):
+
+    def get_object(self, endpoint):
         response = self.session.get(endpoint, timeout=10).json()
         return response
 
-class PurchaseRequisition(UserObjectMixin,View):
-    def get(self,request):
+
+class PurchaseRequisition(UserObjectMixin, View):
+    def get(self, request):
         try:
             userID = request.session['User_ID']
             year = request.session['years']
             empNo = request.session['Employee_No_']
 
-            Access_Point = config.O_DATA.format(f"/QyPurchaseRequisitionHeaders?$filter=Employee_No_%20eq%20%27{empNo}%27")
+            Access_Point = config.O_DATA.format(
+                f"/QyPurchaseRequisitionHeaders?$filter=Employee_No_%20eq%20%27{empNo}%27")
             response = self.get_object(Access_Point)
-            openPurchase = [x for x in response['value'] if x['Status'] == 'Open']
-            Pending = [x for x in response['value'] if x['Status'] == 'Pending Approval']
-            Approved = [x for x in response['value'] if x['Status'] == 'Released']
+            openPurchase = [x for x in response['value']
+                            if x['Status'] == 'Open']
+            Pending = [x for x in response['value']
+                       if x['Status'] == 'Pending Approval']
+            Approved = [x for x in response['value']
+                        if x['Status'] == 'Released']
 
             counts = len(openPurchase)
             counter = len(Approved)
@@ -49,21 +57,22 @@ class PurchaseRequisition(UserObjectMixin,View):
 
         except requests.exceptions.RequestException as e:
             print(e)
-            messages.info(request, "Whoops! Something went wrong. Please Login to Continue")
+            messages.info(
+                request, "Whoops! Something went wrong. Please Login to Continue")
             return redirect('auth')
         except KeyError as e:
             print(e)
             messages.info(request, e)
             return redirect('auth')
-        
 
         ctx = {"today": self.todays_date, "res": openPurchase,
-            "count": counts, "response": Approved,
-            "counter": counter, "pend": pend,
-            "pending": Pending, "year": year,
-            "full": userID}
-    
+               "count": counts, "response": Approved,
+               "counter": counter, "pend": pend,
+               "pending": Pending, "year": year,
+               "full": userID}
+
         return render(request, 'purchaseReq.html', ctx)
+
     def post(self, request):
         if request.method == 'POST':
             try:
@@ -92,22 +101,26 @@ class PurchaseRequisition(UserObjectMixin,View):
                 return redirect('purchase')
         return redirect('purchase')
 
-class PurchaseRequestDetails(UserObjectMixin,View):
-    def get(self, request,pk):
+
+class PurchaseRequestDetails(UserObjectMixin, View):
+    def get(self, request, pk):
         try:
             Dpt = request.session['Department']
             empNo = request.session['Employee_No_']
 
-            Access_Point = config.O_DATA.format(f"/QyPurchaseRequisitionHeaders?$filter=No_%20eq%20%27{pk}%27%20and%20Employee_No_%20eq%20%27{empNo}%27")
+            Access_Point = config.O_DATA.format(
+                f"/QyPurchaseRequisitionHeaders?$filter=No_%20eq%20%27{pk}%27%20and%20Employee_No_%20eq%20%27{empNo}%27")
             response = self.get_object(Access_Point)
             for document in response['value']:
                 res = document
 
-            Approver = config.O_DATA.format(f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
+            Approver = config.O_DATA.format(
+                f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
             res_approver = self.get_object(Approver)
             Approvers = [x for x in res_approver['value']]
 
-            ProcPlan = config.O_DATA.format(f"/QyProcurementPlans?$filter=Shortcut_Dimension_2_Code%20eq%20%27{Dpt}%27")
+            ProcPlan = config.O_DATA.format(
+                f"/QyProcurementPlans?$filter=Shortcut_Dimension_2_Code%20eq%20%27{Dpt}%27")
             Res_Proc = self.get_object(ProcPlan)
             planitem = [x for x in Res_Proc['value']]
 
@@ -119,32 +132,46 @@ class PurchaseRequestDetails(UserObjectMixin,View):
             Res_GL = self.get_object(GL_Acc)
             Gl_Accounts = Res_GL['value']
 
-            Lines_Res = config.O_DATA.format(f"/QyPurchaseRequisitionLines?$filter=AuxiliaryIndex1%20eq%20%27{pk}%27")
+            Lines_Res = config.O_DATA.format(
+                f"/QyPurchaseRequisitionLines?$filter=AuxiliaryIndex1%20eq%20%27{pk}%27")
             response_Lines = self.get_object(Lines_Res)
-            openLines = [x for x in response_Lines['value'] if x['AuxiliaryIndex1'] == pk]
+            openLines = [x for x in response_Lines['value']
+                         if x['AuxiliaryIndex1'] == pk]
 
-            Access_File = config.O_DATA.format(f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27")
+            Access_File = config.O_DATA.format(
+                f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27")
             res_file = self.get_object(Access_File)
             allFiles = [x for x in res_file['value']]
 
-            RejectComments = config.O_DATA.format(f"/QyApprovalCommentLines?$filter=Document_No_%20eq%20%27{pk}%27")
+            RejectComments = config.O_DATA.format(
+                f"/QyApprovalCommentLines?$filter=Document_No_%20eq%20%27{pk}%27")
             RejectedResponse = self.get_object(RejectComments)
             Comments = [x for x in RejectedResponse['value']]
- 
+
         except requests.exceptions.RequestException as e:
             print(e)
-            messages.info(request, "Whoops! Something went wrong. Please Login to Continue")
+            messages.info(
+                request, "Whoops! Something went wrong. Please Login to Continue")
             return redirect('purchase')
         except KeyError as e:
             print(e)
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
 
-        ctx = {"today": self.todays_date, "res": res, "line": openLines,
-             "Approvers": Approvers,"plans": planitem, "items": Items,
-            "gl": Gl_Accounts,"file":allFiles,"Comments":Comments}
+        ctx = {
+            "today": self.todays_date,
+            "res": res,
+            "line": openLines,
+            "Approvers": Approvers,
+            "plans": planitem,
+            "items": Items,
+            "gl": Gl_Accounts,
+            "file": allFiles,
+            "Comments": Comments
+        }
         return render(request, 'purchaseDetail.html', ctx)
-    def post(self, request,pk):
+
+    def post(self, request, pk):
         if request.method == 'POST':
             try:
                 myUserId = request.session['User_ID']
@@ -163,6 +190,7 @@ class PurchaseRequestDetails(UserObjectMixin,View):
             except KeyError:
                 messages.info(request, "Session Expired. Please Login")
                 return redirect('auth')
+
             class Data(enum.Enum):
                 values = itemTypes
             itemType = (Data.values).value
@@ -173,7 +201,7 @@ class PurchaseRequestDetails(UserObjectMixin,View):
                 Unit_of_Measure = ''
             try:
                 response = config.CLIENT.service.FnPurchaseRequisitionLine(
-                    pk, lineNo, procPlanItem, itemType, itemNo, specification, quantity, myUserId, myAction,Unit_of_Measure)
+                    pk, lineNo, procPlanItem, itemType, itemNo, specification, quantity, myUserId, myAction, Unit_of_Measure)
                 messages.success(request, "Request Successful")
                 print(response)
                 return redirect('PurchaseDetail', pk=pk)
@@ -182,6 +210,7 @@ class PurchaseRequestDetails(UserObjectMixin,View):
                 print(e)
                 return redirect('PurchaseDetail', pk=pk)
         return redirect('PurchaseDetail', pk=pk)
+
 
 def RequisitionCategory(request):
     session = requests.Session()
@@ -200,9 +229,9 @@ def RequisitionCategory(request):
         if text == '3':
             Asset_res = session.get(Assets, timeout=10).json()
             return JsonResponse(Asset_res)
-    except  Exception as e:
+    except Exception as e:
         print(e)
-    return redirect('purchase') 
+    return redirect('purchase')
 
 
 def PurchaseApproval(request, pk):
@@ -250,7 +279,7 @@ def UploadPurchaseAttachment(request, pk):
             attachment = base64.b64encode(files.read())
             try:
                 response = config.CLIENT.service.FnUploadAttachedDocument(
-                    pk, fileName, attachment, tableID,request.session['User_ID'])
+                    pk, fileName, attachment, tableID, request.session['User_ID'])
             except Exception as e:
                 messages.error(request, e)
                 print(e)
@@ -262,13 +291,14 @@ def UploadPurchaseAttachment(request, pk):
             return redirect('PurchaseDetail', pk=pk)
     return redirect('PurchaseDetail', pk=pk)
 
-def DeletePurchaseAttachment(request,pk):
+
+def DeletePurchaseAttachment(request, pk):
     if request.method == "POST":
         docID = int(request.POST.get('docID'))
-        tableID= int(request.POST.get('tableID'))
+        tableID = int(request.POST.get('tableID'))
         try:
             response = config.CLIENT.service.FnDeleteDocumentAttachment(
-                pk,docID,tableID)
+                pk, docID, tableID)
             print(response)
             if response == True:
                 messages.success(request, "Deleted Successfully ")
@@ -297,6 +327,7 @@ def FnCancelPurchaseApproval(request, pk):
             print(e)
             return redirect('PurchaseDetail', pk=pk)
     return redirect('PurchaseDetail', pk=pk)
+
 
 def FnGeneratePurchaseReport(request, pk):
     nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
@@ -338,17 +369,21 @@ def FnDeletePurchaseRequisitionLine(request, pk):
     return redirect('PurchaseDetail', pk=pk)
 
 
-class RepairRequest(UserObjectMixin,View):
+class RepairRequest(UserObjectMixin, View):
     def get(self, request):
         try:
             userID = request.session['User_ID']
             year = request.session['years']
 
-            Access_Point = config.O_DATA.format(f"/QyRepairRequisitionHeaders?$filter=Requested_By%20eq%20%27{userID}%27")
+            Access_Point = config.O_DATA.format(
+                f"/QyRepairRequisitionHeaders?$filter=Requested_By%20eq%20%27{userID}%27")
             response = self.get_object(Access_Point)
-            openRepair = [x for x in response['value'] if x['Status'] == 'Open']
-            Pending = [x for x in response['value'] if x['Status'] == 'Pending Approval']
-            Approved = [x for x in response['value'] if x['Status'] == 'Released']
+            openRepair = [x for x in response['value']
+                          if x['Status'] == 'Open']
+            Pending = [x for x in response['value']
+                       if x['Status'] == 'Pending Approval']
+            Approved = [x for x in response['value']
+                        if x['Status'] == 'Released']
 
             counts = len(openRepair)
             counter = len(Approved)
@@ -356,16 +391,18 @@ class RepairRequest(UserObjectMixin,View):
 
         except requests.exceptions.RequestException as e:
             print(e)
-            messages.info(request, "Whoops! Something went wrong. Please Login to Continue")
+            messages.info(
+                request, "Whoops! Something went wrong. Please Login to Continue")
             return redirect('auth')
         except KeyError:
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
 
-        ctx = {"today": self.todays_date, "res": openRepair,"count": counts, "response": Approved,
-            "counter": counter,"pend": pend,"year": year, "full": userID,"pending": Pending}
-        
+        ctx = {"today": self.todays_date, "res": openRepair, "count": counts, "response": Approved,
+               "counter": counter, "pend": pend, "year": year, "full": userID, "pending": Pending}
+
         return render(request, 'repairReq.html', ctx)
+
     def post(self, request):
         if request.method == 'POST':
             try:
@@ -395,50 +432,60 @@ class RepairRequest(UserObjectMixin,View):
                 return redirect('repair')
         return redirect('repair')
 
-class RepairRequestDetails(UserObjectMixin,View):
-    def get(self, request,pk):
+
+class RepairRequestDetails(UserObjectMixin, View):
+    def get(self, request, pk):
         try:
             empNo = request.session['Employee_No_']
             userID = request.session['User_ID']
             year = request.session['years']
 
-            Access_Point = config.O_DATA.format(f"/QyRepairRequisitionHeaders?$filter=No_%20eq%20%27{pk}%27%20and%20Requested_By%20eq%20%27{userID}%27")
+            Access_Point = config.O_DATA.format(
+                f"/QyRepairRequisitionHeaders?$filter=No_%20eq%20%27{pk}%27%20and%20Requested_By%20eq%20%27{userID}%27")
             response = self.get_object(Access_Point)
             for document in response['value']:
                 res = document
 
-            Assets = config.O_DATA.format(f"/QyFixedAssets?$filter=Responsible_Employee%20eq%20%27{empNo}%27")
+            Assets = config.O_DATA.format(
+                f"/QyFixedAssets?$filter=Responsible_Employee%20eq%20%27{empNo}%27")
             Assest_res = self.get_object(Assets)
             my_asset = [x for x in Assest_res['value']]
 
-            Approver = config.O_DATA.format(f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
+            Approver = config.O_DATA.format(
+                f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
             res_approver = self.get_object(Approver)
             Approvers = [x for x in res_approver['value']]
 
-            Lines_Res = config.O_DATA.format(f"/QyRepairRequisitionLines?$filter=AuxiliaryIndex1%20eq%20%27{pk}%27")
+            Lines_Res = config.O_DATA.format(
+                f"/QyRepairRequisitionLines?$filter=AuxiliaryIndex1%20eq%20%27{pk}%27")
             response_Lines = self.get_object(Lines_Res)
-            openLines = [x for x in response_Lines['value'] if x['AuxiliaryIndex1'] == pk]
+            openLines = [x for x in response_Lines['value']
+                         if x['AuxiliaryIndex1'] == pk]
 
-            Access_File = config.O_DATA.format(f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27")
+            Access_File = config.O_DATA.format(
+                f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27")
             res_file = self.get_object(Access_File)
             allFiles = [x for x in res_file['value']]
 
-            RejectComments = config.O_DATA.format(f"/QyApprovalCommentLines?$filter=Document_No_%20eq%20%27{pk}%27")
+            RejectComments = config.O_DATA.format(
+                f"/QyApprovalCommentLines?$filter=Document_No_%20eq%20%27{pk}%27")
             RejectedResponse = self.get_object(RejectComments)
             Comments = [x for x in RejectedResponse['value']]
 
         except requests.exceptions.RequestException as e:
             print(e)
-            messages.info(request, "Whoops! Something went wrong. Please Login to Continue")
+            messages.info(
+                request, "Whoops! Something went wrong. Please Login to Continue")
             return redirect('repair')
         except KeyError:
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
-        ctx = {"res": res,"line": openLines,"Approvers": Approvers,
-            "asset": my_asset, "full": userID,
-            "year": year,"file":allFiles,"Comments":Comments}
+        ctx = {"res": res, "line": openLines, "Approvers": Approvers,
+               "asset": my_asset, "full": userID,
+               "year": year, "file": allFiles, "Comments": Comments}
         return render(request, 'repairDetail.html', ctx)
-    def post(self, request,pk):
+
+    def post(self, request, pk):
         if request.method == 'POST':
             try:
                 lineNo = int(request.POST.get('lineNo'))
@@ -456,9 +503,9 @@ class RepairRequestDetails(UserObjectMixin,View):
                 OtherAsset = ''
             try:
                 response = config.CLIENT.service.FnRepairRequisitionLine(
-                    pk, lineNo, assetCode, description, myAction,OtherAsset)
+                    pk, lineNo, assetCode, description, myAction, OtherAsset)
                 print(response)
-                if response !=0 and not attach:
+                if response != 0 and not attach:
                     messages.success(request, "Request Successful")
                     return redirect('RepairDetail', pk=pk)
                 if attach and response != 0:
@@ -467,7 +514,7 @@ class RepairRequestDetails(UserObjectMixin,View):
                         attachment = base64.b64encode(files.read())
                         try:
                             responses = config.CLIENT.service.FnUploadAttachedDocument(
-                                pk +'#'+str(response), fileName, attachment, tableID,request.session['User_ID'])
+                                pk + '#'+str(response), fileName, attachment, tableID, request.session['User_ID'])
                             if responses == True:
                                 messages.success(request, "Request Successful")
                                 return redirect('RepairDetail', pk=pk)
@@ -510,6 +557,7 @@ def RepairApproval(request, pk):
             return redirect('RepairDetail', pk=pk)
     return redirect('RepairDetail', pk=pk)
 
+
 def FnCancelRepairApproval(request, pk):
     requistionNo = ""
     if request.method == 'POST':
@@ -531,13 +579,14 @@ def FnCancelRepairApproval(request, pk):
             return redirect('RepairDetail', pk=pk)
     return redirect('RepairDetail', pk=pk)
 
-def DeleteRepairAttachment(request,pk):
+
+def DeleteRepairAttachment(request, pk):
     if request.method == "POST":
         docID = int(request.POST.get('docID'))
-        tableID= int(request.POST.get('tableID'))
+        tableID = int(request.POST.get('tableID'))
         try:
             response = config.CLIENT.service.FnDeleteDocumentAttachment(
-                pk,docID,tableID)
+                pk, docID, tableID)
             print(response)
             if response == True:
                 messages.success(request, "Deleted Successfully ")
@@ -563,6 +612,7 @@ def FnDeleteRepairRequisitionLine(request, pk):
             return redirect('RepairDetail', pk=pk)
     return redirect('RepairDetail', pk=pk)
 
+
 def FnGenerateRepairReport(request, pk):
     nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
                         for i in range(5))
@@ -586,17 +636,21 @@ def FnGenerateRepairReport(request, pk):
             return redirect('RepairDetail', pk=pk)
     return redirect('RepairDetail', pk=pk)
 
-class StoreRequest(UserObjectMixin,View):
+
+class StoreRequest(UserObjectMixin, View):
     def get(self, request):
         try:
             userID = request.session['User_ID']
             year = request.session['years']
 
-            Access_Point = config.O_DATA.format(f"/QyStoreRequisitionHeaders?$filter=Requested_By%20eq%20%27{userID}%27")
+            Access_Point = config.O_DATA.format(
+                f"/QyStoreRequisitionHeaders?$filter=Requested_By%20eq%20%27{userID}%27")
             response = self.get_object(Access_Point)
             openStore = [x for x in response['value'] if x['Status'] == 'Open']
-            Pending = [x for x in response['value'] if x['Status'] == 'Pending Approval']
-            Approved = [x for x in response['value'] if x['Status'] == 'Released']
+            Pending = [x for x in response['value']
+                       if x['Status'] == 'Pending Approval']
+            Approved = [x for x in response['value']
+                        if x['Status'] == 'Released']
 
             counts = len(openStore)
             counter = len(Approved)
@@ -604,17 +658,19 @@ class StoreRequest(UserObjectMixin,View):
 
         except requests.exceptions.RequestException as e:
             print(e)
-            messages.info(request, "Whoops! Something went wrong. Please Login to Continue")
+            messages.info(
+                request, "Whoops! Something went wrong. Please Login to Continue")
             return redirect('auth')
         except KeyError:
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
 
         ctx = {"today": self.todays_date, "res": openStore,
-            "count": counts, "response": Approved,
-            "counter": counter,"pend": pend, "pending": Pending,
-            "full": userID, "year": year}
+               "count": counts, "response": Approved,
+               "counter": counter, "pend": pend, "pending": Pending,
+               "full": userID, "year": year}
         return render(request, 'storeReq.html', ctx)
+
     def post(self, request):
         if request.method == 'POST':
             try:
@@ -643,13 +699,15 @@ class StoreRequest(UserObjectMixin,View):
                 return redirect('store')
         return redirect('store')
 
+
 class StoreRequestDetails(UserObjectMixin, View):
-    def get(self, request,pk):
+    def get(self, request, pk):
         try:
             userID = request.session['User_ID']
             year = request.session['years']
 
-            Access_Point = config.O_DATA.format(f"/QyStoreRequisitionHeaders?$filter=No_%20eq%20%27{pk}%27%20and%20Requested_By%20eq%20%27{userID}%27")
+            Access_Point = config.O_DATA.format(
+                f"/QyStoreRequisitionHeaders?$filter=No_%20eq%20%27{pk}%27%20and%20Requested_By%20eq%20%27{userID}%27")
             response = self.get_object(Access_Point)
             for document in response['value']:
                 res = document
@@ -662,36 +720,43 @@ class StoreRequestDetails(UserObjectMixin, View):
             Loc_res = self.get_object(Location)
             Location = Loc_res['value']
 
-            Approver = config.O_DATA.format(f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
+            Approver = config.O_DATA.format(
+                f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
             res_approver = self.get_object(Approver)
             Approvers = [x for x in res_approver['value']]
 
-            Lines_Res = config.O_DATA.format(f"/QyStoreRequisitionLines?$filter=AuxiliaryIndex1%20%20eq%20%27{pk}%27")
+            Lines_Res = config.O_DATA.format(
+                f"/QyStoreRequisitionLines?$filter=AuxiliaryIndex1%20%20eq%20%27{pk}%27")
             response_Lines = self.get_object(Lines_Res)
-            openLines = [x for x in response_Lines['value'] if x['AuxiliaryIndex1'] == pk]
+            openLines = [x for x in response_Lines['value']
+                         if x['AuxiliaryIndex1'] == pk]
 
-            Access_File = config.O_DATA.format(f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27")
+            Access_File = config.O_DATA.format(
+                f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27")
             res_file = self.get_object(Access_File)
             allFiles = [x for x in res_file['value']]
 
-            RejectComments = config.O_DATA.format(f"/QyApprovalCommentLines?$filter=Document_No_%20eq%20%27{pk}%27")
+            RejectComments = config.O_DATA.format(
+                f"/QyApprovalCommentLines?$filter=Document_No_%20eq%20%27{pk}%27")
             RejectedResponse = self.get_object(RejectComments)
             Comments = [x for x in RejectedResponse['value']]
 
         except requests.exceptions.RequestException as e:
             print(e)
-            messages.info(request, "Whoops! Something went wrong. Please Login to Continue")
+            messages.info(
+                request, "Whoops! Something went wrong. Please Login to Continue")
             return redirect('auth')
         except KeyError:
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
 
-        ctx = {"today": self.todays_date, "res": res,"line": openLines,
-            "Approvers": Approvers, "loc": Location,"year": year, "full": userID,
-            "itemsCategory": itemsCategory,"file":allFiles,
-            "Comments":Comments}
+        ctx = {"today": self.todays_date, "res": res, "line": openLines,
+               "Approvers": Approvers, "loc": Location, "year": year, "full": userID,
+               "itemsCategory": itemsCategory, "file": allFiles,
+               "Comments": Comments}
         return render(request, 'storeDetail.html', ctx)
-    def post(self, request,pk):
+
+    def post(self, request, pk):
         if request.method == 'POST':
             try:
                 requisitionNo = pk
@@ -707,7 +772,7 @@ class StoreRequestDetails(UserObjectMixin, View):
                 Unit_of_Measure = ''
             try:
                 response = config.CLIENT.service.FnStoreRequisitionLine(
-                    requisitionNo, lineNo, itemCode, quantity, myAction,Unit_of_Measure)
+                    requisitionNo, lineNo, itemCode, quantity, myAction, Unit_of_Measure)
                 messages.success(request, "Request Successful")
                 print(response)
                 return redirect('StoreDetail', pk=pk)
@@ -716,7 +781,6 @@ class StoreRequestDetails(UserObjectMixin, View):
                 print(e)
                 return redirect('StoreDetail', pk=pk)
         return redirect('StoreDetail', pk=pk)
-
 
 
 def itemCategory(request):
@@ -728,9 +792,10 @@ def itemCategory(request):
         Item_res = session.get(Item, timeout=10).json()
         return JsonResponse(Item_res)
 
-    except  Exception as e:
+    except Exception as e:
         pass
     return redirect('store')
+
 
 def itemUnitOfMeasure(request):
     session = requests.Session()
@@ -741,9 +806,10 @@ def itemUnitOfMeasure(request):
         Item_res = session.get(Item, timeout=10).json()
         return JsonResponse(Item_res)
 
-    except  Exception as e:
+    except Exception as e:
         pass
     return redirect('dashboard')
+
 
 def StoreApproval(request, pk):
     Username = request.session['User_ID']
@@ -793,6 +859,7 @@ def FnCancelStoreApproval(request, pk):
             return redirect('StoreDetail', pk=pk)
     return redirect('StoreDetail', pk=pk)
 
+
 def FnDeleteStoreRequisitionLine(request, pk):
     lineNo = ""
     if request.method == 'POST':
@@ -834,11 +901,12 @@ def FnGenerateStoreReport(request, pk):
             return redirect('StoreDetail', pk=pk)
     return redirect('StoreDetail', pk=pk)
 
+
 def UploadStoreAttachment(request, pk):
     response = ""
     fileName = ""
     attachment = ""
-    
+
     if request.method == "POST":
         try:
             attach = request.FILES.getlist('attachment')
@@ -850,7 +918,7 @@ def UploadStoreAttachment(request, pk):
             attachment = base64.b64encode(files.read())
             try:
                 response = config.CLIENT.service.FnUploadAttachedDocument(
-                    pk, fileName, attachment, tableID,request.session['User_ID'])
+                    pk, fileName, attachment, tableID, request.session['User_ID'])
             except Exception as e:
                 messages.error(request, e)
                 print(e)
@@ -862,13 +930,14 @@ def UploadStoreAttachment(request, pk):
             return redirect('StoreDetail', pk=pk)
     return redirect('StoreDetail', pk=pk)
 
-def DeleteStoreAttachment(request,pk):
+
+def DeleteStoreAttachment(request, pk):
     if request.method == "POST":
         docID = int(request.POST.get('docID'))
-        tableID= int(request.POST.get('tableID'))
+        tableID = int(request.POST.get('tableID'))
         try:
             response = config.CLIENT.service.FnDeleteDocumentAttachment(
-                pk,docID,tableID)
+                pk, docID, tableID)
             print(response)
             if response == True:
                 messages.success(request, "Deleted Successfully ")
@@ -878,17 +947,22 @@ def DeleteStoreAttachment(request,pk):
             print(e)
     return redirect('StoreDetail', pk=pk)
 
-class GeneralRequisition(UserObjectMixin,View):
+
+class GeneralRequisition(UserObjectMixin, View):
     def get(self, request):
         try:
             userID = request.session['User_ID']
             year = request.session['years']
 
-            Access_Point = config.O_DATA.format(f"/QyGeneralRequisitionHeaders?$filter=Requested_By%20eq%20%27{userID}%27")
+            Access_Point = config.O_DATA.format(
+                f"/QyGeneralRequisitionHeader?$filter=Requested_By%20eq%20%27{userID}%27")
             response = self.get_object(Access_Point)
-            openRequest = [x for x in response['value'] if x['Status'] == 'Open']
-            Pending = [x for x in response['value'] if x['Status'] == 'Pending Approval']
-            Approved = [x for x in response['value'] if x['Status'] == 'Released']
+            openRequest = [x for x in response['value']
+                           if x['Status'] == 'Open']
+            Pending = [x for x in response['value']
+                       if x['Status'] == 'Pending Approval']
+            Approved = [x for x in response['value']
+                        if x['Status'] == 'Released']
 
             counts = len(openRequest)
             counter = len(Approved)
@@ -896,21 +970,22 @@ class GeneralRequisition(UserObjectMixin,View):
 
         except requests.exceptions.RequestException as e:
             print(e)
-            messages.info(request, "Whoops! Something went wrong. Please Login to Continue")
+            messages.info(
+                request, "Whoops! Something went wrong. Please Login to Continue")
             return redirect('auth')
         except KeyError as e:
             print(e)
             messages.info(request, e)
             return redirect('auth')
-        
 
         ctx = {"today": self.todays_date, "res": openRequest,
-            "count": counts, "response": Approved,
-            "counter": counter, "pend": pend,
-            "pending": Pending, "year": year,
-            "full": userID}
-        return render(request,"generalReq.html",ctx)
-    def post(self,request):
+               "count": counts, "response": Approved,
+               "counter": counter, "pend": pend,
+               "pending": Pending, "year": year,
+               "full": userID}
+        return render(request, "generalReq.html", ctx)
+
+    def post(self, request):
         if request.method == 'POST':
             try:
                 requisitionNo = request.POST.get('requisitionNo')
@@ -941,50 +1016,58 @@ class GeneralRequisition(UserObjectMixin,View):
                 return redirect('GeneralRequisition')
         return redirect('GeneralRequisition')
 
-class GeneralRequisitionDetails(UserObjectMixin,View):
-    def get(self, request,pk):
+
+class GeneralRequisitionDetails(UserObjectMixin, View):
+    def get(self, request, pk):
         try:
             userID = request.session['User_ID']
 
-            Access_Point = config.O_DATA.format(f"/QyGeneralRequisitionHeaders?$filter=No_%20eq%20%27{pk}%27%20and%20Requested_By%20eq%20%27{userID}%27")
+            Access_Point = config.O_DATA.format(
+                f"/QyGeneralRequisitionHeader?$filter=No_%20eq%20%27{pk}%27%20and%20Requested_By%20eq%20%27{userID}%27")
             response = self.get_object(Access_Point)
             for document in response['value']:
                 res = document
-            
+
             ItemCategory = config.O_DATA.format("/QyItemCategories")
             Item_Cat = self.get_object(ItemCategory)
             itemsCategory = Item_Cat['value']
 
-            Approver = config.O_DATA.format(f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
+            Approver = config.O_DATA.format(
+                f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
             res_approver = self.get_object(Approver)
             Approvers = [x for x in res_approver['value']]
 
-
-            Access_File = config.O_DATA.format(f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27")
+            Access_File = config.O_DATA.format(
+                f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27")
             res_file = self.get_object(Access_File)
             allFiles = [x for x in res_file['value']]
 
-            RejectComments = config.O_DATA.format(f"/QyApprovalCommentLines?$filter=Document_No_%20eq%20%27{pk}%27")
+            RejectComments = config.O_DATA.format(
+                f"/QyApprovalCommentLines?$filter=Document_No_%20eq%20%27{pk}%27")
             RejectedResponse = self.get_object(RejectComments)
             Comments = [x for x in RejectedResponse['value']]
 
-            Lines_Res = config.O_DATA.format(f"/QyGeneralRequisitionLines?$filter=AuxiliaryIndex1%20eq%20%27{pk}%27")
+            Lines_Res = config.O_DATA.format(
+                f"/QyGeneralRequisitionLines?$filter=AuxiliaryIndex1%20eq%20%27{pk}%27")
             response_Lines = self.get_object(Lines_Res)
-            openLines = [x for x in response_Lines['value'] if x['AuxiliaryIndex1'] == pk]
- 
+            openLines = [x for x in response_Lines['value']
+                         if x['AuxiliaryIndex1'] == pk]
+
         except requests.exceptions.RequestException as e:
             print(e)
-            messages.info(request, "Whoops! Something went wrong. Please Login to Continue")
+            messages.info(
+                request, "Whoops! Something went wrong. Please Login to Continue")
             return redirect('purchase')
         except KeyError as e:
             print(e)
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
 
-        ctx = {"today": self.todays_date, "res": res,"Approvers": Approvers,"file":allFiles,"Comments":Comments,
-               "itemsCategory":itemsCategory,"openLines":openLines}
-        return render(request,"generalDetails.html",ctx)
-    def post(self,request,pk):
+        ctx = {"today": self.todays_date, "res": res, "Approvers": Approvers, "file": allFiles, "Comments": Comments,
+               "itemsCategory": itemsCategory, "openLines": openLines}
+        return render(request, "generalDetails.html", ctx)
+
+    def post(self, request, pk):
         if request.method == 'POST':
             try:
                 requisitionNo = pk
@@ -1008,7 +1091,7 @@ class GeneralRequisitionDetails(UserObjectMixin,View):
                 Unit_of_Measure = ''
             try:
                 response = config.CLIENT.service.FnGeneralRequisitionLine(
-                    requisitionNo, lineNo,itemType,itemNo,specification, quantity,myUserId, myAction,Unit_of_Measure)
+                    requisitionNo, lineNo, itemType, itemNo, specification, quantity, myUserId, myAction, Unit_of_Measure)
                 print(response)
                 if response == True:
                     messages.success(request, "Request Successful")
@@ -1021,6 +1104,7 @@ class GeneralRequisitionDetails(UserObjectMixin,View):
                 print(e)
                 return redirect('GeneralRequisitionDetails', pk=pk)
         return redirect('GeneralRequisitionDetails', pk=pk)
+
 
 def FnDeleteGeneralRequisitionLine(request, pk):
     if request.method == 'POST':
@@ -1042,7 +1126,8 @@ def FnDeleteGeneralRequisitionLine(request, pk):
             return redirect('GeneralRequisitionDetails', pk=pk)
     return redirect('GeneralRequisitionDetails', pk=pk)
 
-def UploadGeneralAttachment(request, pk):   
+
+def UploadGeneralAttachment(request, pk):
     if request.method == "POST":
         try:
             attach = request.FILES.getlist('attachment')
@@ -1054,7 +1139,7 @@ def UploadGeneralAttachment(request, pk):
             attachment = base64.b64encode(files.read())
             try:
                 response = config.CLIENT.service.FnUploadAttachedDocument(
-                    pk, fileName, attachment, tableID,request.session['User_ID'])
+                    pk, fileName, attachment, tableID, request.session['User_ID'])
                 if response == True:
                     messages.success(request, "File(s) Uploaded Successfully")
                     return redirect('GeneralRequisitionDetails', pk=pk)
@@ -1066,13 +1151,14 @@ def UploadGeneralAttachment(request, pk):
                 print(e)
     return redirect('GeneralRequisitionDetails', pk=pk)
 
-def DeleteGeneralAttachment(request,pk):
+
+def DeleteGeneralAttachment(request, pk):
     if request.method == "POST":
         docID = int(request.POST.get('docID'))
-        tableID= int(request.POST.get('tableID'))
+        tableID = int(request.POST.get('tableID'))
         try:
             response = config.CLIENT.service.FnDeleteDocumentAttachment(
-                pk,docID,tableID)
+                pk, docID, tableID)
             print(response)
             if response == True:
                 messages.success(request, "Deleted Successfully ")
@@ -1081,6 +1167,7 @@ def DeleteGeneralAttachment(request,pk):
             messages.error(request, e)
             print(e)
     return redirect('GeneralRequisitionDetails', pk=pk)
+
 
 def GeneralApproval(request, pk):
     Username = request.session['User_ID']
@@ -1111,6 +1198,7 @@ def GeneralApproval(request, pk):
             return redirect('GeneralRequisitionDetails', pk=pk)
     return redirect('GeneralRequisitionDetails', pk=pk)
 
+
 def FnCancelGeneralApproval(request, pk):
     if request.method == 'POST':
         requistionNo = request.POST.get('requistionNo')
@@ -1128,6 +1216,7 @@ def FnCancelGeneralApproval(request, pk):
             print(e)
             return redirect('GeneralRequisitionDetails', pk=pk)
     return redirect('GeneralRequisitionDetails', pk=pk)
+
 
 def FnGenerateGeneralReport(request, pk):
     nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)

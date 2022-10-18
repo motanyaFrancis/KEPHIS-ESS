@@ -1,6 +1,6 @@
-#   KMPDC Portal
+#   KEPHIS Portal
 ## Project Description
-KMPDC website UX design
+KEPHIS website UX design
 
 ##### By Enock Abere 
 

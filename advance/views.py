@@ -30,6 +30,7 @@ class advance(UserObjectMixin,View):
 
             Access_Point = config.O_DATA.format(f"/QySalaryAdvances?$filter=Employee_No%20eq%20%27{empNo}%27")
             response = self.get_object(Access_Point)
+            # print(response)
             openAdvance = [x for x in response['value'] if x['Loan_Status'] == 'Application']
             Pending = [x for x in response['value'] if x['Loan_Status'] == 'Being Processed']
             Approved = [x for x in response['value'] if x['Loan_Status'] == 'Approved']
@@ -54,7 +55,9 @@ class advance(UserObjectMixin,View):
             print(e)
             messages.error(request,e)
             return redirect('auth')
-        ctx = {"today": self.todays_date, "res": openAdvance,
+        ctx = {
+            "today": self.todays_date, 
+            "res": openAdvance,
             "count": counts, "response": Approved,
             "counter": counter,"pend": pend,
             "pending": Pending, "year": year,

@@ -2,3 +2,5 @@
 venv/
 tests.py
 notes.txt
+Pipfile
+Pipfile.lock

@@ -12,10 +12,10 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
-import django_heroku
+# import django_heroku
 import dj_database_url
 from decouple import config, Csv
-import requests
+# import requests
 from requests import Session
 from requests_ntlm import HttpNtlmAuth
 from zeep import Client
@@ -184,15 +184,24 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTHS = Session()
 
-WEB_SERVICE_PWD = 'Admin@123'
+
+# WEB_SERVICE_PWD = 'Admin@123'
+# O_DATA = "http://20.121.189.145:7048/KMPDC/ODataV4/Company('KMPDC'){}"
+# BASE_URL = 'http://20.121.189.145:7047/KMPDC/WS/KMPDC/Codeunit/WebPortal'
+# AUTHS.auth = HTTPBasicAuth('EMAEBA', WEB_SERVICE_PWD)
+# CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
+# AUTHS = HTTPBasicAuth('EMAEBA', WEB_SERVICE_PWD)
 
 
-O_DATA = "http://20.121.189.145:7048/KMPDC/ODataV4/Company('KMPDC'){}"
-BASE_URL = 'http://20.121.189.145:7047/KMPDC/WS/KMPDC/Codeunit/WebPortal'
-AUTHS.auth = HTTPBasicAuth('EMAEBA', WEB_SERVICE_PWD)
-
+WEB_SERVICE_PWD = 'W3C0d3@llD@y'
+O_DATA = "http://20.231.15.166:7048/BC140/ODataV4/Company('CRONUS%20International%20Ltd.'){}"
+BASE_URL = 'http://20.231.15.166:7047/BC140/WS/CRONUS%20International%20Ltd./Codeunit/Employee_Self_Service'
+AUTHS.auth = HTTPBasicAuth('COKUNE', WEB_SERVICE_PWD)
 CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
-AUTHS = HTTPBasicAuth('EMAEBA', WEB_SERVICE_PWD)
-django_heroku.settings(locals())
+AUTHS = HTTPBasicAuth('COKUNE', WEB_SERVICE_PWD)
+
+
+
+# django_heroku.settings(locals())
 
 # live Company Name = KMPDC LIVE

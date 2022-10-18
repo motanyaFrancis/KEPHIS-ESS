@@ -27,7 +27,7 @@ class Login(UserObjectMixin,View):
         password = request.POST.get('password').strip()
         print(username, password)
         try:
-            QyUserSetup = config.O_DATA.format(f"/QyUserSetup?$filter=User_ID%20eq%20%27{username}%27")
+            QyUserSetup = config.O_DATA.format(f"/QYUserSetup?$filter=User_ID%20eq%20%27{username}%27")
             res_data = self.get_object(username, password,QyUserSetup)
             for data in res_data['value']:
                 request.session['Employee_No_'] = data['Employee_No_']
@@ -39,12 +39,12 @@ class Login(UserObjectMixin,View):
                 current_year = date.today().year
                 request.session['years'] = current_year
                 print(request.session['Employee_No_'])
-                QyEmployees = config.O_DATA.format(f"/QyEmployees?$filter=No_%20eq%20%27{request.session['Employee_No_']}%27")
+                QyEmployees = config.O_DATA.format(f"/QYEmployees?$filter=No_%20eq%20%27{request.session['Employee_No_']}%27")
                 response = self.get_object(username, password,QyEmployees)
                 for emp in response['value']:
                     request.session['Department'] = emp['Department_Code']
                 return redirect('dashboard')
-        except requests.exceptions.RequestException as e:
+        except Exception as e:
             print(e)
             messages.error(request, "Invalid Username or Password")
             return redirect('auth')

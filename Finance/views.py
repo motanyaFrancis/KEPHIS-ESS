@@ -19,26 +19,34 @@ from requests.auth import HTTPBasicAuth
 from django.views import View
 
 # Create your views here.
+
+
 class UserObjectMixin(object):
-    model =None
+    model = None
     session = requests.Session()
     session.auth = config.AUTHS
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-    def get_object(self,endpoint):
+
+    def get_object(self, endpoint):
         response = self.session.get(endpoint, timeout=10).json()
         return response
 
-class ImprestRequisition(UserObjectMixin,View):
-    def get(self,request):
+
+class ImprestRequisition(UserObjectMixin, View):
+    def get(self, request):
         try:
-            userID =  request.session['User_ID']
+            userID = request.session['User_ID']
             year = request.session['years']
 
-            Access_Point = config.O_DATA.format(f"/Imprests?$filter%20=User_Id%20eq%20%27{userID}%27")
+            Access_Point = config.O_DATA.format(
+                f"/Imprests?$filter%20=User_Id%20eq%20%27{userID}%27")
             response = self.get_object(Access_Point)
-            openImprest = [x for x in response['value'] if x['Status'] == 'Open']
-            Pending = [x for x in response['value'] if x['Status'] == 'Pending Approval']
-            Approved = [x for x in response['value'] if x['Status'] == 'Released']
+            openImprest = [x for x in response['value']
+                           if x['Status'] == 'Open']
+            Pending = [x for x in response['value']
+                       if x['Status'] == 'Pending Approval']
+            Approved = [x for x in response['value']
+                        if x['Status'] == 'Released']
 
             counts = len(openImprest)
 
@@ -48,7 +56,8 @@ class ImprestRequisition(UserObjectMixin,View):
 
         except requests.exceptions.RequestException as e:
             print(e)
-            messages.info(request, "Whoops! Something went wrong. Please Login to Continue")
+            messages.info(
+                request, "Whoops! Something went wrong. Please Login to Continue")
             return redirect('auth')
         except KeyError as e:
             print(e)
@@ -56,12 +65,13 @@ class ImprestRequisition(UserObjectMixin,View):
             return redirect('auth')
 
         ctx = {"today": self.todays_date, "res": openImprest,
-            "count": counts, "response": Approved,
-            "counter": counter, "pend": pend,
-            "pending": Pending, "year": year,
-            "full": userID}
+               "count": counts, "response": Approved,
+               "counter": counter, "pend": pend,
+               "pending": Pending, "year": year,
+               "full": userID}
         return render(request, 'imprestReq.html', ctx)
-    def post(self,request):
+
+    def post(self, request):
         if request.method == 'POST':
             try:
                 accountNo = request.session['Customer_No_']
@@ -84,7 +94,7 @@ class ImprestRequisition(UserObjectMixin,View):
             if not imprestNo:
                 imprestNo = ""
             if isImprest == False and isDsa == False:
-                messages.info(request,"Both DSA and Imprest cannot be empty.")
+                messages.info(request, "Both DSA and Imprest cannot be empty.")
                 return redirect('imprestReq')
             print(travelType)
             try:
@@ -100,59 +110,81 @@ class ImprestRequisition(UserObjectMixin,View):
 
 
 class ImprestDetails(UserObjectMixin, View):
-    def get(self, request,pk):
+    def get(self, request, pk):
         try:
             userID = request.session['User_ID']
             year = request.session['years']
 
-
-            Access_Point = config.O_DATA.format(f"/Imprests?$filter=No_%20eq%20%27{pk}%27%20and%20User_Id%20eq%20%27{userID}%27")
+            Access_Point = config.O_DATA.format( f"/Imprests?$filter=No_%20eq%20%27{pk}%27%20and%20User_Id%20eq%20%27{userID}%27")
             response = self.get_object(Access_Point)
-            for imprest in response['value']:
+            for imprest in response['value']: 
                 res = imprest
 
-            Imprest_Type = config.O_DATA.format("/QyReceiptsAndPaymentTypes?$filter=Type%20eq%20%27Imprest%27")
+            Imprest_Type = config.O_DATA.format(
+                "/QyReceiptsAndPaymentTypes?$filter=Type%20eq%20%27Imprest%27")
             Imprest_RES = self.get_object(Imprest_Type)
             res_type = [x for x in Imprest_RES['value']]
 
             Dimension = config.O_DATA.format("/QyDimensionValues")
             Dimension_RES = self.get_object(Dimension)
-            Area = [x for x in Dimension_RES['value'] if x['Global_Dimension_No_'] == 1]
-            BizGroup = [x for x in Dimension_RES['value'] if x['Global_Dimension_No_'] == 2]
+            Area = [x for x in Dimension_RES['value']
+                    if x['Global_Dimension_No_'] == 1]
+            BizGroup = [x for x in Dimension_RES['value']
+                        if x['Global_Dimension_No_'] == 2]
 
             destination = config.O_DATA.format("/QyDestinations")
             res_dest = self.get_object(destination)
-            Local = [x for x in res_dest['value'] if x['Destination_Type'] == 'Local']
-            ForegnDest = [x for x in res_dest['value'] if x['Destination_Type'] == 'Foreign']
+            Local = [x for x in res_dest['value']
+                     if x['Destination_Type'] == 'Local']
+            ForegnDest = [x for x in res_dest['value']
+                          if x['Destination_Type'] == 'Foreign']
 
-            Approver = config.O_DATA.format(f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
+            Approver = config.O_DATA.format(
+                f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
             res_approver = self.get_object(Approver)
             Approvers = [x for x in res_approver['value']]
 
-            Lines_Res = config.O_DATA.format(f"/QyImprestLines?$filter=AuxiliaryIndex1%20eq%20%27{pk}%27")
+            Lines_Res = config.O_DATA.format(
+                f"/QyImprestLines?$filter=AuxiliaryIndex1%20eq%20%27{pk}%27")
             responses = self.get_object(Lines_Res)
-            openLines = [x for x in responses['value'] if x['AuxiliaryIndex1'] == pk]
+            openLines = [x for x in responses['value']
+                         if x['AuxiliaryIndex1'] == pk]
 
-            Access_File = config.O_DATA.format(f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27")
+            Access_File = config.O_DATA.format(
+                f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27")
             res_file = self.get_object(Access_File)
             allFiles = [x for x in res_file['value']]
 
-            RejectComments = config.O_DATA.format(f"/QyApprovalCommentLines?$filter=Document_No_%20eq%20%27{pk}%27")
+            RejectComments = config.O_DATA.format(
+                f"/QyApprovalCommentLines?$filter=Document_No_%20eq%20%27{pk}%27")
             RejectedResponse = self.get_object(RejectComments)
             Comments = [x for x in RejectedResponse['value']]
         except Exception as e:
             print(e)
             messages.info(request, "Wrong UserID")
             return redirect('imprestReq')
-                        
-        ctx = {"today": self.todays_date, "res": res,"line": openLines,"Approvers": Approvers,
-               "type": res_type,"area": Area, "biz": BizGroup,"Local": Local, "year": year,
-               "full": userID, "Foreign": ForegnDest, "dest": destination,"file":allFiles,"Comments":Comments}
+
+        ctx = {
+            "today": self.todays_date,
+            "res": res, 
+            "line": openLines,
+            "Approvers": Approvers,
+            "type": res_type,
+            "area": Area,
+            "biz": BizGroup,
+            "Local": Local,
+            "year": year,
+            "full": userID,
+            "Foreign": ForegnDest,
+            "dest": destination,
+            "file": allFiles,
+            "Comments": Comments
+        }
         return render(request, 'imprestDetail.html', ctx)
 
 
 def UploadAttachment(request, pk):
-    
+
     response = ''
     if request.method == "POST":
         try:
@@ -165,7 +197,7 @@ def UploadAttachment(request, pk):
             attachment = base64.b64encode(files.read())
             try:
                 response = config.CLIENT.service.FnUploadAttachedDocument(
-                    pk, fileName, attachment, tableID,request.session['User_ID'])
+                    pk, fileName, attachment, tableID, request.session['User_ID'])
             except Exception as e:
                 messages.error(request, e)
                 print(e)
@@ -176,6 +208,7 @@ def UploadAttachment(request, pk):
             messages.error(request, "Failed, Try Again")
             return redirect('IMPDetails', pk=pk)
     return redirect('IMPDetails', pk=pk)
+
 
 def FnDeleteImprestLine(request, pk):
     if request.method == 'POST':
@@ -221,13 +254,14 @@ def FnGenerateImprestReport(request, pk):
             return redirect('auth')
     return redirect('IMPDetails', pk=pk)
 
-def DeleteImprestAttachment(request,pk):
+
+def DeleteImprestAttachment(request, pk):
     if request.method == "POST":
         docID = int(request.POST.get('docID'))
-        tableID= int(request.POST.get('tableID'))
+        tableID = int(request.POST.get('tableID'))
         try:
             response = config.CLIENT.service.FnDeleteDocumentAttachment(
-                pk,docID,tableID)
+                pk, docID, tableID)
             print(response)
             if response == True:
                 messages.success(request, "Deleted Successfully ")
@@ -236,6 +270,7 @@ def DeleteImprestAttachment(request,pk):
             messages.error(request, e)
             print(e)
     return redirect('IMPDetails', pk=pk)
+
 
 def FnRequestPaymentApproval(request, pk):
     Username = request.session['User_ID']
@@ -287,7 +322,7 @@ def CreateImprestLines(request, pk):
             destination = request.POST.get('destination')
             imprestTypes = request.POST.get('imprestType')
             requisitionType = request.POST.get('requisitionType')
-            DSAType= request.POST.get('DSAType')
+            DSAType = request.POST.get('DSAType')
             travelDate = datetime.strptime(
                 request.POST.get('travel'), '%Y-%m-%d').date()
             amount = float(request.POST.get("amount"))
@@ -304,9 +339,9 @@ def CreateImprestLines(request, pk):
 
         if not amount:
             amount = 0
-        
+
         if not imprestType:
-            messages.info(request,"Both Imprest and DSA can't be empty.")
+            messages.info(request, "Both Imprest and DSA can't be empty.")
             return redirect('IMPDetails', pk=pk)
 
         if DSAType:
@@ -323,21 +358,28 @@ def CreateImprestLines(request, pk):
             return redirect('IMPDetails', pk=pk)
     return redirect('IMPDetails', pk=pk)
 
-class ImprestSurrender(UserObjectMixin,View):
-    def get(self,request):
+
+class ImprestSurrender(UserObjectMixin, View):
+    def get(self, request):
         try:
             userID = request.session['User_ID']
             year = request.session['years']
 
-            Access_Point = config.O_DATA.format(f"/QyImprestSurrenders?$filter=User_Id%20eq%20%27{userID}%27")
+            Access_Point = config.O_DATA.format(
+                f"/QyImprestSurrenders?$filter=User_Id%20eq%20%27{userID}%27")
             response = self.get_object(Access_Point)
-            openSurrender = [x for x in response['value'] if x['Status'] == 'Open']
-            Pending = [x for x in response['value'] if x['Status'] == 'Pending Approval']
-            Approved = [x for x in response['value'] if x['Status'] == 'Released']
+            openSurrender = [x for x in response['value']
+                             if x['Status'] == 'Open']
+            Pending = [x for x in response['value']
+                       if x['Status'] == 'Pending Approval']
+            Approved = [x for x in response['value']
+                        if x['Status'] == 'Released']
 
-            Released_imprest = config.O_DATA.format(f"/Imprests?$filter=User_Id%20eq%20%27{userID}%27%20and%20Status%20eq%20%27Released%27")
+            Released_imprest = config.O_DATA.format(
+                f"/Imprests?$filter=User_Id%20eq%20%27{userID}%27%20and%20Status%20eq%20%27Released%27")
             Released = self.get_object(Released_imprest)
-            APPImp=[x for x in Released['value'] if x['Imprest'] == True and x['Surrendered'] ==False and x['Posted'] == True ]
+            APPImp = [x for x in Released['value'] if x['Imprest'] ==
+                      True and x['Surrendered'] == False and x['Posted'] == True]
 
             counts = len(openSurrender)
 
@@ -347,7 +389,8 @@ class ImprestSurrender(UserObjectMixin,View):
 
         except requests.exceptions.RequestException as e:
             print(e)
-            messages.info(request, "Whoops! Something went wrong. Please Login to Continue")
+            messages.info(
+                request, "Whoops! Something went wrong. Please Login to Continue")
             return redirect('auth')
         except KeyError as e:
             print(e)
@@ -355,13 +398,14 @@ class ImprestSurrender(UserObjectMixin,View):
             return redirect('auth')
 
         ctx = {"today": self.todays_date, "res": openSurrender,
-            "count": counts, "full": userID,
-            "response": Approved, "counter": counter,
-            "app": APPImp, "year": year,
-            "pend": pend, "pending": Pending}
-        
+               "count": counts, "full": userID,
+               "response": Approved, "counter": counter,
+               "app": APPImp, "year": year,
+               "pend": pend, "pending": Pending}
+
         return render(request, 'imprestSurr.html', ctx)
-    def post(self,request):
+
+    def post(self, request):
         if request.method == 'POST':
             try:
                 usersId = request.session['User_ID']
@@ -389,41 +433,44 @@ class ImprestSurrender(UserObjectMixin,View):
                 print(e)
                 return redirect('imprestSurr')
         return redirect('imprestSurr')
-    
 
 
 class SurrenderDetails(UserObjectMixin, View):
-    def get(self, request,pk):
+    def get(self, request, pk):
         try:
             userID = request.session['User_ID']
             year = request.session['years']
- 
 
-            Access_Point = config.O_DATA.format(f"/QyImprestSurrenders?$filter=No_%20eq%20%27{pk}%27%20and%20User_Id%20eq%20%27{userID}%27")
+            Access_Point = config.O_DATA.format(
+                f"/QyImprestSurrenders?$filter=No_%20eq%20%27{pk}%27%20and%20User_Id%20eq%20%27{userID}%27")
             response = self.get_object(Access_Point)
             for imprest in response['value']:
                 res = imprest
 
-            Imprest_Type = config.O_DATA.format("/QyReceiptsAndPaymentTypes?$filter=Type%20eq%20%27Imprest%27")
+            Imprest_Type = config.O_DATA.format(
+                "/QyReceiptsAndPaymentTypes?$filter=Type%20eq%20%27Imprest%27")
             Imprest_RES = self.get_object(Imprest_Type)
             res_type = [x for x in Imprest_RES['value']]
 
-            Approver = config.O_DATA.format(f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
+            Approver = config.O_DATA.format(
+                f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
             res_approver = self.get_object(Approver)
             Approvers = [x for x in res_approver['value']]
 
-            Access_File = config.O_DATA.format(f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27")
+            Access_File = config.O_DATA.format(
+                f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27")
             res_file = self.get_object(Access_File)
             allFiles = [x for x in res_file['value']]
 
-            RejectComments = config.O_DATA.format(f"/QyApprovalCommentLines?$filter=Document_No_%20eq%20%27{pk}%27")
+            RejectComments = config.O_DATA.format(
+                f"/QyApprovalCommentLines?$filter=Document_No_%20eq%20%27{pk}%27")
             RejectedResponse = self.get_object(RejectComments)
             Comments = [x for x in RejectedResponse['value']]
 
-            Lines_Res = config.O_DATA.format(f"/QyImprestSurrenderLines?$filter=No%20eq%20%27{pk}%27")
+            Lines_Res = config.O_DATA.format(
+                f"/QyImprestSurrenderLines?$filter=No%20eq%20%27{pk}%27")
             responses = self.get_object(Lines_Res)
             openLines = [x for x in responses['value'] if x['No'] == pk]
-  
 
         except requests.exceptions.ConnectionError as e:
             print(e)
@@ -433,11 +480,12 @@ class SurrenderDetails(UserObjectMixin, View):
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
 
-        ctx = {"today": self.todays_date, "res": res,"line": openLines,
-            "Approvers": Approvers, "type": res_type, "year": year, "full": userID,"file":allFiles,"Comments":Comments}
-        
+        ctx = {"today": self.todays_date, "res": res, "line": openLines,
+               "Approvers": Approvers, "type": res_type, "year": year, "full": userID, "file": allFiles, "Comments": Comments}
+
         return render(request, 'SurrenderDetail.html', ctx)
-    def post(self, request,pk):
+
+    def post(self, request, pk):
         if request.method == 'POST':
             try:
                 lineNo = int(request.POST.get('lineNo'))
@@ -470,7 +518,7 @@ def UploadSurrenderAttachment(request, pk):
             attachment = base64.b64encode(files.read())
             try:
                 response = config.CLIENT.service.FnUploadAttachedDocument(
-                    pk, fileName, attachment, tableID,request.session['User_ID'])
+                    pk, fileName, attachment, tableID, request.session['User_ID'])
             except Exception as e:
                 messages.error(request, e)
                 print(e)
@@ -482,13 +530,14 @@ def UploadSurrenderAttachment(request, pk):
             return redirect('IMPSurrender', pk=pk)
     return redirect('IMPSurrender', pk=pk)
 
-def DeleteSurrenderAttachment(request,pk):
+
+def DeleteSurrenderAttachment(request, pk):
     if request.method == "POST":
         docID = int(request.POST.get('docID'))
-        tableID= int(request.POST.get('tableID'))
+        tableID = int(request.POST.get('tableID'))
         try:
             response = config.CLIENT.service.FnDeleteDocumentAttachment(
-                pk,docID,tableID)
+                pk, docID, tableID)
             print(response)
             if response == True:
                 messages.success(request, "Deleted Successfully ")
@@ -497,6 +546,7 @@ def DeleteSurrenderAttachment(request,pk):
             messages.error(request, e)
             print(e)
     return redirect('IMPSurrender', pk=pk)
+
 
 def FnGenerateImprestSurrenderReport(request, pk):
     nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
@@ -563,41 +613,45 @@ def FnCancelSurrenderApproval(request, pk):
     return redirect('IMPSurrender', pk=pk)
 
 
-class StaffClaim(UserObjectMixin,View):
+class StaffClaim(UserObjectMixin, View):
     def get(self, request):
         try:
             userID = request.session['User_ID']
             year = request.session['years']
 
-            Access_Point = config.O_DATA.format(f"/QyStaffClaims?$filter=User_Id%20eq%20%27{userID}%27")
+            Access_Point = config.O_DATA.format(
+                f"/QyStaffClaims?$filter=User_Id%20eq%20%27{userID}%27")
             response = self.get_object(Access_Point)
             openClaim = [x for x in response['value'] if x['Status'] == 'Open']
-            Pending = [x for x in response['value'] if x['Status'] == 'Pending Approval']
-            Approved = [x for x in response['value'] if x['Status'] == 'Released']
+            Pending = [x for x in response['value']
+                       if x['Status'] == 'Pending Approval']
+            Approved = [x for x in response['value']
+                        if x['Status'] == 'Released']
 
             Claim = config.O_DATA.format("/QyImprestSurrenders")
             res_claim = self.get_object(Claim)
-            My_Claim = [x for x in res_claim['value'] if x['Actual_Amount_Spent'] > x['Imprest_Amount']]
-                
+            My_Claim = [x for x in res_claim['value']
+                        if x['Actual_Amount_Spent'] > x['Imprest_Amount']]
 
             counts = len(openClaim)
             counter = len(Approved)
             pend = len(Pending)
         except requests.exceptions.ConnectionError as e:
             print(e)
-            messages.info(request,e)
+            messages.info(request, e)
             return redirect('auth')
         except KeyError:
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
 
         ctx = {"today": self.todays_date, "res": openClaim,
-            "count": counts,"response": Approved, "claim": counter,
-            "my_claim": My_Claim,"pend": pend,
-            "year": year, "pending": Pending,
-            "full": userID}
+               "count": counts, "response": Approved, "claim": counter,
+               "my_claim": My_Claim, "pend": pend,
+               "year": year, "pending": Pending,
+               "full": userID}
         return render(request, 'staffClaim.html', ctx)
-    def post(self,request):
+
+    def post(self, request):
         if request.method == 'POST':
             accountNo = request.session['Customer_No_']
             usersId = request.session['User_ID']
@@ -624,36 +678,42 @@ class StaffClaim(UserObjectMixin,View):
 
 
 class ClaimDetails(UserObjectMixin, View):
-    def get(self, request,pk):
+    def get(self, request, pk):
         try:
             userID = request.session['User_ID']
             year = request.session['years']
 
-            Access_Point = config.O_DATA.format(f"/QyStaffClaims?$filter=No_%20eq%20%27{pk}%27%20and%20User_Id%20eq%20%27{userID}%27")
+            Access_Point = config.O_DATA.format(
+                f"/QyStaffClaims?$filter=No_%20eq%20%27{pk}%27%20and%20User_Id%20eq%20%27{userID}%27")
             response = self.get_object(Access_Point)
             for claim in response['value']:
                 res = claim
 
-            Claim_Type = config.O_DATA.format("/QyReceiptsAndPaymentTypes?$filter=Type%20eq%20%27Claim%27")
+            Claim_Type = config.O_DATA.format(
+                "/QyReceiptsAndPaymentTypes?$filter=Type%20eq%20%27Claim%27")
             Claim_RES = self.get_object(Claim_Type)
             res_type = [x for x in Claim_RES['value']]
-            
-            Approver = config.O_DATA.format(f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
+
+            Approver = config.O_DATA.format(
+                f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
             res_approver = self.get_object(Approver)
             Approvers = [x for x in res_approver['value']]
 
-            Access_File = config.O_DATA.format(f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27")
+            Access_File = config.O_DATA.format(
+                f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27")
             res_file = self.get_object(Access_File)
             allFiles = [x for x in res_file['value']]
 
-            RejectComments = config.O_DATA.format(f"/QyApprovalCommentLines?$filter=Document_No_%20eq%20%27{pk}%27")
+            RejectComments = config.O_DATA.format(
+                f"/QyApprovalCommentLines?$filter=Document_No_%20eq%20%27{pk}%27")
             RejectedResponse = self.get_object(RejectComments)
             Comments = [x for x in RejectedResponse['value']]
 
-            Lines_Res = config.O_DATA.format(f"/QyStaffClaimLines?$filter=No%20eq%20%27{pk}%27")
+            Lines_Res = config.O_DATA.format(
+                f"/QyStaffClaimLines?$filter=No%20eq%20%27{pk}%27")
             res_Line = self.get_object(Lines_Res)
             openLines = [x for x in res_Line['value'] if x['No'] == pk]
- 
+
         except requests.exceptions.ConnectionError as e:
             print(e)
             return redirect('claim')
@@ -662,9 +722,9 @@ class ClaimDetails(UserObjectMixin, View):
             return redirect('auth')
 
         ctx = {"today": self.todays_date, "res": res,
-              "res_type": res_type,"Approvers": Approvers, "line": openLines,
-            "year": year, "full": userID,"file":allFiles,"Comments":Comments}
-        
+               "res_type": res_type, "Approvers": Approvers, "line": openLines,
+               "year": year, "full": userID, "file": allFiles, "Comments": Comments}
+
         return render(request, "ClaimDetail.html", ctx)
 
 
@@ -672,7 +732,7 @@ def CreateClaimLines(request, pk):
     lineNo = ""
     claimNo = pk
     claimType = ""
-    
+
     amount = ""
     claimReceiptNo = ""
     dimension3 = ''
@@ -705,7 +765,7 @@ def CreateClaimLines(request, pk):
                     attachment = base64.b64encode(files.read())
                     try:
                         responses = config.CLIENT.service.FnUploadAttachedDocument(
-                            pk +'#'+str(response), fileName, attachment, tableID,request.session['User_ID'])
+                            pk + '#'+str(response), fileName, attachment, tableID, request.session['User_ID'])
                         if responses == True:
                             messages.success(request, "Request Successful")
                             return redirect('ClaimDetail', pk=pk)
@@ -744,13 +804,14 @@ def ClaimApproval(request, pk):
             print(e)
     return redirect('ClaimDetail', pk=pk)
 
-def DeleteClaimAttachment(request,pk):
+
+def DeleteClaimAttachment(request, pk):
     if request.method == "POST":
         docID = int(request.POST.get('docID'))
-        tableID= int(request.POST.get('tableID'))
+        tableID = int(request.POST.get('tableID'))
         try:
             response = config.CLIENT.service.FnDeleteDocumentAttachment(
-                pk,docID,tableID)
+                pk, docID, tableID)
             print(response)
             if response == True:
                 messages.success(request, "Deleted Successfully ")
@@ -759,6 +820,7 @@ def DeleteClaimAttachment(request,pk):
             messages.error(request, e)
             print(e)
     return redirect('ClaimDetail', pk=pk)
+
 
 def FnCancelClaimApproval(request, pk):
     if request.method == 'POST':
@@ -776,6 +838,7 @@ def FnCancelClaimApproval(request, pk):
             messages.error(request, e)
             print(e)
     return redirect('ClaimDetail', pk=pk)
+
 
 def FnDeleteStaffClaimLine(request, pk):
     if request.method == 'POST':
