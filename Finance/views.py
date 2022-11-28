@@ -39,7 +39,7 @@ class ImprestRequisition(UserObjectMixin, View):
             year = request.session['years']
 
             Access_Point = config.O_DATA.format(
-                f"/Imprests?$filter%20=User_Id%20eq%20%27{userID}%27")
+                f"/Imprests?$filter=User_Id%20eq%20%27{userID}%27")
             response = self.get_object(Access_Point)
             openImprest = [x for x in response['value']
                            if x['Status'] == 'Open']
@@ -82,7 +82,6 @@ class ImprestRequisition(UserObjectMixin, View):
                 travelType = int(request.POST.get('travelType'))
                 purpose = request.POST.get('purpose')
                 isImprest = eval(request.POST.get('isImprest'))
-                isDsa = eval(request.POST.get('isDsa'))
                 myAction = request.POST.get('myAction')
                 imprestNo = request.POST.get('imprestNo')
             except ValueError:
@@ -93,15 +92,15 @@ class ImprestRequisition(UserObjectMixin, View):
                 return redirect('auth')
             if not imprestNo:
                 imprestNo = ""
-            if isImprest == False and isDsa == False:
-                messages.info(request, "Both DSA and Imprest cannot be empty.")
+            if isImprest == False:
+                messages.info(request, "Imprest cannot be empty.")
                 return redirect('imprestReq')
-            print(travelType)
+            # print(travelType)
             try:
                 response = config.CLIENT.service.FnImprestHeader(
-                    imprestNo, accountNo, responsibilityCenter, travelType, purpose, usersId, personalNo, isImprest, isDsa, myAction)
+                    imprestNo, accountNo, responsibilityCenter, travelType, purpose, usersId, personalNo, isImprest,  myAction)
                 messages.success(request, "Request Successful")
-                print(response)
+                # print(response)
             except Exception as e:
                 messages.error(request, e)
                 print(e)
@@ -114,11 +113,13 @@ class ImprestDetails(UserObjectMixin, View):
         try:
             userID = request.session['User_ID']
             year = request.session['years']
-
+            # res = ''
             Access_Point = config.O_DATA.format( f"/Imprests?$filter=No_%20eq%20%27{pk}%27%20and%20User_Id%20eq%20%27{userID}%27")
             response = self.get_object(Access_Point)
-            for imprest in response['value']: 
-                res = imprest
+ 
+            for imprest in response['value']:
+                res = imprest  
+                print(res) 
 
             Imprest_Type = config.O_DATA.format(
                 "/QyReceiptsAndPaymentTypes?$filter=Type%20eq%20%27Imprest%27")
@@ -164,9 +165,13 @@ class ImprestDetails(UserObjectMixin, View):
             messages.info(request, "Wrong UserID")
             return redirect('imprestReq')
 
+        # ctx = {"today": self.todays_date, "res": res,"line": openLines,"Approvers": Approvers,
+        #        "type": res_type,"area": Area, "biz": BizGroup,"Local": Local, "year": year,
+        #        "full": userID, "Foreign": ForegnDest, "dest": destination,"file":allFiles,"Comments":Comments}
+
         ctx = {
             "today": self.todays_date,
-            "res": res, 
+            "res": res,
             "line": openLines,
             "Approvers": Approvers,
             "type": res_type,

@@ -86,6 +86,7 @@ INSTALLED_APPS = [
     'Approvals',
     'accounts',
     'advance',
+    'fleet',
 
 ]
 

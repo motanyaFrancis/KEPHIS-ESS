@@ -6,5 +6,5 @@ urlpatterns = [
     path('ApproveData/<str:pk>', views.ApproveDetails.as_view(), name='ApproveData'),
     path('Approved/<str:pk>', views.All_Approved, name='All_Approved'),
     path('Rejected/<str:pk>', views.Rejected, name='Rejected'),
-    path('getDocs/<str:pk>/<str:id>/', views.viewDocs, name='getDocs'),
+    path('getDocs/<str:pk>/<str:id>', views.viewDocs, name='getDocs'),
 ]

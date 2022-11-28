@@ -25,4 +25,6 @@ urlpatterns = [
     path('', include('Approvals.urls')),
     path('', include('accounts.urls')),
     path('', include('advance.urls')),
+    path('', include('fleet.urls')),
+    path('forest', include('django_forest.urls')),
 ]

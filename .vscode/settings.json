@@ -7,5 +7,6 @@
     "Refference",
     "rens",
     "requistion"
-  ]
+  ],
+  "python.formatting.provider": "yapf"
 }
