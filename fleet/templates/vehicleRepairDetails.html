@@ -146,15 +146,15 @@
             <div class="col-md-12">
                 <form class="row g-3">
                     <div class="col-md-4">
-                        <label class="form-label">Work ticket Number</label>
+                        <label class="form-label">Vehicle Number</label>
                         <input type="text" class="form-control" placeholder="{{res.No_}}" readonly>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Current Work Ticket Number</label>
+                        <label class="form-label">Document Date</label>
                         <input type="text" class="form-control" placeholder="{{res.Imprest_Amount}}" readonly>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Date Created</label>
+                        <label class="form-label">Odometer Reading</label>
                         <input type="text" class="form-control" placeholder="{{res.Date}}" readonly>
                     </div>
                     <div class="col-md-4">
@@ -364,6 +364,54 @@
         </div>
         {% endif %}
 
+    </div>
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">New Repair Request Line
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="myForm needs-validation" id="frm_" action=""
+                        method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        
+                        <div class="row">
+                            <div class="col-md-12">
+                                <input type="hidden" name="myAction" value="insert">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="form-label">Defect Type <span class="text-danger">*</span></label>
+                                <input type="text" name="defectsType" class="form-control">
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="" class="form-label">Severity <span class="text-danger">*</span></label>
+                                <input type="text" name="severity" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="" class="form-label">Action <span class="text-danger">*</span></label>
+                                <input type="text" name="action" class="form-control">
+                            </div>
+                        </div>
+                        
+                        
+                        <button type="submit" class="btn btn-success my-3 w-100">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 

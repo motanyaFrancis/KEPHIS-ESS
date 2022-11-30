@@ -60,98 +60,199 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <td>TEST-001</td>
-                                            <td>2022-12-12</td>
-                                            <td>KDL 012 V</td>
-                                            <td>John Doe</td>
-                                            <td>
-                                                <button class="btn btn-primary" data-bs-toggle="modal"
-                                                        data-bs-target="#" data-toggle="tooltip" data-placement="top"
-                                                        title="edit">Edit <i class="fas fa-edit"></i>
-                                                </button>
-                                                <!-- <div class="modal fade" id=""
-                                                     data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-                                                     aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                                                    <div
-                                                         class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title" id="staticBackdropLabel">
-                                                                    <i class="las la-edit"></i> Edit Imprest
-                                                                    <span class="editSpan">{{res.No_}}</span>
-                                                                </h5>
-                                                                <button type="button" class="btn-close btn-close-white"
-                                                                        data-bs-dismiss="modal"
-                                                                        aria-label="Close"></button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <form class="myForm" action="" method="post" novalidate>
-                                                                    {% csrf_token %}
-                                                                    <div class="mb-2 myForm">
-                                                                        <div class="row">
-                                                                            <div class="col-md-12">
-                                                                                <label
-                                                                                       class="form-label">Imprest</label>
-                                                                                <select class="form-select"
-                                                                                        name="isImprest" required>
-                                                                                    <option selected disabled value="">
-                                                                                        Select Option</option>
-                                                                                    <option value="True">yes </option>
-                                                                                    <option value="False">No</option>
-                                                                                </select>
-                                                                                <div class="invalid-feedback"> Please
-                                                                                    select a valid option.</div>
+                                            {% for res in open %}
+                                            {% if res.Rejected_By_Approver == True and res.Status == 'Open' %}
+                                            <tr>
+                                                <td>{{res.No}}</td>
+                                                <td>{{res.Date}}</td>
+                                                <td>{{res.Vehicle}}</td>
+                                                <td>{{res.CreatedBy }}</td>
+                                                <td>
+                                                    <button class="btn btn-primary" data-bs-toggle="modal"
+                                                            data-bs-target="#" data-toggle="tooltip" data-placement="top"
+                                                            title="edit">Edit <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <div class="modal fade" id=""
+                                                         data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                                         aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                        <div
+                                                             class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="staticBackdropLabel">
+                                                                        <i class="las la-edit"></i> Edit Imprest
+                                                                        <span class="editSpan">{{res.No_}}</span>
+                                                                    </h5>
+                                                                    <button type="button" class="btn-close btn-close-white"
+                                                                            data-bs-dismiss="modal"
+                                                                            aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <form class="myForm" action="" method="post" novalidate>
+                                                                        {% csrf_token %}
+                                                                        <div class="mb-2 myForm">
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <label
+                                                                                           class="form-label">Imprest</label>
+                                                                                    <select class="form-select"
+                                                                                            name="isImprest" required>
+                                                                                        <option selected disabled value="">
+                                                                                            Select Option</option>
+                                                                                        <option value="True">yes </option>
+                                                                                        <option value="False">No</option>
+                                                                                    </select>
+                                                                                    <div class="invalid-feedback"> Please
+                                                                                        select a valid option.</div>
+                                                                                </div>
                                                                             </div>
-                                                                        </div>
-                                                                        <div class="row">
-                                                                            <div class="col-md-12">
-                                                                                <label class="form-label">Travel
-                                                                                    Type <span
-                                                                                          class="text-danger">*</span></label>
-                                                                                <select class="form-select"
-                                                                                        name="travelType" required>
-                                                                                    <option selected disabled value="">
-                                                                                        Select Option</option>
-                                                                                    <option value="0">Local</option>
-                                                                                    <option value="1">Foreign</option>
-                                                                                </select>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <label class="form-label">Travel
+                                                                                        Type <span
+                                                                                              class="text-danger">*</span></label>
+                                                                                    <select class="form-select"
+                                                                                            name="travelType" required>
+                                                                                        <option selected disabled value="">
+                                                                                            Select Option</option>
+                                                                                        <option value="0">Local</option>
+                                                                                        <option value="1">Foreign</option>
+                                                                                    </select>
+                                                                                </div>
                                                                             </div>
-                                                                        </div>
-                                                                        <div class="row">
-                                                                            <div class="col-md-12">
-                                                                                <input type="hidden" name="myAction"
-                                                                                       value="modify">
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <input type="hidden" name="myAction"
+                                                                                           value="modify">
+                                                                                </div>
                                                                             </div>
-                                                                        </div>
-                                                                        <div class="row">
-                                                                            <div class="col-md-12">
-                                                                                <input type="hidden" name="imprestNo"
-                                                                                       value="{{res.No_}}">
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <input type="hidden" name="imprestNo"
+                                                                                           value="{{res.No_}}">
+                                                                                </div>
                                                                             </div>
-                                                                        </div>
-                                                                        <div class="row">
-                                                                            <div class="col-md-12">
-                                                                                <label for="purpose"
-                                                                                       class="form-label">Purpose</label>
-                                                                                <textarea class="form-control"
-                                                                                          name="purpose" rows="3"
-                                                                                          required></textarea>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <label for="purpose"
+                                                                                           class="form-label">Purpose</label>
+                                                                                    <textarea class="form-control"
+                                                                                              name="purpose" rows="3"
+                                                                                              required></textarea>
+                                                                                </div>
                                                                             </div>
-                                                                        </div>
-                                                                        <button type="submit" id="sasa"
-                                                                                class="btn btn-success my-3 w-100">Submit</button>
-                                                                </form>
+                                                                            <button type="submit" id="sasa"
+                                                                                    class="btn btn-success my-3 w-100">Submit</button>
+                                                                    </form>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div> -->
-                                                <a href="#"
-                                                   class="btn btn-success btn-icon-text" type="button"
-                                                   data-toggle="tooltip" data-placement="top" title="Click to View">
-                                                    View
-                                                    <i class="far fa-eye"></i>
-                                                </a>
-                                            </td>
+                                                    <a href="#"
+                                                       class="btn btn-success btn-icon-text" type="button"
+                                                       data-toggle="tooltip" data-placement="top" title="Click to View">
+                                                        View
+                                                        <i class="far fa-eye"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            {% else %}
+                                            <tr>
+                                                <td>{{res.No}}</td>
+                                                <td>{{res.Date}}</td>
+                                                <td>{{res.Vehicle}}</td>
+                                                <td>{{res.CreatedBy }}</td>
+                                                <td>
+                                                    <button class="btn btn-primary" data-bs-toggle="modal"
+                                                            data-bs-target="#" data-toggle="tooltip" data-placement="top"
+                                                            title="edit">Edit <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <div class="modal fade" id=""
+                                                         data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                                         aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                        <div
+                                                             class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="staticBackdropLabel">
+                                                                        <i class="las la-edit"></i> Edit Imprest
+                                                                        <span class="editSpan">{{res.No_}}</span>
+                                                                    </h5>
+                                                                    <button type="button" class="btn-close btn-close-white"
+                                                                            data-bs-dismiss="modal"
+                                                                            aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <form class="myForm" action="" method="post" novalidate>
+                                                                        {% csrf_token %}
+                                                                        <div class="mb-2 myForm">
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <label
+                                                                                           class="form-label">Imprest</label>
+                                                                                    <select class="form-select"
+                                                                                            name="isImprest" required>
+                                                                                        <option selected disabled value="">
+                                                                                            Select Option</option>
+                                                                                        <option value="True">yes </option>
+                                                                                        <option value="False">No</option>
+                                                                                    </select>
+                                                                                    <div class="invalid-feedback"> Please
+                                                                                        select a valid option.</div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <label class="form-label">Travel
+                                                                                        Type <span
+                                                                                              class="text-danger">*</span></label>
+                                                                                    <select class="form-select"
+                                                                                            name="travelType" required>
+                                                                                        <option selected disabled value="">
+                                                                                            Select Option</option>
+                                                                                        <option value="0">Local</option>
+                                                                                        <option value="1">Foreign</option>
+                                                                                    </select>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <input type="hidden" name="myAction"
+                                                                                           value="modify">
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <input type="hidden" name="imprestNo"
+                                                                                           value="{{res.No_}}">
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <label for="purpose"
+                                                                                           class="form-label">Purpose</label>
+                                                                                    <textarea class="form-control"
+                                                                                              name="purpose" rows="3"
+                                                                                              required></textarea>
+                                                                                </div>
+                                                                            </div>
+                                                                            <button type="submit" id="sasa"
+                                                                                    class="btn btn-success my-3 w-100">Submit</button>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <a href="#"
+                                                       class="btn btn-success btn-icon-text" type="button"
+                                                       data-toggle="tooltip" data-placement="top" title="Click to View">
+                                                        View
+                                                        <i class="far fa-eye"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            {% endif%}
+                                            {%endfor%}
                                         </tbody>
                                     </table>
 
@@ -169,7 +270,7 @@
              aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content">
-                    <div class="modal-header">Inspection request 
+                    <div class="modal-header">Inspection request
                         </h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                                 aria-label="Close"></button>
@@ -179,14 +280,17 @@
                             {% csrf_token %}
                             <div class="row">
                                 <div class="col-md-12">
-                                    <input type="hidden" name="imprestNo" value="">
+                                    <input type="hidden" name="insNo" value="">
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
                                     <label class="form-label">Vehicle <span class="text-danger">*</span></label>
-                                    <select class="form-select" name="isImprest" required>
-                                        <option selected disabled value="">Select Option</option>                                        
+                                    <select class="form-select" name="vehicle" required>
+                                        <option selected disabled value="">Select Option</option>
+                                        {% for list in Vehicle_No %}
+                                        <option value="{{ list.No_ }}">{{ list.Registration_No }}</option>
+                                        {% endfor %}
                                     </select>
                                 </div>
                             </div>
@@ -196,13 +300,13 @@
                                     <input type="hidden" name="myAction" value="insert">
                                 </div>
                             </div>
-                            
+
                             <div class="row">
                                 <div class="col-md-12">
-                                    <label for="purpose" class="form-label">Mechanical Inspection Recommedation<span
-                                            class="text-danger">*</span></label>
-                                    <textarea class="form-control" name="purpose" rows="3" required></textarea>
-    
+                                    <label  class="form-label">Mechanical Inspection Recommedation<span
+                                              class="text-danger">*</span></label>
+                                    <textarea class="form-control" name="mechanicalInspectionRecommedation" rows="3" required></textarea>
+
                                 </div>
                             </div>
                             <button type="submit" id="sasa" class="btn btn-success my-3 w-100">Submit</button>
