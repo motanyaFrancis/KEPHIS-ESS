@@ -116,7 +116,6 @@ class ImprestDetails(UserObjectMixin, View):
             # res = ''
             Access_Point = config.O_DATA.format( f"/Imprests?$filter=No_%20eq%20%27{pk}%27%20and%20User_Id%20eq%20%27{userID}%27")
             response = self.get_object(Access_Point)
- 
             for imprest in response['value']:
                 res = imprest  
                 print(res) 

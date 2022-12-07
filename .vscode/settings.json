@@ -8,5 +8,6 @@
     "rens",
     "requistion"
   ],
-  "python.formatting.provider": "yapf"
+  "python.formatting.provider": "yapf",
+  "python.analysis.typeCheckingMode": "basic"
 }
