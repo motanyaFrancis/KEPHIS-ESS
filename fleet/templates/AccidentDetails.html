@@ -7,20 +7,17 @@
         <div class="d-xl-flex justify-content-between align-items-start">
             <h2 class="text-dark font-weight-bold mb-2"> Accident Report
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Attachment"> <i
-                    class="las la-plus"></i> Upload Attachment</button>
-                    
+                       class="las la-plus"></i> Upload Attachment</button>
+
             </h2>
 
             <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
                 <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
-                    <button class="btn btn-successs p-3 d-flex align-items-center" data-bs-toggle="modal"
-                    data-bs-target="#staticBackdrop" type="button"> <i class="las la-plus text-white"
-                    style="font-size:15px;"></i> Add  Lines
-                </button>
-                {% if res.Status == "Open" %}
-                    {% elif res.Status == "Released" %}
-                    <form action="{% url 'FnGenerateImprestReport' res.No_%}" method="post"
-                        style="display:inline-block">
+                    {% if res.DocumentStage == 'Not-Submitted' %}
+                        
+                    {% elif res.DocumentStage == 'Submitted' %}
+                    <form action="" method="post"
+                          style="display:inline-block">
                         {% csrf_token %}
                         <button class="btn btn-successs" type="submit"> Preview
                             Report</button>
@@ -41,61 +38,43 @@
                         <div class="mb-4">
                             <h5 class="card-title mb-0">Report Stage</h5>
                         </div>
+                        {% if res.DocumentStage == 'Not-Submitted' %}
                         <div class="row align-items-center mb-2 d-flex">
                             <div class="col-md-12">
                                 <h2 class="d-flex align-items-center mb-0">
-                                   Not Submitted
+                                    {{res.DocumentStage}}
                                 </h2>
                             </div>
                         </div>
                         <div class="progress mt-1 " data-height="8" style="height: 8px;">
                             <div class="progress-bar l-bg-red" role="progressbar" data-width="50%" aria-valuenow="25"
-                            aria-valuemin="0" aria-valuemax="100"
-                            style="width: 50%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
+                                 aria-valuemin="0" aria-valuemax="100"
+                                 style="width: 50%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
+                            </div>
                         </div>
-                    </div>
-                    {% if res.Status == "Open" %}
-                        {% elif res.Status == "Pending Approval" %}
+                        {% elif res.DocumentStage == 'Submitted' %}
                         <div class="row align-items-center mb-2 d-flex">
                             <div class="col-md-12">
                                 <h2 class="d-flex align-items-center mb-0">
-                                    {{res.Status}}
+                                    {{res.DocumentStage}}
                                 </h2>
                             </div>
                         </div>
                         <div class="progress mt-1 " data-height="8" style="height: 8px;">
                             <div class="progress-bar l-bg-yellow" role="progressbar" data-width="25%" aria-valuenow="25"
-                                aria-valuemin="0" aria-valuemax="100"
-                                style="width: 75%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
-                            </div>
-                        </div>
-                        {% elif res.Status == "Released" %}
-                        <div class="row align-items-center mb-2 d-flex">
-                            <div class="col-md-12">
-                                <h2 class="d-flex align-items-center mb-0">
-                                    Approved
-                                </h2>
-                            </div>
-                        </div>
-                        <div class="progress mt-1 " data-height="8" style="height: 8px;">
-                            <div class="progress-bar l-bg-green" role="progressbar" data-width="75%" aria-valuenow="75"
-                                aria-valuemin="0" aria-valuemax="100"
-                                style="width: 100%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
+                                 aria-valuemin="0" aria-valuemax="100"
+                                 style="width: 100%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
                             </div>
                         </div>
                         {% endif %}
                     </div>
                 </div>
             </div>
-            
+
         </div>
         <div class="row">
             <div class="col-md-12">
                 <form class="row g-3">
-                    <div class="col-md-4">
-                        <label class="form-label">Document Status</label>
-                        <input type="text" class="form-control" placeholder="{{res.DocumentStage}}" readonly>
-                    </div>
                     <div class="col-md-4">
                         <label class="form-label">Vehicle Number</label>
                         <input type="text" class="form-control" placeholder="{{res.No_}}" readonly>
@@ -144,11 +123,11 @@
                         <label class="form-label">Location Code</label>
                         <input type="text" class="form-control" placeholder="{{res.LocationCode}}" readonly>
                     </div>
-                    
+
                     <div class="col-12">
                         <label for="inputAddress" class="form-label">Description of the Accident</label>
                         <textarea class="form-control" placeholder="{{res.DescribeNatureOfAccident}}" rows="3"
-                            readonly></textarea>
+                                  readonly></textarea>
                     </div>
                 </form>
             </div>
@@ -165,13 +144,12 @@
                             {% for data in allFiles %}
                             <div class="col-lg-4 col-xl-3">
                                 <div class="file-man-box">
-                                    {% if res.Status == 'Open' %}
+                                    {% if res.DocumentStage == 'Not-Submitted' %}
                                     <form action="{% url 'DeleteAccidentAttachment' data.No_  %}" method="POST">
                                         {% csrf_token %}
                                         <input type="hidden" name="docID" value="{{data.AuxiliaryIndex2}}">
                                         <input type="hidden" name="tableID" value="{{data.Table_ID}}">
-                                        <button class="file-close" id="file-close"><i
-                                                class="fa fa-times-circle"></i></button>
+                                        <button class="file-close" id="file-close"><i class="fa fa-times-circle"></i></button>
                                     </form>
                                     {% endif %}
                                     <div class="file-img-box"><img src="../../static/img/logo/f1.png" alt="icon"></div>
@@ -181,7 +159,7 @@
                                         <input type="hidden" name="File_Name" value="{{data.File_Name}}">
                                         <input type="hidden" name="File_Extension" value="{{data.File_Extension}}">
                                         <button class="file-download mx-1"><i
-                                                class="fa fa-download text-success"></i></button>
+                                               class="fa fa-download text-success"></i></button>
                                     </form>
                                     <div class="file-man-title">
                                         <h5 class="mb-0 text-overflow">
@@ -201,142 +179,24 @@
             </div>
         </div>
 
-        {% if res.Rejected_By_Approver == True and res.Status == 'Open' %}
-        <div class="row my-2 py-3">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="card-title mb-4">
-                            Rejection Comments
-                        </h4>
-                        <div class="row">
-                            <div class="chat-history">
-                                <ul class="m-b-0">
-                                    {% for comment in Comments %}
-                                    <li class="clearfix">
-                                        <div class="message-data">
-                                            <span class="message-data-time">{{comment.User_ID}}</span>
-                                        </div>
-                                        <div class="message my-message">{{comment.Comment}}</div>
-                                    </li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endif %}
+        {% if res.DocumentStage == 'Not-Submitted' %}
         <div class="row">
             <div class="col-md-12">
                 <div class="myForm my-3">
-                    <form action="" method="POST" style="display: inline-block;">
+                    <form action="{% url 'FnSubmitAccidents' res.No %}" method="POST" style="display: inline-block;">
                         {% csrf_token %}
                         <div class="mb-3">
-                            <input type="hidden" hidden name="requisitionNo" value="{{res.No_}}">
+                            <input type="hidden" hidden name="accidentNo" value="{{res.No}}">
                         </div>
-                        <button class="btn btn-info" type="submit">Request For Approval</button>
+                        <button class="btn btn-primary" type="submit">Submit Report</button>
                     </form>
-                </div>
-                {% if res.Status == "Open" %}
-                {% elif res.Status == "Pending Approval" %}
-                <div class="d-grid gap-2 my-3">
-                    <form action="{% url 'ImpresCancel' res.No_ %}" method="POST" class="myForm" id="approvalForm">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <input type="hidden" hidden name="requisitionNo" value="{{res.No_}}">
-                        </div>
-                        <button class="btn btn-info" type="submit">Cancel Request For Approval</button>
-                    </form>
-                </div>
-                {% endif %}
-            </div>
-        </div>
-        {% if res.Status == "Pending Approval" %}
-        <div class="row mt-4">
-            <div class="col-md-12">
-                <div class="card" id="d-card">
-                    <h4 class="mt-2 mx-2 text-dark">Document Approvers</h4>
-                    <div class="card-body">
-                        <table id="example"
-                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                            style="width:100%">
-                            <thead>
-                                <tr id="tops">
-                                    <th id="long">Entry No</th>
-                                    <th>Name</th>
-                                    <th>Sequence</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for res in Approvers %}
-                                <tr>
-                                    <td>{{res.Entry_No_}}</td>
-                                    <td>{{res.Approver_ID}}</td>
-                                    <td>{{res.Sequence_No_}}</td>
-                                    <td>{{res.Status}}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
                 </div>
             </div>
         </div>
+
         {% endif %}
-
     </div>
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">New Repair Request Line
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form class="myForm needs-validation" id="frm_" action=""
-                        method="post" novalidate>
-                        {% csrf_token %}
-                        
-                        
-                        <div class="row">
-                            <div class="col-md-12">
-                                <input type="hidden" name="myAction" value="insert">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <label class="form-label">Defect Type <span class="text-danger">*</span></label>
-                                <input type="text" name="defectsType" class="form-control">
-
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <label for="" class="form-label">Severity <span class="text-danger">*</span></label>
-                                <input type="text" name="severity" class="form-control">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <label for="" class="form-label">Action <span class="text-danger">*</span></label>
-                                <input type="text" name="action" class="form-control">
-                            </div>
-                        </div>
-                        
-                        
-                        <button type="submit" class="btn btn-success my-3 w-100">Submit</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+    
 </section>
 <div class="modal fade" id="Attachment" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">

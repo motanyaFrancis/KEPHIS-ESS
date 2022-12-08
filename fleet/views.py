@@ -213,6 +213,31 @@ def DeleteTicketAttachment(request, pk):
     return redirect('WorkTicketDetails', pk=pk)
 
 
+def FnSubmitWorkTicket(request, pk):
+    Username = request.session['User_ID']
+    Password = request.session['password']
+    AUTHS = Session()
+    AUTHS.auth = HTTPBasicAuth(Username, Password)
+    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
+    workTicketNo = ""
+    if request.method == 'POST':
+        workTicketNo = request.POST.get('workTicketNo')
+        myUserID = request.session['User_ID']
+
+        try:
+            response = config.CLIENT.service.FnSubmitWorkTicket(
+                workTicketNo,
+                myUserID,
+            )
+            messages.success(request, "Approval Request Sent Successfully")
+            return redirect('WorkTicketDetails', pk=pk)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+            return redirect('WorkTicketDetails', pk=pk)
+    return redirect('WorkTicketDetails', pk=pk)
+
+
 class VehicleRepaiRequest(UserObjectMixin, View):
 
     def get(self, request):
@@ -782,6 +807,35 @@ def DeleteAccidentAttachment(request, pk):
             print(e)
     return redirect('AccidentDetails', pk=pk)
 
+
+def FnSubmitAccidents(request, pk):
+    Username = request.session['User_ID']
+    Password = request.session['password']
+    AUTHS = Session()
+    AUTHS.auth = HTTPBasicAuth(Username, Password)
+    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
+    
+    accidentNo = ""
+    
+    if request.method == 'POST':
+        try:
+            myUserId = request.session['User_ID']
+            accidentNo = request.POST.get('accidentNo')
+        except KeyError:
+            messages.info(request, "Session Expired. Please Login")
+            return redirect('auth')
+            
+        try:
+            response = config.CLIENT.service.FnSubmitAccidents(
+                accidentNo, myUserId
+            )
+            messages.success(request, 'Report Submitted successfuly')
+            return redirect('AccidentDetails', pk=pk)
+        except Exception as e:
+            messages.error(request, e)
+            return redirect('AccidentDetails', pk=pk)
+    return redirect('AccidentDetails', pk=pk)
+    
 
 class TransportRequest(UserObjectMixin, View):
 

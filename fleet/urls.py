@@ -7,6 +7,7 @@ urlpatterns = [
     path('WorkTicketDetails/<str:pk>', views.WorkTicketDetails.as_view(), name='WorkTicketDetails'),
     path('UploadTicketAttachment/<str:pk>', views.UploadTicketAttachment, name='UploadTicketAttachment'),
     path('DeleteTicketAttachment/<str:pk>', views.DeleteTicketAttachment, name='DeleteTicketAttachment'),
+    path('FnSubmitWorkTicket/<str:pk>', views.FnSubmitWorkTicket, name='FnSubmitWorkTicket'),
     
     # VehicleInspection
     path('vehicleInspection', views.VehicleInspection.as_view(), name='vehicleInspection'),
@@ -19,7 +20,7 @@ urlpatterns = [
     path('vehicleRepairDetails/<str:pk>', views.VehicleRepairRequestDetails.as_view(), name='vehicleRepairDetails'),
     path('UploadRepairAttachment/<str:pk>', views.UploadRepairAttachment, name='UploadRepairAttachment'),
     path('DeleteRepairAttachment/<str:pk>', views.DeleteRepairAttachment, name='DeleteRepairAttachment'),
-    path('FnRepairRequestLine/<str:pk>', views.FnRepairRequestLine, name='FnRepairRequestLine'),
+    # path('FnRepairRequestLine/<str:pk>', views.FnRepairRequestLine, name='FnRepairRequestLine'),
 
     
     # Tranxport Request
@@ -30,5 +31,6 @@ urlpatterns = [
     path('AccidentDetails/<str:pk>', views.AccidentDetails.as_view(), name='AccidentDetails'),
     path('UploadAccidentAttachment/<str:pk>', views.UploadAccidentAttachment, name='UploadAccidentAttachment'),
     path('DeleteAccidentAttachment/<str:pk>', views.DeleteAccidentAttachment, name='DeleteAccidentAttachment'),
+    path('FnSubmitAccidents/<str:pk>', views.FnSubmitAccidents, name='FnSubmitAccidents')
 
 ]
