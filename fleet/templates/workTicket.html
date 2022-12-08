@@ -260,7 +260,7 @@
                                         </thead>
                                         <tbody>
                                             {% for res in pending %}
-                                            {% if res.Status == 'pending' %}
+                                            {% if res.Status == 'Pending Approval' %}
                                             <tr>
                                                 <td>{{res.No}}</td>
                                                 <td>{{res.Date}}</td>
@@ -347,7 +347,7 @@
                                                             </div>
                                                         </div>
                                                     </div> -->
-                                                    <a href="#"
+                                                    <a href="{% url 'WorkTicketDetails' res.No %}"
                                                        class="btn btn-success btn-icon-text" type="button"
                                                        data-toggle="tooltip" data-placement="top" title="Click to View">
                                                         View
@@ -365,7 +365,7 @@
                             </div>
 
 
-                            <div class="tab-pane fade" id="approved">
+                            <div class="tab-pane fade" id="Approved">
                                 <h4 class="mt-2 text-dark">Approved Work Tickets</h4>
                                 <div class="card-body">
                                     <table id="example"
@@ -391,7 +391,7 @@
                                                 <td>{{res.CreatedBy}}</td>
                                                 <td>
 
-                                                    <a href="#"
+                                                    <a href="{% url 'WorkTicketDetails' res.No %}"
                                                        class="btn btn-success btn-icon-text" type="button"
                                                        data-toggle="tooltip" data-placement="top" title="Click to View">
                                                         View

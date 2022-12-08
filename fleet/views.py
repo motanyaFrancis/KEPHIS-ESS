@@ -43,7 +43,7 @@ class WorkTicket(UserObjectMixin, View):
                 f"/QyWorkTicket?$filter=CreatedBy%20eq%20%27{userID}%27")
             response = self.get_object(Access_Point)
             Access_Point_List = [x for x in response]
-            # print(response)
+            
             openTicket = [
                 x for x in response['value'] if x['Status'] == 'Open'
             ]
@@ -96,6 +96,7 @@ class WorkTicket(UserObjectMixin, View):
     def post(self, request):
         if request.method == 'POST':
             try:
+                employeeNo = request.session['Employee_No_']
                 myUserId = request.session['User_ID']
                 workTicketNo = request.POST.get('No')
                 previoursWorkTicketNo = request.POST.get(
@@ -114,17 +115,23 @@ class WorkTicket(UserObjectMixin, View):
             if not workTicketNo:
                 workTicketNo = " "
 
-        try:
-            response = config.CLIENT.service.FnWorkTicket(
-                workTicketNo, previoursWorkTicketNo, kmCovered, myUserId,
-                vehicle, myAction)
-            messages.success(request, "Request Successful")
-            print(response)
+            try:
+                response = config.CLIENT.service.FnWorkTicket(
+                    workTicketNo, 
+                    employeeNo,
+                    myAction,
+                    previoursWorkTicketNo, 
+                    kmCovered, 
+                    myUserId,
+                    vehicle, 
+                    )
+                messages.success(request, "Request Successful")
+                print(response)
 
-        except Exception as e:
-            messages.error(request, e)
-            print(e)
-            return redirect('workTicket')
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+                return redirect('workTicket')
         return redirect('workTicket')
 
 
@@ -340,9 +347,9 @@ class VehicleRepairRequestDetails(UserObjectMixin, View):
                 f"/QyRepairRequest?$filter=No%20eq%20%27{pk}%27%20and%20RequestedBy%20eq%20%27{userID}%27"
             )
             response = self.get_object(Access_Point)
-
-            for repair_req in response['value']:
-                repair_response = repair_req
+            repair_response = [x for x in response['value']]
+            # for repair_req in response['value']:
+            #     repair_response = repair_req
                 # print(res)
 
             Approver = config.O_DATA.format(
@@ -921,9 +928,8 @@ class TransportRequest(UserObjectMixin, View):
 
             try:
                 response = config.CLIENT.service.FnTransportRequest(
-                    tReqNo, myAction, myUserId, reasonForTravel,
-                    typeOfTransport, destination, approximateDistanceKM,
-                    tripeStartDate, startTime, tripeEndDate, returnTime)
+                    tReqNo, myUserId, reasonForTravel,typeOfTransport,destination, 
+                    approximateDistanceKM,tripeStartDate, startTime, tripeEndDate, returnTime,myAction )
                 messages.success(request, "Request Successful")
                 print(response)
             except Exception as e:

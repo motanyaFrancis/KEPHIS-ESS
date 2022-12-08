@@ -701,7 +701,7 @@ class PayslipRequest(UserObjectMixin, View):
             year = request.session['years']
 
             Access_Point = config.O_DATA.format(
-                "/QyPayrollPeriods?$filter=Closed%20eq%20true")
+                f"/QyPayrollPeriods?$filter=Closed%20eq%20true")
             response = self.get_object(Access_Point)
             Payslip = [x for x in response['value']]
 
@@ -903,3 +903,20 @@ def DisciplinaryResponse(request, pk):
         messages.error(request, e)
         print(e)
     return redirect('DisciplineDetail', pk=pk)
+
+
+class appraisal(UserObjectMixin, View):
+    pass
+    # def get(self, request):
+    #     try:
+    #         UserID = request.session['User_ID']
+    #         year = request.session['years']
+            
+    #         Access_Point = config.O_DATA.format(
+    #             f"/QyEmployeeAppraisal?$filter=AppraiseeID%20eq%20%27{UserID}%27"
+    #         )
+    #         response = self.get_object(Access_Point)
+    #         Appraisee = [x for x in response['value']]
+    #     except KeyError as e:
+    #         messages.error(request, e)
+    #         return pass

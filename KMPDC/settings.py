@@ -87,6 +87,7 @@ INSTALLED_APPS = [
     'accounts',
     'advance',
     'fleet',
+    'roombooking',
 
 ]
 
