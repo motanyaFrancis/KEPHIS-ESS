@@ -370,7 +370,7 @@
              aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content">
-                    <div class="modal-header">New Repair request 
+                    <div class="modal-header">Internal Room Booking
                         </h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                                 aria-label="Close"></button>
@@ -380,30 +380,16 @@
                             {% csrf_token %}
                             <div class="row">
                                 <div class="col-md-12">
-                                    <input type="hidden" name="reqNo" value="">
+                                    <input type="hidden" name="bookingNo" value="">
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
-                                    <label class="form-label">Vehicle <span class="text-danger">*</span></label>
-                                    <select class="form-select" name="vehicle" required>
+                                    <label class="form-label">Type of Service <span class="text-danger">*</span></label>
+                                    <select class="form-select" name="typeOfService" required>
                                         <option selected disabled value="">Select Option</option>
-                                        {% for list in Vehicle_No %}
-                                        <option value="{{list.Vehicle}}">{{list.Registration_No}}</option>
-                                        {% endfor %}                                    
+                                        <option value=""></option>                                  
                                     </select>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <label for="" class="form-label">Odometer Reading<span class="text-danger">*</span></label>
-                                    <input type="text" name="odometerReading" class="form-control" required>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <label for="" class="form-label">Repair Instruction Sheet<span class="text-danger">*</span></label>
-                                    <textarea name="repairInstractionSheet" class="form-control" required></textarea>
                                 </div>
                             </div>
                             

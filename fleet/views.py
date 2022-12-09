@@ -64,7 +64,7 @@ class WorkTicket(UserObjectMixin, View):
             res_veh = self.get_object(vehicle)
             Vehicle_No = [x for x in res_veh['value']]
 
-            Ticket = config.O_DATA.format("/QyWorkTicket")
+            Ticket = config.O_DATA.format(f"/QyWorkTicket?$filter=CreatedBy%20eq%20%27{userID}%27")
             res_tkt = self.get_object(Ticket)
             tkt_no = [x for x in res_tkt['value']]
 
@@ -348,8 +348,8 @@ class VehicleRepairRequestDetails(UserObjectMixin, View):
             )
             response = self.get_object(Access_Point)
             repair_response = [x for x in response['value']]
-            # for repair_req in response['value']:
-            #     repair_response = repair_req
+            for repair_req in response['value']:
+                repair_response = repair_req
                 # print(res)
 
             Approver = config.O_DATA.format(

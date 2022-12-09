@@ -54,4 +54,32 @@ class InternalRoomBooking(UserObjectMixin, View):
         }
         return render(request, 'InternalRoomBooking.html')
     
-    
+    def get(self, request):
+        if request.method == 'POST':
+            try:
+                bookingNo = request.POST.get('bookingNo')
+                typeOfService = request.POST.get('typeOfService')
+                myAction = request.POST.get('myAction')
+                userID = request.session['User_ID']
+                employeeNo = request.session['Employee_No_']
+            except ValueError:
+                messages.error(request, "Missing Input")
+                return redirect('InternalRoomBooking')
+            except KeyError:
+                messages.info(request, "Session Expired. Please Login")
+                return redirect('auth')
+            if not bookingNo:
+                bookingNo = " "
+
+            try:
+                response = config.CLIENT.service.FnPurchaseRequisitionHeader(
+                    bookingNo,typeOfService,userID, employeeNo, myAction)
+                messages.success(request, "Request Successful")
+                print(response)
+            except Exception as e:
+                messages.info(request, e)
+                print(e)
+                return redirect('InternalRoomBooking')
+        return redirect('InternalRoomBooking')
+
+        
