@@ -41,6 +41,25 @@ class InternalRoomBooking(UserObjectMixin, View):
             response = self.get_object(Access_Point)
             InternalBooking = [x for x in response['value']]
             
+            openRequest = [
+                x for x in response['value'] if x['Status'] == 'Open'
+            ]
+
+            Pending = [
+                x for x in response['value']
+                if x['Status'] == 'Pending Approval'
+            ]
+
+            Approved = [
+                x for x in response['value'] if x['Status'] == 'Approved'
+            ]
+
+            counts = len(openRequest)
+
+            pend = len(Pending)
+
+            counter = len(Approved)
+            
         except KeyError as e:
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
@@ -50,11 +69,12 @@ class InternalRoomBooking(UserObjectMixin, View):
             return redirect('payslip')
         context = {
             "today": self.todays_date, "year": year,
-               "full": userID, "res": InternalBooking
+               "full": userID, "res": InternalBooking,
+               'open':open
         }
-        return render(request, 'InternalRoomBooking.html')
+        return render(request, 'InternalRoomBooking.html', context)
     
-    def get(self, request):
+    def post(self, request):
         if request.method == 'POST':
             try:
                 bookingNo = request.POST.get('bookingNo')
@@ -72,8 +92,13 @@ class InternalRoomBooking(UserObjectMixin, View):
                 bookingNo = " "
 
             try:
-                response = config.CLIENT.service.FnPurchaseRequisitionHeader(
-                    bookingNo,typeOfService,userID, employeeNo, myAction)
+                response = config.CLIENT.service.FnInternalBookingCard(
+                    bookingNo,
+                    myAction,
+                    typeOfService,
+                    userID, 
+                    employeeNo, 
+                    )
                 messages.success(request, "Request Successful")
                 print(response)
             except Exception as e:
