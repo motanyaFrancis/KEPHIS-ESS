@@ -54,19 +54,19 @@
                                             <tr id="tops">
                                                 <th id="long">Booking No.</th>
                                                 <th>Date Created</th>
-                                                <th>Created By</th>
+                                                <th>Invoiced</th>
                                                 <th>Room Type</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {% for res in open %}
+                                            {% for res in res %}
                                             {% if res.Rejected_By_Approver == True and res.Status == 'Open' %}
                                             <tr>
-                                                <td>{{res.No}}</td>
-                                                <td>{{res.PostingDate}}</td>
-                                                <td>{{res.PostingDate}}</td>
-                                                <td>{{res.VehicleRegistrationNo}}</td>
+                                                <td>{{res.No_}}</td>
+                                                <td>{{res.Document_Date}}</td>
+                                                <td>{{res.Invoice}}</td>
+                                                <td>{{res.Service_Requred}}</td>
                                                 <td>
                                                     <button class="btn btn-primary" data-bs-toggle="modal"
                                                             data-bs-target="#" data-toggle="tooltip" data-placement="top"
@@ -125,7 +125,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <a href="{% url 'vehicleRepairDetails' res.No %}"
+                                                    <a href="{% url 'InternalRoomDetails' res.No_ %}"
                                                        class="btn btn-success btn-icon-text" type="button"
                                                        data-toggle="tooltip" data-placement="top" title="Click to View">
                                                         View
@@ -135,9 +135,10 @@
                                             </tr>
                                             {% else %}
                                             <tr>
-                                                <td>{{res.No}}</td>
-                                                <td>{{res.PostingDate}}</td>
-                                                <td>{{res.VehicleRegistrationNo}}</td>
+                                                <td>{{res.No_}}</td>
+                                                <td>{{res.Document_Date}}</td>
+                                                <td>{{res.Invoice}}</td>
+                                                <td>{{res.Service_Requred}}</td>
                                                 <td>
                                                     <button class="btn btn-primary" data-bs-toggle="modal"
                                                             data-bs-target="#repair" data-toggle="tooltip" data-placement="top"
@@ -201,7 +202,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <a href="{% url 'vehicleRepairDetails' res.No %}"
+                                                    <a href="{% url 'InternalRoomDetails' res.No_ %}"
                                                        class="btn btn-success btn-icon-text" type="button"
                                                        data-toggle="tooltip" data-placement="top" title="Click to View">
                                                         View
@@ -226,10 +227,10 @@
 
                                         <thead>
                                             <tr id="tops">
-                                                <th id="long">Request No.</th>
+                                                <th id="long">Booking No.</th>
                                                 <th>Date Created</th>
-                                                <th>Vehicle</th>
-                                                <!-- <th>Travel Type</th> -->
+                                                <th>Invoiced</th>
+                                                <th>Room Type</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -237,9 +238,10 @@
                                             {% for res in pending %}
                                             
                                             <tr>
-                                                <td>{{res.No}}</td>
-                                                <td>{{res.PostingDate}}</td>
-                                                <td>{{res.VehicleRegistrationNo}}</td>
+                                                td>{{res.No_}}</td>
+                                                <td>{{res.Document_Date}}</td>
+                                                <td>{{res.Invoice}}</td>
+                                                <td>{{res.Service_Requred}}</td>
                                                 <td>
                                                     <button class="btn btn-primary" data-bs-toggle="modal"
                                                             data-bs-target="#repair" data-toggle="tooltip" data-placement="top"
@@ -303,7 +305,7 @@
                                                        </div>
                                                    </div>
                                                </div>
-                                                    <a href="#"
+                                                    <a href="{% url 'InternalRoomDetails' res.No_ %}"
                                                        class="btn btn-success btn-icon-text" type="button"
                                                        data-toggle="tooltip" data-placement="top" title="Click to View">
                                                         View
@@ -328,10 +330,10 @@
 
                                         <thead>
                                             <tr id="tops">
-                                                <th id="long">Request No.</th>
+                                                <th id="long">Booking No.</th>
                                                 <th>Date Created</th>
-                                                <th>Vehicle</th>
-                                                <!-- <th>Travel Type</th> -->
+                                                <th>Invoiced</th>
+                                                <th>Room Type</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -339,11 +341,12 @@
                                             {% for res in approved %}
                                             
                                             <tr>
-                                                <td>{{res.No}}</td>
-                                                <td>{{res.PostingDate}}</td>
-                                                <td>{{res.VehicleRegistrationNo}}</td>
+                                                td>{{res.No_}}</td>
+                                                <td>{{res.Document_Date}}</td>
+                                                <td>{{res.Invoice}}</td>
+                                                <td>{{res.Service_Requred}}</td>
                                                 <td>
-                                                    <a href="#"
+                                                    <a href="{% url 'InternalRoomDetails' res.No_ %}"
                                                        class="btn btn-success btn-icon-text" type="button"
                                                        data-toggle="tooltip" data-placement="top" title="Click to View">
                                                         View
@@ -390,6 +393,7 @@
                                         <option selected disabled value="">Select Option</option>
                                         <option value="1">Meeting Room</option>
                                         <option value="2">Accommodation</option>
+                                        <option value="3">Meeting Room & Accommodation</option>
                                     </select>
                                 </div>
                             </div>

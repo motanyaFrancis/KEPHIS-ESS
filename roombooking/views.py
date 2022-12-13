@@ -32,26 +32,29 @@ class UserObjectMixin(object):
 
 
 class InternalRoomBooking(UserObjectMixin, View):
+
     def get(self, request):
         try:
             userID = request.session['User_ID']
             year = request.session['years']
-            
+
             Access_Point = config.O_DATA.format(f"/QYvisitors")
             response = self.get_object(Access_Point)
-            InternalBooking = [x for x in response['value']]
-            
+            # InternalBooking = [x for x in response['value']]
+            # print(response)
+
             openRequest = [
-                x for x in response['value'] if x['Status'] == 'Open'
+                x for x in response['value'] if x['Booking_Status'] == 'Open'
             ]
 
             Pending = [
                 x for x in response['value']
-                if x['Status'] == 'Pending Approval'
+                if x['Booking_Status'] == 'Pending Approval'
             ]
 
             Approved = [
-                x for x in response['value'] if x['Status'] == 'Approved'
+                x for x in response['value']
+                if x['Booking_Status'] == 'Approved'
             ]
 
             counts = len(openRequest)
@@ -59,21 +62,25 @@ class InternalRoomBooking(UserObjectMixin, View):
             pend = len(Pending)
 
             counter = len(Approved)
-            
+
         except KeyError as e:
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
         except Exception as e:
             messages.error(request, e)
             print(e)
-            return redirect('payslip')
+            return redirect('InternalRoomBooking')
         context = {
-            "today": self.todays_date, "year": year,
-               "full": userID, "res": InternalBooking,
-               'open':open
+            "today": self.todays_date,
+            "year": year,
+            "full": userID,
+            "res": openRequest,
+            'count': counts,
+            'pend': pend,
+            'counter': counter
         }
         return render(request, 'InternalRoomBooking.html', context)
-    
+
     def post(self, request):
         if request.method == 'POST':
             try:
@@ -96,9 +103,9 @@ class InternalRoomBooking(UserObjectMixin, View):
                     bookingNo,
                     myAction,
                     typeOfService,
-                    userID, 
-                    employeeNo, 
-                    )
+                    userID,
+                    employeeNo,
+                )
                 messages.success(request, "Request Successful")
                 print(response)
             except Exception as e:
@@ -107,4 +114,97 @@ class InternalRoomBooking(UserObjectMixin, View):
                 return redirect('InternalRoomBooking')
         return redirect('InternalRoomBooking')
 
+
+class InternalRoomBookingDetails(UserObjectMixin, View):
+
+    def get(self, request, pk):
+        try:
+            userID = request.session['User_ID']
+            year = request.session['years']
+            empNo = request.session['Employee_No_']
+
+            Access_Point = config.O_DATA.format(
+                f"/QYvisitors?$filter=No_%20eq%20%27{pk}%27")
+            response = self.get_object(Access_Point)
+            for Rooms in response['value']:
+                res = Rooms
+
+            Accomodation = config.O_DATA.format(
+                f"/QyAccommodationBookingLines?$filter=RoomNo%20eq%20%{pk}%27")
+            res_accomodation = self.get_object(Accomodation)
+            AccomodationRoom = [x for x in res_accomodation['value']]
+
+            MeetingRoom = config.O_DATA.format(
+                f"/QyRoomBookingLines?$filter=RoomNo%20eq%20%{pk}%27")
+            Room = self.get_object(MeetingRoom)
+            meeting_room = [x for x in Room['value']]
+            BookingItems = config.O_DATA.format(
+                f"/QYRoomBookingItems?$filter=LineNo%20eq%20%{pk}%27")
+
+            room_item = self.get_object(BookingItems)
+            room_items = [x for x in room_item['value']]
+
+            BookingAttendee = config.O_DATA.format(
+                f"/QYRoombookingattendees?$filter=RoomNo%20eq%20%{pk}%27")
+            res_attendees = self.get_object(BookingAttendee)
+            BookingAttendees = [x for x in res_attendees['value']]
+
+            Approver = config.O_DATA.format(
+                f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
+            res_approver = self.get_object(Approver)
+            Approvers = [x for x in res_approver['value']]
+
+            Access_File = config.O_DATA.format(
+                f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27")
+            res_file = self.get_object(Access_File)
+            allFiles = [x for x in res_file['value']]
+        except Exception as e:
+            print(e)
+            messages.info(request, "Wrong UserID")
+            return redirect('InternalRoomBooking')
         
+        context = {
+            'res': res,
+            'file': allFiles,
+            'Approvers': Approvers,
+            'accomodationLines': AccomodationRoom,
+            'meeting_room': meeting_room,
+            'room_items': room_items,
+            'BookingAttendees': BookingAttendees,
+        }
+
+        return render(request, 'InternalRoomDetails.html', context)
+
+
+def FnRoomBookingLine(request, pk):
+    if request.method == 'POST':
+        try:
+            bookingNo = request.POST.get('bookingNo')
+            typeofRoom = request.POST.get('typeofRoom')
+            lineNo = request.POST.get('lineNo')
+            myAction = request.POST.get('myAction')
+            userCode = request.session['User_ID']
+            serviceRequired = request.POST.get('serviceRequired')
+            bookingDate = request.POST.get('bookingDate')
+            startTime = request.POST.get('startTime')
+            endTime = request.POST.get('endTime')
+            noOfPeople = request.POST.get('noOfPeople')
+            noOfDays = request.POST.get('noOfDays')
+
+        except ValueError:
+            messages.error(request, "Missing Input")
+            return redirect('InternalRoomDetails', pk=pk)
+        try:
+            response = config.CLIENT.service.FnRoomBookingLine(
+                bookingNo, typeofRoom, lineNo, myAction, userCode,
+                serviceRequired, bookingDate, startTime, endTime, noOfPeople,
+                noOfDays)
+            messages.success(request, 'Request successful')
+            return redirect('InternalRoomDetails', pk=pk)
+        except Exception as e:
+            messages.error(request, e)
+            return redirect('InternalRoomDetails', pk=pk)
+    return redirect('InternalRoomDetails', pk=pk)
+
+
+# def FnRooms(request, pk)

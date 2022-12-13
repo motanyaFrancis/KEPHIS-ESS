@@ -31,6 +31,10 @@ urlpatterns = [
     path('AccidentDetails/<str:pk>', views.AccidentDetails.as_view(), name='AccidentDetails'),
     path('UploadAccidentAttachment/<str:pk>', views.UploadAccidentAttachment, name='UploadAccidentAttachment'),
     path('DeleteAccidentAttachment/<str:pk>', views.DeleteAccidentAttachment, name='DeleteAccidentAttachment'),
-    path('FnSubmitAccidents/<str:pk>', views.FnSubmitAccidents, name='FnSubmitAccidents')
+    path('FnSubmitAccidents/<str:pk>', views.FnSubmitAccidents, name='FnSubmitAccidents'),
+    
+    # Service Request
+    path('ServiceRequest', views.ServiceRequest.as_view(), name='ServiceRequest'),
+    path('ServiceRequestDetails/<str:pk>', views.ServiceRequestDetails.as_view(), name='ServiceRequestDetails' ),
 
 ]

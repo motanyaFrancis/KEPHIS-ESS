@@ -438,7 +438,7 @@ def FnRepairRequestLine(request, pk):
                 myUserId, defectsType, severity, action, myAction, pk)
             if response == True:
                 messages.success(request, "Request Successful")
-                return redirect('vehicleRepairDetails')
+                return redirect('vehicleRepairDetails', pk=pk)
         except Exception as e:
             messages.error(request, e)
             return redirect('vehicleRepairDetails')
@@ -896,7 +896,8 @@ class TransportRequest(UserObjectMixin, View):
             "pend": pend,
             "pending": Pending,
             "year": year,
-            "User_ID": userID
+            "User_ID": userID,
+            "full": userID,
         }
 
         return render(request, 'TransportRequest.html', ctx)
@@ -937,3 +938,254 @@ class TransportRequest(UserObjectMixin, View):
                 print(e)
                 return redirect('TransportRequest')
         return redirect('TransportRequest')
+
+
+class ServiceRequest(UserObjectMixin, View):
+    def get(self, request):
+        try:
+            userID = request.session['User_ID']
+            year = request.session['years']
+            
+            Access_Point  = config.O_DATA.format(
+                f"/QyServiceRequest?$filter=RequestedBy%20eq%20%27{userID}%27%20and%20Document_Type%20eq%20%27Service%27"
+            )
+            response = self.get_object(Access_Point)
+            
+            openServiceRequest = [
+                x for x in response['value'] if x['Status'] == 'Open'
+            ]
+
+            Pending = [
+                x for x in response['value']
+                if x['Status'] == 'Pending Approval'
+            ]
+
+            Approved = [
+                x for x in response['value'] if x['Status'] == 'Approved'
+            ]
+
+            counts = len(openServiceRequest)
+
+            pend = len(Pending)
+
+            counter = len(Approved)
+            
+            
+            vehicle = config.O_DATA.format("/QyFixedAssets")
+            res_veh = self.get_object(vehicle)
+            Vehicle_No = [x for x in res_veh['value']]
+            
+            driver = config.O_DATA.format(f"/QyDrivers")
+            req_driver = self.get_object(driver)
+            drivers = [x for x in req_driver['value']]
+            
+        except requests.exceptions.RequestException as e:
+            print(e)
+            messages.info(
+                request,
+                "Whoops! Something went wrong. Please Login to Continue")
+            return redirect('auth')
+        except KeyError as e:
+            print(e)
+            messages.info(request, "Session Expired. Please Login")
+            return redirect('auth')
+
+        ctx = {
+            "today": self.todays_date,
+            "res": openServiceRequest,
+            "count": counts,
+            "response": Approved,
+            "counter": counter,
+            "pend": pend,
+            "pending": Pending,
+            "year": year,
+            "User_ID": userID,
+            "full": userID,
+            "Vehicle_No": Vehicle_No,
+            'drivers': drivers,
+        }
+        return render(request, 'ServiceRequest.html', ctx)
+    
+    
+    def post(self, request):
+        if request.method == 'POST':
+            try:
+                reqNo = request.POST.get('reqNo')
+                myUserId = request.session['User_ID']
+                vehicle = request.POST.get('vehicle')
+                driver = request.POST.get('driver')
+                serviceType = request.POST.get('serviceType')
+                currentMileage = request.POST.get('currentMileage')
+                costOfRepair = request.POST.get('costOfRepair')
+                myAction = request.POST.get('myAction')
+            except ValueError:
+                messages.error(request, 'Missing Input')
+                return redirect('ServiceRequest')
+            except KeyError:
+                messages.info(request, 'Session Expired, please Login')
+                return redirect('auth')
+            if not reqNo:
+                reqNo = ""
+            
+            try:
+                response = config.CLIENT.service.FnServiceRequest(
+                    reqNo,
+                    myUserId,
+                    vehicle,
+                    driver,
+                    serviceType,
+                    currentMileage,
+                    costOfRepair,
+                    myAction,
+                )
+                messages.success(request, 'Request Successful')
+                
+            except Exception as e:
+                messages.error(request, e)
+                return redirect('ServiceRequest')
+        return redirect('ServiceRequest')
+    
+    
+    
+class ServiceRequestDetails(UserObjectMixin, View):
+    def get(self, request, pk):
+        try:
+            userID = request.session['User_ID']
+            year = request.session['years']
+            
+            Access_Point = config.O_DATA.format(
+                f"/QyServiceRequest?$filter=No%20eq%20%27{pk}%27%20and%20RequestedBy%20eq%20%27{userID}%27%20and%20Document_Type%20eq%20%27Service%27"
+            )
+            response = self.get_object(Access_Point)
+            for service_req in response['value']:
+                res = service_req
+            
+            Approver = config.O_DATA.format(
+                f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
+            res_approver = self.get_object(Approver)
+            Approvers = [x for x in res_approver['value']]
+            
+
+            Access_File = config.O_DATA.format(
+                f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27")
+            res_file = self.get_object(Access_File)
+            allFiles = [x for x in res_file['value']]
+        except Exception as e:
+            print(e)
+            messages.info(request, "Wrong UserID")
+            return redirect('ServiceRequest')
+
+        ctx = {
+            "res": res,
+            'Approvers': Approvers,
+            'allFiles': allFiles,
+        }
+        return render(request, 'ServiceRequestDetails.html', ctx)
+    
+    
+def FnServiceRequestLine(request, pk):
+    if request.method == 'POST':
+        try:
+            lineNo = request.POST.get('lineNo')
+            myAction = request.POST.get('myAction')
+            myUserId = request.session['User_ID']
+            defectsType = request.POST.get('defectsType')
+            severity = request.POST.get('severity')
+            recommendedAction = request.POST.get('recommendedAction')
+            serviceDueKM = request.POST.get('serviceDueKM')
+        except ValueError:
+            messages.error(request, "Missing Input")
+            return redirect('ServiceRequestDetails', pk=pk)
+        try:
+            response = config.CLIENT.service.FnServiceRequestLine(
+                lineNo,
+                myAction,
+                myUserId,
+                defectsType,
+                severity,
+                recommendedAction,
+                serviceDueKM,
+            )
+            messages.success(request, 'request Successful')
+            return redirect('ServiceRequestDetails', pk=pk )
+            
+        except Exception as e:
+                messages.error(request, e)
+                return redirect('ServiceRequestDetails', pk=pk )
+    return redirect('ServiceRequestDetails', pk=pk )
+
+
+
+def UploadServiceRequestAttachment(request, pk):
+
+    response = ''
+    if request.method == "POST":
+        try:
+            attach = request.FILES.getlist('attachment')
+            tableID = 52177430
+        except Exception as e:
+            return redirect('ServiceRequestDetails', pk=pk)
+        for files in attach:
+            fileName = request.FILES['attachment'].name
+            attachment = base64.b64encode(files.read())
+            try:
+                response = config.CLIENT.service.FnUploadAttachedDocument(
+                    pk, fileName, attachment, tableID,
+                    request.session['User_ID'])
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+        if response == True:
+            messages.success(request, "File(s) Upload Successful")
+            return redirect('ServiceRequestDetails', pk=pk)
+        else:
+            messages.error(request, "Failed, Try Again")
+            return redirect('ServiceRequestDetails', pk=pk)
+    return redirect('ServiceRequestDetails', pk=pk)
+
+
+def DeleteServiceRequestAttachment(request, pk):
+    if request.method == "POST":
+        docID = int(request.POST.get('docID'))
+        tableID = int(request.POST.get('tableID'))
+        try:
+            response = config.CLIENT.service.FnDeleteDocumentAttachment(
+                pk, docID, tableID)
+            print(response)
+            if response == True:
+                messages.success(request, "Deleted Successfully ")
+                return redirect('ServiceRequestDetails', pk=pk)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+    return redirect('ServiceRequestDetails', pk=pk)
+
+
+def FnSubmitServiceRequest(request, pk):
+    Username = request.session['User_ID']
+    Password = request.session['password']
+    AUTHS = Session()
+    AUTHS.auth = HTTPBasicAuth(Username, Password)
+    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
+    
+    insNo = ""
+    
+    if request.method == 'POST':
+        try:
+            myUserId = request.session['User_ID']
+            insNo = request.POST.get('insNo')
+        except KeyError:
+            messages.info(request, "Session Expired. Please Login")
+            return redirect('auth')
+            
+        try:
+            response = config.CLIENT.service.FnSubmitServiceRequest(
+                insNo, myUserId
+            )
+            messages.success(request, 'Request Submited successfuly')
+            return redirect('ServiceRequestDetails', pk=pk)
+        except Exception as e:
+            messages.error(request, e)
+            return redirect('ServiceRequestDetails', pk=pk)
+    return redirect('ServiceRequestDetails', pk=pk)
+    
