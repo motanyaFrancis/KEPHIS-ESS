@@ -15,7 +15,7 @@
 
             <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
                 <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
-                    {% if res.Booking_Status == "Open" %}
+                    {% if open.Booking_Status == "Open" %}
                     <button class="btn btn-successs p-3 d-flex align-items-center" data-bs-toggle="modal"
                         data-bs-target="#staticBackdrop" type="button"> <i class="las la-plus text-white"
                             style="font-size:15px;"></i> Add lines
@@ -45,7 +45,7 @@
                         <div class="row align-items-center mb-2 d-flex">
                             <div class="col-md-12">
                                 <h2 class="d-flex align-items-center mb-0">
-                                    {{res.No_}}
+                                    {{ res.No_ }}
                                 </h2>
                             </div>
                         </div>
@@ -167,7 +167,7 @@
                         <input type="text" class="form-control" placeholder="{{res.Disability}}" readonly>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Diasability Explanation</label>
+                        <label class="form-label">Disability Explanation</label>
                         <input type="text" class="form-control" placeholder="{{res.Explain_Disability}}" readonly>
                     </div>
                     <div class="col-md-4">
@@ -197,7 +197,78 @@
         <div class="row mt-4">
             <div class="col-md-12">
                 <div class="card" id="d-card">
-                    <h4 class="mt-2 mx-2 text-dark">Accomodation Room lines</h4>
+                    <div class="row justify-content-between">
+                        <div class="col-md-4">
+                            <h4 class="mt-2 mx-2 text-dark">Accommodation Room lines</h4>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn  btn-successs p-2 m-2 d-flex align-items-center" data-bs-toggle="modal"
+                                data-bs-target="#staticBackdrop" type="button"> <i class="las la-plus text-white"
+                                    style="font-size:15px;"></i> Add lines
+                            </button>
+                        </div>
+                        
+                    </div>
+                    <div class="card-body">
+                        <table id="example"
+                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                            style="width:100%">
+                            <thead>
+                                <tr id="tops">
+                                    <th id="long"> No.</th>
+                                    <th>Service Required</th>
+                                    <th>No. of Rooms</th>
+                                    <th>Room</th>
+                                    <th>Amount</th>
+                                    {% if res.Status == "Open"%}
+                                    <th>Actions</th>
+                                    {% endif %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for line in accomodationLines %}
+                                <tr>
+                                    <td>{{line.No}}</td>
+                                    <td>{{line.Description}}</td>
+                                    <td>{{line.Quantity}}</td>
+                                    <td>{{line.Direct_Unit_Cost}}</td>
+                                    <td>{{line.Amount}}</td>
+                                    {% if res.Status == "Open"%}
+                                    <td>
+                                        <form action="{% url 'FnDeleteGeneralRequisitionLine' line.AuxiliaryIndex1 %}"
+                                            method="post" style="display: inline-block;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="lineNo" value="{{line.No_}}">
+                                            <button type="submit" class="btn btn-danger" data-toggle="tooltip"
+                                                data-placement="top" title="Delete"><i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                    {% endif %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card" id="d-card">
+                    <div class="row justify-content-between">
+                        <div class="col-md-4">
+                            <h4 class="mt-2 mx-2 text-dark">Meeting Room lines</h4>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn  btn-successs p-2 m-2 d-flex align-items-center" data-bs-toggle="modal"
+                                data-bs-target="#staticBackdrop" type="button"> <i class="las la-plus text-white"
+                                    style="font-size:15px;"></i> Add lines
+                            </button>
+                        </div>
+                        
+                    </div>
                     <div class="card-body">
                         <table id="example"
                             class="display table table-striped table-bordered dt-responsive table-responsive-lg"
@@ -389,7 +460,7 @@
                         aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="myForm" id="PurchaseForm" action="{% url 'FnRoomBookingLine' res.No_ %}"
+                    <form class="myForm" id="PurchaseForm" action=""
                         method="post" novalidate>
                         {% csrf_token %}
                         <div class="row">

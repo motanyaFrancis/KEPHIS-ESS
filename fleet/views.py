@@ -968,8 +968,10 @@ class TransportRequestDetails(UserObjectMixin, View):
                 f"/QyTransportRequest?$filter=RequestNo%20eq%20%27{pk}%27%20and%20UserID%20eq%20%27{userID}%27%20and%20Document_Type%20eq%20%27Service%27"
             )
             response = self.get_object(Access_Point)
-            for transport_req in response['value']:
-                res = transport_req
+            res = [x for x in response['value']]
+            print(res)
+            # for transport_req in response['value']:
+            #     res = transport_req
                 
             Access = config.O_DATA.format(f"/QyTransportRequestEmployee?$filter=Request_No_%20eq%20%27{pk}%27")
             LinesRes = self.get_object(Access)
@@ -993,9 +995,9 @@ class TransportRequestDetails(UserObjectMixin, View):
 
         ctx = {
             "res": res,
-            # 'Approvers': Approvers,
-            # 'allFiles': allFiles,
-            # "line": openLines,
+            'Approvers': Approvers,
+            'allFiles': allFiles,
+            "line": openLines,
         }
         return render(request, 'TransportRequestDetails.html', ctx)
 

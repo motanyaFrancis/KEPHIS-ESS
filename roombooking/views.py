@@ -38,7 +38,7 @@ class InternalRoomBooking(UserObjectMixin, View):
             userID = request.session['User_ID']
             year = request.session['years']
 
-            Access_Point = config.O_DATA.format(f"/QYvisitors")
+            Access_Point = config.O_DATA.format(f"/QYvisitors?$filter=Created_By%20eq%20%27{userID}%27")
             response = self.get_object(Access_Point)
             # InternalBooking = [x for x in response['value']]
             # print(response)
@@ -124,30 +124,32 @@ class InternalRoomBookingDetails(UserObjectMixin, View):
             empNo = request.session['Employee_No_']
 
             Access_Point = config.O_DATA.format(
-                f"/QYvisitors?$filter=No_%20eq%20%27{pk}%27")
+                f"/QYvisitors?$filter=No_%20eq%20%27{pk}%27%20and%20Created_By%20eq%20%27{userID}%27")
             response = self.get_object(Access_Point)
-            for Rooms in response['value']:
-                res = Rooms
+            res = [x for x in response['value']]
+            # print(res)
+            
 
-            Accomodation = config.O_DATA.format(
-                f"/QyAccommodationBookingLines?$filter=RoomNo%20eq%20%{pk}%27")
-            res_accomodation = self.get_object(Accomodation)
-            AccomodationRoom = [x for x in res_accomodation['value']]
+            # Accommodation = config.O_DATA.format(
+            #     f"/QyAccommodationBookingLines?$filter=RoomNo%20eq%20%{pk}%27")
+            # res_accommodation = self.get_object(Accommodation)
+            # AccommodationRoom = [x for x in res_accommodation['value']]
 
-            MeetingRoom = config.O_DATA.format(
-                f"/QyRoomBookingLines?$filter=RoomNo%20eq%20%{pk}%27")
-            Room = self.get_object(MeetingRoom)
-            meeting_room = [x for x in Room['value']]
-            BookingItems = config.O_DATA.format(
-                f"/QYRoomBookingItems?$filter=LineNo%20eq%20%{pk}%27")
+            # MeetingRoom = config.O_DATA.format(
+            #     f"/QyRoomBookingLines?$filter=RoomNo%20eq%20%{pk}%27")
+            # Room = self.get_object(MeetingRoom)
+            # meeting_room = [x for x in Room['value']]
+            
+            # BookingItems = config.O_DATA.format(
+            #     f"/QYRoomBookingItems?$filter=LineNo%20eq%20%{pk}%27")
 
-            room_item = self.get_object(BookingItems)
-            room_items = [x for x in room_item['value']]
+            # room_item = self.get_object(BookingItems)
+            # room_items = [x for x in room_item['value']]
 
-            BookingAttendee = config.O_DATA.format(
-                f"/QYRoombookingattendees?$filter=RoomNo%20eq%20%{pk}%27")
-            res_attendees = self.get_object(BookingAttendee)
-            BookingAttendees = [x for x in res_attendees['value']]
+            # BookingAttendee = config.O_DATA.format(
+            #     f"/QYRoombookingattendees?$filter=RoomNo%20eq%20%{pk}%27")
+            # res_attendees = self.get_object(BookingAttendee)
+            # BookingAttendees = [x for x in res_attendees['value']]
 
             Approver = config.O_DATA.format(
                 f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
@@ -163,17 +165,18 @@ class InternalRoomBookingDetails(UserObjectMixin, View):
             messages.info(request, "Wrong UserID")
             return redirect('InternalRoomBooking')
         
-        context = {
-            'res': res,
+        ctx = {
+            'open': res,
             'file': allFiles,
             'Approvers': Approvers,
-            'accomodationLines': AccomodationRoom,
-            'meeting_room': meeting_room,
-            'room_items': room_items,
-            'BookingAttendees': BookingAttendees,
+            'full': userID
+            # 'accommodationLines': AccommodationRoom,
+            # 'meeting_room': meeting_room,
+            # 'room_items': room_items,
+            # 'BookingAttendees': BookingAttendees,
         }
 
-        return render(request, 'InternalRoomDetails.html', context)
+        return render(request, 'InternalRoomDetails.html', ctx)
 
 
 def FnRoomBookingLine(request, pk):
