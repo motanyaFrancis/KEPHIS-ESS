@@ -436,6 +436,17 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
+                                    <label class="form-label">Driver <span class="text-danger">*</span></label>
+                                    <select class="form-select" name="driver" required>
+                                        <option selected disabled value="">Select Option</option>
+                                        {% for list in drivers %}
+                                        <option value="{{list.No_}}">{{list.First_Name}}  {{list.Middle_Name}} {{list.Last_Name}}</option>
+                                        {% endfor %}                                    
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
                                     <label class="form-label">Vehicle <span class="text-danger">*</span></label>
                                     <select class="form-select" name="vehicle" required>
                                         <option selected disabled value="">Select Option</option>
@@ -459,8 +470,20 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
+                                    <label for="" class="form-label">Ticket No.<span class="text-danger">*</span></label>
+                                    <input type="text" name="currentworkTicketNo" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
                                     <label for="" class="form-label">Distance covered (Km)<span class="text-danger">*</span></label>
                                     <input type="text" name="kmCovered" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label for="" class="form-label">Reason For Replacement<span class="text-danger">*</span></label>
+                                    <input type="text" name="reasoForReplacement" class="form-control" required>
                                 </div>
                             </div>
                             <div class="row">

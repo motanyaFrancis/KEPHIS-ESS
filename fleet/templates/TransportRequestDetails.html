@@ -5,25 +5,12 @@
 <section class="dash2">
     <div class="content-wrapper">
         <div class="d-xl-flex justify-content-between align-items-start">
-            <h2 class="text-dark font-weight-bold mb-2"> Service Request
-                {% if res.Status == "Open" %}
+            <h2 class="text-dark font-weight-bold mb-2"> Transport Request
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Attachment"> <i
                        class="las la-plus"></i> Upload Attachment</button>
+                {% if res.Status == "Open" %}
                 {% endif %}
             </h2>
-
-            <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
-                <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
-                    {% if res.Status == "Released" %}
-                    <form action="{% url 'FnGenerateImprestReport' res.No_%}" method="post"
-                          style="display:inline-block">
-                        {% csrf_token %}
-                        <button class="btn btn-successs" type="submit"> Preview
-                            Report</button>
-                    </form>
-                    {% endif %}
-                </div>
-            </div>
 
             <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
                 <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
@@ -33,7 +20,7 @@
                     </button>
                     {% if res.Status == "Open" %}
                     {% elif res.Status == "Released" %}
-
+                    
                     <!-- link to be changed -->
                     <form action="{% url 'FnGenerateImprestReport' res.No_%}" method="post"
                           style="display:inline-block">
@@ -50,30 +37,12 @@
         {% include 'alerts.html' %}
 
         <div class="row my-3">
-            <div class="col-md-3">
-                <div class="card l-bg-orange-dark statCard h-100">
-                    <div class="card-statistic-3 p-4">
-                        <div class="card-icon card-icon-large"><i class="fas fa-calendar-times"></i></div>
-                        <div class="mb-4">
-                            <h5 class="card-title mb-0">Number</h5>
-                        </div>
-                        <div class="row align-items-center mb-2 d-flex">
-                            <div class="col-md-12">
-                                <h2 class="d-flex align-items-center mb-0">
-                                    {{res.No}}
-                                </h2>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="card l-bg-blue-dark statCard h-100">
                     <div class="card-statistic-3 p-4">
                         <div class="card-icon card-icon-large"><i class="fas fa-file"></i></div>
                         <div class="mb-4">
-                            <h5 class="card-title mb-0">Status</h5>
+                            <h5 class="card-title mb-0">Vehicle Repair Status</h5>
                         </div>
                         {% if res.Status == "Open" %}
                         <div class="row align-items-center mb-2 d-flex">
@@ -121,7 +90,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="card l-bg-green-dark statCard h-100">
                     <div class="card-statistic-3 p-4">
                         <div class="card-icon card-icon-large"><i class="fas fa-dollar-sign"></i></div>
@@ -138,41 +107,44 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="card l-bg-cherry statCard h-100">
                     <div class="card-statistic-3 p-4">
                         <div class="card-icon card-icon-large"><i class="fas fa-calendar"></i></div>
                         <div class="mb-4">
-                            <h5 class="card-title mb-0">Document Date</h5>
+                            <h5 class="card-title mb-0">Date Created</h5>
                         </div>
                         <div class="row align-items-center mb-2 d-flex">
                             <div class="col-md-12">
                                 <h2 class="d-flex align-items-center mb-0">
-                                    {{res.DocumentDate}}
+                                    {{res.PostingDate}}
                                 </h2>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
+           
 
         </div>
         <div class="row">
             <div class="col-md-12">
                 <form class="row g-3">
                     <div class="col-md-4">
-                        <label class="form-label">Service Type</label>
-                        <input type="text" class="form-control" placeholder="{{res.ServiceType}}" readonly>
+                        <label class="form-label">Vehicle Number</label>
+                        <input type="text" class="form-control" placeholder="{{res.Asset}}" readonly>
                     </div>
-
                     <div class="col-md-4">
-                        <label class="form-label">Driver</label>
-                        <input type="text" class="form-control" placeholder="{{res.Driver}}" readonly>
+                        <label class="form-label">Document Date</label>
+                        <input type="text" class="form-control" placeholder="{{res.DocumentDate}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Odometer Reading</label>
+                        <input type="text" class="form-control" placeholder="{{res.OdometerReading}}" readonly>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Drivers Name</label>
-                        <input type="text" class="form-control" placeholder="{{res.DriverName}}" readonly>
+                        <input type="text" class="form-control" placeholder="{{res.Driver}}" readonly>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Status</label>
@@ -180,18 +152,21 @@
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Distance Gone</label>
-                        <input type="text" class="form-control" placeholder="{{res.KmGone}} Km" readonly>
+                        <input type="text" class="form-control" placeholder="{{res.Travel_Type}}" readonly>
                     </div>
 
-
+                  
                     <div class="col-md-4">
-                        <label class="form-label">Vehicle</label>
+                        <label class="form-label">Vehicle registration No.</label>
                         <input type="text" class="form-control" placeholder="{{res.VehicleRegistrationNo}}" readonly>
                     </div>
+                   
 
+                    
+                </form>
             </div>
-            </form>
         </div>
+
         <div class="row mt-4">
             <div class="col-md-12">
                 <div class="card" id="d-card">
@@ -202,11 +177,10 @@
                                style="width:100%">
                             <thead>
                                 <tr id="tops">
-                                    <th>Line No</th>
-                                    <th id="long">Defect Type</th>
+                                    <th id="long">Line No.</th>
+                                    <th>Defect Type</th>
                                     <th>Severity</th>
                                     <th>Recommemded Action</th>
-                                    <th>Service Due Km</th>
                                     {% if res.Status == "Open" %}
                                     <th>Action</th>
                                     {% endif %}
@@ -219,14 +193,13 @@
                                     <td>{{line.DefectType}}</td>
                                     <td>{{line.Severity}}</td>
                                     <td>{{line.Recommendations}}</td>
-                                    <td>{{line.ServiceDueKm}}</td>
                                     {% if res.Status == "Open" %}
                                     <td>
 
-                                        <form action="{% url 'FnDeleteImprestLine' line.AuxiliaryIndex1 %}"
+                                        <form action="{% url 'DeleteRepairAttachment' line.DocumentNo %}"
                                               method="post" style="display: inline-block;">
                                             {% csrf_token %}
-                                            <input type="hidden" name="lineNo" value="{{line.Line_No}}">
+                                            <input type="hidden" name="lineNo" value="{{line.LineNo}}">
                                             <button type="submit" class="btn btn-danger" data-toggle="tooltip"
                                                     data-placement="top" title="Delete"><i class="fas fa-trash-alt"></i>
                                             </button>
@@ -243,7 +216,6 @@
             </div>
         </div>
 
-
         <div class="row my-2 py-3">
             <div class="col-md-12">
                 <div class="card">
@@ -256,7 +228,7 @@
                             <div class="col-lg-4 col-xl-3">
                                 <div class="file-man-box">
                                     {% if res.Status == 'Open' %}
-                                    <form action="{% url 'DeleteServiceRequestAttachment' data.No_  %}" method="POST">
+                                    <form action="{% url 'DeleteRepairAttachment' data.No_  %}" method="POST">
                                         {% csrf_token %}
                                         <input type="hidden" name="docID" value="{{data.AuxiliaryIndex2}}">
                                         <input type="hidden" name="tableID" value="{{data.Table_ID}}">
@@ -321,22 +293,22 @@
         {% endif %}
         <div class="row">
             <div class="col-md-12">
-                {% if res.Status == "Open" %}
                 <div class="myForm my-3">
-                    <form action="{% url 'FnSubmitServiceRequest' res.No %}" method="POST" style="display: inline-block;">
+                    <form action="" method="POST" style="display: inline-block;">
                         {% csrf_token %}
                         <div class="mb-3">
-                            <input type="hidden" hidden name="insNo" value="{{res.No}}">
+                            <input type="hidden" hidden name="requisitionNo" value="{{res.No_}}">
                         </div>
                         <button class="btn btn-info" type="submit">Request For Approval</button>
                     </form>
                 </div>
+                {% if res.Status == "Open" %}
                 {% elif res.Status == "Pending Approval" %}
                 <div class="d-grid gap-2 my-3">
-                    <form action="" method="POST" class="myForm" id="approvalForm">
+                    <form action="{% url 'ImpresCancel' res.No_ %}" method="POST" class="myForm" id="approvalForm">
                         {% csrf_token %}
                         <div class="mb-3">
-                            <input type="hidden" hidden name="insNo" value="{{res.No}}">
+                            <input type="hidden" hidden name="requisitionNo" value="{{res.No_}}">
                         </div>
                         <button class="btn btn-info" type="submit">Cancel Request For Approval</button>
                     </form>
@@ -377,29 +349,25 @@
             </div>
         </div>
         {% endif %}
-    </div>
-
 
     </div>
-
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
          aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">New Service Request Line
+                    <h5 class="modal-title" id="staticBackdropLabel">New Repair Request Line
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                             aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="myForm needs-validation" id="frm_" action="{%url 'FnServiceRequestLine' res.No %}"
+                    <form class="myForm needs-validation" id="frm_" action="{% url 'FnRepairRequestLine' res.No %}"
                           method="post" novalidate>
                         {% csrf_token %}
-                        <div class="row">
-                            <input type="text" name="lineNo" id="" value="" hidden>
-                        </div>
 
+
+                        
                         <div class="row">
                             <div class="col-md-12">
                                 <label class="form-label">Defect Type <span class="text-danger">*</span></label>
@@ -415,14 +383,8 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <label for="" class="form-label">Recomendation Action <span class="text-danger">*</span></label>
-                                <input type="text" name="recommendedAction" class="form-control">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <label for="" class="form-label">Service Due (KM) <span class="text-danger">*</span></label>
-                                <input type="text" name="serviceDueKM" class="form-control">
+                                <label for="" class="form-label">Action <span class="text-danger">*</span></label>
+                                <input type="text" name="action" class="form-control">
                             </div>
                         </div>
                         <div class="row">
@@ -439,27 +401,30 @@
         </div>
     </div>
 </section>
-    <div class="modal fade" id="Attachment" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Upload Attachment</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="{% url 'UploadServiceRequestAttachment' res.No %}" method="post" class="myForm"
-                          enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <div class=" mb-3">
-                            <label class="form-label">Attachments </label>
-                            <input class="form-control" name="attachment" type="file" multiple>
-                        </div>
-                        <button type="submit" class="btn btn-success my-3 w-100">Submit</button>
-                    </form>
 
-                </div>
+
+<div class="modal fade" id="Attachment" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Upload Attachment</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'UploadRepairAttachment' res.No %}" method="post" class="myForm"
+                      enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class=" mb-3">
+                        <label class="form-label">Attachments </label>
+                        <input class="form-control" name="attachment" type="file" multiple>
+                    </div>
+                    <button type="submit" class="btn btn-success my-3 w-100">Submit</button>
+                </form>
+
             </div>
         </div>
     </div>
-    {% endblock %}
+</div>
+
+{% endblock %}

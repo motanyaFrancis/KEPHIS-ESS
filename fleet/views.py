@@ -67,6 +67,10 @@ class WorkTicket(UserObjectMixin, View):
             Ticket = config.O_DATA.format(f"/QyWorkTicket?$filter=CreatedBy%20eq%20%27{userID}%27")
             res_tkt = self.get_object(Ticket)
             tkt_no = [x for x in res_tkt['value']]
+            
+            driver = config.O_DATA.format(f"/QyDrivers")
+            req_driver = self.get_object(driver)
+            drivers = [x for x in req_driver['value']]
 
         except requests.exceptions.RequestException as e:
             print(e)
@@ -90,6 +94,7 @@ class WorkTicket(UserObjectMixin, View):
             "full": userID,
             'Vehicle_No': Vehicle_No,
             'tkt_no': tkt_no,
+            'drivers': drivers,
         }
         return render(request, 'workticket.html', ctx)
 
@@ -101,6 +106,9 @@ class WorkTicket(UserObjectMixin, View):
                 workTicketNo = request.POST.get('No')
                 previoursWorkTicketNo = request.POST.get(
                     'previoursWorkTicketNo')
+                driver = request.POST.get('driver')
+                currentworkTicketNo = request.POST.get('currentworkTicketNo')
+                reasoForReplacement = request.POST.get('reasoForReplacement')
                 kmCovered = request.POST.get('kmCovered')
                 vehicle = request.POST.get('vehicle')
                 myAction = request.POST.get('myAction')
@@ -120,7 +128,10 @@ class WorkTicket(UserObjectMixin, View):
                     workTicketNo, 
                     employeeNo,
                     myAction,
-                    previoursWorkTicketNo, 
+                    previoursWorkTicketNo,
+                    driver,
+                    currentworkTicketNo,
+                    reasoForReplacement, 
                     kmCovered, 
                     myUserId,
                     vehicle, 
@@ -254,7 +265,7 @@ class VehicleRepaiRequest(UserObjectMixin, View):
             empNo = request.session['Employee_No_']
 
             Access_Point = config.O_DATA.format(
-                f"/QyRepairRequest?$filter=RequestedBy%20eq%20%27{userID}%27")
+                f"//QyRepairRequest?$filter=RequestedBy%20eq%20%27{userID}%27%20and%20DocumentType%20eq%20%27Repair%27")
             response = self.get_object(Access_Point)
 
             vehicle = config.O_DATA.format("/QyFixedAssets")
@@ -344,13 +355,19 @@ class VehicleRepairRequestDetails(UserObjectMixin, View):
             year = request.session['years']
 
             Access_Point = config.O_DATA.format(
-                f"/QyRepairRequest?$filter=No%20eq%20%27{pk}%27%20and%20RequestedBy%20eq%20%27{userID}%27"
+                f"/QyRepairRequest?$filter=RequestedBy%20eq%20%27{userID}%27%20and%20No%20eq%20%27{pk}%27"
             )
             response = self.get_object(Access_Point)
             repair_response = [x for x in response['value']]
             for repair_req in response['value']:
                 repair_response = repair_req
-                # print(res)
+            
+            Access = config.O_DATA.format(
+                 f"/QyRepairRequestLines?$filter=DocumentNo%20eq%20%27{pk}%27"
+            )
+            LinesRes = self.get_object(Access)
+            openLines = [x for x in LinesRes['value']
+                         if x['DocumentNo'] == pk]
 
             Approver = config.O_DATA.format(
                 f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
@@ -371,6 +388,7 @@ class VehicleRepairRequestDetails(UserObjectMixin, View):
             "res": repair_response,
             'allFiles': allFiles,
             "Approvers": Approvers,
+            "line": openLines,
         }
 
         return render(request, 'vehicleRepairDetails.html', context)
@@ -421,7 +439,7 @@ def DeleteRepairAttachment(request, pk):
     return redirect('vehicleRepairDetails', pk=pk)
 
 
-def FnRepairRequestLine(request, pk):
+def FnRepairRequestLines(request, pk):
     if request.method == 'POST':
         try:
             myUserId = request.session['User_ID']
@@ -435,14 +453,13 @@ def FnRepairRequestLine(request, pk):
             return redirect('vehicleRepairDetails', pk=pk)
         try:
             response = config.CLIENT.service.FnRepairRequestLine(
-                myUserId, defectsType, severity, action, myAction, pk)
-            if response == True:
-                messages.success(request, "Request Successful")
-                return redirect('vehicleRepairDetails', pk=pk)
+                myUserId, defectsType, severity, action, myAction)
+            messages.success(request, "Request Successful")
+            return redirect('vehicleRepairDetails', pk=pk)
         except Exception as e:
             messages.error(request, e)
-            return redirect('vehicleRepairDetails')
-        return redirect('vehicleRepairDetails')
+            return redirect('vehicleRepairDetails', pk=pk)
+    return redirect('vehicleRepairDetails', pk=pk)
 
 
 class VehicleInspection(UserObjectMixin, View):
@@ -852,7 +869,7 @@ class TransportRequest(UserObjectMixin, View):
             year = request.session['years']
 
             Access_Point = config.O_DATA.format(
-                f"/QyTransportRequisition?$filter=User_ID%20eq%20%27{userID}%27"
+                f"/QyTransportRequest?$filter=UserID%20eq%20%27{userID}%27"
             )
 
             response = self.get_object(Access_Point)
@@ -939,6 +956,154 @@ class TransportRequest(UserObjectMixin, View):
                 return redirect('TransportRequest')
         return redirect('TransportRequest')
 
+
+
+class TransportRequestDetails(UserObjectMixin, View):
+    def get(self, request, pk):
+        try:
+            userID = request.session['User_ID']
+            year = request.session['years']
+            
+            Access_Point = config.O_DATA.format(
+                f"/QyTransportRequest?$filter=RequestNo%20eq%20%27{pk}%27%20and%20UserID%20eq%20%27{userID}%27%20and%20Document_Type%20eq%20%27Service%27"
+            )
+            response = self.get_object(Access_Point)
+            for transport_req in response['value']:
+                res = transport_req
+                
+            Access = config.O_DATA.format(f"/QyTransportRequestEmployee?$filter=Request_No_%20eq%20%27{pk}%27")
+            LinesRes = self.get_object(Access)
+            openLines = [x for x in LinesRes['value']
+                         if x['Request_No_'] == pk]
+            
+            Approver = config.O_DATA.format(
+                f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
+            res_approver = self.get_object(Approver)
+            Approvers = [x for x in res_approver['value']]
+            
+
+            Access_File = config.O_DATA.format(
+                f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27")
+            res_file = self.get_object(Access_File)
+            allFiles = [x for x in res_file['value']]
+        except Exception as e:
+            print(e)
+            messages.info(request, "Wrong UserID")
+            return redirect('TransportRequest')
+
+        ctx = {
+            "res": res,
+            # 'Approvers': Approvers,
+            # 'allFiles': allFiles,
+            # "line": openLines,
+        }
+        return render(request, 'TransportRequestDetails.html', ctx)
+
+def FnTravelEmployeeLine(request, pk):
+    if request.method == 'POST':
+        try:
+            reqNo = request.POST.get('reqNo')
+            myUserId = request.session['User_ID']
+            vehicle = request.POST.get('vehicle')
+            driver = request.POST.get('driver')
+            lineNo = request.POST.get('lineNo')
+            myAction = request.POST.get('myAction')
+            
+        except ValueError:
+            messages.error(request, "Missing Input")
+            return redirect('TransportRequestDetails', pk=pk)
+        try:
+            response = config.CLIENT.service.FnTravelEmployeeLine(
+                reqNo,
+                myUserId,
+                vehicle,
+                driver,
+                lineNo,
+                myAction,
+            )
+            messages.success(request, 'request Successful')
+            return redirect('TransportRequestDetails', pk=pk )
+            
+        except Exception as e:
+                messages.error(request, e)
+                return redirect('TransportRequestDetails', pk=pk )
+    return redirect('TransportRequestDetails', pk=pk )
+
+
+
+def UploadTransportRequestAttachment(request, pk):
+
+    response = ''
+    if request.method == "POST":
+        try:
+            attach = request.FILES.getlist('attachment')
+            tableID = 52177430
+        except Exception as e:
+            return redirect('ServiceRequestDetails', pk=pk)
+        for files in attach:
+            fileName = request.FILES['attachment'].name
+            attachment = base64.b64encode(files.read())
+            try:
+                response = config.CLIENT.service.FnUploadAttachedDocument(
+                    pk, fileName, attachment, tableID,
+                    request.session['User_ID'])
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+        if response == True:
+            messages.success(request, "File(s) Upload Successful")
+            return redirect('TransportRequestDetails', pk=pk)
+        else:
+            messages.error(request, "Failed, Try Again")
+            return redirect('TransportRequestDetails', pk=pk)
+    return redirect('TransportRequestDetails', pk=pk)
+
+
+def DeleteTransportRequestAttachment(request, pk):
+    if request.method == "POST":
+        docID = int(request.POST.get('docID'))
+        tableID = int(request.POST.get('tableID'))
+        try:
+            response = config.CLIENT.service.FnDeleteDocumentAttachment(
+                pk, docID, tableID)
+            print(response)
+            if response == True:
+                messages.success(request, "Deleted Successfully ")
+                return redirect('TransportRequestDetails', pk=pk)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+    return redirect('TransportRequestDetails', pk=pk)
+
+
+def FnSubmitTrnsportRequest(request, pk):
+    Username = request.session['User_ID']
+    Password = request.session['password']
+    AUTHS = Session()
+    AUTHS.auth = HTTPBasicAuth(Username, Password)
+    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
+    
+    insNo = ""
+    
+    if request.method == 'POST':
+        try:
+            myUserId = request.session['User_ID']
+            insNo = request.POST.get('insNo')
+        except KeyError:
+            messages.info(request, "Session Expired. Please Login")
+            return redirect('auth')
+            
+        try:
+            response = config.CLIENT.service.FnSubmitServiceRequest(
+                insNo, myUserId
+            )
+            messages.success(request, 'Request Submited successfuly')
+            return redirect('TransportRequestDetails', pk=pk)
+        except Exception as e:
+            messages.error(request, e)
+            return redirect('TransportRequestDetails', pk=pk)
+    return redirect('TransportRequestDetails', pk=pk)
+    
 
 class ServiceRequest(UserObjectMixin, View):
     def get(self, request):
@@ -1059,6 +1224,11 @@ class ServiceRequestDetails(UserObjectMixin, View):
             response = self.get_object(Access_Point)
             for service_req in response['value']:
                 res = service_req
+                
+            Access = config.O_DATA.format(f"/QyServiceRequestLine?$filter=AuxiliaryIndex1%20eq%20%27{pk}%27")
+            LinesRes = self.get_object(Access)
+            openLines = [x for x in LinesRes['value']
+                         if x['AuxiliaryIndex1'] == pk]
             
             Approver = config.O_DATA.format(
                 f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
@@ -1079,6 +1249,7 @@ class ServiceRequestDetails(UserObjectMixin, View):
             "res": res,
             'Approvers': Approvers,
             'allFiles': allFiles,
+            "line": openLines,
         }
         return render(request, 'ServiceRequestDetails.html', ctx)
     

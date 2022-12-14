@@ -20,11 +20,15 @@ urlpatterns = [
     path('vehicleRepairDetails/<str:pk>', views.VehicleRepairRequestDetails.as_view(), name='vehicleRepairDetails'),
     path('UploadRepairAttachment/<str:pk>', views.UploadRepairAttachment, name='UploadRepairAttachment'),
     path('DeleteRepairAttachment/<str:pk>', views.DeleteRepairAttachment, name='DeleteRepairAttachment'),
-    # path('FnRepairRequestLine/<str:pk>', views.FnRepairRequestLine, name='FnRepairRequestLine'),
+    path('FnRepairRequestLine/<str:pk>', views.FnRepairRequestLines, name='FnRepairRequestLine'),
 
     
-    # Tranxport Request
+    # Transport Request
     path('TransportRequest', views.TransportRequest.as_view(), name='TransportRequest'),
+    path('TransportRequestDetails/<str:pk>', views.TransportRequestDetails.as_view(), name='TransportRequestDetails'),
+    path('FnTravelEmployeeLine/<str:pk>', views.FnTravelEmployeeLine, name='FnTravelEmployeeLine'),
+    path('UploadTransportRequestAttachment/<str:pk>', views.UploadTransportRequestAttachment, name='UploadTransportRequestAttachment'),
+    path('DeleteTransportRequestAttachment<str:pk>', views.DeleteTransportRequestAttachment, name='DeleteTransportRequestAttachment'),
 
     # Accidents
     path('Accidents', views.Accidents.as_view(), name='Accidents'),
@@ -36,5 +40,9 @@ urlpatterns = [
     # Service Request
     path('ServiceRequest', views.ServiceRequest.as_view(), name='ServiceRequest'),
     path('ServiceRequestDetails/<str:pk>', views.ServiceRequestDetails.as_view(), name='ServiceRequestDetails' ),
+    path('UploadServiceRequestAttachment/<str:pk>', views.UploadServiceRequestAttachment, name='UploadServiceRequestAttachment'),
+    path('DeleteServiceRequestAttachment/<str:pk>', views.DeleteServiceRequestAttachment, name='DeleteServiceRequestAttachment'),
+    path('FnSubmitServiceRequest/<str:pk>', views.FnSubmitServiceRequest, name='FnSubmitServiceRequest'),
+    path('FnServiceRequestLine/<str:pk>', views.FnServiceRequestLine, name='FnServiceRequestLine'),
 
 ]

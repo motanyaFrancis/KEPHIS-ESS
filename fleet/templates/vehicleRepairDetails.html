@@ -155,24 +155,14 @@
                         <input type="text" class="form-control" placeholder="{{res.Travel_Type}}" readonly>
                     </div>
 
+                  
                     <div class="col-md-4">
-                        <label class="form-label">Ticket Issued</label>
-                        <input type="text" class="form-control" placeholder="{{res.Account_Type}}" readonly>
+                        <label class="form-label">Vehicle registration No.</label>
+                        <input type="text" class="form-control" placeholder="{{res.VehicleRegistrationNo}}" readonly>
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Vehicle</label>
-                        <input type="text" class="form-control" placeholder="{{res.Imprest_Amount}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Imprest</label>
-                        <input type="text" class="form-control" placeholder="{{res.Imprest}}" readonly>
-                    </div>
+                   
 
-                    <div class="col-12">
-                        <label for="inputAddress" class="form-label">Reason of Replacement</label>
-                        <textarea class="form-control" placeholder="{{res.Payment_Narration}}" rows="3"
-                                  readonly></textarea>
-                    </div>
+                    
                 </form>
             </div>
         </div>
@@ -180,29 +170,43 @@
         <div class="row mt-4">
             <div class="col-md-12">
                 <div class="card" id="d-card">
-                    <h4 class="mt-2 mx-2 text-dark">Repair Request Lines</h4>
+                    <h4 class="mt-2 mx-2 text-dark">Service Request Lines</h4>
                     <div class="card-body">
                         <table id="example"
                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
                                style="width:100%">
                             <thead>
                                 <tr id="tops">
-                                    <th id="long">Defect Type</th>
-                                    <th> Serveerity</th>
+                                    <th id="long">Line No.</th>
+                                    <th>Defect Type</th>
+                                    <th>Severity</th>
+                                    <th>Recommemded Action</th>
+                                    {% if res.Status == "Open" %}
                                     <th>Action</th>
-                                    <th>Line No</th>
-
+                                    {% endif %}
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Dent</td>
-                                    <td>Body torn</td>
-                                    <td>Repair</td>
-                                    <td>0002</td>
-
-                                </tr>
                                 {% for line in line %}
+                                <tr>
+                                    <td>{{line.LineNo}}</td>
+                                    <td>{{line.DefectType}}</td>
+                                    <td>{{line.Severity}}</td>
+                                    <td>{{line.Recommendations}}</td>
+                                    {% if res.Status == "Open" %}
+                                    <td>
+
+                                        <form action="{% url 'DeleteRepairAttachment' line.DocumentNo %}"
+                                              method="post" style="display: inline-block;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="lineNo" value="{{line.LineNo}}">
+                                            <button type="submit" class="btn btn-danger" data-toggle="tooltip"
+                                                    data-placement="top" title="Delete"><i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                    {% endif %}
+                                </tr>
 
                                 {% endfor %}
                             </tbody>
@@ -358,7 +362,7 @@
                             aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="myForm needs-validation" id="frm_" action=""
+                    <form class="myForm needs-validation" id="frm_" action="{% url 'FnRepairRequestLine' res.No %}"
                           method="post" novalidate>
                         {% csrf_token %}
 

@@ -54,18 +54,19 @@
                                             <tr id="tops">
                                                 <th id="long">Request No.</th>
                                                 <th>Request Date</th>
-                                                <th>No of Vehicles</th>
-                                                <!-- <th>Travel Type</th> -->
+                                                <th>Start Trip</th>
+                                                <th>End Trip</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {% for res in open %}
+                                            {% for res in res %}
                                             {% if res.Rejected_By_Approver == True and res.Status == 'Open' %}
                                             <tr>
-                                                <td>{{res.No}}</td>
-                                                <td>{{res.DatePosted}}</td>
-                                                <td>{{res.No_of_Vehicles}}</td>
+                                                <td>{{res.RequestNo}}</td>
+                                                <td>{{res.RequestDate}}</td>
+                                                <td>{{res.TripPlannedStartDate}}</td>
+                                                <td>{{res.TripPlannedEndDate}}</td>
                                                 <td>
                                                     <button class="btn btn-primary" data-bs-toggle="modal"
                                                             data-bs-target="#" data-toggle="tooltip" data-placement="top"
@@ -79,7 +80,7 @@
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title" id="staticBackdropLabel">
-                                                                        <i class="las la-edit"></i> Edit Imprest
+                                                                        <i class="las la-edit"></i> Edit Transport Request
                                                                         <span class="editSpan">{{res.No}}</span>
                                                                     </h5>
                                                                     <button type="button" class="btn-close btn-close-white"
@@ -124,7 +125,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <a href="{% url 'vehicleRepairDetails' res.No %}"
+                                                    <a href="{% url 'TransportRequestDetails' res.RequestNo %}"
                                                        class="btn btn-success btn-icon-text" type="button"
                                                        data-toggle="tooltip" data-placement="top" title="Click to View">
                                                         View
@@ -134,9 +135,10 @@
                                             </tr>
                                             {% else %}
                                             <tr>
-                                                <td>{{res.No}}</td>
-                                                <td>{{res.DatePosted}}</td>
-                                                <td>{{res.No_of_Vehicles}}</td>
+                                                <td>{{res.RequestNo}}</td>
+                                                <td>{{res.RequestDate}}</td>
+                                                <td>{{res.TripPlannedStartDate}}</td>
+                                                <td>{{res.TripPlannedEndDate}}</td>
                                                 <td>
                                                     <button class="btn btn-primary" data-bs-toggle="modal"
                                                             data-bs-target="#repair" data-toggle="tooltip" data-placement="top"
@@ -200,7 +202,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <a href="{% url 'vehicleRepairDetails' res.No %}"
+                                                    <a href="{% url 'TransportRequestDetails' res.RequestNo %}"
                                                        class="btn btn-success btn-icon-text" type="button"
                                                        data-toggle="tooltip" data-placement="top" title="Click to View">
                                                         View
@@ -227,8 +229,8 @@
                                             <tr id="tops">
                                                 <th id="long">Request No.</th>
                                                 <th>Request Date</th>
-                                                <th>VehicleNo of Vehicles</th>
-                                                <!-- <th>Travel Type</th> -->
+                                                <th>Start Trip</th>
+                                                <th>End Trip</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -236,9 +238,10 @@
                                             {% for res in pending %}
                                             
                                             <tr>
-                                                <td>{{res.No}}</td>
-                                                <td>{{res.DatePosted}}</td>
-                                                <td>{{res.No_of_Vehicles}}</td>
+                                                <td>{{res.RequestNo}}</td>
+                                                <td>{{res.RequestDate}}</td>
+                                                <td>{{res.TripPlannedStartDate}}</td>
+                                                <td>{{res.TripPlannedEndDate}}</td>
                                                 <td>
                                                     <button class="btn btn-primary" data-bs-toggle="modal"
                                                             data-bs-target="#repair" data-toggle="tooltip" data-placement="top"
@@ -302,7 +305,7 @@
                                                        </div>
                                                    </div>
                                                </div>
-                                                    <a href="#"
+                                                    <a href="{% url 'TransportRequestDetails' res.RequestNo %}"
                                                        class="btn btn-success btn-icon-text" type="button"
                                                        data-toggle="tooltip" data-placement="top" title="Click to View">
                                                         View
@@ -318,7 +321,7 @@
                                 </div>
 
                             </div>
-                            <div class="tab-pane fade" id="Approved">
+                            <div class="tab-pane fade" id="approved">
                                 <h4 class="mt-2 text-dark">Approved Transport Request</h4>
                                 <div class="card-body">
                                     <table id="example"
@@ -329,20 +332,21 @@
                                             <tr id="tops">
                                                 <th id="long">Request No.</th>
                                                 <th>Request Date</th>
-                                                <th>No of Vehicles</th>
-                                                <!-- <th>Travel Type</th> -->
+                                                <th>Start Trip</th>
+                                                <th>End Trip</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {% for res in approved %}
+                                            {% for res in response %}
                                             
                                             <tr>
-                                                <td>{{res.Request_No_}}</td>
-                                                <td>{{res.Request_Date}}</td>
-                                                <td>{{res.No_of_Vehicles}}</td>
+                                                <td>{{res.RequestNo}}</td>
+                                                <td>{{res.RequestDate}}</td>
+                                                <td>{{res.TripPlannedStartDate}}</td>
+                                                <td>{{res.TripPlannedEndDate}}</td>
                                                 <td>
-                                                    <a href="#"
+                                                    <a href="{% url 'TransportRequestDetails' res.RequestNo %}"
                                                        class="btn btn-success btn-icon-text" type="button"
                                                        data-toggle="tooltip" data-placement="top" title="Click to View">
                                                         View
