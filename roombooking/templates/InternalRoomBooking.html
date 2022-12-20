@@ -11,11 +11,11 @@
             <div class="col-12">
                 <span class="d-flex align-items-center purchase-popup">
                     <img src="../../../static/img/logo/fav.png" width="70px" class="img-fluid" alt="" srcset="">
-                    <h2 class="text-dark font-weight-bold ml-3"> Internal Room Booking </h2>
+                    <h2 class="text-dark font-weight-bold ml-3"> Room Booking </h2>
                     <button class="btn btn-successs align-items-center p-3" data-bs-toggle="modal"
                             data-bs-target="#staticBackdrop"
                             style="margin-left: auto;margin-right:0;outline: none;border: none;"><i
-                           class="las la-plus text-white" style="font-size:15px;"></i> New Booking</button>
+                           class="las la-plus text-white" style="font-size:15px;"></i>Book a Room</button>
                 </span>
             </div>
         </div>
@@ -80,7 +80,7 @@
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title" id="staticBackdropLabel">
-                                                                        <i class="las la-edit"></i> Edit Imprest
+                                                                        <i class="las la-edit"></i> Edit Booking Request
                                                                         <span class="editSpan">{{res.No}}</span>
                                                                     </h5>
                                                                     <button type="button" class="btn-close btn-close-white"
@@ -92,30 +92,24 @@
                                                                         {% csrf_token %}
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <input type="hidden" name="requisitionNo" value="">
+                                                                                <input type="hidden" name="bookingNo" value="">
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <label class="form-label">Vehicle <span class="text-danger">*</span></label>
-                                                                                <select class="form-select" name="vehicle" required>
+                                                                                <label class="form-label">Type of Service <span class="text-danger">*</span></label>
+                                                                                <select class="form-select" name="typeOfService" required>
                                                                                     <option selected disabled value="">Select Option</option>
-                                                                                    {% for list in Vehicle_No %}
-                                                                                    <option value="{{list.Registration_No}}">{{list.Registration_No}}</option>
-                                                                                    {% endfor %}                                    
+                                                                                    <option value="1">Meeting Room</option>
+                                                                                    <option value="2">Accommodation</option>
+                                                                                    <option value="3">Meeting Room & Accommodation</option>
                                                                                 </select>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="row">
-                                                                            <div class="col-md-12">
-                                                                                <label for="" class="form-label">Odometer Reading<span class="text-danger">*</span></label>
-                                                                                <input type="text" name="odometerReading" class="form-control" required>
                                                                             </div>
                                                                         </div>
                                                                         
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <input type="hidden" name="myAction" value="insert">
+                                                                                <input type="hidden" name="myAction" value="modify">
                                                                             </div>
                                                                         </div>
                                                                         
@@ -300,7 +294,7 @@
              aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content">
-                    <div class="modal-header">Internal Room Booking
+                    <div class="modal-header">Room Booking
                         </h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                                 aria-label="Close"></button>
@@ -340,6 +334,6 @@
 
     </div>
 
-</secton>
+</section>
 
 {% endblock %}

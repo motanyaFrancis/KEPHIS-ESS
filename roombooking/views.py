@@ -126,25 +126,27 @@ class InternalRoomBookingDetails(UserObjectMixin, View):
             Access_Point = config.O_DATA.format(
                 f"/QYvisitors?$filter=No_%20eq%20%27{pk}%27%20and%20Created_By%20eq%20%27{userID}%27")
             response = self.get_object(Access_Point)
-            res = [x for x in response['value']]
-            # print(res)
+            for booking in response['value']:
+                res = booking
+                # print(res)
             
 
-            # Accommodation = config.O_DATA.format(
-            #     f"/QyAccommodationBookingLines?$filter=RoomNo%20eq%20%{pk}%27")
-            # res_accommodation = self.get_object(Accommodation)
-            # AccommodationRoom = [x for x in res_accommodation['value']]
+            Accommodation = config.O_DATA.format(
+                f"/QyAccommodationBookingLines?$filter=RoomNo%20eq%20%27{pk}%27")
+            res_accommodation = self.get_object(Accommodation)
+            AccommodationRoom = [x for x in res_accommodation['value']]
 
-            # MeetingRoom = config.O_DATA.format(
-            #     f"/QyRoomBookingLines?$filter=RoomNo%20eq%20%{pk}%27")
-            # Room = self.get_object(MeetingRoom)
-            # meeting_room = [x for x in Room['value']]
+            MeetingRoom = config.O_DATA.format(
+                f"/QyRoomBookingLines?$filter=RoomNo%20eq%20%27{pk}%27")
+            Room = self.get_object(MeetingRoom)
+            meeting_room = [x for x in Room['value']]
+            # print(meeting_room)
             
-            # BookingItems = config.O_DATA.format(
-            #     f"/QYRoomBookingItems?$filter=LineNo%20eq%20%{pk}%27")
-
-            # room_item = self.get_object(BookingItems)
-            # room_items = [x for x in room_item['value']]
+            
+            BookingItems = config.O_DATA.format(
+                f"/QYRoomBookingItems?$filter=LineNo%20eq%20%27{pk}%27")
+            room_item = self.get_object(BookingItems)
+            room_items = [x for x in room_item['value']]
 
             # BookingAttendee = config.O_DATA.format(
             #     f"/QYRoombookingattendees?$filter=RoomNo%20eq%20%{pk}%27")
@@ -166,12 +168,12 @@ class InternalRoomBookingDetails(UserObjectMixin, View):
             return redirect('InternalRoomBooking')
         
         ctx = {
-            'open': res,
+            'res': res,
             'file': allFiles,
             'Approvers': Approvers,
-            'full': userID
-            # 'accommodationLines': AccommodationRoom,
-            # 'meeting_room': meeting_room,
+            'full': userID,
+            'accommodationLines': AccommodationRoom,
+            'meeting_room': meeting_room,
             # 'room_items': room_items,
             # 'BookingAttendees': BookingAttendees,
         }

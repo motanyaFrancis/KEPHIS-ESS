@@ -6,7 +6,7 @@
 <section class="dash2">
     <div class="content-wrapper">
         <div class="d-xl-flex justify-content-between align-items-start">
-            <h2 class="text-dark font-weight-bold mb-2"> Internal Room Booking
+            <h2 class="text-dark font-weight-bold mb-2"> Room Booking
                 {% if res.Booking_Status == "Open" %}
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Attachment"> <i
                         class="las la-plus"></i> Upload Attachment</button>
@@ -108,6 +108,24 @@
             <div class="col-md-3">
                 <div class="card l-bg-orange-dark statCard h-100">
                     <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-calendar-alt"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Invoiced</h5>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{res.Invoiced}}
+                                </h2>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card l-bg-orange-dark statCard h-100">
+                    <div class="card-statistic-3 p-4">
                         <div class="card-icon card-icon-large"><i class="fas fa-dollar-sign"></i></div>
                         <div class="mb-4">
                             <h5 class="card-title mb-0">Paid</h5>
@@ -123,24 +141,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card l-bg-orange-dark statCard h-100">
-                    <div class="card-statistic-3 p-4">
-                        <div class="card-icon card-icon-large"><i class="fas fa-calendar-alt"></i></div>
-                        <div class="mb-4">
-                            <h5 class="card-title mb-0">Order Date</h5>
-                        </div>
-                        <div class="row align-items-center mb-2 d-flex">
-                            <div class="col-md-12">
-                                <h2 class="d-flex align-items-center mb-0">
-                                    {{res.Document_Date}}
-                                </h2>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
+            
         </div>
         <div class="row">
             <div class="col-md-12">
@@ -148,40 +149,23 @@
                     
                     <div class="col-md-4">
                         <label class="form-label">Booked By</label>
-                        <input type="text" class="form-control" placeholder="{{res.Booked_by_Name}}" readonly>
+                        <input type="text" class="form-control" placeholder="{{res.Created_By}}" readonly>
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Type of Client</label>
-                        <input type="text" class="form-control" placeholder="{{res.Type_Of_Client}}" readonly>
-                    </div>
+                    
                     <div class="col-md-4">
                         <label class="form-label">Service Required</label>
                         <input type="text" class="form-control" placeholder="{{res.Service_Requred}}" readonly>
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Email</label>
-                        <input type="text" class="form-control" placeholder="{{res.Booked_By_Email}}" readonly>
-                    </div>
+                    
                     <div class="col-md-4">
                         <label class="form-label">Disability</label>
                         <input type="text" class="form-control" placeholder="{{res.Disability}}" readonly>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-12">
                         <label class="form-label">Disability Explanation</label>
                         <input type="text" class="form-control" placeholder="{{res.Explain_Disability}}" readonly>
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Allergies</label>
-                        <input type="text" class="form-control" placeholder="{{res.Indicate_Allergies}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Allergies Explanation</label>
-                        <input type="text" class="form-control" placeholder="{{res.Explain_Allergies}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Invoiced</label>
-                        <input type="text" class="form-control" placeholder="{{res.Invoice}}" readonly>
-                    </div>
+                    
                     <div class="col-md-6">
                         <label class="form-label">Room Booking Total Amount</label>
                         <input type="text" class="form-control" placeholder="KES {{res.Room_Booking_Total_Amount}}" style="font-weight: 800;" readonly>
@@ -194,6 +178,8 @@
                 </form>
             </div>
         </div>
+
+        {% if res.Service_Requred == "Accommodation" %}
         <div class="row mt-4">
             <div class="col-md-12">
                 <div class="card" id="d-card">
@@ -203,7 +189,7 @@
                         </div>
                         <div class="col-md-2">
                             <button class="btn  btn-successs p-2 m-2 d-flex align-items-center" data-bs-toggle="modal"
-                                data-bs-target="#staticBackdrop" type="button"> <i class="las la-plus text-white"
+                                data-bs-target="#accomodationLines" type="button"> <i class="las la-plus text-white"
                                     style="font-size:15px;"></i> Add lines
                             </button>
                         </div>
@@ -232,6 +218,138 @@
                                     <td>{{line.Description}}</td>
                                     <td>{{line.Quantity}}</td>
                                     <td>{{line.Direct_Unit_Cost}}</td>
+                                    <td>{{line.Amount}}</td>
+                                    {% if res.Status == "Open"%}
+                                    <td>
+                                        <form action="{% url 'FnDeleteGeneralRequisitionLine' line.AuxiliaryIndex1 %}"
+                                            method="post" style="display: inline-block;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="lineNo" value="{{line.No_}}">
+                                            <button type="submit" class="btn btn-danger" data-toggle="tooltip"
+                                                data-placement="top" title="Delete"><i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                    {% endif %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% elif res.Service_Requred == "Meeting Room" %}
+
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card" id="d-card">
+                    <div class="row justify-content-between">
+                        <div class="col-md-4">
+                            <h4 class="mt-2 mx-2 text-dark">Meeting Room lines</h4>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn  btn-successs p-2 m-2 d-flex align-items-center" data-bs-toggle="modal"
+                                data-bs-target="#meeting_room" type="button"> <i class="las la-plus text-white"
+                                    style="font-size:15px;"></i> Add lines
+                            </button>
+                        </div>
+                        
+                    </div>
+                    <div class="card-body">
+                        <table id="example"
+                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                            style="width:100%">
+                            <thead>
+                                <tr id="tops">
+                                    <th id="long"> No.</th>
+                                    <th>Service Required</th>
+                                    <th>No. of Days</th>
+                                    <th>Room</th>
+                                    <th>Booking Date</th>
+                                    <th>No. Days</th>
+                                    <th>Amount</th>
+                                    {% if res.Status == "Open"%}
+                                    <th>Actions</th>
+                                    {% endif %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for line in meeting_room %}
+                                <tr>
+                                    <td>{{line.No}}</td>
+                                    <td>{{line.ServiceRequired}}</td>
+                                    <td>{{line.No_Of_Days}}</td>
+                                    <td>{{line.Room}}</td>
+                                    <td>{{line.Booking_Date}}</td>
+                                    <td>{{line.No_Of_Rooms}}</td>
+                                    <td>{{line.Amount}}</td>
+                                    {% if res.Status == "Open"%}
+                                    <td>
+                                        <form action="{% url 'FnDeleteGeneralRequisitionLine' line.AuxiliaryIndex1 %}"
+                                            method="post" style="display: inline-block;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="lineNo" value="{{line.No_}}">
+                                            <button type="submit" class="btn btn-danger" data-toggle="tooltip"
+                                                data-placement="top" title="Delete"><i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                    {% endif %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% else %}
+
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card" id="d-card">
+                    <div class="row justify-content-between">
+                        <div class="col-md-4">
+                            <h4 class="mt-2 mx-2 text-dark">Accommodation Room lines</h4>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn  btn-successs p-2 m-2 d-flex align-items-center" data-bs-toggle="modal"
+                                data-bs-target="#accomodationLines" type="button"> <i class="las la-plus text-white"
+                                    style="font-size:15px;"></i> Add lines
+                            </button>
+                        </div>
+                        
+                    </div>
+                    <div class="card-body">
+                        <table id="example"
+                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                            style="width:100%">
+                            <thead>
+                                <tr id="tops">
+                                    <th id="long"> No.</th>
+                                    <th>Service Required</th>
+                                    <th>No. of Rooms</th>
+                                    <th>Room</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Amount</th>
+                                    {% if res.Status == "Open"%}
+                                    <th>Actions</th>
+                                    {% endif %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for line in accommodationLines %}
+                                <tr>
+                                    <td>{{line.No}}</td>
+                                    <td>{{line.ServiceRequired}}</td>
+                                    <td>{{line.No_Of_Rooms}}</td>
+                                    <td>{{line.Room}}</td>
+                                    <td>{{line.Start_Date}}</td>
+                                    <td>{{line.End_Date}}</td>
                                     <td>{{line.Amount}}</td>
                                     {% if res.Status == "Open"%}
                                     <td>
@@ -263,7 +381,7 @@
                         </div>
                         <div class="col-md-2">
                             <button class="btn  btn-successs p-2 m-2 d-flex align-items-center" data-bs-toggle="modal"
-                                data-bs-target="#staticBackdrop" type="button"> <i class="las la-plus text-white"
+                                data-bs-target="#meeting_room" type="button"> <i class="las la-plus text-white"
                                     style="font-size:15px;"></i> Add lines
                             </button>
                         </div>
@@ -277,8 +395,10 @@
                                 <tr id="tops">
                                     <th id="long"> No.</th>
                                     <th>Service Required</th>
-                                    <th>No. of Rooms</th>
+                                    <th>No. of Days</th>
                                     <th>Room</th>
+                                    <th>Booking Date</th>
+                                    <th>No. Days</th>
                                     <th>Amount</th>
                                     {% if res.Status == "Open"%}
                                     <th>Actions</th>
@@ -286,12 +406,14 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for line in accomodationLines %}
+                                {% for line in meeting_room %}
                                 <tr>
                                     <td>{{line.No}}</td>
-                                    <td>{{line.Description}}</td>
-                                    <td>{{line.Quantity}}</td>
-                                    <td>{{line.Direct_Unit_Cost}}</td>
+                                    <td>{{line.ServiceRequired}}</td>
+                                    <td>{{line.No_Of_Days}}</td>
+                                    <td>{{line.Room}}</td>
+                                    <td>{{line.Booking_Date}}</td>
+                                    <td>{{line.No_Of_Rooms}}</td>
                                     <td>{{line.Amount}}</td>
                                     {% if res.Status == "Open"%}
                                     <td>
@@ -313,6 +435,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
         <div class="row my-2 py-3">
             <div class="col-md-12">
                 <div class="card">
@@ -448,13 +571,78 @@
         {% endif %}
     </div>
 
-    <!-- Modal Lines -->
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    <!-- Modal Accomodation Room Lines -->
+    <div class="modal fade" id="accomodationLines" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-md">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Room Booking Line
+                    <h5 class="modal-title" id="staticBackdropLabel">Accommodation Lines
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="myForm" id="PurchaseForm" action=""
+                        method="post" novalidate>
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <input type="hidden" name="lineNo" value="">
+                                <input type="hidden" name="myAction" value="insert">
+                                <input type="hidden" name="bookingNo" value="{{res.No_}}">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="form-label">Service Required <span class="text-danger">*</span></label>
+                                <select class="form-select" id="itemType" name="serviceRequired" required>
+                                    <option selected disabled value="0">--Select--</option>
+                                    <option value="1">Meeting Room</option>
+                                    <option value="2">Accomodation</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Number of Rooms</label>
+                                <input type="number" name="noOfRooms" id="">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="form-label">Start Date<span class="text-danger">*</span></label>
+                               <input type="date" name="startDate" id="">
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">End Date</label>
+                               <input type="date" name="endDate" id="">
+                            </div>
+                            
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="form-label">Number of People <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" name="noOfPeople" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Number of Days <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" name="noOfDays" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success my-3 w-100">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Meeting Room Lines -->
+    <div class="modal fade" id="meeting_room" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Meeting Room Lines
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                         aria-label="Close"></button>
