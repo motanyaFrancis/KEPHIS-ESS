@@ -180,7 +180,7 @@
                                     <th id="long">Line No.</th>
                                     <th>Defect Type</th>
                                     <th>Severity</th>
-                                    <th>Recommemded Action</th>
+                                    <th>Recommended Action</th>
                                     {% if res.Status == "Open" %}
                                     <th>Action</th>
                                     {% endif %}
@@ -293,22 +293,22 @@
         {% endif %}
         <div class="row">
             <div class="col-md-12">
+                {% if res.Status == "Open" %}
                 <div class="myForm my-3">
-                    <form action="" method="POST" style="display: inline-block;">
+                    <form action="{% url 'FnRaiseRepairRequest' res.No %}" method="POST" style="display: inline-block;">
                         {% csrf_token %}
                         <div class="mb-3">
-                            <input type="hidden" hidden name="requisitionNo" value="{{res.No_}}">
+                            <input type="hidden" hidden name="insNo" value="{{res.No}}">
                         </div>
                         <button class="btn btn-info" type="submit">Request For Approval</button>
                     </form>
                 </div>
-                {% if res.Status == "Open" %}
                 {% elif res.Status == "Pending Approval" %}
                 <div class="d-grid gap-2 my-3">
-                    <form action="{% url 'ImpresCancel' res.No_ %}" method="POST" class="myForm" id="approvalForm">
+                    <form action="" method="POST" class="myForm" id="approvalForm">
                         {% csrf_token %}
                         <div class="mb-3">
-                            <input type="hidden" hidden name="requisitionNo" value="{{res.No_}}">
+                            <input type="hidden" hidden name="insNo" value="{{res.No}}">
                         </div>
                         <button class="btn btn-info" type="submit">Cancel Request For Approval</button>
                     </form>

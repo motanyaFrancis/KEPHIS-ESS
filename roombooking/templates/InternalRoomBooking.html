@@ -151,8 +151,8 @@
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title" id="staticBackdropLabel">
-                                                                        <i class="las la-edit"></i> Edit Repair Request
-                                                                        <span class="editSpan">{{res.No}}</span>
+                                                                        <i class="las la-edit"></i> Edit Booking Request
+                                                                        <span class="editSpan">{{res.No_}}</span>
                                                                     </h5>
                                                                     <button type="button" class="btn-close btn-close-white"
                                                                             data-bs-dismiss="modal"
@@ -163,36 +163,24 @@
                                                                         {% csrf_token %}
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <input type="hidden" name="requisitionNo" value="">
+                                                                                <input type="hidden" name="bookingNo" value="">
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <label class="form-label">Vehicle <span class="text-danger">*</span></label>
-                                                                                <select class="form-select" name="vehicle" required>
+                                                                                <label class="form-label">Type of Service <span class="text-danger">*</span></label>
+                                                                                <select class="form-select" name="typeOfService" required>
                                                                                     <option selected disabled value="">Select Option</option>
-                                                                                    {% for list in Vehicle_No %}
-                                                                                    <option value="{{list.Registration_No}}">{{list.Registration_No}}</option>
-                                                                                    {% endfor %}                                    
+                                                                                    <option value="1">Meeting Room</option>
+                                                                                    <option value="2">Accommodation</option>
+                                                                                    <option value="3">Meeting Room & Accommodation</option>
                                                                                 </select>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="row">
-                                                                            <div class="col-md-12">
-                                                                                <label for="" class="form-label">Odometer Reading<span class="text-danger">*</span></label>
-                                                                                <input type="text" name="odometerReading" class="form-control" required>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="row">
-                                                                            <div class="col-md-12">
-                                                                                <label for="" class="form-label">Repair Instruction Sheet<span class="text-danger">*</span></label>
-                                                                                <textarea name="repairInstractionSheet" class="form-control" required></textarea>
                                                                             </div>
                                                                         </div>
                                                                         
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <input type="hidden" name="myAction" value="insert">
+                                                                                <input type="hidden" name="myAction" value="modify">
                                                                             </div>
                                                                         </div>
                                                                         
@@ -243,68 +231,7 @@
                                                 <td>{{res.Invoice}}</td>
                                                 <td>{{res.Service_Requred}}</td>
                                                 <td>
-                                                    <button class="btn btn-primary" data-bs-toggle="modal"
-                                                            data-bs-target="#repair" data-toggle="tooltip" data-placement="top"
-                                                            title="edit">Edit <i class="fas fa-edit"></i>
-                                                    </button>
-                                                    <div class="modal fade" id="repair"
-                                                    data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-                                                    aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                                                   <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                                                       <div class="modal-content">
-                                                           <div class="modal-header">
-                                                               <h5 class="modal-title" id="staticBackdropLabel">
-                                                                   <i class="las la-edit"></i> Edit Repair Request
-                                                                   <span class="editSpan">{{res.No}}</span>
-                                                               </h5>
-                                                               <button type="button" class="btn-close btn-close-white"
-                                                                       data-bs-dismiss="modal"
-                                                                       aria-label="Close"></button>
-                                                           </div>
-                                                           <div class="modal-body">
-                                                               <form class="myForm needs-validation" action="" method="post" novalidate>
-                                                                   {% csrf_token %}
-                                                                   <div class="row">
-                                                                       <div class="col-md-12">
-                                                                           <input type="hidden" name="requisitionNo" value="">
-                                                                       </div>
-                                                                   </div>
-                                                                   <div class="row">
-                                                                       <div class="col-md-12">
-                                                                           <label class="form-label">Vehicle <span class="text-danger">*</span></label>
-                                                                           <select class="form-select" name="vehicle" required>
-                                                                               <option selected disabled value="">Select Option</option>
-                                                                               {% for list in Vehicle_No %}
-                                                                               <option value="{{list.Vehicle}}">{{list.Registration_No}}</option>
-                                                                               {% endfor %}                                    
-                                                                           </select>
-                                                                       </div>
-                                                                   </div>
-                                                                   <div class="row">
-                                                                       <div class="col-md-12">
-                                                                           <label for="" class="form-label">Odometer Reading<span class="text-danger">*</span></label>
-                                                                           <input type="text" name="odometerReading" class="form-control" required>
-                                                                       </div>
-                                                                   </div>
-                                                                   <div class="row">
-                                                                       <div class="col-md-12">
-                                                                           <label for="" class="form-label">Repair Instruction Sheet<span class="text-danger">*</span></label>
-                                                                           <textarea name="repairInstractionSheet" class="form-control" required></textarea>
-                                                                       </div>
-                                                                   </div>
-                                                                   
-                                                                   <div class="row">
-                                                                       <div class="col-md-12">
-                                                                           <input type="hidden" name="myAction" value="insert">
-                                                                       </div>
-                                                                   </div>
-                                                                   
-                                                                   <button type="submit" id="sasa" class="btn btn-success my-3 w-100">Submit</button>
-                                                               </form>
-                                                           </div>
-                                                       </div>
-                                                   </div>
-                                               </div>
+                                                    
                                                     <a href="{% url 'InternalRoomDetails' res.No_ %}"
                                                        class="btn btn-success btn-icon-text" type="button"
                                                        data-toggle="tooltip" data-placement="top" title="Click to View">

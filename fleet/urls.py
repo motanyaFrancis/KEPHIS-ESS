@@ -14,13 +14,17 @@ urlpatterns = [
     path('VehicleInspectionDetails/<str:pk>', views.VehicleInspectionDetails.as_view(), name='VehicleInspectionDetails'),
     path('UploadInspectionAttachment/<str:pk>', views.UploadInspectionAttachment, name='UploadInspectionAttachment'),
     path('DeleteInspectionAttachment/<str:pk>', views.DeleteInspectionAttachment, name='DeleteInspectionAttachment'),
+    path('FnSubmitVehicleInspection/<str:pk>', views.FnSubmitVehicleInspection, name='FnSubmitVehicleInspection' ),
+    path('FnBookForInspection/<str:pk>', views.FnBookForInspection, name='FnBookForInspection' ),
+    path('FnCancelBooking/<str:pk>', views.FnCancelBooking, name='FnCancelBooking' ),
 
     # repair request
-    path('vehicleRepairRequest', views.VehicleRepaiRequest.as_view(), name='vehicleRepairRequest'),
+    path('vehicleRepairRequest', views.VehicleRepairRequest.as_view(), name='vehicleRepairRequest'),
     path('vehicleRepairDetails/<str:pk>', views.VehicleRepairRequestDetails.as_view(), name='vehicleRepairDetails'),
     path('UploadRepairAttachment/<str:pk>', views.UploadRepairAttachment, name='UploadRepairAttachment'),
     path('DeleteRepairAttachment/<str:pk>', views.DeleteRepairAttachment, name='DeleteRepairAttachment'),
     path('FnRepairRequestLine/<str:pk>', views.FnRepairRequestLines, name='FnRepairRequestLine'),
+    path('FnRaiseRepairRequest/<str:pk>', views.FnRaiseRepairRequest, name='FnRaiseRepairRequest'),
 
     
     # Transport Request
