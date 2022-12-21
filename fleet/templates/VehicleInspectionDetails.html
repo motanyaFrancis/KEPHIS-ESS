@@ -16,7 +16,7 @@
                 <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
                     {% if res.Status == "Open" %}
 
-                    {% elif res.Status == "Approved" and res.Booked_For_Inspection == False %}
+                    {% elif res.Status == "Approved" and res.Booked_For_Inspection == fal %}
                     <form action="{% url 'FnBookForInspection' res.No %}" method="POST"
                           style="display:inline-block">
                         {% csrf_token %}

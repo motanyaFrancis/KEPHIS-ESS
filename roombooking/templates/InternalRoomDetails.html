@@ -583,7 +583,7 @@
                         aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="myForm" id="PurchaseForm" action=""
+                    <form class="myForm" id="PurchaseForm" action="{% url 'FnAccomodationBookingLine' res.No_ %}"
                         method="post" novalidate>
                         {% csrf_token %}
                         <div class="row">
@@ -597,9 +597,10 @@
                             <div class="col-md-6">
                                 <label class="form-label">Service Required <span class="text-danger">*</span></label>
                                 <select class="form-select" id="itemType" name="serviceRequired" required>
-                                    <option selected disabled value="0">--Select--</option>
-                                    <option value="1">Meeting Room</option>
-                                    <option value="2">Accomodation</option>
+                                    <option selected disabled value="">--Select--</option>
+                                    {% for list in all_services %}
+                                    <option value="{{list.No}}">{{list.ServiceDescription}}</option>
+                                    {% endfor %}
                                 </select>
                             </div>
                             <div class="col-md-6">
@@ -620,16 +621,7 @@
                             
                         </div>
                         
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label class="form-label">Number of People <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" name="noOfPeople" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Number of Days <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" name="noOfDays" required>
-                            </div>
-                        </div>
+                        
                         <button type="submit" class="btn btn-success my-3 w-100">Submit</button>
                     </form>
                 </div>
@@ -663,8 +655,9 @@
                                 <label class="form-label">Service Required <span class="text-danger">*</span></label>
                                 <select class="form-select" id="itemType" name="serviceRequired" required>
                                     <option selected disabled value="0">--Select--</option>
-                                    <option value="1">Meeting Room</option>
-                                    <option value="2">Accomodation</option>
+                                    {% for list in all_services %}
+                                    <option value="{{list.No}}">{{list.ServiceDescription}}</option>
+                                    {% endfor %}
                                 </select>
                             </div>
                             <div class="col-md-6">

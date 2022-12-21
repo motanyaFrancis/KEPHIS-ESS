@@ -37,7 +37,24 @@
         {% include 'alerts.html' %}
 
         <div class="row my-3">
-            <div class="col-md-4">
+            <div class="col-md-3">
+                <div class="card l-bg-orange-dark statCard h-100">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-search"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Requisition No.</h5>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{res.RequestNo}}
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
                 <div class="card l-bg-blue-dark statCard h-100">
                     <div class="card-statistic-3 p-4">
                         <div class="card-icon card-icon-large"><i class="fas fa-file"></i></div>
@@ -90,7 +107,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="card l-bg-green-dark statCard h-100">
                     <div class="card-statistic-3 p-4">
                         <div class="card-icon card-icon-large"><i class="fas fa-dollar-sign"></i></div>
@@ -100,24 +117,24 @@
                         <div class="row align-items-center mb-2 d-flex">
                             <div class="col-md-12">
                                 <h2 class="d-flex align-items-center mb-0">
-                                    {{res.RequestedBy}}
+                                    {{res.UserID}}
                                 </h2>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="card l-bg-cherry statCard h-100">
                     <div class="card-statistic-3 p-4">
                         <div class="card-icon card-icon-large"><i class="fas fa-calendar"></i></div>
                         <div class="mb-4">
-                            <h5 class="card-title mb-0">Date Created</h5>
+                            <h5 class="card-title mb-0">Request Date</h5>
                         </div>
                         <div class="row align-items-center mb-2 d-flex">
                             <div class="col-md-12">
                                 <h2 class="d-flex align-items-center mb-0">
-                                    {{res.PostingDate}}
+                                    {{res.RequestDate}}
                                 </h2>
                             </div>
                         </div>
@@ -131,38 +148,44 @@
             <div class="col-md-12">
                 <form class="row g-3">
                     <div class="col-md-4">
-                        <label class="form-label">Vehicle Number</label>
-                        <input type="text" class="form-control" placeholder="{{res.Asset}}" readonly>
+                        <label class="form-label">Reason For Travel</label>
+                        <input type="text" class="form-control" placeholder="{{res.ReasonforTravel}}" readonly>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Document Date</label>
-                        <input type="text" class="form-control" placeholder="{{res.DocumentDate}}" readonly>
+                        <label class="form-label">Mode of Transport</label>
+                        <input type="text" class="form-control" placeholder="{{res.ModeofTravel}}" readonly>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Odometer Reading</label>
-                        <input type="text" class="form-control" placeholder="{{res.OdometerReading}}" readonly>
+                        <label class="form-label">Destination</label>
+                        <input type="text" class="form-control" placeholder="{{res.Destination}}" readonly>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Drivers Name</label>
-                        <input type="text" class="form-control" placeholder="{{res.Driver}}" readonly>
+                        <label class="form-label">Approximate Distance (KM)</label>
+                        <input type="text" class="form-control" placeholder="{{res.ApproximateDistance}}" readonly>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Status</label>
-                        <input type="text" class="form-control" placeholder="{{res.Status}}" readonly>
+                        <label class="form-label">Trip Planned Start Date</label>
+                        <input type="text" class="form-control" placeholder="{{res.TripPlannedStartDate}}" readonly>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Distance Gone</label>
-                        <input type="text" class="form-control" placeholder="{{res.Travel_Type}}" readonly>
+                        <label class="form-label">Trip Planned End Date</label>
+                        <input type="text" class="form-control" placeholder="{{res.TripPlannedEndDate}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Trip Planned Start Time</label>
+                        <input type="text" class="form-control" placeholder="{{res.StartTime}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Trip Planned End Time</label>
+                        <input type="text" class="form-control" placeholder="{{res.ReturnTime}}" readonly>
                     </div>
 
                   
                     <div class="col-md-4">
-                        <label class="form-label">Vehicle registration No.</label>
-                        <input type="text" class="form-control" placeholder="{{res.VehicleRegistrationNo}}" readonly>
+                        <label class="form-label">Transport Status.</label>
+                        <input type="text" class="form-control" placeholder="{{res.TransportStatus}}" readonly>
                     </div>
                    
-
-                    
                 </form>
             </div>
         </div>
@@ -356,44 +379,34 @@
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">New Repair Request Line
+                    <h5 class="modal-title" id="staticBackdropLabel">Traveling Employees
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                             aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="myForm needs-validation" id="frm_" action="{% url 'FnRepairRequestLine' res.No %}"
+                    <form class="myForm needs-validation" id="frm_" action="{% url 'FnTravelEmployeeLine' res.RequestNo %}"
                           method="post" novalidate>
-                        {% csrf_token %}
-
-
-                        
+                        {% csrf_token %}  
                         <div class="row">
                             <div class="col-md-12">
-                                <label class="form-label">Defect Type <span class="text-danger">*</span></label>
-                                <input type="text" name="defectsType" class="form-control">
-
+                                <input type="hidden" name="reqNo" value="{{res.RequestNo}}">
+                            </div>
+                        </div>                      
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="form-label">Employee No <span class="text-danger">*</span></label>
+                                <input type="text" name="employeeNo" class="form-control">
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <label for="" class="form-label">Severity <span class="text-danger">*</span></label>
-                                <input type="text" name="severity" class="form-control">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <label for="" class="form-label">Action <span class="text-danger">*</span></label>
-                                <input type="text" name="action" class="form-control">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
+                                <input type="hidden" name="lineNo" value="">
                                 <input type="hidden" name="myAction" value="insert">
                             </div>
                         </div>
-
-
+                        
+                        
                         <button type="submit" class="btn btn-success my-3 w-100">Submit</button>
                     </form>
                 </div>
@@ -412,7 +425,7 @@
                         aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="{% url 'UploadRepairAttachment' res.No %}" method="post" class="myForm"
+                <form action="" method="post" class="myForm"
                       enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class=" mb-3">

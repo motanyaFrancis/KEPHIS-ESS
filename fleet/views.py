@@ -1053,29 +1053,29 @@ class TransportRequestDetails(UserObjectMixin, View):
             userID = request.session['User_ID']
             year = request.session['years']
             Access_Point = config.O_DATA.format(
-                f"/QyTransportRequest?$filter=RequestNo%20eq%20%27{pk}%27%20and%20UserID%20eq%20%27{userID}%27%20and%20Document_Type%20eq%20%27Service%27"
+                f"/QyTransportRequest?$filter=RequestNo%20eq%20%27{pk}%27%20and%20UserID%20eq%20%27{userID}%27"
             )
             response = self.get_object(Access_Point)
-            # res = [x for x in response['value']]
+            #
             for transport_req in response['value']:
                 res = transport_req
-                print(res)  
+                # print(res)  
                 
-            # Access = config.O_DATA.format(f"/QyTransportRequestEmployee?$filter=Request_No_%20eq%20%27{pk}%27")
-            # LinesRes = self.get_object(Access)
-            # openLines = [x for x in LinesRes['value']
-            #              if x['Request_No_'] == pk]
+            Access = config.O_DATA.format(f"/QyTransportRequestEmployee?$filter=Request_No_%20eq%20%27{pk}%27")
+            LinesRes = self.get_object(Access)
+            openLines = [x for x in LinesRes['value']
+                         if x['Request_No_'] == pk]
             
-            # Approver = config.O_DATA.format(
-            #     f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
-            # res_approver = self.get_object(Approver)
-            # Approvers = [x for x in res_approver['value']]
+            Approver = config.O_DATA.format(
+                f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
+            res_approver = self.get_object(Approver)
+            Approvers = [x for x in res_approver['value']]
             
 
-            # Access_File = config.O_DATA.format(
-            #     f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27")
-            # res_file = self.get_object(Access_File)
-            # allFiles = [x for x in res_file['value']]
+            Access_File = config.O_DATA.format(
+                f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27")
+            res_file = self.get_object(Access_File)
+            allFiles = [x for x in res_file['value']]
         except Exception as e:
             print(e)
             messages.info(request, "Wrong UserID")
@@ -1085,9 +1085,9 @@ class TransportRequestDetails(UserObjectMixin, View):
             "res": res,
             "today": self.todays_date,
              "year": year,
-            # 'Approvers': Approvers,
-            # 'allFiles': allFiles,
-            # "line": openLines,
+            'Approvers': Approvers,
+            'allFiles': allFiles,
+            "line": openLines,
         }
         return render(request, 'TransportRequestDetails.html', ctx)
 
@@ -1096,8 +1096,7 @@ def FnTravelEmployeeLine(request, pk):
         try:
             reqNo = request.POST.get('reqNo')
             myUserId = request.session['User_ID']
-            vehicle = request.POST.get('vehicle')
-            driver = request.POST.get('driver')
+            employeeNo = request.POST.get('employeeNo')
             lineNo = request.POST.get('lineNo')
             myAction = request.POST.get('myAction')
             
@@ -1106,13 +1105,9 @@ def FnTravelEmployeeLine(request, pk):
             return redirect('TransportRequestDetails', pk=pk)
         try:
             response = config.CLIENT.service.FnTravelEmployeeLine(
-                reqNo,
-                myUserId,
-                vehicle,
-                driver,
-                lineNo,
-                myAction,
+                reqNo, myUserId, employeeNo, lineNo, myAction,
             )
+            print(response)
             messages.success(request, 'request Successful')
             return redirect('TransportRequestDetails', pk=pk )
             

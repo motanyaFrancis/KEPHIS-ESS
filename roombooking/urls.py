@@ -5,4 +5,5 @@ urlpatterns = [
     path('InternalRoomBooking', views.InternalRoomBooking.as_view(), name = 'InternalRoomBooking'),
     path('InternalRoomDetails/<str:pk>', views.InternalRoomBookingDetails.as_view(), name='InternalRoomDetails'),
     path('FnRoomBookingLine/<str:pk>', views.FnRoomBookingLine, name='FnRoomBookingLine'),
+    path('FnAccomodationBookingLine/<str:pk>', views.FnAccomodationBookingLine, name='FnAccomodationBookingLine')
 ]

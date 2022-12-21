@@ -143,10 +143,14 @@ class InternalRoomBookingDetails(UserObjectMixin, View):
             # print(meeting_room)
             
             
-            BookingItems = config.O_DATA.format(
-                f"/QYRoomBookingItems?$filter=LineNo%20eq%20%27{pk}%27")
-            room_item = self.get_object(BookingItems)
-            room_items = [x for x in room_item['value']]
+            # BookingItems = config.O_DATA.format(
+            #     f"/QYRoomBookingItems?$filter=LineNo%20eq%20%27{pk}%27")
+            # room_item = self.get_object(BookingItems)
+            # room_items = [x for x in room_item['value']]
+            
+            Service = config.O_DATA.format(f"/QYServicerequired")
+            service_req = self.get_object(Service)
+            all_services = [x for x in service_req['value']]
 
             # BookingAttendee = config.O_DATA.format(
             #     f"/QYRoombookingattendees?$filter=RoomNo%20eq%20%{pk}%27")
@@ -174,6 +178,7 @@ class InternalRoomBookingDetails(UserObjectMixin, View):
             'full': userID,
             'accommodationLines': AccommodationRoom,
             'meeting_room': meeting_room,
+            'all_services': all_services,
             # 'room_items': room_items,
             # 'BookingAttendees': BookingAttendees,
         }
@@ -212,4 +217,29 @@ def FnRoomBookingLine(request, pk):
     return redirect('InternalRoomDetails', pk=pk)
 
 
-# def FnRooms(request, pk)
+def FnAccomodationBookingLine(request, pk):
+    if request.method == 'POST':
+        try:
+            bookingNo = request.POST.get('bookingNo')
+            myAction = request.POST.get('myAction')
+            userCode = request.session['User_ID']
+            serviceRequired = request.POST.get('serviceRequired')
+            noOfRooms = request.POST.get('noOfRooms')
+            lineNo = request.POST.get('lineNo')
+            startDate = request.POST.get('startDate')
+            endDate = request.POST.get('endDate')
+            
+        except ValueError:
+            messages.error(request, "Missing Input")
+            return redirect('InternalRoomDetails', pk=pk)
+        try:
+            response = config.CLIENT.service.FnAccomodationBookingLine(
+                bookingNo, myAction, userCode, serviceRequired, noOfRooms, lineNo, startDate, endDate
+            )
+            messages.success(request, 'Request successful')
+            return redirect('InternalRoomDetails', pk=pk)
+        except Exception as e:
+            messages.error(request, e)
+            return redirect('InternalRoomDetails', pk=pk)
+    return redirect('InternalRoomDetails', pk=pk)
+
