@@ -151,6 +151,10 @@ class InternalRoomBookingDetails(UserObjectMixin, View):
             Service = config.O_DATA.format(f"/QYServicerequired")
             service_req = self.get_object(Service)
             all_services = [x for x in service_req['value']]
+            
+            Employee_Access = config.O_DATA.FORMAT(f'/QYEmployees')
+            EmployeeList = self.get_object(Employee_Access)
+            Employees = [x for x in EmployeeList['value']]
 
             # BookingAttendee = config.O_DATA.format(
             #     f"/QYRoombookingattendees?$filter=RoomNo%20eq%20%{pk}%27")
@@ -179,6 +183,7 @@ class InternalRoomBookingDetails(UserObjectMixin, View):
             'accommodationLines': AccommodationRoom,
             'meeting_room': meeting_room,
             'all_services': all_services,
+            'Employees': Employees,
             # 'room_items': room_items,
             # 'BookingAttendees': BookingAttendees,
         }

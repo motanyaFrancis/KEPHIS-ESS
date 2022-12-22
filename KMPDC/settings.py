@@ -90,6 +90,7 @@ INSTALLED_APPS = [
     'advance',
     'fleet',
     'roombooking',
+    'Appraisals',
 
 ]
 
