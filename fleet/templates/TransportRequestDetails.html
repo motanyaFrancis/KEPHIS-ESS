@@ -16,7 +16,7 @@
                 <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
                     <button class="btn btn-successs p-3 d-flex align-items-center" data-bs-toggle="modal"
                             data-bs-target="#staticBackdrop" type="button"> <i class="las la-plus text-white"
-                           style="font-size:15px;"></i> Add Lines
+                           style="font-size:15px;"></i> Add Traveling Employee
                     </button>
                     {% if res.Status == "Open" %}
                     {% elif res.Status == "Released" %}
@@ -193,17 +193,17 @@
         <div class="row mt-4">
             <div class="col-md-12">
                 <div class="card" id="d-card">
-                    <h4 class="mt-2 mx-2 text-dark">Service Request Lines</h4>
+                    <h4 class="mt-2 mx-2 text-dark">Traveling Employees</h4>
                     <div class="card-body">
                         <table id="example"
                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
                                style="width:100%">
                             <thead>
                                 <tr id="tops">
-                                    <th id="long">Line No.</th>
-                                    <th>Defect Type</th>
-                                    <th>Severity</th>
-                                    <th>Recommemded Action</th>
+                                    <th>Employee No.</th>
+                                    <th>Employee Name</th>
+                                    <th>Department Code</th>
+                                    <th>Department</th>
                                     {% if res.Status == "Open" %}
                                     <th>Action</th>
                                     {% endif %}
@@ -212,14 +212,14 @@
                             <tbody>
                                 {% for line in line %}
                                 <tr>
-                                    <td>{{line.LineNo}}</td>
-                                    <td>{{line.DefectType}}</td>
-                                    <td>{{line.Severity}}</td>
-                                    <td>{{line.Recommendations}}</td>
+                                    <td>{{line.Employee_No_}}</td>
+                                    <td>{{line.Employee_Name}}</td>
+                                    <td>{{line.Department_Code}}</td>
+                                    <td>{{line.Department_Name}}</td>
                                     {% if res.Status == "Open" %}
                                     <td>
 
-                                        <form action="{% url 'DeleteRepairAttachment' line.DocumentNo %}"
+                                        <form action=""
                                               method="post" style="display: inline-block;">
                                             {% csrf_token %}
                                             <input type="hidden" name="lineNo" value="{{line.LineNo}}">
@@ -316,22 +316,22 @@
         {% endif %}
         <div class="row">
             <div class="col-md-12">
+                {% if res.Status == "Open" %}
                 <div class="myForm my-3">
-                    <form action="" method="POST" style="display: inline-block;">
+                    <form action="{% url 'FnSubmitTravelRequest' res.RequestNo %}" method="POST" style="display: inline-block;">
                         {% csrf_token %}
                         <div class="mb-3">
-                            <input type="hidden" hidden name="requisitionNo" value="{{res.No_}}">
+                            <input type="hidden" hidden name="tReqNo" value="{{res.RequestNo}}">
                         </div>
                         <button class="btn btn-info" type="submit">Request For Approval</button>
                     </form>
                 </div>
-                {% if res.Status == "Open" %}
                 {% elif res.Status == "Pending Approval" %}
                 <div class="d-grid gap-2 my-3">
-                    <form action="{% url 'ImpresCancel' res.No_ %}" method="POST" class="myForm" id="approvalForm">
+                    <form action="" method="POST" class="myForm" id="approvalForm">
                         {% csrf_token %}
                         <div class="mb-3">
-                            <input type="hidden" hidden name="requisitionNo" value="{{res.No_}}">
+                            <input type="hidden" hidden name="requisitionNo" value="">
                         </div>
                         <button class="btn btn-info" type="submit">Cancel Request For Approval</button>
                     </form>
@@ -392,13 +392,21 @@
                             <div class="col-md-12">
                                 <input type="hidden" name="reqNo" value="{{res.RequestNo}}">
                             </div>
-                        </div>                      
+                        </div>    
                         <div class="row">
                             <div class="col-md-12">
-                                <label class="form-label">Employee No <span class="text-danger">*</span></label>
-                                <input type="text" name="employeeNo" class="form-control">
+                                <label class="form-label">Employee <span class="text-danger">*</span></label>
+                                <select class="form-select" name="employeeNo" required>
+                                    <option selected disabled value="">Select Option</option>
+                                    {% for Employee in Employees %}
+                                    <option value="{{Employees.No_}}">
+                                        {{Employee.First_Name}} {{Employee.Middle_Name}} {{Employee.Last_Name}}
+                                    </option>
+                                    {% endfor %}                                                
+                                </select>
                             </div>
-                        </div>
+                        </div>                  
+                        
                         <div class="row">
                             <div class="col-md-12">
                                 <input type="hidden" name="lineNo" value="">
@@ -425,7 +433,7 @@
                         aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="" method="post" class="myForm"
+                <form action="{% url 'UploadTransportRequestAttachment' res.RequestNo %}" method="post" class="myForm"
                       enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class=" mb-3">

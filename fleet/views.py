@@ -140,7 +140,7 @@ class WorkTicket(UserObjectMixin, View):
                 print(response)
 
             except Exception as e:
-                messages.error(request, e)
+                messages.error(request, "OOps!! Something went wrong")
                 print(e)
                 return redirect('workTicket')
         return redirect('workTicket')
@@ -203,7 +203,7 @@ def UploadTicketAttachment(request, pk):
                     pk, fileName, attachment, tableID,
                     request.session['User_ID'])
             except Exception as e:
-                messages.error(request, e)
+                messages.error(request, "OOps!! Something went wrong")
                 print(e)
         if response == True:
             messages.success(request, "File(s) Upload Successful")
@@ -226,7 +226,7 @@ def DeleteTicketAttachment(request, pk):
                 messages.success(request, "Deleted Successfully ")
                 return redirect('WorkTicketDetails', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, "OOps!! Something went wrong" )
             print(e)
     return redirect('WorkTicketDetails', pk=pk)
 
@@ -250,7 +250,7 @@ def FnSubmitWorkTicket(request, pk):
             messages.success(request, "Approval Request Sent Successfully")
             return redirect('WorkTicketDetails', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, "OOps!! Something went wrong")
             print(e)
             return redirect('WorkTicketDetails', pk=pk)
     return redirect('WorkTicketDetails', pk=pk)
@@ -341,7 +341,7 @@ class VehicleRepairRequest(UserObjectMixin, View):
                     return redirect('vehicleRepairRequest')
                 # print(response)
             except Exception as e:
-                messages.error(request, e)
+                messages.error(request, "OOps!! Something went wrong")
                 return redirect('vehicleRepairRequest')
         return redirect('vehicleRepairRequest')
 
@@ -411,7 +411,7 @@ def UploadRepairAttachment(request, pk):
                     pk, fileName, attachment, tableID,
                     request.session['User_ID'])
             except Exception as e:
-                messages.error(request, e)
+                messages.error(request, "OOps!! Something went wrong")
                 print(e)
         if response == True:
             messages.success(request, "File(s) Upload Successful")
@@ -434,7 +434,7 @@ def DeleteRepairAttachment(request, pk):
                 messages.success(request, "Deleted Successfully ")
                 return redirect('vehicleRepairDetails', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, "OOps!! Something went wrong")
             print(e)
     return redirect('vehicleRepairDetails', pk=pk)
 
@@ -457,7 +457,7 @@ def FnRepairRequestLines(request, pk):
             messages.success(request, "Request Successful")
             return redirect('vehicleRepairDetails', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, "OOps!! Something went wrong")
             return redirect('vehicleRepairDetails', pk=pk)
     return redirect('vehicleRepairDetails', pk=pk)
 
@@ -481,7 +481,7 @@ def FnRaiseRepairRequest(request, pk):
             messages.success(request, "Repair Request Successful")
 
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, "OOps!! Something went wrong")
             print(e)
             return redirect('auth')
     return redirect('vehicleRepairDetails', pk=pk)
@@ -1056,7 +1056,6 @@ class TransportRequestDetails(UserObjectMixin, View):
                 f"/QyTransportRequest?$filter=RequestNo%20eq%20%27{pk}%27%20and%20UserID%20eq%20%27{userID}%27"
             )
             response = self.get_object(Access_Point)
-            #
             for transport_req in response['value']:
                 res = transport_req
                 # print(res)  
@@ -1065,6 +1064,10 @@ class TransportRequestDetails(UserObjectMixin, View):
             LinesRes = self.get_object(Access)
             openLines = [x for x in LinesRes['value']
                          if x['Request_No_'] == pk]
+            
+            Employee = config.O_DATA.format(f"/QYEmployees")
+            EmployeeRes = self.get_object(Employee)
+            Employees = [x for x in EmployeeRes['value']]
             
             Approver = config.O_DATA.format(
                 f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
@@ -1088,6 +1091,7 @@ class TransportRequestDetails(UserObjectMixin, View):
             'Approvers': Approvers,
             'allFiles': allFiles,
             "line": openLines,
+            'Employees': Employees
         }
         return render(request, 'TransportRequestDetails.html', ctx)
 
@@ -1163,31 +1167,31 @@ def DeleteTransportRequestAttachment(request, pk):
     return redirect('TransportRequestDetails', pk=pk)
 
 
-def FnSubmitTrnsportRequest(request, pk):
+def FnSubmitTravelRequest(request, pk):
     Username = request.session['User_ID']
     Password = request.session['password']
     AUTHS = Session()
     AUTHS.auth = HTTPBasicAuth(Username, Password)
     CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
     
-    insNo = ""
+    tReqNo = ""
     
     if request.method == 'POST':
         try:
             myUserId = request.session['User_ID']
-            insNo = request.POST.get('insNo')
+            tReqNo = request.POST.get('tReqNo')
         except KeyError:
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
             
         try:
-            response = config.CLIENT.service.FnSubmitServiceRequest(
-                insNo, myUserId
-            )
-            messages.success(request, 'Request Submited successfuly')
+            response = config.CLIENT.service.FnSubmitTravelRequests(tReqNo, myUserId)
+            print(response)
+            messages.success(request, 'Request Submitted successfully')
             return redirect('TransportRequestDetails', pk=pk)
         except Exception as e:
             messages.error(request, e)
+            print(e)
             return redirect('TransportRequestDetails', pk=pk)
     return redirect('TransportRequestDetails', pk=pk)
     

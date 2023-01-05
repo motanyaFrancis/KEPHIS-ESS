@@ -131,45 +131,46 @@ class InternalRoomBookingDetails(UserObjectMixin, View):
                 # print(res)
             
 
-            Accommodation = config.O_DATA.format(
-                f"/QyAccommodationBookingLines?$filter=RoomNo%20eq%20%27{pk}%27")
+            Accommodation = config.O_DATA.format(f"/QyAccommodationBookingLines?$filter=RoomNo%20eq%20%27{pk}%27")
             res_accommodation = self.get_object(Accommodation)
             AccommodationRoom = [x for x in res_accommodation['value']]
 
-            MeetingRoom = config.O_DATA.format(
-                f"/QyRoomBookingLines?$filter=RoomNo%20eq%20%27{pk}%27")
+            MeetingRoom = config.O_DATA.format(f"/QyRoomBookingLines?$filter=RoomNo%20eq%20%27{pk}%27")
             Room = self.get_object(MeetingRoom)
             meeting_room = [x for x in Room['value']]
             # print(meeting_room)
             
             
-            # BookingItems = config.O_DATA.format(
-            #     f"/QYRoomBookingItems?$filter=LineNo%20eq%20%27{pk}%27")
-            # room_item = self.get_object(BookingItems)
-            # room_items = [x for x in room_item['value']]
+            BookingItems = config.O_DATA.format(f"/QYRoomBookingItems?$filter=LineNo%20eq%20%27{pk}%27")
+            room_item = self.get_object(BookingItems)
+            room_items = [x for x in room_item['value']]
             
             Service = config.O_DATA.format(f"/QYServicerequired")
             service_req = self.get_object(Service)
             all_services = [x for x in service_req['value']]
             
-            Employee_Access = config.O_DATA.FORMAT(f'/QYEmployees')
-            EmployeeList = self.get_object(Employee_Access)
-            Employees = [x for x in EmployeeList['value']]
+            # RoomType = config.O_DATA.formart(f'QYRooms')
+            # RoomType_req = self.get_object(RoomType)
+            # room_type = [x for x in RoomType_req['value']]
+            
+            # Employee_Access = config.O_DATA.FORMAT(f'/QYEmployees')
+            # EmployeeList = self.get_object(Employee_Access)
+            # Employees = [x for x in EmployeeList['value']]
 
             # BookingAttendee = config.O_DATA.format(
             #     f"/QYRoombookingattendees?$filter=RoomNo%20eq%20%{pk}%27")
             # res_attendees = self.get_object(BookingAttendee)
             # BookingAttendees = [x for x in res_attendees['value']]
 
-            Approver = config.O_DATA.format(
-                f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
+            Approver = config.O_DATA.format(f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
             res_approver = self.get_object(Approver)
             Approvers = [x for x in res_approver['value']]
 
-            Access_File = config.O_DATA.format(
-                f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27")
+            Access_File = config.O_DATA.format(f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27")
             res_file = self.get_object(Access_File)
             allFiles = [x for x in res_file['value']]
+            
+            
         except Exception as e:
             print(e)
             messages.info(request, "Wrong UserID")
@@ -182,9 +183,10 @@ class InternalRoomBookingDetails(UserObjectMixin, View):
             'full': userID,
             'accommodationLines': AccommodationRoom,
             'meeting_room': meeting_room,
+            'room_items': room_items,
             'all_services': all_services,
-            'Employees': Employees,
-            # 'room_items': room_items,
+            # 'room_type': room_type
+            # 'Employees': Employees,
             # 'BookingAttendees': BookingAttendees,
         }
 

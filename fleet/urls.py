@@ -33,7 +33,8 @@ urlpatterns = [
     path('FnTravelEmployeeLine/<str:pk>', views.FnTravelEmployeeLine, name='FnTravelEmployeeLine'),
     path('UploadTransportRequestAttachment/<str:pk>', views.UploadTransportRequestAttachment, name='UploadTransportRequestAttachment'),
     path('DeleteTransportRequestAttachment<str:pk>', views.DeleteTransportRequestAttachment, name='DeleteTransportRequestAttachment'),
-
+    path('FnSubmitTravelRequest/<str:pk>', views.FnSubmitTravelRequest, name='FnSubmitTravelRequest'),
+    
     # Accidents
     path('Accidents', views.Accidents.as_view(), name='Accidents'),
     path('AccidentDetails/<str:pk>', views.AccidentDetails.as_view(), name='AccidentDetails'),

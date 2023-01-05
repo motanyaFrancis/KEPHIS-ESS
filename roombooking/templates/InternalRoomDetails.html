@@ -663,9 +663,10 @@
                             <div class="col-md-6">
                                 <label class="form-label">Type of room</label>
                                 <select class="form-select" name="typeofRoom" id="typeofRoom">
-                                    <option class="after" value="0" disabled>--Select--</option>
-                                    <option value="1">Test 1</option>
-                                    <option value="2">Test 2</option>
+                                    <option class="after" value="" disabled>--Select--</option>
+                                    {% for data in room_type %}
+                                    <option value="{{ data.ServiceRequired }}">Test 1</option>
+                                    {% endfor %}
                                     
                                 </select>
                             </div>
