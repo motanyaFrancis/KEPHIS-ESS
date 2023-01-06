@@ -29,7 +29,7 @@
                 <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
                     <button class="btn btn-successs p-3 d-flex align-items-center" data-bs-toggle="modal"
                             data-bs-target="#staticBackdrop" type="button"> <i class="las la-plus text-white"
-                           style="font-size:15px;"></i> Add Lines
+                           style="font-size:15px;"></i> Add Defect
                     </button>
                     {% if res.Status == "Open" %}
                     {% elif res.Status == "Released" %}
@@ -195,18 +195,18 @@
         <div class="row mt-4">
             <div class="col-md-12">
                 <div class="card" id="d-card">
-                    <h4 class="mt-2 mx-2 text-dark">Service Request Lines</h4>
+                    <h4 class="mt-2 mx-2 text-dark">Vehicle Defects</h4>
                     <div class="card-body">
                         <table id="example"
                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
                                style="width:100%">
                             <thead>
                                 <tr id="tops">
-                                    <th>Line No</th>
+                                    <th>No</th>
                                     <th id="long">Defect Type</th>
                                     <th>Severity</th>
-                                    <th>Recommemded Action</th>
-                                    <th>Service Due Km</th>
+                                    <th>Repair</th>
+                                    <th>Comments</th>
                                     {% if res.Status == "Open" %}
                                     <th>Action</th>
                                     {% endif %}

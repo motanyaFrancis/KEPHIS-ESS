@@ -124,15 +124,17 @@
                     </div>
                 </div>
             </div>
-           
-
         </div>
         <div class="row">
             <div class="col-md-12">
                 <form class="row g-3">
                     <div class="col-md-4">
-                        <label class="form-label">Vehicle Number</label>
+                        <label class="form-label">Vehicle</label>
                         <input type="text" class="form-control" placeholder="{{res.Asset}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Vehicle registration No.</label>
+                        <input type="text" class="form-control" placeholder="{{res.VehicleRegistrationNo}}" readonly>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Document Date</label>
@@ -144,24 +146,12 @@
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Drivers Name</label>
+                        <input type="text" class="form-control" placeholder="{{res.DriverName}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Driver Code</label>
                         <input type="text" class="form-control" placeholder="{{res.Driver}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Status</label>
-                        <input type="text" class="form-control" placeholder="{{res.Status}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Distance Gone</label>
-                        <input type="text" class="form-control" placeholder="{{res.Travel_Type}}" readonly>
-                    </div>
-
-                  
-                    <div class="col-md-4">
-                        <label class="form-label">Vehicle registration No.</label>
-                        <input type="text" class="form-control" placeholder="{{res.VehicleRegistrationNo}}" readonly>
-                    </div>
-                   
-
+                    </div>       
                     
                 </form>
             </div>
@@ -170,7 +160,7 @@
         <div class="row mt-4">
             <div class="col-md-12">
                 <div class="card" id="d-card">
-                    <h4 class="mt-2 mx-2 text-dark">Service Request Lines</h4>
+                    <h4 class="mt-2 mx-2 text-dark">Repair Request Lines</h4>
                     <div class="card-body">
                         <table id="example"
                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
@@ -285,7 +275,6 @@
                                 </ul>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -298,9 +287,9 @@
                     <form action="{% url 'FnRaiseRepairRequest' res.No %}" method="POST" style="display: inline-block;">
                         {% csrf_token %}
                         <div class="mb-3">
-                            <input type="hidden" hidden name="insNo" value="{{res.No}}">
+                            <input type="hidden" hidden name="insNo" value="{{ res.No }}">
                         </div>
-                        <button class="btn btn-info" type="submit">Request For Approval</button>
+                        <button class="btn btn-info" type="submit"> Request For Approval </button>
                     </form>
                 </div>
                 {% elif res.Status == "Pending Approval" %}
@@ -365,9 +354,6 @@
                     <form class="myForm needs-validation" id="frm_" action="{% url 'FnRepairRequestLine' res.No %}"
                           method="post" novalidate>
                         {% csrf_token %}
-
-
-                        
                         <div class="row">
                             <div class="col-md-12">
                                 <label class="form-label">Defect Type <span class="text-danger">*</span></label>

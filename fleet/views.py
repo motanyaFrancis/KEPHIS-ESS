@@ -256,6 +256,7 @@ def FnSubmitWorkTicket(request, pk):
     return redirect('WorkTicketDetails', pk=pk)
 
 
+# vehicle repair
 class VehicleRepairRequest(UserObjectMixin, View):
 
     def get(self, request):

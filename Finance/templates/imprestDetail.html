@@ -461,7 +461,7 @@
                                         onchange="getRep()" disabled>
                                     <option value='' selected='selected'>Select</option>
                                     {% for res in type %}
-                                    {% if res.DSA == False %}
+                                    {% if res.Type == 'Imprest' %}
                                     <option value='{{res.Code}}' ren='{{res.Based_On_a_Table}}'>
                                         {{res.Description}}
                                     </option>

@@ -399,7 +399,7 @@
                                 <select class="form-select" name="employeeNo" required>
                                     <option selected disabled value="">Select Option</option>
                                     {% for Employee in Employees %}
-                                    <option value="{{Employees.No_}}">
+                                    <option value="{{ Employees.No_ }}">
                                         {{Employee.First_Name}} {{Employee.Middle_Name}} {{Employee.Last_Name}}
                                     </option>
                                     {% endfor %}                                                
