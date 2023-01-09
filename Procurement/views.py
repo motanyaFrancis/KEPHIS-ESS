@@ -107,6 +107,7 @@ class PurchaseRequestDetails(UserObjectMixin, View):
         try:
             Dpt = request.session['Department']
             empNo = request.session['Employee_No_']
+            print(Dpt, empNo)
 
             Access_Point = config.O_DATA.format(
                 f"/QyPurchaseRequisitionHeaders?$filter=No_%20eq%20%27{pk}%27%20and%20Employee_No_%20eq%20%27{empNo}%27")
@@ -120,7 +121,7 @@ class PurchaseRequestDetails(UserObjectMixin, View):
             Approvers = [x for x in res_approver['value']]
 
             ProcPlan = config.O_DATA.format(
-                f"/QyProcurementPlans?$filter=Shortcut_Dimension_2_Code%20eq%20%27{Dpt}%27")
+                f"/QyProcurementPlans?$filter=Shortcut_Dimension_1_Code%20eq%20%27{Dpt}%27")
             Res_Proc = self.get_object(ProcPlan)
             planitem = [x for x in Res_Proc['value']]
 

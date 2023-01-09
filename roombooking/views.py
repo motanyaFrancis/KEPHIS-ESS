@@ -129,7 +129,7 @@ class InternalRoomBookingDetails(UserObjectMixin, View):
             for booking in response['value']:
                 res = booking
                 # print(res)
-            
+
 
             Accommodation = config.O_DATA.format(f"/QyAccommodationBookingLines?$filter=RoomNo%20eq%20%27{pk}%27")
             res_accommodation = self.get_object(Accommodation)
@@ -139,21 +139,21 @@ class InternalRoomBookingDetails(UserObjectMixin, View):
             Room = self.get_object(MeetingRoom)
             meeting_room = [x for x in Room['value']]
             # print(meeting_room)
-            
-            
+
+
             BookingItems = config.O_DATA.format(f"/QYRoomBookingItems?$filter=LineNo%20eq%20%27{pk}%27")
             room_item = self.get_object(BookingItems)
             room_items = [x for x in room_item['value']]
-            
+
             Service = config.O_DATA.format(f"/QYServicerequired")
             service_req = self.get_object(Service)
             all_services = [x for x in service_req['value']]
-            
-            # RoomType = config.O_DATA.formart(f'QYRooms')
-            # RoomType_req = self.get_object(RoomType)
-            # room_type = [x for x in RoomType_req['value']]
-            
-            # Employee_Access = config.O_DATA.FORMAT(f'/QYEmployees')
+
+            RoomType = config.O_DATA.format(f"/QYRooms")
+            RoomType_req = self.get_object(RoomType)
+            room_type = [x for x in RoomType_req['value']]
+
+            # Employee_Access = config.O_DATA.format(f'/QYEmployees')
             # EmployeeList = self.get_object(Employee_Access)
             # Employees = [x for x in EmployeeList['value']]
 
@@ -169,13 +169,13 @@ class InternalRoomBookingDetails(UserObjectMixin, View):
             Access_File = config.O_DATA.format(f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27")
             res_file = self.get_object(Access_File)
             allFiles = [x for x in res_file['value']]
-            
-            
+
+
         except Exception as e:
             print(e)
             messages.info(request, "Wrong UserID")
             return redirect('InternalRoomBooking')
-        
+
         ctx = {
             'res': res,
             'file': allFiles,
@@ -185,7 +185,7 @@ class InternalRoomBookingDetails(UserObjectMixin, View):
             'meeting_room': meeting_room,
             'room_items': room_items,
             'all_services': all_services,
-            # 'room_type': room_type
+            'room_type': room_type,
             # 'Employees': Employees,
             # 'BookingAttendees': BookingAttendees,
         }
@@ -224,7 +224,7 @@ def FnRoomBookingLine(request, pk):
     return redirect('InternalRoomDetails', pk=pk)
 
 
-def FnAccomodationBookingLine(request, pk):
+def FnAccommodationBookingLine(request, pk):
     if request.method == 'POST':
         try:
             bookingNo = request.POST.get('bookingNo')
@@ -235,7 +235,7 @@ def FnAccomodationBookingLine(request, pk):
             lineNo = request.POST.get('lineNo')
             startDate = request.POST.get('startDate')
             endDate = request.POST.get('endDate')
-            
+
         except ValueError:
             messages.error(request, "Missing Input")
             return redirect('InternalRoomDetails', pk=pk)
@@ -250,3 +250,60 @@ def FnAccomodationBookingLine(request, pk):
             return redirect('InternalRoomDetails', pk=pk)
     return redirect('InternalRoomDetails', pk=pk)
 
+
+def UploadRoomBookingAttachment(request, pk):
+
+    response = ''
+    if request.method == "POST":
+        try:
+            attach = request.FILES.getlist('attachment')
+            tableID = 52177430
+        except Exception as e:
+            return redirect('InternalRoomDetails', pk=pk)
+        for files in attach:
+            fileName = request.FILES['attachment'].name
+            attachment = base64.b64encode(files.read())
+            try:
+                response = config.CLIENT.service.FnUploadAttachedDocument(
+                    pk, fileName, attachment, tableID,
+                    request.session['User_ID'])
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+        if response == True:
+            messages.success(request, "File(s) Upload Successful")
+            return redirect('InternalRoomDetails', pk=pk)
+        else:
+            messages.error(request, "Failed, Try Again")
+            return redirect('InternalRoomDetails', pk=pk)
+    return redirect('InternalRoomDetails', pk=pk)
+
+
+def FnRequestInternalRequestApproval(request, pk):
+    Username = request.session['User_ID']
+    Password = request.session['password']
+    AUTHS = Session()
+    AUTHS.auth = HTTPBasicAuth(Username, Password)
+    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
+
+    tReqNo = ""
+
+    if request.method == 'POST':
+        try:
+            myUserId = request.session['User_ID']
+            requistionNo = request.POST.get('requistionNo')
+        except KeyError:
+            messages.info(request, "Session Expired. Please Login")
+            return redirect('auth')
+
+        try:
+            response = config.CLIENT.service.FnRequestInternalRequestApproval(
+                requistionNo, myUserId)
+            print(response)
+            messages.success(request, 'Request Submitted successfully')
+            return redirect('InternalRoomDetails', pk=pk)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+            return redirect('InternalRoomDetails', pk=pk)
+    return redirect('InternalRoomDetails', pk=pk)

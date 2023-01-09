@@ -206,7 +206,7 @@
                                     <th>No. of Rooms</th>
                                     <th>Room</th>
                                     <th>Amount</th>
-                                    {% if res.Status == "Open"%}
+                                    {% if res.Booking_Status == "Open"%}
                                     <th>Actions</th>
                                     {% endif %}
                                 </tr>
@@ -219,7 +219,7 @@
                                     <td>{{line.Quantity}}</td>
                                     <td>{{line.Direct_Unit_Cost}}</td>
                                     <td>{{line.Amount}}</td>
-                                    {% if res.Status == "Open"%}
+                                    {% if res.Booking_Status == "Open"%}
                                     <td>
                                         <form action="{% url 'FnDeleteGeneralRequisitionLine' line.AuxiliaryIndex1 %}"
                                             method="post" style="display: inline-block;">
@@ -270,7 +270,7 @@
                                     <th>Booking Date</th>
                                     <th>No. Days</th>
                                     <th>Amount</th>
-                                    {% if res.Status == "Open"%}
+                                    {% if res.Booking_Status == "Open"%}
                                     <th>Actions</th>
                                     {% endif %}
                                 </tr>
@@ -285,7 +285,7 @@
                                     <td>{{line.Booking_Date}}</td>
                                     <td>{{line.No_Of_Rooms}}</td>
                                     <td>{{line.Amount}}</td>
-                                    {% if res.Status == "Open"%}
+                                    {% if res.Booking_Status == "Open"%}
                                     <td>
                                         <form action="{% url 'FnDeleteGeneralRequisitionLine' line.AuxiliaryIndex1 %}"
                                             method="post" style="display: inline-block;">
@@ -336,7 +336,7 @@
                                     <th>Start Date</th>
                                     <th>End Date</th>
                                     <th>Amount</th>
-                                    {% if res.Status == "Open"%}
+                                    {% if res.Booking_Status == "Open"%}
                                     <th>Actions</th>
                                     {% endif %}
                                 </tr>
@@ -351,9 +351,9 @@
                                     <td>{{line.Start_Date}}</td>
                                     <td>{{line.End_Date}}</td>
                                     <td>{{line.Amount}}</td>
-                                    {% if res.Status == "Open"%}
+                                    {% if res.Booking_Status == "Open"%}
                                     <td>
-                                        <form action="{% url 'FnDeleteGeneralRequisitionLine' line.AuxiliaryIndex1 %}"
+                                        <form action=""
                                             method="post" style="display: inline-block;">
                                             {% csrf_token %}
                                             <input type="hidden" name="lineNo" value="{{line.No_}}">
@@ -400,7 +400,7 @@
                                     <th>Booking Date</th>
                                     <th>No. Days</th>
                                     <th>Amount</th>
-                                    {% if res.Status == "Open"%}
+                                    {% if res.Booking_Status == "Open"%}
                                     <th>Actions</th>
                                     {% endif %}
                                 </tr>
@@ -415,9 +415,9 @@
                                     <td>{{line.Booking_Date}}</td>
                                     <td>{{line.No_Of_Rooms}}</td>
                                     <td>{{line.Amount}}</td>
-                                    {% if res.Status == "Open"%}
+                                    {% if res.Booking_Status == "Open"%}
                                     <td>
-                                        <form action="{% url 'FnDeleteGeneralRequisitionLine' line.AuxiliaryIndex1 %}"
+                                        <form action=""
                                             method="post" style="display: inline-block;">
                                             {% csrf_token %}
                                             <input type="hidden" name="lineNo" value="{{line.No_}}">
@@ -482,7 +482,7 @@
                 </div>
             </div>
         </div>
-        {% if res.Rejected_By_Approver == True and res.Status == 'Open' %}
+        {% if res.Rejected_By_Approver == True and res.Booking_Status == 'Open' %}
         <div class="row my-2 py-3">
             <div class="col-md-12">
                 <div class="card">
@@ -512,9 +512,9 @@
         {% endif %}
         <div class="row">
             <div class="col-md-12">
-                {% if res.Status == "Open" %}
+                {% if res.Booking_Status == "Open" %}
                 <div class="myForm my-3">
-                    <form action="{% url 'GeneralApproval' res.No_ %}" method="POST" style="display: inline-block;">
+                    <form action="{% url 'FnRequestInternalRequestApproval' res.No_ %}" method="POST" style="display: inline-block;">
                         {% csrf_token %}
                         <div class="mb-3">
                             <input type="hidden" name="requistionNo" value="{{res.No_}}">
@@ -522,9 +522,9 @@
                         <button class="btn btn-info" type="submit">Request For Approval</button>
                     </form>
                 </div>
-                {% elif res.Status == "Pending Approval" %}
+                {% elif res.Booking_Status == "Pending Approval" %}
                 <div class="d-grid gap-2 my-3">
-                    <form action="{% url 'FnCancelGeneralApproval' res.No_ %}" method="POST" class="myForm"
+                    <form action="" method="POST" class="myForm"
                         id="approvalForm">
                         {% csrf_token %}
                         <div class="mb-3">
@@ -583,7 +583,7 @@
                         aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="myForm" id="PurchaseForm" action="{% url 'FnAccomodationBookingLine' res.No_ %}"
+                    <form class="myForm" id="PurchaseForm" action="{% url 'FnAccommodationBookingLine' res.No_ %}"
                         method="post" novalidate>
                         {% csrf_token %}
                         <div class="row">
@@ -640,14 +640,14 @@
                         aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="myForm" id="PurchaseForm" action=""
+                    <form class="myForm" id="PurchaseForm" action="{% url 'FnRoomBookingLine' res.No_ %}"
                         method="post" novalidate>
                         {% csrf_token %}
                         <div class="row">
                             <div class="col-md-12">
                                 <input type="hidden" name="lineNo" value="">
                                 <input type="hidden" name="myAction" value="insert">
-                                <input type="hidden" name="bookingNo" value="{{res.No_}}">
+                                <input type="hidden" name="bookingNo" value="{{ res.No_ }}">
                             </div>
                         </div>
                         <div class="row">
@@ -665,7 +665,7 @@
                                 <select class="form-select" name="typeofRoom" id="typeofRoom">
                                     <option class="after" value="" disabled>--Select--</option>
                                     {% for data in room_type %}
-                                    <option value="{{ data.ServiceRequired }}">Test 1</option>
+                                    <option value="{{ data.Unit }}">{{ data.Unit}}</option>
                                     {% endfor %}
                                     
                                 </select>
@@ -714,7 +714,7 @@
                     aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="" method="post" class="myForm"
+                <form action="{% url 'UploadRoomBookingAttachment' res.No_ %}" method="post" class="myForm"
                     enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class=" mb-3">
