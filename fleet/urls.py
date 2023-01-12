@@ -49,5 +49,6 @@ urlpatterns = [
     path('DeleteServiceRequestAttachment/<str:pk>', views.DeleteServiceRequestAttachment, name='DeleteServiceRequestAttachment'),
     path('FnSubmitServiceRequest/<str:pk>', views.FnSubmitServiceRequest, name='FnSubmitServiceRequest'),
     path('FnServiceRequestLine/<str:pk>', views.FnServiceRequestLine, name='FnServiceRequestLine'),
+    path('FnCancelServiceRequest/<str:pk>', views.FnCancelServiceRequest, name='FnCancelServiceRequest')
 
 ]

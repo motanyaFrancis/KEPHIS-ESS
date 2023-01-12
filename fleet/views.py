@@ -442,11 +442,14 @@ def DeleteRepairAttachment(request, pk):
 
 def FnRepairRequestLines(request, pk):
     if request.method == 'POST':
+        LineNo = int
         try:
-            myUserId = request.session['User_ID']
+            requisitionNo = request.POST.get('requisitionNo')
             defectsType = request.POST.get('defectsType')
             severity = request.POST.get('severity')
-            action = request.POST.get('action')
+            specification = request.POST.get('specification')
+            lineNo = request.POST.get('lineNo')
+            myUserId = request.session['User_ID']
             myAction = request.POST.get('myAction')
 
         except ValueError:
@@ -454,11 +457,18 @@ def FnRepairRequestLines(request, pk):
             return redirect('vehicleRepairDetails', pk=pk)
         try:
             response = config.CLIENT.service.FnRepairRequestLine(
-                myUserId, defectsType, severity, action, myAction)
+                requisitionNo,
+                defectsType,
+                severity,
+                specification,
+                lineNo,
+                myUserId,
+                myAction,
+                )
             messages.success(request, "Request Successful")
             return redirect('vehicleRepairDetails', pk=pk)
         except Exception as e:
-            messages.error(request, "OOps!! Something went wrong")
+            messages.error(request, e)
             return redirect('vehicleRepairDetails', pk=pk)
     return redirect('vehicleRepairDetails', pk=pk)
 
@@ -989,7 +999,7 @@ class TransportRequest(UserObjectMixin, View):
                 x for x in res_dest['value']
                 if x['Destination_Type'] == 'Local'
             ]
-            
+
 
         except requests.exceptions.RequestException as e:
             print(e)
@@ -1329,10 +1339,11 @@ class ServiceRequestDetails(UserObjectMixin, View):
             for service_req in response['value']:
                 res = service_req
 
-            Access = config.O_DATA.format(f"/QyServiceRequestLine?$filter=AuxiliaryIndex1%20eq%20%27{pk}%27")
+            Access = config.O_DATA.format(f"/QyServiceRequestLine")
             LinesRes = self.get_object(Access)
-            openLines = [x for x in LinesRes['value']
-                         if x['AuxiliaryIndex1'] == pk]
+            for line in LinesRes['value']:
+                if line['AuxiliaryIndex1'] == 'FMGT00002':
+                    print(line)
 
             Approver = config.O_DATA.format(
                 f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
@@ -1353,7 +1364,7 @@ class ServiceRequestDetails(UserObjectMixin, View):
             "res": res,
             'Approvers': Approvers,
             'allFiles': allFiles,
-            "line": openLines,
+            # "line": openLines,
         }
         return render(request, 'ServiceRequestDetails.html', ctx)
 
@@ -1362,6 +1373,7 @@ def FnServiceRequestLine(request, pk):
     if request.method == 'POST':
         try:
             lineNo = request.POST.get('lineNo')
+            reqNo = request.POST.get('reqNo')
             myAction = request.POST.get('myAction')
             myUserId = request.session['User_ID']
             defectsType = request.POST.get('defectsType')
@@ -1374,6 +1386,7 @@ def FnServiceRequestLine(request, pk):
         try:
             response = config.CLIENT.service.FnServiceRequestLine(
                 lineNo,
+                reqNo,
                 myAction,
                 myUserId,
                 defectsType,
@@ -1461,4 +1474,24 @@ def FnSubmitServiceRequest(request, pk):
         except Exception as e:
             messages.error(request, e)
             return redirect('ServiceRequestDetails', pk=pk)
+    return redirect('ServiceRequestDetails', pk=pk)
+
+
+def FnCancelServiceRequest(request, pk):
+    if request.method == 'POST':
+        try:
+            insNo = request.POST.get('insNo')
+            myUserId = request.session['User_ID']
+        except ValueError as e:
+            return redirect('ServiceRequestDetails', pk=pk)
+        try:
+            response = config.CLIENT.service.FnCancelServiceRequest(
+                myUserId, insNo)
+            messages.success(request, "Cancel Approval Successful")
+            print(response)
+            return redirect('ServiceRequestDetails', pk=pk)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+            return redirect('auth')
     return redirect('ServiceRequestDetails', pk=pk)

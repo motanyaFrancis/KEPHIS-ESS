@@ -356,6 +356,12 @@
                         {% csrf_token %}
                         <div class="row">
                             <div class="col-md-12">
+                                <input type="number" name="lineNo" hidden>
+                                <input type="text" name="requisitionNo" value="{{res.No}}" hidden>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
                                 <label class="form-label">Defect Type <span class="text-danger">*</span></label>
                                 <input type="text" name="defectsType" class="form-control">
 
@@ -369,8 +375,8 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <label for="" class="form-label">Action <span class="text-danger">*</span></label>
-                                <input type="text" name="action" class="form-control">
+                                <label for="" class="form-label">Specification<span class="text-danger">*</span></label>
+                                <input type="text" name="specification" class="form-control">
                             </div>
                         </div>
                         <div class="row">

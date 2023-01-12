@@ -74,16 +74,17 @@ class ImprestRequisition(UserObjectMixin, View):
     def post(self, request):
         if request.method == 'POST':
             try:
+                imprestNo = request.POST.get('imprestNo')
                 accountNo = request.session['Customer_No_']
                 responsibilityCenter = request.session['User_Responsibility_Center']
-                usersId = request.session['User_ID']
-                personalNo = request.session['Employee_No_']
-                imprestNo = request.POST.get('imprestNo')
                 travelType = int(request.POST.get('travelType'))
                 purpose = request.POST.get('purpose')
-                isImprest = eval(request.POST.get('isImprest'))
+                usersId = request.session['User_ID']
+                personalNo = request.session['Employee_No_']
                 myAction = request.POST.get('myAction')
-                imprestNo = request.POST.get('imprestNo')
+                startDate  = request.POST.get('startDate')
+                completionDate = request.POST.get('completionDate')
+                isImprest = request.POST.get('isImprest')
             except ValueError:
                 messages.error(request, "Missing Input")
                 return redirect('imprestReq')
@@ -92,13 +93,13 @@ class ImprestRequisition(UserObjectMixin, View):
                 return redirect('auth')
             if not imprestNo:
                 imprestNo = ""
-            if isImprest == False:
-                messages.info(request, "Imprest cannot be empty.")
-                return redirect('imprestReq')
-            # print(travelType)
+            # if isImprest == False:
+            #     messages.info(request, "Imprest cannot be empty.")
+            #     return redirect('imprestReq')
+        
             try:
                 response = config.CLIENT.service.FnImprestHeader(
-                    imprestNo, accountNo, responsibilityCenter, travelType, purpose, usersId, personalNo, isImprest,  myAction)
+                    imprestNo, accountNo, responsibilityCenter, travelType, purpose, usersId, personalNo,  myAction, startDate, completionDate)
                 messages.success(request, "Request Successful")
                 # print(response)
             except Exception as e:

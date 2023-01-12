@@ -81,18 +81,16 @@
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title" id="staticBackdropLabel">
                                                                         <i class="las la-edit"></i> Edit Transport Request
-                                                                        <span class="editSpan">{{res.No}}</span>
+                                                                        <span class="editSpan">{{res.RequestNo}}</span>
                                                                     </h5>
-                                                                    <button type="button" class="btn-close btn-close-white"
-                                                                            data-bs-dismiss="modal"
-                                                                            aria-label="Close"></button>
+                                                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                                                                 </div>
                                                                 <div class="modal-body">
                                                                     <form class="myForm needs-validation" action="" method="post" novalidate>
                                                                         {% csrf_token %}
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <input type="hidden" name="requisitionNo" value="">
+                                                                                <input type="hidden" name="requisitionNo" value="{{res.RequestNo}}">
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
@@ -163,7 +161,7 @@
                                                                         {% csrf_token %}
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <input type="hidden" name="tReqNo" value="">
+                                                                                <input type="hidden" name="tReqNo" value="{{res.RequestNo}}">
                                                                             </div>
                                                                         </div>
                                                                         

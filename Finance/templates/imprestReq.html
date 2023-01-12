@@ -95,66 +95,47 @@
                                                                                         <option selected value="True">Yes</option>
                                                                                     </select>
                                                                                     <div class="invalid-feedback">
-                                                                                        Please select a valid
-                                                                                        option.
+                                                                                        Please select a valid option.
                                                                                     </div>
                                                                                 </div>
-                                                                                <!-- <div class="col-md-6">
-                                                                                    <label
-                                                                                        class="form-label">DSA</label>
-                                                                                    <select class="form-select"
-                                                                                        name="isDsa" required>
-                                                                                        <option selected disabled
-                                                                                            value="">Select Option
-                                                                                        </option>
-                                                                                        <option value="True">Yes
-                                                                                        </option>
-                                                                                        <option value="False">No
-                                                                                        </option>
-                                                                                    </select>
-
-                                                                                </div> -->
                                                                             </div>
                                                                             <div class="row">
                                                                                 <div class="col-md-12">
-                                                                                    <label class="form-label">Travel
-                                                                                        Type <span
-                                                                                              class="text-danger">*</span></label>
-                                                                                    <select class="form-select"
-                                                                                            name="travelType" required>
-                                                                                        <option selected disabled
-                                                                                                value="">Select Option
-                                                                                        </option>
+                                                                                    <label class="form-label">Travel Type <span class="text-danger">*</span></label>
+                                                                                    <select class="form-select" name="travelType" required>
+                                                                                        <option selected disabled value="">Select Option </option>
                                                                                         <option value="0">Local</option>
-                                                                                        <option value="1">Foreign
-                                                                                        </option>
+                                                                                        <option value="1">Foreign </option>
                                                                                     </select>
                                                                                 </div>
                                                                             </div>
                                                                             <div class="row">
                                                                                 <div class="col-md-12">
-                                                                                    <input type="hidden" name="myAction"
-                                                                                           value="modify">
+                                                                                    <input type="hidden" name="myAction" value="modify">
                                                                                 </div>
                                                                             </div>
                                                                             <div class="row">
                                                                                 <div class="col-md-12">
-                                                                                    <input type="hidden"
-                                                                                           name="imprestNo"
-                                                                                           value="{{res.No_}}">
+                                                                                    <input type="hidden" name="imprestNo" value="{{res.No_}}">
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-6">
+                                                                                    <label class="form-label">Start Date</label>
+                                                                                    <input class="form-control" type="date" name="startDate" >
+                                                                                </div>
+                                                                                <div class="col-md-6">
+                                                                                    <label class="form-label">Completion Date</label>
+                                                                                    <input class="form-control" type="date" name="completionDate">
                                                                                 </div>
                                                                             </div>
                                                                             <div class="row">
                                                                                 <div class="col-md-12">
-                                                                                    <label for="purpose"
-                                                                                           class="form-label">Purpose</label>
-                                                                                    <textarea class="form-control"
-                                                                                              name="purpose" rows="3"
-                                                                                              required></textarea>
+                                                                                    <label for="purpose" class="form-label">Purpose</label>
+                                                                                    <textarea class="form-control" name="purpose" rows="3" required></textarea>
                                                                                 </div>
                                                                             </div>
-                                                                            <button type="submit" id="sasa"
-                                                                                    class="btn btn-success my-3 w-100">Submit</button>
+                                                                            <button type="submit" id="sasa" class="btn btn-success my-3 w-100">Submit</button>
                                                                     </form>
                                                                 </div>
                                                             </div>
@@ -202,6 +183,7 @@
                                                                     <form class="myForm" action="{% url 'imprestReq' %}" method="post" novalidate>
                                                                         {% csrf_token %}
                                                                         <div class="mb-2 myForm">
+                                                                            
                                                                             <div class="row">
                                                                                 <div class="col-md-12">
                                                                                     <label class="form-label" hidden>Imprest</label>
@@ -211,6 +193,7 @@
 
                                                                                 </div>
                                                                             </div>
+
                                                                             <div class="row">
                                                                                 <div class="col-md-12">
                                                                                     <label class="form-label">Travel
@@ -223,16 +206,30 @@
                                                                                     </select>
                                                                                 </div>
                                                                             </div>
+
                                                                             <div class="row">
                                                                                 <div class="col-md-12">
                                                                                     <input type="hidden" name="myAction" value="modify">
                                                                                 </div>
                                                                             </div>
+
                                                                             <div class="row">
                                                                                 <div class="col-md-12">
                                                                                     <input type="hidden" name="imprestNo" value="{{res.No_}}">
                                                                                 </div>
                                                                             </div>
+
+                                                                            <div class="row">
+                                                                                <div class="col-md-6">
+                                                                                    <label for="startDate" class="form-label">Start Date</label>
+                                                                                    <input class="form-control" type="date" name="startDate" >
+                                                                                </div>
+                                                                                <div class="col-md-6">
+                                                                                    <label for="completionDate" class="form-label">Completion Date</label>
+                                                                                    <input class="form-control" type="date" name="completionDate">
+                                                                                </div>
+                                                                            </div>
+
                                                                             <div class="row">
                                                                                 <div class="col-md-12">
                                                                                     <label for="purpose" class="form-label">Purpose</label>
@@ -350,15 +347,7 @@
                                 <input type="hidden" name="imprestNo" value="">
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <label class="form-label" hidden>Imprest <span class="text-danger">*</span></label>
-                                <select class="form-select" name="isImprest" disabled required hidden>
-                                    <option selected value="True">Yes</option>
-                                </select>
-                            </div>
-
-                        </div>
+                        
                         <div class="row">
                             <div class="col-md-12">
                                 <label class="form-label">Travel Type <span class="text-danger">*</span></label>
@@ -370,12 +359,17 @@
                             </div>
                         </div>
 
-                        <div class="col-md-6" hidden>
-                            <label class="form-label">DSA <span class="text-danger">*</span></label>
-                            <select class="form-select" name="isImprest" required>
-                                <option value="True" selected>No</option>
-                            </select>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="form-label">Start Date</label>
+                                <input type="date" name="startDate" >
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Completion Date</label>
+                                <input type="date" name="completionDate">
+                            </div>
                         </div>
+
                         <div class="row">
                             <div class="col-md-12">
                                 <input type="hidden" name="myAction" value="insert">

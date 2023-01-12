@@ -143,12 +143,12 @@
                     <div class="card-statistic-3 p-4">
                         <div class="card-icon card-icon-large"><i class="fas fa-calendar"></i></div>
                         <div class="mb-4">
-                            <h5 class="card-title mb-0">Document Date</h5>
+                            <h5 class="card-title mb-0">Cost of Repair</h5>
                         </div>
                         <div class="row align-items-center mb-2 d-flex">
                             <div class="col-md-12">
                                 <h2 class="d-flex align-items-center mb-0">
-                                    {{res.DocumentDate}}
+                                    {{res.CostOfRepair}}
                                 </h2>
                             </div>
                         </div>
@@ -172,7 +172,7 @@
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Drivers Name</label>
-                        <input type="text" class="form-control" placeholder="{{res.DriverName}}" readonly>
+                        <input type="text" class="form-control" placeholder="{{res.EmployeeName}}" readonly>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Status</label>
@@ -333,7 +333,7 @@
                 </div>
                 {% elif res.Status == "Pending Approval" %}
                 <div class="d-grid gap-2 my-3">
-                    <form action="" method="POST" class="myForm" id="approvalForm">
+                    <form action="{% url 'FnCancelServiceRequest' res.No %}" method="POST" class="myForm" id="approvalForm">
                         {% csrf_token %}
                         <div class="mb-3">
                             <input type="hidden" hidden name="insNo" value="{{res.No}}">
@@ -398,6 +398,8 @@
                         {% csrf_token %}
                         <div class="row">
                             <input type="text" name="lineNo" id="" value="" hidden>
+                            <input type="text" name="reqNo" id="" value="{{res.No}}" hidden>
+
                         </div>
 
                         <div class="row">

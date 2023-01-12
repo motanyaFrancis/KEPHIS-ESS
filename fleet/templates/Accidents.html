@@ -77,6 +77,11 @@
                                                                     <form class="myForm needs-validation" action="" method="post" novalidate>
                                                                         {% csrf_token %}
                                                                         <div class="row">
+                                                                            <div class="col-md-12">
+                                                                                <input type="hidden" name="accidentNo" value="{{res.No}}">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
                                                                             <div class="col-md-4">
                                                                                 <label class="form-label">Vehicle <span class="text-danger">*</span></label>
                                                                                 <select class="form-select" name="vehicle" required>
