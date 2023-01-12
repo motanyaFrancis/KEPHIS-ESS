@@ -107,8 +107,8 @@ class WorkTicket(UserObjectMixin, View):
                 previoursWorkTicketNo = request.POST.get(
                     'previoursWorkTicketNo')
                 driver = request.POST.get('driver')
-                currentworkTicketNo = request.POST.get('currentworkTicketNo')
                 reasoForReplacement = request.POST.get('reasoForReplacement')
+                currentworkTicketNo = request.POST.get('currentworkTicketNo')
                 kmCovered = request.POST.get('kmCovered')
                 vehicle = request.POST.get('vehicle')
                 myAction = request.POST.get('myAction')
