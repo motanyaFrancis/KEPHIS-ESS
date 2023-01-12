@@ -665,7 +665,7 @@
                                 <select class="form-select" name="typeofRoom" id="typeofRoom">
                                     <option class="after" value="" disabled>--Select--</option>
                                     {% for data in room_type %}
-                                    <option value="{{ data.Unit }}">{{ data.Unit}}</option>
+                                    <option value="{{ data.Unit }}">{{data.Unit}} | Capacity ({{data.Capacity}})</option>
                                     {% endfor %}
                                     
                                 </select>

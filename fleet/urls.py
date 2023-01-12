@@ -8,6 +8,7 @@ urlpatterns = [
     path('UploadTicketAttachment/<str:pk>', views.UploadTicketAttachment, name='UploadTicketAttachment'),
     path('DeleteTicketAttachment/<str:pk>', views.DeleteTicketAttachment, name='DeleteTicketAttachment'),
     path('FnSubmitWorkTicket/<str:pk>', views.FnSubmitWorkTicket, name='FnSubmitWorkTicket'),
+    path('FnCancelWorkTicket/<str:pk>', views.FnCancelWorkTicket, name='FnCancelWorkTicket'),
     
     # VehicleInspection
     path('vehicleInspection', views.VehicleInspection.as_view(), name='vehicleInspection'),
@@ -25,6 +26,7 @@ urlpatterns = [
     path('DeleteRepairAttachment/<str:pk>', views.DeleteRepairAttachment, name='DeleteRepairAttachment'),
     path('FnRepairRequestLine/<str:pk>', views.FnRepairRequestLines, name='FnRepairRequestLine'),
     path('FnRaiseRepairRequest/<str:pk>', views.FnRaiseRepairRequest, name='FnRaiseRepairRequest'),
+    path('FnCancelRepairRequest/<str:pk>', views.FnCancelRepairRequest, name='FnCancelRepairRequest'),
 
     
     # Transport Request

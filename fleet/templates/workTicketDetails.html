@@ -246,7 +246,7 @@
                 </div>
                 {% elif res.Status == "Pending Approval" %}
                 <div class="d-grid gap-2 my-3">
-                    <form action="" method="POST" class="myForm" id="approvalForm">
+                    <form action="{% url 'FnCancelWorkTicket' res.No %}" method="POST" class="myForm" id="approvalForm">
                         {% csrf_token %}
                         <div class="mb-3">
                             <input type="hidden" hidden name="workTicketNo" value="{{res.No}}">

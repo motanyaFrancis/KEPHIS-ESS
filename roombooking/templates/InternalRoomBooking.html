@@ -65,14 +65,14 @@
                                             <tr>
                                                 <td>{{res.No_}}</td>
                                                 <td>{{res.Document_Date}}</td>
-                                                <td>{{res.Invoice}}</td>
+                                                <td>{{res.Invoiced}}</td>
                                                 <td>{{res.Service_Requred}}</td>
                                                 <td>
                                                     <button class="btn btn-primary" data-bs-toggle="modal"
-                                                            data-bs-target="#" data-toggle="tooltip" data-placement="top"
+                                                            data-bs-target="#room{{ res.No_ }}" data-toggle="tooltip" data-placement="top"
                                                             title="edit">Edit <i class="fas fa-edit"></i>
                                                     </button>
-                                                    <div class="modal fade" id=""
+                                                    <div class="modal fade" id="room{{ res.No_ }}"
                                                          data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
                                                          aria-labelledby="staticBackdropLabel" aria-hidden="true">
                                                         <div
@@ -92,7 +92,7 @@
                                                                         {% csrf_token %}
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <input type="hidden" name="bookingNo" value="">
+                                                                                <input type="hidden" name="bookingNo" value="{{res.No_}}">
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
@@ -131,14 +131,14 @@
                                             <tr>
                                                 <td>{{res.No_}}</td>
                                                 <td>{{res.Document_Date}}</td>
-                                                <td>{{res.Invoice}}</td>
+                                                <td>{{res.Invoiced}}</td>
                                                 <td>{{res.Service_Requred}}</td>
                                                 <td>
                                                     <button class="btn btn-primary" data-bs-toggle="modal"
-                                                            data-bs-target="#repair" data-toggle="tooltip" data-placement="top"
+                                                            data-bs-target="#room{{ res.No_ }}" data-toggle="tooltip" data-placement="top"
                                                             title="edit">Edit <i class="fas fa-edit"></i>
                                                     </button>
-                                                    <div class="modal fade" id="repair"
+                                                    <div class="modal fade" id="room{{ res.No_ }}"
                                                          data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
                                                          aria-labelledby="staticBackdropLabel" aria-hidden="true">
                                                         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -146,7 +146,7 @@
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title" id="staticBackdropLabel">
                                                                         <i class="las la-edit"></i> Edit Booking Request
-                                                                        <span class="editSpan">{{res.No_}}</span>
+                                                                        <span class="editSpan">{{ res.No_ }}</span>
                                                                     </h5>
                                                                     <button type="button" class="btn-close btn-close-white"
                                                                             data-bs-dismiss="modal"
@@ -157,7 +157,7 @@
                                                                         {% csrf_token %}
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <input type="hidden" name="bookingNo" value="">
+                                                                                <input type="hidden" name="bookingNo" value="{{ res.No_ }}">
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
@@ -222,7 +222,7 @@
                                             <tr>
                                                 td>{{res.No_}}</td>
                                                 <td>{{res.Document_Date}}</td>
-                                                <td>{{res.Invoice}}</td>
+                                                <td>{{res.Invoiced}}</td>
                                                 <td>{{res.Service_Requred}}</td>
                                                 <td>
                                                     
@@ -264,7 +264,7 @@
                                             <tr>
                                                 td>{{res.No_}}</td>
                                                 <td>{{res.Document_Date}}</td>
-                                                <td>{{res.Invoice}}</td>
+                                                <td>{{res.Invoiced}}</td>
                                                 <td>{{res.Service_Requred}}</td>
                                                 <td>
                                                     <a href="{% url 'InternalRoomDetails' res.No_ %}"

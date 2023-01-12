@@ -149,7 +149,7 @@ class InternalRoomBookingDetails(UserObjectMixin, View):
             service_req = self.get_object(Service)
             all_services = [x for x in service_req['value']]
 
-            RoomType = config.O_DATA.format(f"/QYRooms")
+            RoomType = config.O_DATA.format(f"/QYRooms?$filter=PurposeOfRoom%20eq%20%27Meeting%20Room%27")
             RoomType_req = self.get_object(RoomType)
             room_type = [x for x in RoomType_req['value']]
 
@@ -222,6 +222,8 @@ def FnRoomBookingLine(request, pk):
             messages.error(request, e)
             return redirect('InternalRoomDetails', pk=pk)
     return redirect('InternalRoomDetails', pk=pk)
+
+
 
 
 def FnAccommodationBookingLine(request, pk):

@@ -280,6 +280,8 @@
             </div>
         </div>
         {% endif %}
+
+
         <div class="row">
             <div class="col-md-12">
                 {% if res.Status == "Open" %}
@@ -294,10 +296,10 @@
                 </div>
                 {% elif res.Status == "Pending Approval" %}
                 <div class="d-grid gap-2 my-3">
-                    <form action="" method="POST" class="myForm" id="approvalForm">
+                    <form action="{% url 'FnCancelRepairRequest' res.No %}" method="POST" class="myForm" id="approvalForm">
                         {% csrf_token %}
                         <div class="mb-3">
-                            <input type="hidden" hidden name="insNo" value="{{res.No}}">
+                            <input type="hidden" hidden name="reqNo" value="{{res.No}}">
                         </div>
                         <button class="btn btn-info" type="submit">Cancel Request For Approval</button>
                     </form>

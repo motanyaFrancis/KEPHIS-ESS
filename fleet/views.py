@@ -256,6 +256,25 @@ def FnSubmitWorkTicket(request, pk):
     return redirect('WorkTicketDetails', pk=pk)
 
 
+def FnCancelWorkTicket(request, pk):
+    if request.method == 'POST':
+        try:
+            workTicketNo = request.POST.get('workTicketNo')
+            myUserId = request.session['User_ID']
+        except ValueError as e:
+            return redirect('WorkTicketDetails', pk=pk)
+        try:
+            response = config.CLIENT.service.FnCancelWorkTicket(
+                workTicketNo, myUserId)
+            messages.success(request, "Cancel Approval Successful")
+            print(response)
+            return redirect('WorkTicketDetails', pk=pk)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+            return redirect('auth')
+    return redirect('WorkTicketDetails', pk=pk)
+
 # vehicle repair
 class VehicleRepairRequest(UserObjectMixin, View):
 
@@ -337,10 +356,9 @@ class VehicleRepairRequest(UserObjectMixin, View):
                 response = config.CLIENT.service.FnRepairRequestHeader(
                     reqNo, myUserId, vehicle, odometerReading,
                     repairInstractionSheet, myAction)
-                if response == True:
-                    messages.success(request, "Request Successful")
-                    return redirect('vehicleRepairRequest')
-                # print(response)
+                print(response)
+                messages.success(request, "Request Successful")
+                return redirect('vehicleRepairRequest')
             except Exception as e:
                 messages.error(request, "OOps!! Something went wrong")
                 return redirect('vehicleRepairRequest')
@@ -472,6 +490,7 @@ def FnRepairRequestLines(request, pk):
             return redirect('vehicleRepairDetails', pk=pk)
     return redirect('vehicleRepairDetails', pk=pk)
 
+
 def FnRaiseRepairRequest(request, pk):
     Username = request.session['User_ID']
     Password = request.session['password']
@@ -497,6 +516,25 @@ def FnRaiseRepairRequest(request, pk):
             return redirect('auth')
     return redirect('vehicleRepairDetails', pk=pk)
 
+
+def FnCancelRepairRequest(request, pk):
+    if request.method == 'POST':
+        try:
+            reqNo = request.POST.get('reqNo')
+            myUserId = request.session['User_ID']
+        except ValueError as e:
+            return redirect('vehicleRepairDetails', pk=pk)
+        try:
+            response = config.CLIENT.service.FnCancelRepairRequest(
+               reqNo, myUserId)
+            messages.success(request, "Cancel Approval Successful")
+            print(response)
+            return redirect('vehicleRepairDetails', pk=pk)
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+            return redirect('auth')
+    return redirect('vehicleRepairDetails', pk=pk)
 
 
 class VehicleInspection(UserObjectMixin, View):
@@ -539,7 +577,6 @@ class VehicleInspection(UserObjectMixin, View):
             counter = len(ApprovedInspection)
             bookedCount = len(BookedInspection)
             inspectedCount = len(Inspected)
-
 
             vehicle = config.O_DATA.format("/QyFixedAssets")
             res_veh = self.get_object(vehicle)
@@ -1341,9 +1378,9 @@ class ServiceRequestDetails(UserObjectMixin, View):
 
             Access = config.O_DATA.format(f"/QyServiceRequestLine")
             LinesRes = self.get_object(Access)
-            for line in LinesRes['value']:
-                if line['AuxiliaryIndex1'] == 'FMGT00002':
-                    print(line)
+            line = [ x for x in LinesRes['value']
+                if x['AuxiliaryIndex1'] == {pk} ]
+            print(line)
 
             Approver = config.O_DATA.format(
                 f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
@@ -1364,7 +1401,7 @@ class ServiceRequestDetails(UserObjectMixin, View):
             "res": res,
             'Approvers': Approvers,
             'allFiles': allFiles,
-            # "line": openLines,
+            "line": line,
         }
         return render(request, 'ServiceRequestDetails.html', ctx)
 
