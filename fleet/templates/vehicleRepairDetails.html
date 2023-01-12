@@ -21,13 +21,6 @@
                     {% if res.Status == "Open" %}
                     {% elif res.Status == "Released" %}
                     
-                    <!-- link to be changed -->
-                    <form action="{% url 'FnGenerateImprestReport' res.No_%}" method="post"
-                          style="display:inline-block">
-                        {% csrf_token %}
-                        <button class="btn btn-successs" type="submit"> Preview
-                            Report</button>
-                    </form>
                     {% endif %}
                 </div>
             </div>
