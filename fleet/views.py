@@ -55,10 +55,15 @@ class WorkTicket(UserObjectMixin, View):
                 x for x in response['value'] if x['Status'] == 'Approved'
             ]
 
+            IssuedTicket = [
+                x for x in response['value'] if x['Status'] == 'Approved' and x['TicketIssued'] == True
+            ]
+
             counts = len(openTicket)
             pend = len(PendingTicket)
-
             counter = len(ApprovedTicket)
+            issued = len(IssuedTicket)
+
 
             vehicle = config.O_DATA.format("/QyFixedAssets")
             res_veh = self.get_object(vehicle)
@@ -86,6 +91,7 @@ class WorkTicket(UserObjectMixin, View):
             "today": self.todays_date,
             "open": openTicket,
             "count": counts,
+            'issued': issued,
             "approved": ApprovedTicket,
             "counter": counter,
             "pend": pend,
@@ -292,6 +298,11 @@ class VehicleRepairRequest(UserObjectMixin, View):
             res_veh = self.get_object(vehicle)
             Vehicle_No = [x for x in res_veh['value']]
 
+            driver = config.O_DATA.format(f"/QyDrivers")
+            req_driver = self.get_object(driver)
+            drivers = [x for x in req_driver['value']]
+
+
             openRepairReq = [
                 x for x in response['value'] if x['Status'] == 'Open'
             ]
@@ -301,6 +312,10 @@ class VehicleRepairRequest(UserObjectMixin, View):
             ]
             ApprovedRepair = [
                 x for x in response['value'] if x['Status'] == 'Released'
+            ]
+
+            Repaired = [
+                x for x in response['value'] if x['Status'] == 'Releases'
             ]
 
             counts = len(openRepairReq)
@@ -328,6 +343,7 @@ class VehicleRepairRequest(UserObjectMixin, View):
             "year": year,
             "full": userID,
             "Vehicle_No": Vehicle_No,
+            'drivers': drivers,
         }
         return render(request, 'vehicleRepairReq.html', ctx)
 
@@ -337,6 +353,7 @@ class VehicleRepairRequest(UserObjectMixin, View):
                 reqNo = request.POST.get('reqNo')
                 myUserId = request.session['User_ID']
                 vehicle = request.POST.get('vehicle')
+                driver = request.POST.get('driver')
                 odometerReading = request.POST.get('odometerReading')
                 repairInstractionSheet = request.POST.get(
                     'repairInstractionSheet')
@@ -354,7 +371,7 @@ class VehicleRepairRequest(UserObjectMixin, View):
 
             try:
                 response = config.CLIENT.service.FnRepairRequestHeader(
-                    reqNo, myUserId, vehicle, odometerReading,
+                    reqNo, myUserId, vehicle,  odometerReading, driver,
                     repairInstractionSheet, myAction)
                 print(response)
                 messages.success(request, "Request Successful")
@@ -382,11 +399,11 @@ class VehicleRepairRequestDetails(UserObjectMixin, View):
                 repair_response = repair_req
 
             Access = config.O_DATA.format(
-                 f"/QyRepairRequestLines?$filter=DocumentNo%20eq%20%27{pk}%27"
+                 f"/QyRepairRequestLines"
             )
             LinesRes = self.get_object(Access)
             openLines = [x for x in LinesRes['value']
-                         if x['DocumentNo'] == pk]
+                         if x['AuxiliaryIndex1'] == pk]
 
             Approver = config.O_DATA.format(
                 f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
@@ -399,15 +416,15 @@ class VehicleRepairRequestDetails(UserObjectMixin, View):
             allFiles = [x for x in res_file['value']]
 
         except Exception as e:
-            messages.info(request, 'Wrong UserID')
+            messages.info(request, e)
             return redirect('vehicleRepairRequest')
 
         context = {
             "today": self.todays_date,
             "res": repair_response,
+            "line": openLines,
             'allFiles': allFiles,
             "Approvers": Approvers,
-            "line": openLines,
         }
 
         return render(request, 'vehicleRepairDetails.html', context)
@@ -541,6 +558,7 @@ class VehicleInspection(UserObjectMixin, View):
 
     def get(self, request):
         try:
+            EmployeeNo = request.session['Employee_No_']
             userID = request.session['User_ID']
             year = request.session['years']
 
@@ -582,6 +600,18 @@ class VehicleInspection(UserObjectMixin, View):
             res_veh = self.get_object(vehicle)
             Vehicle_No = [x for x in res_veh['value']]
 
+            driver = config.O_DATA.format(f"/QyDrivers")
+            req_driver = self.get_object(driver)
+            drivers = [x for x in req_driver['value']]
+            
+            Inspector = config.O_DATA.format(f'/QyMechanicalInspectors')
+            inspector_data = self.get_object(Inspector)
+            Inspectors = [x for x in inspector_data['value']]
+
+            TransportOfficer = config.O_DATA.format(f'/QyTransportOfficers')
+            tOfficer_data = self.get_object(TransportOfficer)
+            TransportOfficers = [x for x in tOfficer_data['value']]
+
         except requests.exceptions.RequestException as e:
             print(e)
             messages.info(
@@ -607,6 +637,9 @@ class VehicleInspection(UserObjectMixin, View):
             "year": year,
             "full": userID,
             "Vehicle_No": Vehicle_No,
+            'drivers': drivers,
+            'Inspectors': Inspectors,
+            'TransportOfficers': TransportOfficers
         }
         return render(request, 'vehicleInspection.html', ctx)
 
@@ -614,11 +647,16 @@ class VehicleInspection(UserObjectMixin, View):
         if request.method == 'POST':
             try:
                 insNo = request.POST.get('insNo')
+                myAction = request.POST.get('myAction')
+                employeeNo = request.session['Employee_No_']
                 myUserId = request.session['User_ID']
                 vehicle = request.POST.get('vehicle')
+                driver = request.POST.get('driver')
+                mechanicalInspector = request.POST.get('mechanicalInspector')
                 mechanicalInspectionRecommedation = request.POST.get(
                     'mechanicalInspectionRecommedation')
-                myAction = request.POST.get('myAction')
+                transportOfficer = request.POST.get('transportOfficer')
+            
             except ValueError:
                 messages.error(request, "Missing Input")
                 return redirect('vehicleInspection')
@@ -631,8 +669,16 @@ class VehicleInspection(UserObjectMixin, View):
 
             try:
                 response = config.CLIENT.service.FnVehicleInspection(
-                    insNo, myUserId, vehicle,
-                    mechanicalInspectionRecommedation, myAction)
+                    insNo, 
+                    myAction,
+                    employeeNo,
+                    myUserId, 
+                    vehicle, 
+                    driver, 
+                    mechanicalInspector, 
+                    mechanicalInspectionRecommedation, 
+                    transportOfficer,
+                    )
                 messages.success(request, 'Request successful')
             except Exception as e:
                 messages.error(request, e)

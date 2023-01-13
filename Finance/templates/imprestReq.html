@@ -222,7 +222,7 @@
                                                                             <div class="row">
                                                                                 <div class="col-md-6">
                                                                                     <label for="startDate" class="form-label">Start Date</label>
-                                                                                    <input class="form-control" type="date" name="startDate" >
+                                                                                    <input class="form-control" type="date" name="startDate" required >
                                                                                 </div>
                                                                                 <div class="col-md-6">
                                                                                     <label for="completionDate" class="form-label">Completion Date</label>
@@ -361,12 +361,14 @@
 
                         <div class="row">
                             <div class="col-md-6">
-                                <label class="form-label">Start Date</label>
-                                <input type="date" name="startDate" >
+                                <label class="form-label">Start Date<span
+                                    class="text-danger">*</span></label>
+                                <input class="form-control"  type="date" name="startDate" required >
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Completion Date</label>
-                                <input type="date" name="completionDate">
+                                <label class="form-label">Completion Date<span
+                                    class="text-danger">*</span></label>
+                                <input class="form-control" type="date" name="completionDate" required>
                             </div>
                         </div>
 

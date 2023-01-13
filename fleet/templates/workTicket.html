@@ -41,6 +41,10 @@
                                 <a href="#approved" class="nav-link" data-bs-toggle="tab">Approved
                                     ({{counter}})</a>
                             </li>
+                            <li class="nav-item flex-fill">
+                                <a href="#issued" class="nav-link" data-bs-toggle="tab">Issued Tickets
+                                    ({{issued}})</a>
+                            </li>
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane fade show active" id="open">
@@ -300,7 +304,6 @@
                                                 </td>
                                             </tr>
                                             {% endif %}
-
                                             {% endfor %}
                                         </tbody>
                                     </table>
@@ -370,7 +373,51 @@
                                         </thead>
                                         <tbody>
                                             {% for res in approved %}
-                                            {% if res.Status == 'Approved' %}
+                                            {% if res.Status == 'Approved' and res.TicketIssued == False %}
+                                            <tr>
+                                                <td>{{res.No}}</td>
+                                                <td>{{res.Date}}</td>
+                                                <td>{{res.KmGone}}</td>
+                                                <td>{{res.CreatedBy}}</td>
+                                                <td>
+
+                                                    <a href="{% url 'WorkTicketDetails' res.No %}"
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top"
+                                                        title="Click to View">
+                                                        View
+                                                        <i class="far fa-eye"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+
+                                </div>
+
+                            </div>
+
+                            <div class="tab-pane fade" id="issued">
+                                <h4 class="mt-2 text-dark">Issued Work Tickets</h4>
+                                <div class="card-body">
+                                    <table id="example"
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
+
+                                        <thead>
+                                            <tr id="tops">
+                                                <th id="long">Ticket No.</th>
+                                                <th>Date Requested</th>
+                                                <th>Distance Covered</th>
+                                                <th>Requested By</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for res in approved %}
+                                            {% if res.Status == 'Approved' and res.TicketIssued == True %}
                                             <tr>
                                                 <td>{{res.No}}</td>
                                                 <td>{{res.Date}}</td>

@@ -51,6 +51,21 @@ class Appraisals(UserObjectMixin, View):
                 x for x in response['value'] if x['Status'] == 'Approved'
             ]
 
+            Appraisal = [
+                x for x in response['value'] 
+                if x['Status'] == 'Approved' and x['DocumentStage'] == 'Appraisal'
+            ]
+
+            Supervisor = [
+                x for x in response['value'] 
+                if x['Status'] == 'Approved' and x['DocumentStage'] == 'Supervisor'
+            ]
+            
+            Completed = [
+                x for x in response['value'] 
+                if x['Status'] == 'Approved' and x['DocumentStage'] == 'Completed'
+            ]
+
             counts = len(open)
 
             pend = len(Pending)

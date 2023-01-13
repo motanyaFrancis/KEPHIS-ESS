@@ -9,7 +9,7 @@
             <h2 class="text-dark font-weight-bold mb-2"> Room Booking
                 {% if res.Booking_Status == "Open" %}
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Attachment"> <i
-                        class="las la-plus"></i> Upload Attachment</button>
+                        class="las la-plus"></i> Attach MEMO</button>
                 {% endif %}
             </h2>
 
@@ -598,7 +598,7 @@
                                 <label class="form-label">Service Required <span class="text-danger">*</span></label>
                                 <select class="form-select" id="itemType" name="serviceRequired" required>
                                     <option selected disabled value="">--Select--</option>
-                                    {% for list in all_services %}
+                                    {% for list in AccommodationService %}
                                     <option value="{{list.No}}">{{list.ServiceDescription}}</option>
                                     {% endfor %}
                                 </select>
@@ -655,7 +655,7 @@
                                 <label class="form-label">Service Required <span class="text-danger">*</span></label>
                                 <select class="form-select" id="itemType" name="serviceRequired" required>
                                     <option selected disabled value="0">--Select--</option>
-                                    {% for list in all_services %}
+                                    {% for list in MeetingRoomService %}
                                     <option value="{{list.No}}">{{list.ServiceDescription}}</option>
                                     {% endfor %}
                                 </select>

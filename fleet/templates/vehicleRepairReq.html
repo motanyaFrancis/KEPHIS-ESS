@@ -41,6 +41,14 @@
                                 <a href="#approved" class="nav-link" data-bs-toggle="tab">Approved
                                     ({{counter}})</a>
                             </li>
+                            <li class="nav-item flex-fill">
+                                <a href="#repaired" class="nav-link" data-bs-toggle="tab">Repaired
+                                    (0)</a>
+                            </li>
+                            <li class="nav-item flex-fill">
+                                <a href="#crepaired" class="nav-link" data-bs-toggle="tab">Confirmed Repaired
+                                    (0)</a>
+                            </li>
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane fade show active" id="home">
@@ -105,6 +113,20 @@
                                                                                 </select>
                                                                             </div>
                                                                         </div>
+
+                                                                        <div class="row">
+                                                                            <div class="col-md-12">
+                                                                                <label for="" class="form-label">Driver</label>
+                                                                                <select class="form-select" name="driver" required>
+                                                                                    <option selected disabled value="">Select Option</option>
+                                                                                    {% for list in drivers %}
+                                                                                    <option value="{{list.No_}}">{{list.First_Name}} {{list.Middle_Name}}
+                                                                                        {{list.Last_Name}}</option>
+                                                                                    {% endfor %}
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+
                                                                         <div class="row">
                                                                             <div class="col-md-12">
                                                                                 <label for="" class="form-label">Odometer Reading<span class="text-danger">*</span></label>
@@ -173,6 +195,20 @@
                                                                                 </select>
                                                                             </div>
                                                                         </div>
+
+                                                                        <div class="row">
+                                                                            <div class="col-md-12">
+                                                                                <label for="" class="form-label">Driver</label>
+                                                                                <select class="form-select" name="driver" required>
+                                                                                    <option selected disabled value="">Select Option</option>
+                                                                                    {% for list in drivers %}
+                                                                                    <option value="{{list.No_}}">{{list.First_Name}} {{list.Middle_Name}}
+                                                                                        {{list.Last_Name}}</option>
+                                                                                    {% endfor %}
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+
                                                                         <div class="row">
                                                                             <div class="col-md-12">
                                                                                 <label for="" class="form-label">Odometer Reading<span class="text-danger">*</span></label>
@@ -321,6 +357,20 @@
                                     </select>
                                 </div>
                             </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label for="" class="form-label">Driver</label>
+                                    <select class="form-select" name="driver" required>
+                                        <option selected disabled value="">Select Option</option>
+                                        {% for list in drivers %}
+                                        <option value="{{list.No_}}">{{list.First_Name}} {{list.Middle_Name}}
+                                            {{list.Last_Name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
                             <div class="row">
                                 <div class="col-md-12">
                                     <label for="" class="form-label">Odometer Reading<span class="text-danger">*</span></label>

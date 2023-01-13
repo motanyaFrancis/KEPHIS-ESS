@@ -149,7 +149,17 @@ class InternalRoomBookingDetails(UserObjectMixin, View):
             service_req = self.get_object(Service)
             all_services = [x for x in service_req['value']]
 
-            RoomType = config.O_DATA.format(f"/QYRooms?$filter=PurposeOfRoom%20eq%20%27Meeting%20Room%27")
+            MeetingRoomService = [x for x in service_req['value']
+                if x['ServiceRequred'] == 'Meeting Room' or x['ServiceRequred'] == 'Meeting Room And Accommodation'
+            ]
+
+            
+
+            AccommodationService = [x for x in service_req['value']
+                if x['ServiceRequred'] == 'Accommodation' or x['ServiceRequred'] == 'Meeting Room And Accommodation'
+            ]
+
+            RoomType = config.O_DATA.format(f"/QYRooms?$filter=PurposeOfRoom%20eq%20%27Meeting%20Room%27%20and%20Booked%20eq%20false")
             RoomType_req = self.get_object(RoomType)
             room_type = [x for x in RoomType_req['value']]
 
@@ -185,6 +195,8 @@ class InternalRoomBookingDetails(UserObjectMixin, View):
             'meeting_room': meeting_room,
             'room_items': room_items,
             'all_services': all_services,
+            'MeetingRoomService': MeetingRoomService,
+            'AccommodationService': AccommodationService,
             'room_type': room_type,
             # 'Employees': Employees,
             # 'BookingAttendees': BookingAttendees,

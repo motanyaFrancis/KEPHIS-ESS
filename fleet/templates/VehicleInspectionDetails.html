@@ -32,7 +32,7 @@
         {% include 'alerts.html' %}
 
         <div class="row my-3">
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="card l-bg-blue-dark statCard h-100">
                     <div class="card-statistic-3 p-4">
                         <div class="card-icon card-icon-large"><i class="fas fa-file"></i></div>
@@ -114,7 +114,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="card l-bg-green-dark statCard h-100">
                     <div class="card-statistic-3 p-4">
                         <div class="card-icon card-icon-large"><i class="fas fa-search"></i></div>
@@ -131,7 +131,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="card l-bg-cherry statCard h-100">
                     <div class="card-statistic-3 p-4">
                         <div class="card-icon card-icon-large"><i class="fas fa-search"></i></div>
@@ -148,24 +148,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card l-bg-orange-dark statCard h-100">
-                    <div class="card-statistic-3 p-4">
-                        <div class="card-icon card-icon-large"><i class="fas fa-calendar-times"></i></div>
-                        <div class="mb-4">
-                            <h5 class="card-title mb-0">Due Date</h5>
-                        </div>
-                        <div class="row align-items-center mb-2 d-flex">
-                            <div class="col-md-12">
-                                <h2 class="d-flex align-items-center mb-0">
-                                    {{res.Due_Date}}
-                                </h2>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
+            
 
         </div>
         <div class="row">
@@ -195,19 +178,8 @@
                         <label class="form-label">Status</label>
                         <input type="text" class="form-control" placeholder="{{res.Status}}" readonly>
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Distance Gone</label>
-                        <input type="text" class="form-control" placeholder="{{res.KmGone}}" readonly>
-                    </div>
-
-                    <div class="col-md-4">
-                        <label class="form-label">Next Inspection Date</label>
-                        <input type="text" class="form-control" placeholder="{{res.NextInspectionDate}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Previous Inspection Date</label>
-                        <input type="text" class="form-control" placeholder="{{res.PreviousInspectionDate}}" readonly>
-                    </div>
+                    
+                    
 
                     <div class="col-12">
                         <label for="inputAddress" class="form-label">Service Instruction</label>

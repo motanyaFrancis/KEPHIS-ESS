@@ -172,14 +172,14 @@
                             <tbody>
                                 {% for line in line %}
                                 <tr>
-                                    <td>{{line.LineNo}}</td>
-                                    <td>{{line.DefectType}}</td>
+                                    <td>{{line.Line_No_}}</td>
+                                    <td>{{line.Defect_Type}}</td>
                                     <td>{{line.Severity}}</td>
                                     <td>{{line.Recommendations}}</td>
                                     {% if res.Status == "Open" %}
                                     <td>
 
-                                        <form action="{% url 'DeleteRepairAttachment' line.DocumentNo %}"
+                                        <form action="{% url 'DeleteRepairAttachment' line.AuxiliaryIndex1 %}"
                                               method="post" style="display: inline-block;">
                                             {% csrf_token %}
                                             <input type="hidden" name="lineNo" value="{{line.LineNo}}">
@@ -351,7 +351,7 @@
                         {% csrf_token %}
                         <div class="row">
                             <div class="col-md-12">
-                                <input type="number" name="lineNo" hidden>
+                                <input type="number" name="lineNo" value="1000" hidden>
                                 <input type="text" name="requisitionNo" value="{{res.No}}" hidden>
                             </div>
                         </div>
