@@ -291,7 +291,7 @@
                                     <td>{{line.Amount}}</td>
                                     {% if res.Booking_Status == "Open"%}
                                     <td>
-                                        <form action="{% url 'FnDeleteGeneralRequisitionLine' line.AuxiliaryIndex1 %}"
+                                        <form action=""
                                             method="post" style="display: inline-block;">
                                             {% csrf_token %}
                                             <input type="hidden" name="lineNo" value="{{line.No_}}">
