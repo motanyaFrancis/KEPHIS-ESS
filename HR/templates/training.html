@@ -118,19 +118,11 @@
                                                                         <div class="mb-2">
                                                                             <div class="row mt-3">
                                                                                 <div class="col-md-12">
-                                                                                    <label
-                                                                                        class="form-label">Adhoc</label>
-                                                                                    <select
-                                                                                        class="form-select EditAdhoc"
-                                                                                        name="isAdhoc" required>
-                                                                                        <option selected disabled
-                                                                                            value="">
-                                                                                            Select
-                                                                                        </option>
-                                                                                        <option value="True">Yes
-                                                                                        </option>
-                                                                                        <option value="False">No
-                                                                                        </option>
+                                                                                    <label class="form-label">Adhoc</label>
+                                                                                    <select class="form-select EditAdhoc" name="isAdhoc" required>
+                                                                                        <option selected disabled value=""> Select </option>
+                                                                                        <option value="True">Yes </option>
+                                                                                        <option value="False">No</option>
                                                                                     </select>
                                                                                     <div class="invalid-feedback">
                                                                                         Please select a valid option.
@@ -154,6 +146,19 @@
                                                                                             {{res.Description}}</option>
                                                                                         {% endfor %}
                                                                                     </select>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row mt-3">
+                                                                                <div class="col-md-12">
+                                                                                    <label for="sponsorType" class="form-label">Sponsor Type</label>
+                                                                                    <select class="form-select" id="sponsorType" name="sponsorType" required>
+                                                                                        <option selected disabled value="">--Select--</option>
+                                                                                        <option value="1">Self Sponsored</option>
+                                                                                        <option value="2">Organiation Sponsored</option>
+                                                                                    </select>
+                                                                                    <div class="invalid-feedback">
+                                                                                        Please select a valid option.
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
 
@@ -276,7 +281,19 @@
                                                                                     </select>
                                                                                 </div>
                                                                             </div>
-
+                                                                            <div class="row mt-3">
+                                                                                <div class="col-md-12">
+                                                                                    <label for="sponsorType" class="form-label">Sponsor Type</label>
+                                                                                    <select class="form-select" id="sponsorType" name="sponsorType" required>
+                                                                                        <option selected disabled value="">--Select--</option>
+                                                                                        <option value="1">Self Sponsored</option>
+                                                                                        <option value="2">Organiation Sponsored</option>
+                                                                                    </select>
+                                                                                    <div class="invalid-feedback">
+                                                                                        Please select a valid option.
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
                                                                             <div class="row">
                                                                                 <div class="col-md-12">
                                                                                     <input type="hidden" name="myAction"
@@ -441,6 +458,19 @@
                                         <option selected disabled value="0">--Select--</option>
                                         <option value="True">Yes</option>
                                         <option value="False">No</option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        Please select a valid option.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-12">
+                                    <label for="sponsorType" class="form-label">Sponsor Type</label>
+                                    <select class="form-select" id="sponsorType" name="sponsorType" required>
+                                        <option selected disabled value="">--Select--</option>
+                                        <option value="1">Self Sponsored</option>
+                                        <option value="2">Organiation Sponsored</option>
                                     </select>
                                     <div class="invalid-feedback">
                                         Please select a valid option.

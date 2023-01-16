@@ -6,28 +6,19 @@
     <div class="content-wrapper">
         <div class="d-xl-flex justify-content-between align-items-start">
             <h2 class="text-dark font-weight-bold mb-2"> Transport Request
+                {% if res.Status == "Open" %}
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Attachment"> <i
                        class="las la-plus"></i> Upload Attachment</button>
-                {% if res.Status == "Open" %}
                 {% endif %}
             </h2>
 
             <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
                 <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
+                    {% if res.Status == "Open" %}
                     <button class="btn btn-successs p-3 d-flex align-items-center" data-bs-toggle="modal"
                             data-bs-target="#staticBackdrop" type="button"> <i class="las la-plus text-white"
                            style="font-size:15px;"></i> Add Traveling Employee
-                    </button>
-                    {% if res.Status == "Open" %}
-                    {% elif res.Status == "Released" %}
-                    
-                    <!-- link to be changed -->
-                    <form action="{% url 'FnGenerateImprestReport' res.No_%}" method="post"
-                          style="display:inline-block">
-                        {% csrf_token %}
-                        <button class="btn btn-successs" type="submit"> Preview
-                            Report</button>
-                    </form>
+                    </button>                   
                     {% endif %}
                 </div>
             </div>
@@ -374,6 +365,9 @@
         {% endif %}
 
     </div>
+
+
+    <!-- Traveling Employees line Form -->
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
          aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -399,7 +393,7 @@
                                 <select class="form-select" name="employeeNo" required>
                                     <option selected disabled value="">Select Option</option>
                                     {% for Employee in Employees %}
-                                    <option value="{{ Employees.No_ }}">
+                                    <option value="{{ Employee.No_ }}">
                                         {{Employee.First_Name}} {{Employee.Middle_Name}} {{Employee.Last_Name}}
                                     </option>
                                     {% endfor %}                                                
@@ -423,7 +417,7 @@
     </div>
 </section>
 
-
+<!-- Attachment Modal Form -->
 <div class="modal fade" id="Attachment" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">

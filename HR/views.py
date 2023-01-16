@@ -381,6 +381,7 @@ class Training_Request(UserObjectMixin, View):
                 requestNo = request.POST.get('requestNo')
                 isAdhoc = eval(request.POST.get('isAdhoc'))
                 trainingNeed = request.POST.get('trainingNeed')
+                sponsorType = request.POST.get('sponsorType')
                 myAction = request.POST.get('myAction')
             except ValueError:
                 messages.error(request, "Not sent. Invalid Input, Try Again!!")
@@ -392,7 +393,7 @@ class Training_Request(UserObjectMixin, View):
                 trainingNeed = ''
             try:
                 response = config.CLIENT.service.FnTrainingRequest(
-                    requestNo, employeeNo, usersId, isAdhoc, trainingNeed, myAction)
+                    requestNo, employeeNo, usersId, isAdhoc, sponsorType , trainingNeed, myAction)
                 messages.success(request, "Successfully Added!!")
                 print(response)
             except Exception as e:
