@@ -187,6 +187,7 @@ class WorkTicketDetails(UserObjectMixin, View):
             'res': res,
             'file': allFiles,
             'Approvers': Approvers,
+            "full": userID,
         }
 
         return render(request, 'workTicketDetails.html', ctx)
@@ -849,7 +850,9 @@ class Accidents(UserObjectMixin, View):
                 f"/QyaccidentsMaintenance?$filter=CreatedBy%20eq%20%27{userID}%27"
             )
             response = self.get_object(Access_Point)
-            report = [x for x in response['value']]
+            report = [x for x in response['value'] if x['DocumentStage'] == 'Not-Submitted']
+
+            submitted = [x for x in response['value'] if x['DocumentStage'] == 'Submitted']
 
             vehicle = config.O_DATA.format(f"/QyFixedAssets")
             res_veh = self.get_object(vehicle)
@@ -860,6 +863,8 @@ class Accidents(UserObjectMixin, View):
             drivers = [x for x in req_driver['value']]
 
             count = len(report)
+
+            submit_count = len(submitted)
 
         except requests.exceptions.RequestException as e:
             print(e)
@@ -875,10 +880,12 @@ class Accidents(UserObjectMixin, View):
         ctx = {
             "today": self.todays_date,
             "count": count,
+            'submit_count': submit_count,
             "User_ID": userID,
             "Vehicle_No": Vehicle_No,
             'drivers': drivers,
             "report": report,
+            'submitted': submitted,
         }
 
         return render(request, 'Accidents.html', ctx)

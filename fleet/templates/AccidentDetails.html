@@ -6,23 +6,19 @@
     <div class="content-wrapper">
         <div class="d-xl-flex justify-content-between align-items-start">
             <h2 class="text-dark font-weight-bold mb-2"> Accident Report
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Attachment"> <i
-                       class="las la-plus"></i> Upload Attachment</button>
-
+                {% if res.DocumentStage == 'Not-Submitted' %}
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Attachment"> 
+                    <i class="las la-plus"></i> Upload Attachment
+                </button>
+                        
+                {% elif res.DocumentStage == 'Submitted' %}
+                
+                {% endif %}
             </h2>
 
             <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
                 <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
-                    {% if res.DocumentStage == 'Not-Submitted' %}
-                        
-                    {% elif res.DocumentStage == 'Submitted' %}
-                    <form action="" method="post"
-                          style="display:inline-block">
-                        {% csrf_token %}
-                        <button class="btn btn-successs" type="submit"> Preview
-                            Report</button>
-                    </form>
-                    {% endif %}
+                   
                 </div>
             </div>
         </div>
@@ -33,6 +29,24 @@
         <div class="row my-3">
             <div class="col-md-3">
                 <div class="card l-bg-blue-dark statCard h-100">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-car-crash"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Accident Number</h5>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{ res.No }}
+                                </h2>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card l-bg-green-dark statCard h-100">
                     <div class="card-statistic-3 p-4">
                         <div class="card-icon card-icon-large"><i class="fas fa-file"></i></div>
                         <div class="mb-4">
@@ -70,15 +84,48 @@
                     </div>
                 </div>
             </div>
+            <div class="col-md-3">
+                <div class="card l-bg-orange-dark statCard h-100">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-car"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Vehicle No</h5>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{res.RegistrationNo}}
+                                </h2>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card l-bg-cherry statCard h-100">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-wrench"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Vehicle Status</h5>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{ res.VehicleStatus }}
+                                </h2>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
 
         </div>
         <div class="row">
             <div class="col-md-12">
                 <form class="row g-3">
-                    <div class="col-md-4">
-                        <label class="form-label">Vehicle Number</label>
-                        <input type="text" class="form-control" placeholder="{{res.No_}}" readonly>
-                    </div>
+                    
                     <div class="col-md-4">
                         <label class="form-label">Drivers Number</label>
                         <input type="text" class="form-control" placeholder="{{res.DriverPNo}}" readonly>
@@ -103,10 +150,7 @@
                         <label class="form-label">OB Number</label>
                         <input type="text" class="form-control" placeholder="{{res.OBNo}}" readonly>
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Vehicle Status</label>
-                        <input type="text" class="form-control" placeholder="{{res.VehicleStatus}}" readonly>
-                    </div>
+                   
                     <div class="col-md-4">
                         <label class="form-label">Date of Accident</label>
                         <input type="text" class="form-control" placeholder="{{res.TimeOfAccident}}" readonly>

@@ -294,26 +294,26 @@ def UploadRoomBookingAttachment(request, pk):
     return redirect('InternalRoomDetails', pk=pk)
 
 
-def FnRequestInternalRequestApproval(request, pk):
+def FnSubmitInternalRoomBooking(request, pk):
     Username = request.session['User_ID']
     Password = request.session['password']
     AUTHS = Session()
     AUTHS.auth = HTTPBasicAuth(Username, Password)
     CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
 
-    tReqNo = ""
+    bookingNo = ""
 
     if request.method == 'POST':
         try:
             myUserId = request.session['User_ID']
-            requistionNo = request.POST.get('requistionNo')
+            bookingNo = request.POST.get('bookingNo')
         except KeyError:
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
 
         try:
-            response = config.CLIENT.service.FnRequestInternalRequestApproval(
-                requistionNo, myUserId)
+            response = config.CLIENT.service.FnSubmitInternalRoomBooking(
+                bookingNo, myUserId)
             print(response)
             messages.success(request, 'Request Submitted successfully')
             return redirect('InternalRoomDetails', pk=pk)

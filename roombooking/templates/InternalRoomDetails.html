@@ -166,14 +166,14 @@
                         <input type="text" class="form-control" placeholder="{{res.Explain_Disability}}" readonly>
                     </div>
                     
-                    <div class="col-md-6">
+                    <!-- <div class="col-md-6">
                         <label class="form-label">Room Booking Total Amount</label>
                         <input type="text" class="form-control" placeholder="KES {{res.Room_Booking_Total_Amount}}" style="font-weight: 800;" readonly>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Accommodation Total Amount</label>
                         <input type="text" class="form-control" placeholder="KES {{res.Accomodation_Total_Amount}}" style="font-weight: 800;" readonly>
-                    </div>
+                    </div> -->
                    
                 </form>
             </div>
@@ -207,7 +207,7 @@
                                     <th>Room</th>
                                     <th>Start Date</th>
                                     <th>End Date</th>
-                                    <th>Amount</th>
+                                    <!-- <th>Amount</th> -->
                                     {% if res.Booking_Status == "Open"%}
                                     <th>Actions</th>
                                     {% endif %}
@@ -222,7 +222,7 @@
                                     <td>{{line.Room}}</td>
                                     <td>{{line.Start_Date}}</td>
                                     <td>{{line.End_Date}}</td>
-                                    <td>{{line.Amount}}</td>
+                                    <!-- <td>{{line.Amount}}</td> -->
                                     {% if res.Booking_Status == "Open"%}
                                     <td>
                                         <form action=""
@@ -272,8 +272,8 @@
                                     <th>No. of Days</th>
                                     <th>Room</th>
                                     <th>Booking Date</th>
-                                    <th>No. Days</th>
-                                    <th>Amount</th>
+                                    <th>No. People</th>
+                                    <!-- <th>Amount</th> -->
                                     {% if res.Booking_Status == "Open"%}
                                     <th>Actions</th>
                                     {% endif %}
@@ -288,7 +288,7 @@
                                     <td>{{line.Room}}</td>
                                     <td>{{line.Booking_Date}}</td>
                                     <td>{{line.No_Of_Rooms}}</td>
-                                    <td>{{line.Amount}}</td>
+                                    <!-- <td>{{line.Amount}}</td> -->
                                     {% if res.Booking_Status == "Open"%}
                                     <td>
                                         <form action=""
@@ -339,7 +339,7 @@
                                     <th>Room</th>
                                     <th>Start Date</th>
                                     <th>End Date</th>
-                                    <th>Amount</th>
+                                    <!-- <th>Amount</th> -->
                                     {% if res.Booking_Status == "Open"%}
                                     <th>Actions</th>
                                     {% endif %}
@@ -354,7 +354,7 @@
                                     <td>{{line.Room}}</td>
                                     <td>{{line.Start_Date}}</td>
                                     <td>{{line.End_Date}}</td>
-                                    <td>{{line.Amount}}</td>
+                                    <!-- <td>{{line.Amount}}</td> -->
                                     {% if res.Booking_Status == "Open"%}
                                     <td>
                                         <form action=""
@@ -402,8 +402,8 @@
                                     <th>No. of Days</th>
                                     <th>Room</th>
                                     <th>Booking Date</th>
-                                    <th>No. Days</th>
-                                    <th>Amount</th>
+                                    <th>No. People</th>
+                                    <!-- <th>Amount</th> -->
                                     {% if res.Booking_Status == "Open"%}
                                     <th>Actions</th>
                                     {% endif %}
@@ -418,7 +418,7 @@
                                     <td>{{line.Room}}</td>
                                     <td>{{line.Booking_Date}}</td>
                                     <td>{{line.No_Of_Rooms}}</td>
-                                    <td>{{line.Amount}}</td>
+                                    <!-- <td>{{line.Amount}}</td> -->
                                     {% if res.Booking_Status == "Open"%}
                                     <td>
                                         <form action=""
@@ -514,14 +514,17 @@
             </div>
         </div>
         {% endif %}
+
+
+        <!-- Request for Approval -->
         <div class="row">
             <div class="col-md-12">
                 {% if res.Booking_Status == "Open" %}
                 <div class="myForm my-3">
-                    <form action="{% url 'FnRequestInternalRequestApproval' res.No_ %}" method="POST" style="display: inline-block;">
+                    <form action="{% url 'FnSubmitInternalRoomBooking' res.No_ %}" method="POST" style="display: inline-block;">
                         {% csrf_token %}
                         <div class="mb-3">
-                            <input type="hidden" name="requistionNo" value="{{res.No_}}">
+                            <input type="hidden" name="bookingNo" value="{{res.No_}}">
                         </div>
                         <button class="btn btn-info" type="submit">Request For Approval</button>
                     </form>
@@ -532,7 +535,7 @@
                         id="approvalForm">
                         {% csrf_token %}
                         <div class="mb-3">
-                            <input type="hidden" hidden name="requistionNo" value="{{res.No_}}">
+                            <input type="hidden" hidden name="bookingNo" value="{{res.No_}}">
                         </div>
                         <button class="btn btn-info" type="submit">Cancel Request For Approval</button>
                     </form>
@@ -540,6 +543,9 @@
                 {% endif %}
             </div>
         </div>
+
+
+
         {% if res.Status == "Pending Approval" %}
         <div class="row mt-4">
             <div class="col-md-12">

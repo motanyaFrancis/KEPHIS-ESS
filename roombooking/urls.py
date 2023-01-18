@@ -7,5 +7,5 @@ urlpatterns = [
     path('FnRoomBookingLine/<str:pk>', views.FnRoomBookingLine, name='FnRoomBookingLine'),
     path('FnAccommodationBookingLine/<str:pk>', views.FnAccommodationBookingLine, name='FnAccommodationBookingLine'),
     path('UploadRoomBookingAttachment/<str:pk>', views.UploadRoomBookingAttachment, name='UploadRoomBookingAttachment'),
-    path('FnRequestInternalRequestApproval/<str:pk>', views.FnRequestInternalRequestApproval, name='FnRequestInternalRequestApproval'),
+    path('FnSubmitInternalRoomBooking/<str:pk>', views.FnSubmitInternalRoomBooking, name='FnSubmitInternalRoomBooking'),
 ]

@@ -187,7 +187,7 @@
                         </div>
                         <div class="col-md-2">
                             <button class="btn  btn-successs p-2 m-2 d-flex align-items-center" data-bs-toggle="modal"
-                                data-bs-target="#" type="button"> <i class="las la-plus text-white"
+                                data-bs-target="#goals" type="button"> <i class="las la-plus text-white"
                                     style="font-size:15px;"></i> Add 
                             </button>
                         </div>
@@ -614,8 +614,9 @@
             </div>
         </div>
     </div>
-    <!-- Modal Meeting Room Lines -->
-    <div class="modal fade" id="meeting_room" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+
+    <!-- Modal Appraisal goals -->
+    <div class="modal fade" id="goals" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-md">
             <div class="modal-content">
@@ -626,62 +627,43 @@
                         aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="myForm" id="PurchaseForm" action=""
+                    <form class="myForm" id="AppraisalForm" action=""
                         method="post" novalidate>
                         {% csrf_token %}
                         <div class="row">
                             <div class="col-md-12">
                                 <input type="hidden" name="lineNo" value="">
                                 <input type="hidden" name="myAction" value="insert">
-                                <input type="hidden" name="bookingNo" value="{{res.No_}}">
+                                <input type="hidden" name="apprsailNo" value="{{res.AppraisalNo}}">
+                                <input type="hidden" name="No" value="1000">
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label class="form-label">Service Required <span class="text-danger">*</span></label>
-                                <select class="form-select" id="itemType" name="serviceRequired" required>
-                                    <option selected disabled value="0">--Select--</option>
-                                    {% for list in all_services %}
-                                    <option value="{{list.No}}">{{list.ServiceDescription}}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Type of room</label>
-                                <select class="form-select" name="typeofRoom" id="typeofRoom">
-                                    <option class="after" value="0" disabled>--Select--</option>
-                                    <option value="1">Test 1</option>
-                                    <option value="2">Test 2</option>
-                                    
-                                </select>
-                            </div>
-                        </div>
+                       
                         <div class="row">
                             <div class="col-md-12">
-                                <label class="form-label">Booking Date<span class="text-danger">*</span></label>
-                               <input type="date" name="bookingDate" id="">
+                                <label class="form-label">Targets Set for the Year<span class="text-danger">*</span></label>
+                                <input class="form-control" type="text" name="targetsSetForTheYear" id="">
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Start Time</label>
-                               <input type="time" name="startTime" id="">
+                            <div class="col-md-12">
+                                <label class="form-label">Weight</label>
+                                <input class="form-control" type="text" name="weight" id="">
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label">End Time</label>
-                               <input type="time" name="endTime" id="">
+                            <div class="col-md-12">
+                                <label class="form-label">Unit of Measure or Performance Indicator</label>
+                                <input class="form-control" type="text" name="unitOfMeasureORPerformanceIndicator" id="">
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label">Self Rating</label>
+                                <input class="form-control" type="text" name="selfRating" id="">
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label">Supervisor Rating</label>
+                                <input class="form-control" type="text" name="supervisorRating" id="">
                             </div>
                             
                         </div>
                         
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label class="form-label">Number of People <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" name="noOfPeople" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Number of Days <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" name="noOfDays" required>
-                            </div>
-                        </div>
+                        
                         <button type="submit" class="btn btn-success my-3 w-100">Submit</button>
                     </form>
                 </div>

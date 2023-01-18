@@ -331,7 +331,7 @@
     </div>
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog  modal-dialog-scrollable modal-lg">
+        <div class="modal-dialog  modal-dialog-scrollable modal-md">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="staticBackdropLabel">New Purchase Requisition Line
@@ -350,16 +350,16 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6">
-                                <label class="form-label">Procurement Plan Item </label>
-                                <select class="form-select" name="procPlanItem">
+                            <div class="col-md-12">
+                                <!-- <label class="form-label">Procurement Plan Item </label> -->
+                                <select class="form-select" name="procPlanItem" hidden>
                                     <option selected disabled value="">Select Procurement Plan Item</option>
                                     {% for res in plans %}
                                     <option value="{{res.Plan_Item_No}}">{{res.Item_Description}}</option>
                                     {% endfor %}
                                 </select>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <label class="form-label">Requisition Type <span class="text-danger">*</span></label>
                                 <select class="form-select" id="itemType" name="itemTypes" required>
                                     <option selected disabled value="">Select Requisition Type</option>

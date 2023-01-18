@@ -463,7 +463,7 @@
                             aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form class="myForm needs-validation" action="{% url 'workTicket' %}" method="post" novalidate>
+                        <form class="myForm needs-validation" action="{% url 'workTicket' %}" method="post" id="TicketForm" novalidate>
                             {% csrf_token %}
                             <div class="row">
                                 <div class="col-md-12">
@@ -473,7 +473,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <label class="form-label">Driver <span class="text-danger">*</span></label>
-                                    <select class="form-select" name="driver" required>
+                                    <select class="form-select" name="driver" id="driver" required>
                                         <option selected disabled value="">Select Option</option>
                                         {% for list in drivers %}
                                         <option value="{{list.No_}}">{{list.First_Name}} {{list.Middle_Name}}
@@ -485,7 +485,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <label class="form-label">Vehicle <span class="text-danger">*</span></label>
-                                    <select class="form-select" name="vehicle" required>
+                                    <select class="form-select" name="vehicle" id="vehicle" required>
                                         <option selected disabled value="">Select Option</option>
                                         {% for list in Vehicle_No %}
                                         <option value="{{list.No_}}">{{list.Registration_No}}</option>
@@ -498,7 +498,7 @@
                                 <div class="col-md-12">
                                     <label for="" class="form-label">Previous Ticket Number<span
                                             class="text-danger">*</span></label>
-                                    <select class="form-select" name="previoursWorkTicketNo" required>
+                                    <select class="form-select" name="previoursWorkTicketNo" id="previoursWorkTicketNo" required>
                                         <option selected disabled value="">Select Option</option>
                                         {% for list in tkt_no %}
                                         <option value="{{list.No}}">{{list.No}}</option>
@@ -546,5 +546,19 @@
         </div>
     </div>
 </section>
-
+<script>
+    $(document).ready(function (){
+        $('#vehicle').on('change', function (e){
+            e.preventDefault();
+            var VehicleCode = $('#vehicle').val();
+            if (VehicleCode != null){
+                $('#TicketForm select[name=previoursWorkTicketNo]').find('after').nextAll().remove();
+                $.ajax({
+                    type: 'get'
+                    // url: ''
+                })
+            }
+        })
+    })
+</script>
 {% endblock %}
