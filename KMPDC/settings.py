@@ -144,6 +144,6 @@ WEB_SERVICE_PWD = config('WEB_SERVICE_PWD')
 
 O_DATA = "http://20.231.15.166:7048/BC140/ODataV4/Company('CRONUS%20International%20Ltd.'){}"
 BASE_URL = 'http://20.231.15.166:7047/BC140/WS/CRONUS%20International%20Ltd./Codeunit/Employee_Self_Service'
-AUTHS.auth = HTTPBasicAuth(WEB_SERVICE_UID, WEB_SERVICE_PWD)
+AUTHS.auth = HTTPBasicAuth(WEB_SERVICE_UID, WEB_SERVICE_PWD) #type:ignore
 CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
-AUTHS = HTTPBasicAuth(WEB_SERVICE_UID, WEB_SERVICE_PWD)
+AUTHS = HTTPBasicAuth(WEB_SERVICE_UID, WEB_SERVICE_PWD) #type:ignore

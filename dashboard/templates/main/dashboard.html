@@ -26,13 +26,13 @@
                             <div class="col-md-6">
                                 <div class="c-content c1">
                                     <h6>Leave Requests</h6>
-                                    <small>{{leave_open}}</small>
+                                    <small>{{open_leave}}</small>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="c-content">
                                     <h6>Training Requests</h6>
-                                    <small>{{open_train}}</small>
+                                    <small>{{open_training}}</small>
                                 </div>
                             </div>
                         </div>
@@ -49,13 +49,13 @@
                             <div class="col-md-4">
                                 <div class="c-content c1">
                                     <h6>Imprest Requisition</h6>
-                                    <small>{{imprest_open}}</small>
+                                    <small>{{open_imprests}}</small>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="c-content c2">
                                     <h6>Imprest Surrender</h6>
-                                    <small>{{surrender_open}}</small>
+                                    <small>{{open_surrender}}</small>
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -119,14 +119,14 @@
                             'Store Requests',
                         ];
 
-                        var Rejected_Leave = '{{pendLeave}}'
-                        var Rej_Train = '{{pendTrain}}'
-                        var Rej_Imprest = '{{pendImp}}'
-                        var Rej_Claim = '{{pendClaim}}'
-                        var Rej_surrender = '{{pendSurrender}}'
-                        var Rej_Purchase = '{{pendPurchase}}'
-                        var Rej_Repair = '{{pendRepair}}'
-                        var Rej_Store = '{{pendStore}}'
+                        var pending_leave = '{{pending_leave}}'
+                        var pendTrain = '{{pendTrain}}'
+                        var pending_imprest = '{{pending_imprest}}'
+                        var pending_surrender = '{{pending_surrender}}'
+                        var pending_claims = '{{pending_claims}}'
+                        var pending_purchase = '{{pending_purchase}}'
+                        var pending_repair = '{{pending_repair}}'
+                        var pending_store = '{{pending_store}}'
                         const data2 = {
                             labels: newlabel,
                             datasets: [{
@@ -139,10 +139,11 @@
                                     '#9FE2BF',
                                 ],
                                 borderColor: 'rgb(255, 99, 132)',
-                                data: [Rejected_Leave, Rej_Train, Rej_Imprest, Rej_surrender, Rej_Claim,
-                                    Rej_Purchase,
-                                    Rej_Repair,
-                                    Rej_Store
+                                data: [pending_leave, pendTrain, pending_imprest, pending_surrender,
+                                    pending_claims,
+                                    pending_purchase,
+                                    pending_repair,
+                                    pending_store
                                 ],
                             }]
                         };
@@ -180,21 +181,22 @@
                             'Repair Requests',
                             'Store Requests',
                         ];
-                        var Approved_Leave = '{{leave_app}}'
-                        var App_Train = '{{app_train}}'
-                        var APP_Imprest = '{{imprest_app}}'
-                        var App_Claim = '{{app_claim}}'
-                        var App_surrender = '{{surrender_app}}'
-                        var APP_Purchase = '{{app_purchase}}'
-                        var APP_Repair = '{{app_repair}}'
-                        var App_Store = '{{app_store}}'
+                        var Approved_Leave = '{{app_leave_list}}'
+                        var app_train_list = '{{app_train_list}}'
+                        var APP_Imprest = '{{app_imprest_list}}'
+                        var app_surrender_list = '{{app_surrender_list}}'
+                        var app_claim_list = '{{app_claim_list}}'
+                        var APP_Purchase = '{{app_purchase_list}}'
+                        var APP_Repair = '{{app_repair_list}}'
+                        var App_Store = '{{app_store_list}}'
                         const data = {
                             labels: labels,
                             datasets: [{
-                                label: 'All Approved Requests',
+                                label: 'Approved Requests',
                                 backgroundColor: 'rgb(255, 99, 132)',
                                 borderColor: 'rgb(255, 99, 132)',
-                                data: [Approved_Leave, App_Train, APP_Imprest, App_surrender, App_Claim,
+                                data: [Approved_Leave, app_train_list, APP_Imprest, app_surrender_list,
+                                    app_claim_list,
                                     APP_Purchase,
                                     APP_Repair,
                                     App_Store

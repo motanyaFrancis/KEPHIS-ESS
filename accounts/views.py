@@ -21,10 +21,7 @@ class Login(UserObjectMixins,View):
                                                                         "/QYUserSetup","User_ID","eq"))
                 
                 user_response = await asyncio.gather(task_get_user_setup)
-                
-                if user_response[0]['status_code'] == 401: #type:ignore
-                    messages.error(request,"Authentication Error: Invalid credentials")
-                    return redirect('auth')
+                                   
                 if user_response[0]['status_code'] == 200: #type:ignore
                     for data in user_response[0]['data']: #type:ignore
                         await sync_to_async(request.session.__setitem__)('Employee_No_', data['Employee_No_'])
@@ -47,6 +44,8 @@ class Login(UserObjectMixins,View):
                             await sync_to_async(request.session.__setitem__)('full_name', data['First_Name'] + " " + data['Last_Name'] )
                             messages.success(request,f"Success. Logged in as {request.session['full_name']}")
                             return redirect('dashboard')
+                messages.error(request,"Authentication Error: Invalid credentials")
+                return redirect('auth')
         except (aiohttp.ClientError, aiohttp.ServerDisconnectedError, aiohttp.ClientResponseError) as e:
             print(e)
             messages.error(request,"Authentication Error: Invalid credentials")
@@ -55,9 +54,6 @@ class Login(UserObjectMixins,View):
             print(e)
             messages.error(request,"Authentication Error: Invalid credentials")
             return redirect('auth')
-                   
-            
-
 def logout(request):
     try:
         request.session.flush()
