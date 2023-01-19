@@ -1,7 +1,6 @@
 import base64
 from django.shortcuts import render, redirect
 from datetime import datetime
-# from isodate import date_isoformat
 import requests
 from requests import Session
 import json
@@ -16,6 +15,10 @@ from requests.auth import HTTPBasicAuth
 from zeep import Client
 from zeep.transports import Transport
 from django.views import View
+from myRequest.views import UserObjectMixins
+import asyncio
+import aiohttp
+from asgiref.sync import sync_to_async
 
 # Create your views here.
 
@@ -31,87 +34,73 @@ class UserObjectMixin(object):
         return response
 
 
-class InternalRoomBooking(UserObjectMixin, View):
+class InternalRoomBooking(UserObjectMixins, View):
 
-    def get(self, request):
-        try:
-            userID = request.session['User_ID']
-            year = request.session['years']
+    async def get(self, request):
+        try:   
+            User_ID = await sync_to_async(request.session.__getitem__)('User_ID')
+            openRequest =[]
+            Pending = []
+            Approved = []
+  
+            async with aiohttp.ClientSession() as session:
+                task_get_reservations = asyncio.ensure_future(self.fetch_one_filtered_data(
+                    session,"/QYvisitors","Created_By","eq",User_ID))
 
-            Access_Point = config.O_DATA.format(f"/QYvisitors?$filter=Created_By%20eq%20%27{userID}%27")
-            response = self.get_object(Access_Point)
-            # InternalBooking = [x for x in response['value']]
-            # print(response)
+                reservation_response = await asyncio.gather(task_get_reservations) 
+                
+                if reservation_response[0]['status_code'] == 200: # type: ignore
+                    openRequest = [x for x in reservation_response[0]['data'] if x['Booking_Status'] == 'Open' ] # type: ignore
+                    Pending = [x for x in reservation_response[0]['data'] if x['Booking_Status'] == 'Pending Approval'] #type:ignore
+                    Approved = [x for x in reservation_response[0]['data'] if x['Booking_Status'] == 'Approved'] #type:ignore
 
-            openRequest = [
-                x for x in response['value'] if x['Booking_Status'] == 'Open'
-            ]
-
-            Pending = [
-                x for x in response['value']
-                if x['Booking_Status'] == 'Pending Approval'
-            ]
-
-            Approved = [
-                x for x in response['value']
-                if x['Booking_Status'] == 'Approved'
-            ]
-
-            counts = len(openRequest)
-
-            pend = len(Pending)
-
-            counter = len(Approved)
-
-        except KeyError as e:
-            messages.info(request, "Session Expired. Please Login")
-            return redirect('auth')
+            ctx = {
+                "res": openRequest,
+                "pending":Pending,
+                'approved':Approved,
+                "today": self.todays_date,
+                "full": User_ID,
+            }
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, "connection refused,non-200 response")
             print(e)
             return redirect('InternalRoomBooking')
-        context = {
-            "today": self.todays_date,
-            "year": year,
-            "full": userID,
-            "res": openRequest,
-            'count': counts,
-            'pend': pend,
-            'counter': counter
-        }
-        return render(request, 'InternalRoomBooking.html', context)
+        return render(request, 'InternalRoomBooking.html',ctx)
 
-    def post(self, request):
+    async def post(self, request):
         if request.method == 'POST':
-            try:
-                bookingNo = request.POST.get('bookingNo')
-                typeOfService = request.POST.get('typeOfService')
-                myAction = request.POST.get('myAction')
-                userID = request.session['User_ID']
-                employeeNo = request.session['Employee_No_']
-            except ValueError:
-                messages.error(request, "Missing Input")
-                return redirect('InternalRoomBooking')
-            except KeyError:
-                messages.info(request, "Session Expired. Please Login")
-                return redirect('auth')
-            if not bookingNo:
-                bookingNo = " "
+            pass
+            # try:
+            #     bookingNo = request.POST.get('bookingNo')
+            #     typeOfService = request.POST.get('typeOfService')
+            #     myAction = request.POST.get('myAction')
+            #     userID = request.session['User_ID']
+            #     employeeNo = request.session['Employee_No_']
+            # except ValueError:
+            #     messages.error(request, "Missing Input")
+            #     return redirect('InternalRoomBooking')
+            # except KeyError:
+            #     messages.info(request, "Session Expired. Please Login")
+            #     return redirect('auth')
+            # if not bookingNo:
+            #     bookingNo = " "
 
-            try:
-                response = config.CLIENT.service.FnInternalBookingCard(
-                    bookingNo,
-                    myAction,
-                    typeOfService,
-                    userID,
-                    employeeNo,
-                )
-                messages.success(request, "Request Successful")
-                print(response)
-            except Exception as e:
-                messages.info(request, e)
-                print(e)
-                return redirect('InternalRoomBooking')
+            # try:
+            #     response = config.CLIENT.service.FnInternalBookingCard(
+            #         bookingNo,
+            #         myAction,
+            #         typeOfService,
+            #         False,
+            #         '-None-',
+            #         userID,
+            #         employeeNo,
+            #     )
+            #     messages.success(request, "Request Successful")
+            #     print(response)
+            # except Exception as e:
+            #     messages.info(request, e)
+            #     print(e)
+            #     return redirect('InternalRoomBooking')
         return redirect('InternalRoomBooking')
 
 

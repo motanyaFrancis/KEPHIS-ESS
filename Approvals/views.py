@@ -1,4 +1,3 @@
-from typing_extensions import Self
 from django.shortcuts import render, redirect
 from datetime import date
 import requests

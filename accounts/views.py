@@ -1,69 +1,72 @@
 
 from django.shortcuts import render, redirect
-from django.conf import settings as config
-import requests
-from requests import Session
 from django.contrib import messages
-from requests.auth import HTTPBasicAuth
 from django.views import View
-from datetime import date
-import datetime
-# Create your views here.
-class UserObjectMixin(object):
-    model =None
-    user = Session()
-    todays_date = datetime.datetime.now().strftime("%b. %d, %Y %A")
-    def get_object(self,username,password,endpoint):
-        self.user.auth = HTTPBasicAuth(username, password)
-        response = self.user.get(endpoint, timeout=10).json()
-        return response
+from myRequest.views import UserObjectMixins
+import asyncio
+import aiohttp
+from asgiref.sync import sync_to_async
 
-class Login(UserObjectMixin,View):
+
+class Login(UserObjectMixins,View):
     template_name = 'auth.html'
-    def get(self, request):
+    async def get(self, request):
         return render(request, self.template_name)
-    def post(self,request):
-        username = request.POST.get('username').upper().strip()
-        password = request.POST.get('password').strip()
-        print(username, password)
+    async def post(self,request):
         try:
-            QyUserSetup = config.O_DATA.format(f"/QYUserSetup?$filter=User_ID%20eq%20%27{username}%27")
-            res_data = self.get_object(username, password,QyUserSetup)
-            for data in res_data['value']:
-                request.session['Employee_No_'] = data['Employee_No_']
-                request.session['Customer_No_'] = data['Customer_No_']
-                request.session['User_ID'] = data['User_ID']
-                request.session['E_Mail'] = data['E_Mail']
-                request.session['User_Responsibility_Center'] = data['User_Responsibility_Center']
-                request.session['password'] = password
-                current_year = date.today().year
-                request.session['years'] = current_year
-                print(request.session['Employee_No_'])
-                QyEmployees = config.O_DATA.format(f"/QYEmployees?$filter=No_%20eq%20%27{request.session['Employee_No_']}%27")
-                response = self.get_object(username, password,QyEmployees)
-                for emp in response['value']:
-                    request.session['Department'] = emp['Department_Code']
-                return redirect('dashboard')
+            username = request.POST.get('username').upper().strip()
+            password = request.POST.get('password').strip()
+            async with aiohttp.ClientSession() as session:
+                task_get_user_setup = asyncio.ensure_future(self.fetch_data(session,username,password,
+                                                                        "/QYUserSetup","User_ID","eq"))
+                
+                user_response = await asyncio.gather(task_get_user_setup)
+                
+                if user_response[0]['status_code'] == 401: #type:ignore
+                    messages.error(request,"Authentication Error: Invalid credentials")
+                    return redirect('auth')
+                if user_response[0]['status_code'] == 200: #type:ignore
+                    for data in user_response[0]['data']: #type:ignore
+                        await sync_to_async(request.session.__setitem__)('Employee_No_', data['Employee_No_'])
+                        await sync_to_async(request.session.__setitem__)('Customer_No_', data['Customer_No_'])
+                        await sync_to_async(request.session.__setitem__)('User_ID', data['User_ID'])
+                        await sync_to_async(request.session.__setitem__)('E_Mail', data['E_Mail'])
+                        await sync_to_async(request.session.__setitem__)('User_Responsibility_Center', data['User_Responsibility_Center'])
+                        await sync_to_async(request.session.__setitem__)('HOD_User', data['HOD_User'])
+                        await sync_to_async(request.session.__setitem__)('password', password)
+                        await sync_to_async(request.session.save)()
+                        
+                        Employee_No_ = await sync_to_async(request.session.__getitem__)('Employee_No_')
+ 
+                        task_get_employee = asyncio.ensure_future(self.fetch_one_filtered_data(session,
+                                                       "/QYEmployees","No_","eq",Employee_No_))
+                    
+                        employee_response = await asyncio.gather(task_get_employee)
+                    
+                        for data in employee_response[0]['data']: #type:ignore
+                            await sync_to_async(request.session.__setitem__)('full_name', data['First_Name'] + " " + data['Last_Name'] )
+                            messages.success(request,f"Success. Logged in as {request.session['full_name']}")
+                            return redirect('dashboard')
+        except (aiohttp.ClientError, aiohttp.ServerDisconnectedError, aiohttp.ClientResponseError) as e:
+            print(e)
+            messages.error(request,"Authentication Error: Invalid credentials")
+            return redirect('auth')   
         except Exception as e:
             print(e)
-            messages.error(request, "Invalid Username or Password")
+            messages.error(request,"Authentication Error: Invalid credentials")
             return redirect('auth')
+                   
+            
 
 def logout(request):
     try:
-        del request.session['User_ID']
-        del request.session['Employee_No_']
-        del request.session['Customer_No_']
-        del request.session['User_Responsibility_Center']
-        del request.session['Department']
-        del request.session['years']
-        del request.session['E_Mail']
+        request.session.flush()
         messages.success(request,"Logged out successfully")
     except KeyError:
         print(False)
     return redirect('auth')
 
-class profile(UserObjectMixin,View):
+class profile(UserObjectMixins,View):
     def get(self, request):
         try:
             year =request.session['years']
@@ -72,7 +75,7 @@ class profile(UserObjectMixin,View):
             Dpt =request.session['Department']
             mail =request.session['E_Mail']
         except KeyError as e:
-            messages.error(request, e)
+            messages.error(request, f"{e}")
             return redirect('auth')
 
         ctx = {"today": self.todays_date,"year": year,"full": fullname,"empNo":empNo,"Dpt":Dpt,"mail":mail}

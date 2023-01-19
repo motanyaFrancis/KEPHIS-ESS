@@ -1,12 +1,15 @@
 {
   "cSpell.words": [
     "Assest",
+    "asyncio",
     "autoclose",
     "needno",
+    "ODATA",
     "planitem",
     "Refference",
     "rens",
-    "requistion"
+    "requistion",
+    "Yvisitors"
   ],
   "python.formatting.provider": "yapf",
   "python.analysis.typeCheckingMode": "basic"

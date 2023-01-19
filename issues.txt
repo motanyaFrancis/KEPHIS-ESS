@@ -1,1 +1,17 @@
-Training need endpoint doesn't have the trainings that i create
+import asyncio
+from zeep import Client
+
+async def make_request(url, function_name, parameters):
+    async with Client(url) as client:
+        result = await asyncio.get_event_loop().run_in_executor(None, getattr(client.service, function_name), parameters)
+        return result
+
+# Example usage
+url1 = 'http://example.com/soap/service1'
+url2 = 'http://example.com/soap/service2'
+parameters1 = {'param1': 'value1', 'param2': 'value2'}
+parameters2 = {'param3': 'value3', 'param4': 'value4'}
+
+result1 = await make_request(url1, 'function1', parameters1)
+result2 = await make_request(url2, 'function2', parameters2)
+

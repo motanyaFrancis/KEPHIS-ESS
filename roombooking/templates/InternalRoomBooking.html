@@ -3,7 +3,7 @@
 {% load static %}
 {% block main %}
 <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
-        crossorigin="anonymous"></script>
+    crossorigin="anonymous"></script>
 <secton class="dash2">
     <!-- top banner -->
     <div class="content-wrapper general-bg">
@@ -13,9 +13,9 @@
                     <img src="../../../static/img/logo/fav.png" width="70px" class="img-fluid" alt="" srcset="">
                     <h2 class="text-dark font-weight-bold ml-3"> Room Booking </h2>
                     <button class="btn btn-successs align-items-center p-3" data-bs-toggle="modal"
-                            data-bs-target="#staticBackdrop"
-                            style="margin-left: auto;margin-right:0;outline: none;border: none;"><i
-                           class="las la-plus text-white" style="font-size:15px;"></i>Book a Room</button>
+                        data-bs-target="#staticBackdrop"
+                        style="margin-left: auto;margin-right:0;outline: none;border: none;"><i
+                            class="las la-plus text-white" style="font-size:15px;"></i>Book a Room</button>
                 </span>
             </div>
         </div>
@@ -31,24 +31,23 @@
                         <ul class="nav nav-tabs d-flex" id="myTab">
                             <li class="nav-item flex-fill">
                                 <a href="#home" class="nav-link active" data-bs-toggle="tab">Open
-                                    ({{count}})</a>
+                                    ({{res|length}})</a>
                             </li>
                             <li class="nav-item flex-fill">
                                 <a href="#pending" class="nav-link" data-bs-toggle="tab">Pending Approval
-                                    ({{pend}})</a>
+                                    ({{pending|length}})</a>
                             </li>
                             <li class="nav-item flex-fill">
                                 <a href="#approved" class="nav-link" data-bs-toggle="tab">Approved
-                                    ({{counter}})</a>
+                                    ({{approved|length}})</a>
                             </li>
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane fade show active" id="home">
-                                <h4 class="mt-2 text-dark">Open Room Booking Request</h4>
                                 <div class="card-body">
                                     <table id="example"
-                                           class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                                           style="width:100%">
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
 
                                         <thead>
                                             <tr id="tops">
@@ -69,59 +68,73 @@
                                                 <td>{{res.Service_Requred}}</td>
                                                 <td>
                                                     <button class="btn btn-primary" data-bs-toggle="modal"
-                                                            data-bs-target="#room{{ res.No_ }}" data-toggle="tooltip" data-placement="top"
-                                                            title="edit">Edit <i class="fas fa-edit"></i>
+                                                        data-bs-target="#room{{ res.No_ }}" data-toggle="tooltip"
+                                                        data-placement="top" title="edit">Edit <i
+                                                            class="fas fa-edit"></i>
                                                     </button>
                                                     <div class="modal fade" id="room{{ res.No_ }}"
-                                                         data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-                                                         aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                        data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                                        aria-labelledby="staticBackdropLabel" aria-hidden="true">
                                                         <div
-                                                             class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                                            class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title" id="staticBackdropLabel">
                                                                         <i class="las la-edit"></i> Edit Booking Request
                                                                         <span class="editSpan">{{res.No}}</span>
                                                                     </h5>
-                                                                    <button type="button" class="btn-close btn-close-white"
-                                                                            data-bs-dismiss="modal"
-                                                                            aria-label="Close"></button>
+                                                                    <button type="button"
+                                                                        class="btn-close btn-close-white"
+                                                                        data-bs-dismiss="modal"
+                                                                        aria-label="Close"></button>
                                                                 </div>
                                                                 <div class="modal-body">
-                                                                    <form class="myForm needs-validation" action="" method="post" novalidate>
+                                                                    <form class="myForm needs-validation" action=""
+                                                                        method="post" novalidate>
                                                                         {% csrf_token %}
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <input type="hidden" name="bookingNo" value="{{res.No_}}">
+                                                                                <input type="hidden" name="bookingNo"
+                                                                                    value="{{res.No_}}">
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <label class="form-label">Type of Service <span class="text-danger">*</span></label>
-                                                                                <select class="form-select" name="typeOfService" required>
-                                                                                    <option selected disabled value="">Select Option</option>
-                                                                                    <option value="1">Meeting Room</option>
-                                                                                    <option value="2">Accommodation</option>
-                                                                                    <option value="3">Meeting Room & Accommodation</option>
+                                                                                <label class="form-label">Type of
+                                                                                    Service <span
+                                                                                        class="text-danger">*</span></label>
+                                                                                <select class="form-select"
+                                                                                    name="typeOfService" required>
+                                                                                    <option selected disabled value="">
+                                                                                        Select Option</option>
+                                                                                    <option value="1">Meeting Room
+                                                                                    </option>
+                                                                                    <option value="2">Accommodation
+                                                                                    </option>
+                                                                                    <option value="3">Meeting Room &
+                                                                                        Accommodation</option>
                                                                                 </select>
                                                                             </div>
                                                                         </div>
-                                                                        
+
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <input type="hidden" name="myAction" value="modify">
+                                                                                <input type="hidden" name="myAction"
+                                                                                    value="modify">
                                                                             </div>
                                                                         </div>
-                                                                        
-                                                                        <button type="submit" id="sasa" class="btn btn-success my-3 w-100">Submit</button>
+
+                                                                        <button type="submit" id="sasa"
+                                                                            class="btn btn-success my-3 w-100">Submit</button>
                                                                     </form>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <a href="{% url 'InternalRoomDetails' res.No_ %}"
-                                                       class="btn btn-success btn-icon-text" type="button"
-                                                       data-toggle="tooltip" data-placement="top" title="Click to View">
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top"
+                                                        title="Click to View">
                                                         View
                                                         <i class="far fa-eye"></i>
                                                     </a>
@@ -135,58 +148,73 @@
                                                 <td>{{res.Service_Requred}}</td>
                                                 <td>
                                                     <button class="btn btn-primary" data-bs-toggle="modal"
-                                                            data-bs-target="#room{{ res.No_ }}" data-toggle="tooltip" data-placement="top"
-                                                            title="edit">Edit <i class="fas fa-edit"></i>
+                                                        data-bs-target="#room{{ res.No_ }}" data-toggle="tooltip"
+                                                        data-placement="top" title="edit">Edit <i
+                                                            class="fas fa-edit"></i>
                                                     </button>
                                                     <div class="modal fade" id="room{{ res.No_ }}"
-                                                         data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-                                                         aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                                                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                                        data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                                        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                        <div
+                                                            class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title" id="staticBackdropLabel">
                                                                         <i class="las la-edit"></i> Edit Booking Request
                                                                         <span class="editSpan">{{ res.No_ }}</span>
                                                                     </h5>
-                                                                    <button type="button" class="btn-close btn-close-white"
-                                                                            data-bs-dismiss="modal"
-                                                                            aria-label="Close"></button>
+                                                                    <button type="button"
+                                                                        class="btn-close btn-close-white"
+                                                                        data-bs-dismiss="modal"
+                                                                        aria-label="Close"></button>
                                                                 </div>
                                                                 <div class="modal-body">
-                                                                    <form class="myForm needs-validation" action="" method="post" novalidate>
+                                                                    <form class="myForm needs-validation" action=""
+                                                                        method="post" novalidate>
                                                                         {% csrf_token %}
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <input type="hidden" name="bookingNo" value="{{ res.No_ }}">
+                                                                                <input type="hidden" name="bookingNo"
+                                                                                    value="{{ res.No_ }}">
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <label class="form-label">Type of Service <span class="text-danger">*</span></label>
-                                                                                <select class="form-select" name="typeOfService" required>
-                                                                                    <option selected disabled value="">Select Option</option>
-                                                                                    <option value="1">Meeting Room</option>
-                                                                                    <option value="2">Accommodation</option>
-                                                                                    <option value="3">Meeting Room & Accommodation</option>
+                                                                                <label class="form-label">Type of
+                                                                                    Service <span
+                                                                                        class="text-danger">*</span></label>
+                                                                                <select class="form-select"
+                                                                                    name="typeOfService" required>
+                                                                                    <option selected disabled value="">
+                                                                                        Select Option</option>
+                                                                                    <option value="1">Meeting Room
+                                                                                    </option>
+                                                                                    <option value="2">Accommodation
+                                                                                    </option>
+                                                                                    <option value="3">Meeting Room &
+                                                                                        Accommodation</option>
                                                                                 </select>
                                                                             </div>
                                                                         </div>
-                                                                        
+
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <input type="hidden" name="myAction" value="modify">
+                                                                                <input type="hidden" name="myAction"
+                                                                                    value="modify">
                                                                             </div>
                                                                         </div>
-                                                                        
-                                                                        <button type="submit" id="sasa" class="btn btn-success my-3 w-100">Submit</button>
+
+                                                                        <button type="submit" id="sasa"
+                                                                            class="btn btn-success my-3 w-100">Submit</button>
                                                                     </form>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <a href="{% url 'InternalRoomDetails' res.No_ %}"
-                                                       class="btn btn-success btn-icon-text" type="button"
-                                                       data-toggle="tooltip" data-placement="top" title="Click to View">
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top"
+                                                        title="Click to View">
                                                         View
                                                         <i class="far fa-eye"></i>
                                                     </a>
@@ -201,11 +229,10 @@
 
                             </div>
                             <div class="tab-pane fade" id="pending">
-                                <h4 class="mt-2 text-dark">Pending Repair Request</h4>
                                 <div class="card-body">
                                     <table id="example"
-                                           class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                                           style="width:100%">
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
 
                                         <thead>
                                             <tr id="tops">
@@ -218,23 +245,24 @@
                                         </thead>
                                         <tbody>
                                             {% for res in pending %}
-                                            
+
                                             <tr>
                                                 td>{{res.No_}}</td>
                                                 <td>{{res.Document_Date}}</td>
                                                 <td>{{res.Invoiced}}</td>
                                                 <td>{{res.Service_Requred}}</td>
                                                 <td>
-                                                    
+
                                                     <a href="{% url 'InternalRoomDetails' res.No_ %}"
-                                                       class="btn btn-success btn-icon-text" type="button"
-                                                       data-toggle="tooltip" data-placement="top" title="Click to View">
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top"
+                                                        title="Click to View">
                                                         View
                                                         <i class="far fa-eye"></i>
                                                     </a>
                                                 </td>
                                             </tr>
-                                            
+
                                             {% endfor %}
                                         </tbody>
                                     </table>
@@ -243,11 +271,10 @@
 
                             </div>
                             <div class="tab-pane fade" id="approved">
-                                <h4 class="mt-2 text-dark">Approved Repair Request</h4>
                                 <div class="card-body">
                                     <table id="example"
-                                           class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                                           style="width:100%">
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
 
                                         <thead>
                                             <tr id="tops">
@@ -260,7 +287,7 @@
                                         </thead>
                                         <tbody>
                                             {% for res in approved %}
-                                            
+
                                             <tr>
                                                 td>{{res.No_}}</td>
                                                 <td>{{res.Document_Date}}</td>
@@ -268,14 +295,15 @@
                                                 <td>{{res.Service_Requred}}</td>
                                                 <td>
                                                     <a href="{% url 'InternalRoomDetails' res.No_ %}"
-                                                       class="btn btn-success btn-icon-text" type="button"
-                                                       data-toggle="tooltip" data-placement="top" title="Click to View">
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top"
+                                                        title="Click to View">
                                                         View
                                                         <i class="far fa-eye"></i>
                                                     </a>
                                                 </td>
                                             </tr>
-                                            
+
                                             {% endfor %}
                                         </tbody>
                                     </table>
@@ -291,13 +319,13 @@
 
         <!-- Modal -->
         <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-             aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content">
-                    <div class="modal-header">Room Booking
+                    <div class="modal-header">Room Bookings
                         </h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
+                            aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <form class="myForm needs-validation" action="" method="post" novalidate>
@@ -318,13 +346,13 @@
                                     </select>
                                 </div>
                             </div>
-                            
+
                             <div class="row">
                                 <div class="col-md-12">
                                     <input type="hidden" name="myAction" value="insert">
                                 </div>
                             </div>
-                            
+
                             <button type="submit" id="sasa" class="btn btn-success my-3 w-100">Submit</button>
                         </form>
                     </div>
@@ -334,6 +362,6 @@
 
     </div>
 
-</section>
+    </section>
 
-{% endblock %}
+    {% endblock %}
