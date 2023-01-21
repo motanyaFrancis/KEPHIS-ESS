@@ -33,7 +33,6 @@ class UserObjectMixin(object):
         response = self.session.get(endpoint, timeout=10).json()
         return response
 
-
 class InternalRoomBooking(UserObjectMixins, View):
 
     async def get(self, request):
@@ -67,50 +66,48 @@ class InternalRoomBooking(UserObjectMixins, View):
             return redirect('InternalRoomBooking')
         return render(request, 'InternalRoomBooking.html',ctx)
 
-    async def post(self, request):
+    async def post(self, request, *args, **kwargs):
         if request.method == 'POST':
-            pass
-            # try:
-            #     bookingNo = request.POST.get('bookingNo')
-            #     typeOfService = request.POST.get('typeOfService')
-            #     myAction = request.POST.get('myAction')
-            #     userID = request.session['User_ID']
-            #     employeeNo = request.session['Employee_No_']
-            # except ValueError:
-            #     messages.error(request, "Missing Input")
-            #     return redirect('InternalRoomBooking')
-            # except KeyError:
-            #     messages.info(request, "Session Expired. Please Login")
-            #     return redirect('auth')
-            # if not bookingNo:
-            #     bookingNo = " "
-
-            # try:
-            #     response = config.CLIENT.service.FnInternalBookingCard(
-            #         bookingNo,
-            #         myAction,
-            #         typeOfService,
-            #         False,
-            #         '-None-',
-            #         userID,
-            #         employeeNo,
-            #     )
-            #     messages.success(request, "Request Successful")
-            #     print(response)
-            # except Exception as e:
-            #     messages.info(request, e)
-            #     print(e)
-            #     return redirect('InternalRoomBooking')
+            try:
+                bookingNo = request.POST.get('bookingNo')
+                myAction = request.POST.get('myAction')
+                typeOfService =request.POST.get('typeOfService')
+                userID = await sync_to_async(request.session.__getitem__)('User_ID')
+                Employee_No_ = await sync_to_async(request.session.__getitem__)('Employee_No_')
+                soap_headers = await sync_to_async(request.session.__getitem__)('soap_headers')
+        
+                response =  self.make_soap_request(soap_headers,'FnInternalBookingCard',
+                                                   bookingNo,myAction,typeOfService,
+                                                   False,'-None-',userID,Employee_No_)
+                                           
+                if response != '0':
+                    messages.success(request,"success")
+                    return redirect('InternalRoomDetails', pk=response)
+                if response == '0':
+                    messages.error(request,"Failed, non-201 response")
+                    return redirect('InternalRoomBooking')
+            except (aiohttp.ClientError, aiohttp.ServerDisconnectedError, aiohttp.ClientResponseError) as e:
+                print(e)
+                messages.error(request,"connect timed out")
+                return redirect('InternalRoomBooking')
+            except KeyError as e:
+                messages.info(request, f'Session expired,login to continue.')
+                print(e)
+                return redirect('auth')
+            except Exception as e:
+                messages.info(request, f'{e}')
+                print(e)
+                return redirect('InternalRoomBooking')
         return redirect('InternalRoomBooking')
 
 
 class InternalRoomBookingDetails(UserObjectMixin, View):
-
     def get(self, request, pk):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
             empNo = request.session['Employee_No_']
+            full_name = request.session['full_name']
+            res ={}
 
             Access_Point = config.O_DATA.format(
                 f"/QYvisitors?$filter=No_%20eq%20%27{pk}%27%20and%20Created_By%20eq%20%27{userID}%27")
@@ -177,10 +174,11 @@ class InternalRoomBookingDetails(UserObjectMixin, View):
             return redirect('InternalRoomBooking')
 
         ctx = {
+            "today": self.todays_date,
             'res': res,
             'file': allFiles,
             'Approvers': Approvers,
-            'full': userID,
+            'full': full_name,
             'AccommodationRoom': AccommodationRoom,
             'meeting_room': meeting_room,
             'room_items': room_items,
@@ -218,10 +216,10 @@ def FnRoomBookingLine(request, pk):
                 bookingNo, typeofRoom, lineNo, myAction, userCode,
                 serviceRequired, bookingDate, startTime, endTime, noOfPeople,
                 noOfDays)
-            messages.success(request, 'Request successful')
+            messages.success(request, 'Success')
             return redirect('InternalRoomDetails', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             return redirect('InternalRoomDetails', pk=pk)
     return redirect('InternalRoomDetails', pk=pk)
 
@@ -247,10 +245,10 @@ def FnAccommodationBookingLine(request, pk):
             response = config.CLIENT.service.FnAccomodationBookingLine(
                 bookingNo, myAction, userCode, serviceRequired, noOfRooms, lineNo, startDate, endDate
             )
-            messages.success(request, 'Request successful')
+            messages.success(request, 'Success')
             return redirect('InternalRoomDetails', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             return redirect('InternalRoomDetails', pk=pk)
     return redirect('InternalRoomDetails', pk=pk)
 
@@ -272,7 +270,7 @@ def UploadRoomBookingAttachment(request, pk):
                     pk, fileName, attachment, tableID,
                     request.session['User_ID'])
             except Exception as e:
-                messages.error(request, e)
+                messages.error(request, f'{e}')
                 print(e)
         if response == True:
             messages.success(request, "File(s) Upload Successful")
@@ -283,31 +281,59 @@ def UploadRoomBookingAttachment(request, pk):
     return redirect('InternalRoomDetails', pk=pk)
 
 
-def FnSubmitInternalRoomBooking(request, pk):
-    Username = request.session['User_ID']
-    Password = request.session['password']
-    AUTHS = Session()
-    AUTHS.auth = HTTPBasicAuth(Username, Password)
-    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
+class FnSubmitInternalRoomBooking(UserObjectMixins, View):
+    async def post(self, request,pk):
+        if request.method == 'POST':
+            try:
+                userID = await sync_to_async(request.session.__getitem__)('User_ID')
+                bookingNo = request.POST.get('bookingNo')
+                soap_headers = await sync_to_async(request.session.__getitem__)('soap_headers')
+        
+                response =  self.make_soap_request(soap_headers,'FnSubmitInternalRoomBooking', bookingNo,userID)
 
-    bookingNo = ""
+                if response == True:
+                    messages.success(request, 'Request Submitted successfully')
+                    return redirect('InternalRoomDetails', pk=pk)
+                if response == False:
+                    messages.success(request, 'Request Failed')
+                    return redirect('InternalRoomDetails', pk=pk)
+            except (aiohttp.ClientError, aiohttp.ServerDisconnectedError, aiohttp.ClientResponseError) as e:
+                print(e)
+                messages.error(request,"connect timed out")
+                return redirect('InternalRoomDetails', pk=pk)
+            except KeyError:
+                messages.info(request, "Session Expired. Please Login")
+                return redirect('auth')
+            except Exception as e:
+                messages.error(request, f'{e}')
+                print(e)
+                return redirect('InternalRoomDetails', pk=pk)
+        return redirect('InternalRoomDetails', pk=pk)
+class FnCancelInternalRoomBooking(UserObjectMixins, View):
+    async def post(self, request,pk):
+        if request.method == 'POST':
+            try:
+                userID = await sync_to_async(request.session.__getitem__)('User_ID')
+                bookingNo = request.POST.get('bookingNo')
+                soap_headers = await sync_to_async(request.session.__getitem__)('soap_headers')
+        
+                response =  self.make_soap_request(soap_headers,'FnSubmitInternalRoomBooking', bookingNo,userID)
 
-    if request.method == 'POST':
-        try:
-            myUserId = request.session['User_ID']
-            bookingNo = request.POST.get('bookingNo')
-        except KeyError:
-            messages.info(request, "Session Expired. Please Login")
-            return redirect('auth')
-
-        try:
-            response = config.CLIENT.service.FnSubmitInternalRoomBooking(
-                bookingNo, myUserId)
-            print(response)
-            messages.success(request, 'Request Submitted successfully')
-            return redirect('InternalRoomDetails', pk=pk)
-        except Exception as e:
-            messages.error(request, e)
-            print(e)
-            return redirect('InternalRoomDetails', pk=pk)
-    return redirect('InternalRoomDetails', pk=pk)
+                if response == True:
+                    messages.success(request, 'Success')
+                    return redirect('InternalRoomDetails', pk=pk)
+                if response == False:
+                    messages.success(request, 'Request Failed')
+                    return redirect('InternalRoomDetails', pk=pk)
+            except (aiohttp.ClientError, aiohttp.ServerDisconnectedError, aiohttp.ClientResponseError) as e:
+                print(e)
+                messages.error(request,"connect timed out")
+                return redirect('InternalRoomDetails', pk=pk)
+            except KeyError:
+                messages.info(request, "Session Expired. Please Login")
+                return redirect('auth')
+            except Exception as e:
+                messages.error(request, f'{e}')
+                print(e)
+                return redirect('InternalRoomDetails', pk=pk)
+        return redirect('InternalRoomDetails', pk=pk)
