@@ -30,8 +30,11 @@ class Approve(UserObjectMixin,View):
     def get(self,request):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
- 
+            driver_role = request.session['driver_role']
+            TO_role = request.session['TO_role']
+            mechanical_inspector_role = request.session['mechanical_inspector_role']
+            full_name = request.session['full_name']
+          
 
             Access_Point = config.O_DATA.format(f"/QyApprovalEntries?$filter=Approver_ID%20eq%20%27{userID}%27")
             response = self.get_object(Access_Point)
@@ -86,14 +89,15 @@ class Approve(UserObjectMixin,View):
 
         except requests.exceptions.RequestException as e:
             print(e)
-            messages.info(request, e)
+            messages.info(request, f'{e}')
             return redirect('auth')
         except KeyError as e:
             print (e)
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth') 
 
-        ctx = {"today": self.todays_date, "imprest": openImp,"year": year, "full": userID,
+        ctx = {
+            "today": self.todays_date, "imprest": openImp, "full": userID,
             "countIMP": countIMP, "approvedIMP":approvedImp,"rejectedImp":rejectedImp,
             "openLeave":openLeave,"CountLeave":CountLeave,"approvedLeave":approvedLeave,
             "rejectedLeave":rejectedLeave,"openSurrender":openSurrender,"countSurrender":countSurrender,"approveSurrender":approveSurrender,"rejectSurrender":rejectSurrender,
@@ -101,7 +105,12 @@ class Approve(UserObjectMixin,View):
             "countPurchase":countPurchase,"openPurchase":openPurchase,"approvePurchase":approvePurchase,
             "rejectPurchase":rejectPurchase, "countRepair":countRepair,"appRepair":appRepair,"rejRepair":rejRepair,
             "countStore":countStore,"openStore":openStore,"appStore":appStore,"rejStore":rejStore,
-            "openOther":openOther,"appOther":appOther,"rejOther":rejOther,"countOther":countOther}
+            "openOther":openOther,"appOther":appOther,"rejOther":rejOther,"countOther":countOther,
+            "full": full_name,
+            "driver_role":driver_role,
+            "TO_role":TO_role,
+            "mechanical_inspector_role":mechanical_inspector_role
+            }
               
         return render(request, 'Approve.html', ctx)
 
@@ -110,7 +119,13 @@ class ApproveDetails(UserObjectMixin, View):
     def get(self, request,pk):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
+            driver_role = request.session['driver_role']
+            TO_role = request.session['TO_role']
+            mechanical_inspector_role = request.session['mechanical_inspector_role']
+            full_name = request.session['full_name']
+            data = ''
+            state = ''
+            res ={}
   
             Access_Point = config.O_DATA.format(f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27%20and%20Approver_ID%20eq%20%27{userID}%27")
             response = self.get_object(Access_Point)
@@ -229,21 +244,31 @@ class ApproveDetails(UserObjectMixin, View):
                 
         except requests.exceptions.RequestException as e:
             print(e)
-            messages.info(request, e)
+            messages.info(request, f'{e}')
             return redirect('approve')
         except KeyError as e:
-            messages.info(request, e)
+            messages.info(request, f"{e}")
             print(e)
             return redirect('auth')
         except Exception as e:
-            messages.info(request,e)
+            messages.info(request,f'{e}')
             return redirect('auth')
 
-        ctx = {"today": self.todays_date, "res": res, "full": userID, "year": year,
-        "file":allFiles,"data":data,"state":state,"ImpLine":ImprestLine,"TrainLine":TrainLine,
-        "SurrenderLines":SurrenderLines,"ClaimLines":ClaimLines,"PurchaseLines":PurchaseLines,
-        "RepairLines":RepairLines,"StoreLines":StoreLines,"VoucherLines":VoucherLines,
-        "PettyLines":PettyLines,"PettySurrenderLines":PettySurrenderLines}
+        ctx = {
+            "today": self.todays_date,
+            "res": res, "file":allFiles,"data":data,
+            "state":state,"ImpLine":ImprestLine,
+            "TrainLine":TrainLine,
+            "SurrenderLines":SurrenderLines,
+            "ClaimLines":ClaimLines,"PurchaseLines":PurchaseLines,
+            "RepairLines":RepairLines,"StoreLines":StoreLines,
+            "VoucherLines":VoucherLines,
+            "PettyLines":PettyLines,"PettySurrenderLines":PettySurrenderLines,
+            "full": full_name,
+            "driver_role":driver_role,
+            "TO_role":TO_role,
+            "mechanical_inspector_role":mechanical_inspector_role
+            }
         return render(request, 'approveDetails.html', ctx)
 
 
@@ -272,7 +297,7 @@ def All_Approved(request, pk):
             return redirect('approve')
         except Exception as e:
             print(e)
-            messages.info(request, e)
+            messages.info(request, f'{e}')
             return redirect('ApproveData', pk=pk)
     return redirect('ApproveData', pk=pk)
 
@@ -305,7 +330,7 @@ def Rejected(request, pk):
             print(response)
             return redirect('approve')
         except Exception as e:
-            messages.info(request, e)
+            messages.info(request, f'{e}')
             return redirect('ApproveData', pk=pk)
     return redirect('ApproveData', pk=pk)
 
@@ -332,6 +357,6 @@ def viewDocs(request,pk,id):
             responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
             return responses
         except Exception as e:
-            messages.info(request, e)
+            messages.info(request, f'{e}')
             return redirect('auth')
     return redirect('auth')

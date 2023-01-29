@@ -6,21 +6,22 @@
     <div class="content-wrapper">
         <div class="d-xl-flex justify-content-between align-items-start">
             <h2 class="text-dark font-weight-bold mb-2"> Vehicle Repair Request
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Attachment"> <i
-                       class="las la-plus"></i> Upload Attachment</button>
                 {% if res.Status == "Open" %}
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Attachment"> <i
+                        class="las la-plus"></i> Upload Attachment</button>
                 {% endif %}
             </h2>
 
             <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
                 <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
-                    <button class="btn btn-successs p-3 d-flex align-items-center" data-bs-toggle="modal"
-                            data-bs-target="#staticBackdrop" type="button"> <i class="las la-plus text-white"
-                           style="font-size:15px;"></i> Add Lines
-                    </button>
+
                     {% if res.Status == "Open" %}
+                    <button class="btn btn-successs p-3 d-flex align-items-center" data-bs-toggle="modal"
+                        data-bs-target="#staticBackdrop" type="button"> <i class="las la-plus text-white"
+                            style="font-size:15px;"></i> Add Lines
+                    </button>
                     {% elif res.Status == "Released" %}
-                    
+
                     {% endif %}
                 </div>
             </div>
@@ -47,8 +48,8 @@
                         </div>
                         <div class="progress mt-1 " data-height="8" style="height: 8px;">
                             <div class="progress-bar l-bg-red" role="progressbar" data-width="50%" aria-valuenow="25"
-                                 aria-valuemin="0" aria-valuemax="100"
-                                 style="width: 50%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
+                                aria-valuemin="0" aria-valuemax="100"
+                                style="width: 50%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
                             </div>
                         </div>
                         {% elif res.Status == "Pending Approval" %}
@@ -61,8 +62,8 @@
                         </div>
                         <div class="progress mt-1 " data-height="8" style="height: 8px;">
                             <div class="progress-bar l-bg-yellow" role="progressbar" data-width="25%" aria-valuenow="25"
-                                 aria-valuemin="0" aria-valuemax="100"
-                                 style="width: 75%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
+                                aria-valuemin="0" aria-valuemax="100"
+                                style="width: 75%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
                             </div>
                         </div>
                         {% elif res.Status == "Released" %}
@@ -75,8 +76,8 @@
                         </div>
                         <div class="progress mt-1 " data-height="8" style="height: 8px;">
                             <div class="progress-bar l-bg-green" role="progressbar" data-width="75%" aria-valuenow="75"
-                                 aria-valuemin="0" aria-valuemax="100"
-                                 style="width: 100%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
+                                aria-valuemin="0" aria-valuemax="100"
+                                style="width: 100%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
                             </div>
                         </div>
                         {% endif %}
@@ -88,12 +89,12 @@
                     <div class="card-statistic-3 p-4">
                         <div class="card-icon card-icon-large"><i class="fas fa-user-tag"></i></div>
                         <div class="mb-4">
-                            <h5 class="card-title mb-0">Requested By</h5>
+                            <h5 class="card-title mb-0">Vehicle registration No.</h5>
                         </div>
                         <div class="row align-items-center mb-2 d-flex">
                             <div class="col-md-12">
                                 <h2 class="d-flex align-items-center mb-0">
-                                    {{res.RequestedBy}}
+                                    {{res.Vehicle_Registration_No_}}
                                 </h2>
                             </div>
                         </div>
@@ -110,7 +111,7 @@
                         <div class="row align-items-center mb-2 d-flex">
                             <div class="col-md-12">
                                 <h2 class="d-flex align-items-center mb-0">
-                                    {{res.PostingDate}}
+                                    {{res.Document_Date}}
                                 </h2>
                             </div>
                         </div>
@@ -121,31 +122,14 @@
         <div class="row">
             <div class="col-md-12">
                 <form class="row g-3">
-                    <div class="col-md-4">
-                        <label class="form-label">Vehicle</label>
-                        <input type="text" class="form-control" placeholder="{{res.Asset}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Vehicle registration No.</label>
-                        <input type="text" class="form-control" placeholder="{{res.VehicleRegistrationNo}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Document Date</label>
-                        <input type="text" class="form-control" placeholder="{{res.DocumentDate}}" readonly>
-                    </div>
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <label class="form-label">Odometer Reading</label>
-                        <input type="text" class="form-control" placeholder="{{res.OdometerReading}}" readonly>
+                        <input type="text" class="form-control" placeholder="{{res.Odometer_Reading}}" readonly>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <label class="form-label">Drivers Name</label>
-                        <input type="text" class="form-control" placeholder="{{res.DriverName}}" readonly>
+                        <input type="text" class="form-control" placeholder="{{res.Driver_Name}}" readonly>
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Driver Code</label>
-                        <input type="text" class="form-control" placeholder="{{res.Driver}}" readonly>
-                    </div>       
-                    
                 </form>
             </div>
         </div>
@@ -156,8 +140,8 @@
                     <h4 class="mt-2 mx-2 text-dark">Repair Request Lines</h4>
                     <div class="card-body">
                         <table id="example"
-                               class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                               style="width:100%">
+                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                            style="width:100%">
                             <thead>
                                 <tr id="tops">
                                     <th id="long">Line No.</th>
@@ -180,11 +164,11 @@
                                     <td>
 
                                         <form action="{% url 'DeleteRepairAttachment' line.AuxiliaryIndex1 %}"
-                                              method="post" style="display: inline-block;">
+                                            method="post" style="display: inline-block;">
                                             {% csrf_token %}
                                             <input type="hidden" name="lineNo" value="{{line.LineNo}}">
                                             <button type="submit" class="btn btn-danger" data-toggle="tooltip"
-                                                    data-placement="top" title="Delete"><i class="fas fa-trash-alt"></i>
+                                                data-placement="top" title="Delete"><i class="fas fa-trash-alt"></i>
                                             </button>
                                         </form>
                                     </td>
@@ -216,7 +200,7 @@
                                         <input type="hidden" name="docID" value="{{data.AuxiliaryIndex2}}">
                                         <input type="hidden" name="tableID" value="{{data.Table_ID}}">
                                         <button class="file-close" id="file-close"><i
-                                               class="fa fa-times-circle"></i></button>
+                                                class="fa fa-times-circle"></i></button>
                                     </form>
                                     {% endif %}
                                     <div class="file-img-box"><img src="../../static/img/logo/f1.png" alt="icon"></div>
@@ -226,7 +210,7 @@
                                         <input type="hidden" name="File_Name" value="{{data.File_Name}}">
                                         <input type="hidden" name="File_Extension" value="{{data.File_Extension}}">
                                         <button class="file-download mx-1"><i
-                                               class="fa fa-download text-success"></i></button>
+                                                class="fa fa-download text-success"></i></button>
                                     </form>
                                     <div class="file-man-title">
                                         <h5 class="mb-0 text-overflow">
@@ -279,20 +263,22 @@
             <div class="col-md-12">
                 {% if res.Status == "Open" %}
                 <div class="myForm my-3">
-                    <form action="{% url 'FnRaiseRepairRequest' res.No %}" method="POST" style="display: inline-block;">
+                    <form action="{% url 'FnRaiseRepairRequest' res.No_ %}" method="POST"
+                        style="display: inline-block;">
                         {% csrf_token %}
                         <div class="mb-3">
-                            <input type="hidden" hidden name="insNo" value="{{ res.No }}">
+                            <input type="hidden" hidden name="insNo" value="{{ res.No_ }}">
                         </div>
                         <button class="btn btn-info" type="submit"> Request For Approval </button>
                     </form>
                 </div>
                 {% elif res.Status == "Pending Approval" %}
                 <div class="d-grid gap-2 my-3">
-                    <form action="{% url 'FnCancelRepairRequest' res.No %}" method="POST" class="myForm" id="approvalForm">
+                    <form action="{% url 'FnCancelRepairRequest' res.No_ %}" method="POST" class="myForm"
+                        id="approvalForm">
                         {% csrf_token %}
                         <div class="mb-3">
-                            <input type="hidden" hidden name="reqNo" value="{{res.No}}">
+                            <input type="hidden" hidden name="reqNo" value="{{res.No_}}">
                         </div>
                         <button class="btn btn-info" type="submit">Cancel Request For Approval</button>
                     </form>
@@ -307,8 +293,8 @@
                     <h4 class="mt-2 mx-2 text-dark">Document Approvers</h4>
                     <div class="card-body">
                         <table id="example"
-                               class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                               style="width:100%">
+                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                            style="width:100%">
                             <thead>
                                 <tr id="tops">
                                     <th id="long">Entry No</th>
@@ -336,23 +322,23 @@
 
     </div>
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-         aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="staticBackdropLabel">New Repair Request Line
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="myForm needs-validation" id="frm_" action="{% url 'FnRepairRequestLine' res.No %}"
-                          method="post" novalidate>
+                    <form class="myForm needs-validation" id="frm_" action="{% url 'FnRepairRequestLine' res.No_ %}"
+                        method="post" novalidate>
                         {% csrf_token %}
                         <div class="row">
                             <div class="col-md-12">
                                 <input type="number" name="lineNo" value="1000" hidden>
-                                <input type="text" name="requisitionNo" value="{{res.No}}" hidden>
+                                <input type="text" name="requisitionNo" value="{{res.No_}}" hidden>
                             </div>
                         </div>
                         <div class="row">
@@ -396,11 +382,11 @@
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Upload Attachment</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="{% url 'UploadRepairAttachment' res.No %}" method="post" class="myForm"
-                      enctype="multipart/form-data">
+                <form action="{% url 'UploadRepairAttachment' res.No_ %}" method="post" class="myForm"
+                    enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class=" mb-3">
                         <label class="form-label">Attachments </label>

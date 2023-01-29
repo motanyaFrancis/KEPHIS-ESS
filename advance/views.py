@@ -24,9 +24,12 @@ class UserObjectMixin(object):
 class advance(UserObjectMixin,View):
     def get(self,request):
         try:
-            fullname =  request.session['User_ID']
             year = request.session['years']
             empNo =request.session['Employee_No_']
+            driver_role = request.session['driver_role']
+            TO_role = request.session['TO_role']
+            mechanical_inspector_role = request.session['mechanical_inspector_role']
+            full_name = request.session['full_name']
 
             Access_Point = config.O_DATA.format(f"/QySalaryAdvances?$filter=Employee_No%20eq%20%27{empNo}%27")
             response = self.get_object(Access_Point)
@@ -53,7 +56,7 @@ class advance(UserObjectMixin,View):
             return redirect('auth')
         except Exception as e:
             print(e)
-            messages.error(request,e)
+            messages.error(request, f'{e}')
             return redirect('auth')
         ctx = {
             "today": self.todays_date, 
@@ -61,7 +64,13 @@ class advance(UserObjectMixin,View):
             "count": counts, "response": Approved,
             "counter": counter,"pend": pend,
             "pending": Pending, "year": year,
-            "full": fullname,"salary":salary}
+            "salary":salary,
+            "full": full_name,
+            "driver_role":driver_role,
+            "TO_role":TO_role,
+            "mechanical_inspector_role":mechanical_inspector_role
+            
+            }
         return render(request,"advance.html",ctx)
     def post(self, request):
         if request.method == "POST":
@@ -74,7 +83,7 @@ class advance(UserObjectMixin,View):
                 myAction = request.POST.get('myAction')
             except ValueError as e:
                 print(e)
-                messages.error(request,e)
+                messages.error(request,f'{e}')
                 return redirect('advance')
             except KeyError as e:
                 print(e)
@@ -89,16 +98,23 @@ class advance(UserObjectMixin,View):
                     return redirect('advance')
             
             except Exception as e:
-                messages.error(request, e)
+                messages.error(request, f'{e}')
                 print(e)
         return redirect('advance')
 
 class advanceDetail(UserObjectMixin,View):
     def get(self, request,pk):
         try:
-            fullname = request.session['User_ID']
+            driver_role = request.session['driver_role']
+            TO_role = request.session['TO_role']
+            mechanical_inspector_role = request.session['mechanical_inspector_role']
+            full_name = request.session['full_name']
             year = request.session['years']
             empNo =request.session['Employee_No_']
+            
+            res = {}
+            state = ''
+            
 
             Access_Point = config.O_DATA.format(f"/QySalaryAdvances?$filter=Employee_No%20eq%20%27{empNo}%27%20and%20Loan_No%20eq%20%27{pk}%27")
             response = self.get_object(Access_Point)
@@ -120,18 +136,23 @@ class advanceDetail(UserObjectMixin,View):
 
         except requests.exceptions.ConnectionError as e:
             print(e)
-            messages.error(request,e)
+            messages.error(request,f'{e}')
             return redirect('advance')
         except KeyError as e:
             messages.info(request, "Session Expired. Please Login")
             print(e)
             return redirect('auth')
         except Exception as e:
-                messages.error(request, e)
+                messages.error(request, f'{e}')
                 print(e)
         ctx = {"today": self.todays_date, "res": res,
                 "Approvers": Approvers, "state": state,"file":allFiles,
-                "year": year, "full": fullname,"Comments":Comments}
+                "year": year,"Comments":Comments,
+                "full": full_name,
+                "driver_role":driver_role,
+                "TO_role":TO_role,
+                "mechanical_inspector_role":mechanical_inspector_role
+            }
 
         return render(request,"advanceDetails.html",ctx)
 
@@ -150,7 +171,7 @@ def FnRequestSalaryAdvanceApproval(request,pk):
                 messages.success(request, "Approval Request Sent Successfully ")
                 return redirect('advance')
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)        
     return redirect('advanceDetail', pk=pk)
 
@@ -169,7 +190,7 @@ def FnCancelSalaryAdvanceApproval(request,pk):
                 messages.success(request, "Approval Request Sent Successfully ")
                 return redirect('advance')
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)        
     return redirect('advanceDetail', pk=pk)
 
@@ -209,6 +230,6 @@ def DeleteAdvanceAttachment(request,pk):
                 messages.success(request, "Deleted Successfully")
                 return redirect('advanceDetail', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
     return redirect('advanceDetail', pk=pk)

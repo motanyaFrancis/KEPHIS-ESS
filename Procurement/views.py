@@ -1,6 +1,4 @@
 import base64
-from ctypes.wintypes import PHKEY
-from urllib.parse import parse_qs
 from django.shortcuts import render, redirect
 from datetime import datetime
 import requests
@@ -37,9 +35,11 @@ class UserObjectMixin(object):
 class PurchaseRequisition(UserObjectMixin, View):
     def get(self, request):
         try:
-            userID = request.session['User_ID']
-            year = request.session['years']
             empNo = request.session['Employee_No_']
+            driver_role = request.session['driver_role']
+            TO_role = request.session['TO_role']
+            mechanical_inspector_role = request.session['mechanical_inspector_role']
+            full_name = request.session['full_name']
 
             Access_Point = config.O_DATA.format(
                 f"/QyPurchaseRequisitionHeaders?$filter=Employee_No_%20eq%20%27{empNo}%27")
@@ -62,14 +62,17 @@ class PurchaseRequisition(UserObjectMixin, View):
             return redirect('auth')
         except KeyError as e:
             print(e)
-            messages.info(request, e)
+            messages.info(request, f'{e}')
             return redirect('auth')
 
         ctx = {"today": self.todays_date, "res": openPurchase,
                "count": counts, "response": Approved,
                "counter": counter, "pend": pend,
-               "pending": Pending, "year": year,
-               "full": userID}
+               "pending": Pending,
+               "full": full_name,
+                "driver_role":driver_role,
+                "TO_role":TO_role,
+                "mechanical_inspector_role":mechanical_inspector_role}
 
         return render(request, 'purchaseReq.html', ctx)
 
@@ -96,7 +99,7 @@ class PurchaseRequisition(UserObjectMixin, View):
                 messages.success(request, "Request Successful")
                 print(response)
             except Exception as e:
-                messages.info(request, e)
+                messages.info(request, f'{e}')
                 print(e)
                 return redirect('purchase')
         return redirect('purchase')
@@ -105,9 +108,13 @@ class PurchaseRequisition(UserObjectMixin, View):
 class PurchaseRequestDetails(UserObjectMixin, View):
     def get(self, request, pk):
         try:
-            Dpt = request.session['Department']
+            Dpt = request.session['User_Responsibility_Center']
             empNo = request.session['Employee_No_']
-            print(Dpt, empNo)
+            driver_role = request.session['driver_role']
+            TO_role = request.session['TO_role']
+            mechanical_inspector_role = request.session['mechanical_inspector_role']
+            full_name = request.session['full_name']
+            res ={}
 
             Access_Point = config.O_DATA.format(
                 f"/QyPurchaseRequisitionHeaders?$filter=No_%20eq%20%27{pk}%27%20and%20Employee_No_%20eq%20%27{empNo}%27")
@@ -168,7 +175,11 @@ class PurchaseRequestDetails(UserObjectMixin, View):
             "items": Items,
             "gl": Gl_Accounts,
             "file": allFiles,
-            "Comments": Comments
+            "Comments": Comments,
+            "full": full_name,
+            "driver_role":driver_role,
+            "TO_role":TO_role,
+            "mechanical_inspector_role":mechanical_inspector_role
         }
         return render(request, 'purchaseDetail.html', ctx)
 
@@ -207,7 +218,7 @@ class PurchaseRequestDetails(UserObjectMixin, View):
                 print(response)
                 return redirect('PurchaseDetail', pk=pk)
             except Exception as e:
-                messages.error(request, e)
+                messages.error(request, f'{e}')
                 print(e)
                 return redirect('PurchaseDetail', pk=pk)
         return redirect('PurchaseDetail', pk=pk)
@@ -237,9 +248,9 @@ def RequisitionCategory(request):
 
 def PurchaseApproval(request, pk):
     Username = request.session['User_ID']
-    Password = request.session['password']
+    Password = request.session['soap_headers']
     AUTHS = Session()
-    AUTHS.auth = HTTPBasicAuth(Username, Password)
+    AUTHS.auth = HTTPBasicAuth(Username, Password['password'])
     CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
     requistionNo = ""
     if request.method == 'POST':
@@ -259,7 +270,7 @@ def PurchaseApproval(request, pk):
             print(response)
             return redirect('PurchaseDetail', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
             return redirect('PurchaseDetail', pk=pk)
     return redirect('PurchaseDetail', pk=pk)
@@ -282,7 +293,7 @@ def UploadPurchaseAttachment(request, pk):
                 response = config.CLIENT.service.FnUploadAttachedDocument(
                     pk, fileName, attachment, tableID, request.session['User_ID'])
             except Exception as e:
-                messages.error(request, e)
+                messages.error(request, f'{e}')
                 print(e)
         if response == True:
             messages.success(request, "File(s) Uploaded Successfully")
@@ -305,7 +316,7 @@ def DeletePurchaseAttachment(request, pk):
                 messages.success(request, "Deleted Successfully ")
                 return redirect('PurchaseDetail', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
     return redirect('PurchaseDetail', pk=pk)
 
@@ -324,7 +335,7 @@ def FnCancelPurchaseApproval(request, pk):
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
             return redirect('PurchaseDetail', pk=pk)
     return redirect('PurchaseDetail', pk=pk)
@@ -348,7 +359,7 @@ def FnGeneratePurchaseReport(request, pk):
             responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
             return responses
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
             return redirect('PurchaseDetail', pk=pk)
     return redirect('PurchaseDetail', pk=pk)
@@ -364,7 +375,7 @@ def FnDeletePurchaseRequisitionLine(request, pk):
             messages.success(request, "Successfully Deleted")
             print(response)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
             return redirect('PurchaseDetail', pk=pk)
     return redirect('PurchaseDetail', pk=pk)
@@ -374,8 +385,11 @@ class RepairRequest(UserObjectMixin, View):
     def get(self, request):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
-
+            driver_role = request.session['driver_role']
+            TO_role = request.session['TO_role']
+            mechanical_inspector_role = request.session['mechanical_inspector_role']
+            full_name = request.session['full_name']
+         
             Access_Point = config.O_DATA.format(
                 f"/QyRepairRequisitionHeaders?$filter=Requested_By%20eq%20%27{userID}%27")
             response = self.get_object(Access_Point)
@@ -400,7 +414,11 @@ class RepairRequest(UserObjectMixin, View):
             return redirect('auth')
 
         ctx = {"today": self.todays_date, "res": openRepair, "count": counts, "response": Approved,
-               "counter": counter, "pend": pend, "year": year, "full": userID, "pending": Pending}
+               "counter": counter, "pend": pend, "pending": Pending,
+               "full": full_name,
+                "driver_role":driver_role,
+                "TO_role":TO_role,
+                "mechanical_inspector_role":mechanical_inspector_role}
 
         return render(request, 'repairReq.html', ctx)
 
@@ -428,7 +446,7 @@ class RepairRequest(UserObjectMixin, View):
                 messages.success(request, "Request Successful")
                 print(response)
             except Exception as e:
-                messages.error(request, e)
+                messages.error(request, f'{e}')
                 print(e)
                 return redirect('repair')
         return redirect('repair')
@@ -439,8 +457,12 @@ class RepairRequestDetails(UserObjectMixin, View):
         try:
             empNo = request.session['Employee_No_']
             userID = request.session['User_ID']
-            year = request.session['years']
-
+            driver_role = request.session['driver_role']
+            TO_role = request.session['TO_role']
+            mechanical_inspector_role = request.session['mechanical_inspector_role']
+            full_name = request.session['full_name']
+            res = {}
+        
             Access_Point = config.O_DATA.format(
                 f"/QyRepairRequisitionHeaders?$filter=No_%20eq%20%27{pk}%27%20and%20Requested_By%20eq%20%27{userID}%27")
             response = self.get_object(Access_Point)
@@ -481,9 +503,16 @@ class RepairRequestDetails(UserObjectMixin, View):
         except KeyError:
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
-        ctx = {"res": res, "line": openLines, "Approvers": Approvers,
-               "asset": my_asset, "full": userID,
-               "year": year, "file": allFiles, "Comments": Comments}
+        ctx = {
+                "res": res,
+               "line": openLines,
+               "Approvers": Approvers,
+               "asset": my_asset,
+               "file": allFiles, "Comments": Comments,
+               "full": full_name,
+                "driver_role":driver_role,
+                "TO_role":TO_role,
+                "mechanical_inspector_role":mechanical_inspector_role}
         return render(request, 'repairDetail.html', ctx)
 
     def post(self, request, pk):
@@ -523,10 +552,10 @@ class RepairRequestDetails(UserObjectMixin, View):
                                 messages.error(request, "Failed, Try Again")
                                 return redirect('RepairDetail', pk=pk)
                         except Exception as e:
-                            messages.error(request, e)
+                            messages.error(request, f'{e}')
                             print(e)
             except Exception as e:
-                messages.error(request, e)
+                messages.error(request, f'{e}')
                 print(e)
                 return redirect('RepairDetail', pk=pk)
         return redirect('RepairDetail', pk=pk)
@@ -534,9 +563,9 @@ class RepairRequestDetails(UserObjectMixin, View):
 
 def RepairApproval(request, pk):
     Username = request.session['User_ID']
-    Password = request.session['password']
+    Password = request.session['soap_headers']
     AUTHS = Session()
-    AUTHS.auth = HTTPBasicAuth(Username, Password)
+    AUTHS.auth = HTTPBasicAuth(Username, Password['password'])
     CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
     requistionNo = ""
     if request.method == 'POST':
@@ -553,7 +582,7 @@ def RepairApproval(request, pk):
             print(response)
             return redirect('RepairDetail', pk=pk)
         except Exception as e:
-            messages.info(request, e)
+            messages.info(request, f'{e}')
             print(e)
             return redirect('RepairDetail', pk=pk)
     return redirect('RepairDetail', pk=pk)
@@ -575,7 +604,7 @@ def FnCancelRepairApproval(request, pk):
             print(response)
             return redirect('RepairDetail', pk=pk)
         except Exception as e:
-            messages.info(request, e)
+            messages.info(request, f'{e}')
             print(e)
             return redirect('RepairDetail', pk=pk)
     return redirect('RepairDetail', pk=pk)
@@ -593,7 +622,7 @@ def DeleteRepairAttachment(request, pk):
                 messages.success(request, "Deleted Successfully ")
                 return redirect('RepairDetail', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
     return redirect('RepairDetail', pk=pk)
 
@@ -608,7 +637,7 @@ def FnDeleteRepairRequisitionLine(request, pk):
             messages.success(request, "Successfully Deleted")
             print(response)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
             return redirect('RepairDetail', pk=pk)
     return redirect('RepairDetail', pk=pk)
@@ -632,7 +661,7 @@ def FnGenerateRepairReport(request, pk):
             responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
             return responses
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
             return redirect('RepairDetail', pk=pk)
     return redirect('RepairDetail', pk=pk)
@@ -642,8 +671,11 @@ class StoreRequest(UserObjectMixin, View):
     def get(self, request):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
-
+            driver_role = request.session['driver_role']
+            TO_role = request.session['TO_role']
+            mechanical_inspector_role = request.session['mechanical_inspector_role']
+            full_name = request.session['full_name']
+         
             Access_Point = config.O_DATA.format(
                 f"/QyStoreRequisitionHeaders?$filter=Requested_By%20eq%20%27{userID}%27")
             response = self.get_object(Access_Point)
@@ -669,7 +701,10 @@ class StoreRequest(UserObjectMixin, View):
         ctx = {"today": self.todays_date, "res": openStore,
                "count": counts, "response": Approved,
                "counter": counter, "pend": pend, "pending": Pending,
-               "full": userID, "year": year}
+               "full": full_name,
+                "driver_role":driver_role,
+                "TO_role":TO_role,
+                "mechanical_inspector_role":mechanical_inspector_role}
         return render(request, 'storeReq.html', ctx)
 
     def post(self, request):
@@ -696,7 +731,7 @@ class StoreRequest(UserObjectMixin, View):
                 print(response)
             except Exception as e:
                 print(e)
-                messages.info(request, e)
+                messages.info(request, f'{e}')
                 return redirect('store')
         return redirect('store')
 
@@ -705,7 +740,11 @@ class StoreRequestDetails(UserObjectMixin, View):
     def get(self, request, pk):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
+            driver_role = request.session['driver_role']
+            TO_role = request.session['TO_role']
+            mechanical_inspector_role = request.session['mechanical_inspector_role']
+            full_name = request.session['full_name']
+            res = {}
 
             Access_Point = config.O_DATA.format(
                 f"/QyStoreRequisitionHeaders?$filter=No_%20eq%20%27{pk}%27%20and%20Requested_By%20eq%20%27{userID}%27")
@@ -752,9 +791,13 @@ class StoreRequestDetails(UserObjectMixin, View):
             return redirect('auth')
 
         ctx = {"today": self.todays_date, "res": res, "line": openLines,
-               "Approvers": Approvers, "loc": Location, "year": year, "full": userID,
+               "Approvers": Approvers, "loc": Location,
                "itemsCategory": itemsCategory, "file": allFiles,
-               "Comments": Comments}
+               "Comments": Comments,
+               "full": full_name,
+                "driver_role":driver_role,
+                "TO_role":TO_role,
+                "mechanical_inspector_role":mechanical_inspector_role}
         return render(request, 'storeDetail.html', ctx)
 
     def post(self, request, pk):
@@ -778,7 +821,7 @@ class StoreRequestDetails(UserObjectMixin, View):
                 print(response)
                 return redirect('StoreDetail', pk=pk)
             except Exception as e:
-                messages.error(request, e)
+                messages.error(request, f'{e}')
                 print(e)
                 return redirect('StoreDetail', pk=pk)
         return redirect('StoreDetail', pk=pk)
@@ -814,9 +857,9 @@ def itemUnitOfMeasure(request):
 
 def StoreApproval(request, pk):
     Username = request.session['User_ID']
-    Password = request.session['password']
+    Password = request.session['soap_headers']
     AUTHS = Session()
-    AUTHS.auth = HTTPBasicAuth(Username, Password)
+    AUTHS.auth = HTTPBasicAuth(Username, Password['password'])
     CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
     requistionNo = ""
     if request.method == 'POST':
@@ -833,7 +876,7 @@ def StoreApproval(request, pk):
             print(response)
             return redirect('StoreDetail', pk=pk)
         except Exception as e:
-            messages.info(request, e)
+            messages.info(request, f'{e}')
             print(e)
             return redirect('StoreDetail', pk=pk)
     return redirect('StoreDetail', pk=pk)
@@ -855,7 +898,7 @@ def FnCancelStoreApproval(request, pk):
             print(response)
             return redirect('StoreDetail', pk=pk)
         except Exception as e:
-            messages.info(request, e)
+            messages.info(request, f'{e}')
             print(e)
             return redirect('StoreDetail', pk=pk)
     return redirect('StoreDetail', pk=pk)
@@ -872,7 +915,7 @@ def FnDeleteStoreRequisitionLine(request, pk):
             messages.success(request, "Successfully Deleted")
             print(response)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
             return redirect('StoreDetail', pk=pk)
     return redirect('StoreDetail', pk=pk)
@@ -897,7 +940,7 @@ def FnGenerateStoreReport(request, pk):
             responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
             return responses
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
             return redirect('StoreDetail', pk=pk)
     return redirect('StoreDetail', pk=pk)
@@ -921,7 +964,7 @@ def UploadStoreAttachment(request, pk):
                 response = config.CLIENT.service.FnUploadAttachedDocument(
                     pk, fileName, attachment, tableID, request.session['User_ID'])
             except Exception as e:
-                messages.error(request, e)
+                messages.error(request, f'{e}')
                 print(e)
         if response == True:
             messages.success(request, "File(s) Uploaded Successfully")
@@ -944,7 +987,7 @@ def DeleteStoreAttachment(request, pk):
                 messages.success(request, "Deleted Successfully ")
                 return redirect('StoreDetail', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
     return redirect('StoreDetail', pk=pk)
 
@@ -953,7 +996,10 @@ class GeneralRequisition(UserObjectMixin, View):
     def get(self, request):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
+            driver_role = request.session['driver_role']
+            TO_role = request.session['TO_role']
+            mechanical_inspector_role = request.session['mechanical_inspector_role']
+            full_name = request.session['full_name']
 
             Access_Point = config.O_DATA.format(
                 f"/QyGeneralRequisitionHeader?$filter=Requested_By%20eq%20%27{userID}%27")
@@ -976,14 +1022,17 @@ class GeneralRequisition(UserObjectMixin, View):
             return redirect('auth')
         except KeyError as e:
             print(e)
-            messages.info(request, e)
+            messages.info(request, f'{e}')
             return redirect('auth')
 
         ctx = {"today": self.todays_date, "res": openRequest,
                "count": counts, "response": Approved,
                "counter": counter, "pend": pend,
-               "pending": Pending, "year": year,
-               "full": userID}
+               "pending": Pending,
+               "full": full_name,
+                "driver_role":driver_role,
+                "TO_role":TO_role,
+                "mechanical_inspector_role":mechanical_inspector_role}
         return render(request, "generalReq.html", ctx)
 
     def post(self, request):
@@ -1012,7 +1061,7 @@ class GeneralRequisition(UserObjectMixin, View):
                     messages.success(request, "False")
                     return redirect('GeneralRequisition')
             except Exception as e:
-                messages.info(request, e)
+                messages.info(request, f'{e}')
                 print(e)
                 return redirect('GeneralRequisition')
         return redirect('GeneralRequisition')
@@ -1022,6 +1071,11 @@ class GeneralRequisitionDetails(UserObjectMixin, View):
     def get(self, request, pk):
         try:
             userID = request.session['User_ID']
+            driver_role = request.session['driver_role']
+            TO_role = request.session['TO_role']
+            mechanical_inspector_role = request.session['mechanical_inspector_role']
+            full_name = request.session['full_name']
+            res = {}
 
             Access_Point = config.O_DATA.format(
                 f"/QyGeneralRequisitionHeader?$filter=No_%20eq%20%27{pk}%27%20and%20Requested_By%20eq%20%27{userID}%27")
@@ -1065,7 +1119,11 @@ class GeneralRequisitionDetails(UserObjectMixin, View):
             return redirect('auth')
 
         ctx = {"today": self.todays_date, "res": res, "Approvers": Approvers, "file": allFiles, "Comments": Comments,
-               "itemsCategory": itemsCategory, "openLines": openLines}
+               "itemsCategory": itemsCategory, "openLines": openLines,
+               "full": full_name,
+                "driver_role":driver_role,
+                "TO_role":TO_role,
+                "mechanical_inspector_role":mechanical_inspector_role}
         return render(request, "generalDetails.html", ctx)
 
     def post(self, request, pk):
@@ -1101,7 +1159,7 @@ class GeneralRequisitionDetails(UserObjectMixin, View):
                     messages.error(request, "Not Sent")
                     return redirect('GeneralRequisitionDetails', pk=pk)
             except Exception as e:
-                messages.error(request, e)
+                messages.error(request, f'{e}')
                 print(e)
                 return redirect('GeneralRequisitionDetails', pk=pk)
         return redirect('GeneralRequisitionDetails', pk=pk)
@@ -1122,7 +1180,7 @@ def FnDeleteGeneralRequisitionLine(request, pk):
                 messages.error(request, "Not Sent")
                 return redirect('GeneralRequisitionDetails', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
             return redirect('GeneralRequisitionDetails', pk=pk)
     return redirect('GeneralRequisitionDetails', pk=pk)
@@ -1148,7 +1206,7 @@ def UploadGeneralAttachment(request, pk):
                     messages.error(request, "Failed, Try Again.")
                     return redirect('GeneralRequisitionDetails', pk=pk)
             except Exception as e:
-                messages.error(request, e)
+                messages.error(request, f'{e}')
                 print(e)
     return redirect('GeneralRequisitionDetails', pk=pk)
 
@@ -1165,16 +1223,16 @@ def DeleteGeneralAttachment(request, pk):
                 messages.success(request, "Deleted Successfully ")
                 return redirect('GeneralRequisitionDetails', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
     return redirect('GeneralRequisitionDetails', pk=pk)
 
 
 def GeneralApproval(request, pk):
     Username = request.session['User_ID']
-    Password = request.session['password']
+    Password = request.session['soap_headers']
     AUTHS = Session()
-    AUTHS.auth = HTTPBasicAuth(Username, Password)
+    AUTHS.auth = HTTPBasicAuth(Username, Password['password'])
     CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
     requistionNo = ""
     if request.method == 'POST':
@@ -1194,7 +1252,7 @@ def GeneralApproval(request, pk):
             print(response)
             return redirect('GeneralRequisitionDetails', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
             return redirect('GeneralRequisitionDetails', pk=pk)
     return redirect('GeneralRequisitionDetails', pk=pk)
@@ -1213,7 +1271,7 @@ def FnCancelGeneralApproval(request, pk):
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
             return redirect('GeneralRequisitionDetails', pk=pk)
     return redirect('GeneralRequisitionDetails', pk=pk)
@@ -1237,7 +1295,7 @@ def FnGenerateGeneralReport(request, pk):
             responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
             return responses
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
             return redirect('GeneralRequisitionDetails', pk=pk)
     return redirect('GeneralRequisitionDetails', pk=pk)

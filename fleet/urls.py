@@ -4,11 +4,14 @@ from . import views
 urlpatterns = [
     # work Ticket
     path('workTicket/', views.WorkTicket.as_view(), name='workTicket'),
+    path('get_prev_tickets/', views.get_prev_tickets.as_view(), name='get_prev_tickets'),
     path('WorkTicketDetails/<str:pk>', views.WorkTicketDetails.as_view(), name='WorkTicketDetails'),
     path('UploadTicketAttachment/<str:pk>', views.UploadTicketAttachment, name='UploadTicketAttachment'),
     path('DeleteTicketAttachment/<str:pk>', views.DeleteTicketAttachment, name='DeleteTicketAttachment'),
-    path('FnSubmitWorkTicket/<str:pk>', views.FnSubmitWorkTicket, name='FnSubmitWorkTicket'),
+    path('FnSubmitWorkTicket/<str:pk>', views.FnSubmitWorkTicket.as_view(), name='FnSubmitWorkTicket'),
     path('FnCancelWorkTicket/<str:pk>', views.FnCancelWorkTicket, name='FnCancelWorkTicket'),
+    path('FnIssueWorkTicket/<str:pk>', views.FnIssueWorkTicket.as_view(),name="FnIssueWorkTicket"),
+    path('FnGenerateWorkTicketReport/<str:pk>', views.FnGenerateWorkTicketReport.as_view(), name='FnGenerateWorkTicketReport'),
     
     # VehicleInspection
     path('vehicleInspection', views.VehicleInspection.as_view(), name='vehicleInspection'),
@@ -25,8 +28,9 @@ urlpatterns = [
     path('UploadRepairAttachment/<str:pk>', views.UploadRepairAttachment, name='UploadRepairAttachment'),
     path('DeleteRepairAttachment/<str:pk>', views.DeleteRepairAttachment, name='DeleteRepairAttachment'),
     path('FnRepairRequestLine/<str:pk>', views.FnRepairRequestLines, name='FnRepairRequestLine'),
-    path('FnRaiseRepairRequest/<str:pk>', views.FnRaiseRepairRequest, name='FnRaiseRepairRequest'),
+    path('FnRaiseRepairRequest/<str:pk>', views.FnRaiseRepairRequest.as_view(), name='FnRaiseRepairRequest'),
     path('FnCancelRepairRequest/<str:pk>', views.FnCancelRepairRequest, name='FnCancelRepairRequest'),
+    path('FnConfirmRepaireRequest/<str:pk>', views.FnConfirmRepaireRequest.as_view(), name=' FnConfirmRepaireRequest'),
 
     
     # Transport Request
@@ -42,14 +46,14 @@ urlpatterns = [
     path('AccidentDetails/<str:pk>', views.AccidentDetails.as_view(), name='AccidentDetails'),
     path('UploadAccidentAttachment/<str:pk>', views.UploadAccidentAttachment, name='UploadAccidentAttachment'),
     path('DeleteAccidentAttachment/<str:pk>', views.DeleteAccidentAttachment, name='DeleteAccidentAttachment'),
-    path('FnSubmitAccidents/<str:pk>', views.FnSubmitAccidents, name='FnSubmitAccidents'),
+    path('FnSubmitAccidents/<str:pk>', views.FnSubmitAccidents.as_view(), name='FnSubmitAccidents'),
     
     # Service Request
     path('ServiceRequest', views.ServiceRequest.as_view(), name='ServiceRequest'),
     path('ServiceRequestDetails/<str:pk>', views.ServiceRequestDetails.as_view(), name='ServiceRequestDetails' ),
     path('UploadServiceRequestAttachment/<str:pk>', views.UploadServiceRequestAttachment, name='UploadServiceRequestAttachment'),
     path('DeleteServiceRequestAttachment/<str:pk>', views.DeleteServiceRequestAttachment, name='DeleteServiceRequestAttachment'),
-    path('FnSubmitServiceRequest/<str:pk>', views.FnSubmitServiceRequest, name='FnSubmitServiceRequest'),
+    path('FnSubmitServiceRequest/<str:pk>', views.FnSubmitServiceRequest.as_view(), name='FnSubmitServiceRequest'),
     path('FnServiceRequestLine/<str:pk>', views.FnServiceRequestLine, name='FnServiceRequestLine'),
     path('FnCancelServiceRequest/<str:pk>', views.FnCancelServiceRequest, name='FnCancelServiceRequest')
 

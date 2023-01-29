@@ -15,11 +15,10 @@
 
             <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
                 <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
-                    {% if open.Booking_Status == "Open" %}
+                    {% if res.Booking_Status == "Open" %}
                     <button class="btn btn-successs p-3 d-flex align-items-center" data-bs-toggle="modal"
-                        data-bs-target="#staticBackdrop" type="button"> <i class="las la-plus text-white"
-                            style="font-size:15px;"></i> Add lines
-                        Lines
+                        data-bs-target="#disability_modal" type="button"> <i class="las la-plus text-white"
+                            style="font-size:15px;"></i> Add Disability Details
                     </button>
                     {% elif res.Booking_Status == "Released" %}
                     <form action="{% url 'FnGenerateGeneralReport' res.No_ %}" method="post"
@@ -742,5 +741,47 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="disability_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">Disability Details
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="myForm needs-validation" action="{% url 'DisabilityDetails' res.No_ %}" method="post"
+                    novalidate>
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <input type="hidden" name="bookingNo" value="{{res.No_}}">
+                            <input type="hidden" name="myAction" value="modify">
+                            {% if res.Service_Requred == 'Meeting Room' %}
+                            <input type="hidden" name="typeOfService" value="1">
+                            {% elif res.Service_Requred == 'Accommodation' %}
+                            <input type="hidden" name="typeOfService" value="2">
+                            {% elif res.Service_Requred == 'Meeting Room And Accommodation' %}
+                            <input type="hidden" name="typeOfService" value="3">
+                            {% else %}
+                            <input type="hidden" name="typeOfService" value="0">
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label class="form-label">Explain Disability</label>
+                                <textarea class="form-control" name="exaplainDisability" rows="3"></textarea>
+                            </div>
 
+                        </div>
+                    </div>
+                    <button type="submit" id="sasa" class="btn btn-success my-3 w-100">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

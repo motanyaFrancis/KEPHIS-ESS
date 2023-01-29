@@ -1,20 +1,9 @@
-import base64
 from django.shortcuts import render, redirect
-from datetime import datetime
-# from isodate import date_isoformat
 import requests
 from requests import Session
-import json
 from django.conf import settings as config
 import datetime as dt
 from django.contrib import messages
-from django.http import HttpResponse
-import io as BytesIO
-import secrets
-import string
-from requests.auth import HTTPBasicAuth
-from zeep.client import Client
-from zeep.transports import Transport
 from django.views import View
 
 # Create your views here.
@@ -34,7 +23,6 @@ class Appraisals(UserObjectMixin, View):
     def get(self, request):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
             Access_Point = config.O_DATA.format(f"/QyEmployeeAppraisal?$filter=AppraiseeID%20eq%20%27{userID}%27")
             response = self.get_object(Access_Point)
             
@@ -91,7 +79,6 @@ class Appraisals(UserObjectMixin, View):
             "counter": counter,
             "pend": pend,
             "pending": Pending,
-            "year": year,
             "full": userID,
         }
                 
@@ -123,7 +110,7 @@ class Appraisals(UserObjectMixin, View):
                 messages.success(request, 'request successful')
                 print(response)
             except Exception as e:
-                messages.error(request, e)
+                messages.error(request, f'{e}')
                 print(e)
                 return redirect('Appraisals')
         return redirect('Appraisals')
@@ -132,7 +119,7 @@ class AppraisalDetails(UserObjectMixin, View):
     def get(self, request, pk):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
+            res = {}
             
             Access_Point = config.O_DATA.format(f"/QyEmployeeAppraisal?$filter=AppraisalNo%20eq%20%27{pk}%27%20and%20AppraiseeID%20eq%20%27{userID}%27")
             response = self.get_object(Access_Point)
@@ -147,11 +134,7 @@ class AppraisalDetails(UserObjectMixin, View):
         ctx = {
             "res": res,
             "today": self.todays_date,
-            "year": year,
             'full': userID
-            # 'Approvers': Approvers,
-            # 'allFiles': allFiles,
-            # "line": openLines,
         }
             
         return render(request, 'appraisalDetails.html', ctx)

@@ -1,0 +1,6 @@
+{% if options %}
+<option value="0" disabled selected>Select</option>
+{% for data in options %}
+<option value="{{ data.Work_Ticket_No}}">{{ data.Work_Ticket_No|safe }}</option>
+{% endfor %}
+{% endif %}

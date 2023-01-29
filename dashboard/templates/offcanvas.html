@@ -107,12 +107,6 @@
                     </a>
                     <div class="collapse" id="hr">
                         <ul class="nav flex-column sub-menu">
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'LeavePlanner' %}"><i
-                                        class="las la-arrow-right mr-2"></i>
-                                    Annual Leave Planner
-                                </a>
-                            </li>
                             <li class="nav-item"> <a class="nav-link" href="{% url 'leave' %}"><i
                                         class="las la-arrow-right mr-2"></i> Leave Requests</a>
                             </li>
@@ -168,7 +162,7 @@
                                         class="las la-arrow-right mr-2"></i>Repair/Maintenance</a></li>
                             <li class="nav-item"> <a class="nav-link" href="{% url 'store' %}"><i
                                         class="las la-arrow-right mr-2"></i>Store Request</a></li>
-                            
+
                         </ul>
                     </div>
                 </li>
@@ -183,35 +177,39 @@
                         <ul class="nav flex-column sub-menu">
 
                             <li class="nav-item">
+                                {% if driver_role == True or TO_role == True or mechanical_inspector_role == True %}
                                 <a class="nav-link" href="{% url 'workTicket' %}">
-                                    <i class="las la-arrow-right mr-2"></i>  Work Ticket
+                                    <i class="las la-arrow-right mr-2"></i> Work Ticket
                                 </a>
+                                {% endif %}
+                                {% if driver_role == True or mechanical_inspector_role == True %}
                                 <a class="nav-link" href="{% url 'vehicleRepairRequest' %}">
-                                    <i class="las la-arrow-right mr-2"></i>  Vehicle Repair
+                                    <i class="las la-arrow-right mr-2"></i> Vehicle Repair
                                 </a>
-                                <a class="nav-link" href="{% url 'vehicleInspection' %}">
-                                    <i class="las la-arrow-right mr-2"></i>  Vehicle Inspection
-                                </a>
-                                
+
                                 <a class="nav-link" href="{% url 'TransportRequest' %}">
-                                    <i class="las la-arrow-right mr-2"></i>  Transport Request
+                                    <i class="las la-arrow-right mr-2"></i> Transport Request
                                 </a>
                                 <a class="nav-link" href="{% url 'Accidents' %}">
-                                    <i class="las la-arrow-right mr-2"></i>  Accidents
+                                    <i class="las la-arrow-right mr-2"></i> Accidents
                                 </a>
-                                <li class="nav-item"> <a class="nav-link" href="{% url 'ServiceRequest' %}"><i
-                                    class="las la-arrow-right mr-2"></i>Service Request</a></li>
+                                {% endif %}
+                                <!-- <li class="nav-item"> <a class="nav-link" href="{% url 'ServiceRequest' %}"><i
+                                        class="las la-arrow-right mr-2"></i>Service Request</a></li> -->
+                                <!-- <a class="nav-link" href="{% url 'vehicleInspection' %}">
+                                    <i class="las la-arrow-right mr-2"></i> Vehicle Inspection
+                                </a> -->
                             </li>
 
                         </ul>
                     </div>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'approve' %}">
-                        <span class="icon-bg"><i class="las la-stamp"></i></span>
-                        <span class="menu-title">Approvals </span>
-                    </a>
-                </li>
+                <!-- <li class="nav-item">
+        <a class="nav-link" href="{% url 'approve' %}">
+            <span class="icon-bg"><i class="las la-stamp"></i></span>
+            <span class="menu-title">Approvals </span>
+        </a>
+    </li> -->
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'InternalRoomBooking' %}">
                         <span class="icon-bg"><i class="las la-home"></i></span>
@@ -219,17 +217,11 @@
                     </a>
                 </li>
                 <!-- <li class="nav-item">
-                    <a class="nav-link" href="{% url 'Appraisals' %}">
-                        <span class="icon-bg"><i class="las la-tasks"></i></span>
-                        <span class="menu-title">Appraisal</span>
-                    </a>
-                </li> -->
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'advance' %}">
-                        <span class="icon-bg"><i class="las la-briefcase"></i></span>
-                        <span class="menu-title">Salary Advance </span>
-                    </a>
-                </li>
+        <a class="nav-link" href="{% url 'advance' %}">
+            <span class="icon-bg"><i class="las la-briefcase"></i></span>
+            <span class="menu-title">Salary Advance </span>
+        </a>
+    </li> -->
                 <!-- <li class="nav-item" style="margin-top:.1rem;">
                     <a class="nav-link" href="../../static/img/2.jpg" download>
                         <span class="icon-bg"><i class="las la-file-pdf"></i></span>

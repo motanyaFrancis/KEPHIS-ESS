@@ -28,7 +28,7 @@ class Login(UserObjectMixins,View):
                         await sync_to_async(request.session.__setitem__)('Customer_No_', data['Customer_No_'])
                         await sync_to_async(request.session.__setitem__)('User_ID', data['User_ID'])
                         await sync_to_async(request.session.__setitem__)('E_Mail', data['E_Mail'])
-                        await sync_to_async(request.session.__setitem__)('User_Responsibility_Center', data['User_Responsibility_Center'])
+                        await sync_to_async(request.session.__setitem__)('User_Responsibility_Center', data['Global_Dimension_1_Code'])
                         await sync_to_async(request.session.__setitem__)('HOD_User', data['HOD_User'])
                         soap_headers = {
                             "username":data['User_ID'],
@@ -46,6 +46,9 @@ class Login(UserObjectMixins,View):
                     
                         for data in employee_response[0]['data']: #type:ignore
                             await sync_to_async(request.session.__setitem__)('full_name', data['First_Name'] + " " + data['Last_Name'] )
+                            await sync_to_async(request.session.__setitem__)('driver_role', data['Driver'])
+                            await sync_to_async(request.session.__setitem__)('TO_role', data['TransportOfficer'])
+                            await sync_to_async(request.session.__setitem__)('mechanical_inspector_role', data['Mechanical_Inspector'])
                             await sync_to_async(request.session.save)()
                             messages.success(request,f"Success. Logged in as {request.session['full_name']}")
                             return redirect('dashboard')
@@ -70,7 +73,6 @@ def logout(request):
 class profile(UserObjectMixins,View):
     def get(self, request):
         try:
-            year =request.session['years']
             fullname =request.session['User_ID']
             empNo =request.session['Employee_No_']
             Dpt =request.session['Department']
@@ -79,5 +81,5 @@ class profile(UserObjectMixins,View):
             messages.error(request, f"{e}")
             return redirect('auth')
 
-        ctx = {"today": self.todays_date,"year": year,"full": fullname,"empNo":empNo,"Dpt":Dpt,"mail":mail}
+        ctx = {"today": self.todays_date,"full": fullname,"empNo":empNo,"Dpt":Dpt,"mail":mail}
         return render(request,"profile.html",ctx)

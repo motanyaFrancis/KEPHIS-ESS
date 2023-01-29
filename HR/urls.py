@@ -3,11 +3,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('leave/Planner', views.Leave_Planner.as_view(), name="LeavePlanner"),
-    path('PlanDetail/<str:pk>', views.PlanDetail.as_view(), name='PlanDetail'),
-    path('FnDeleteLeavePlannerLine/<str:pk>',
-         views.FnDeleteLeavePlannerLine, name='FnDeleteLeavePlannerLine'),
-
     path('leave', views.Leave_Request.as_view(), name="leave"),
     path('leave/detail/<str:pk>', views.LeaveDetail.as_view(), name='LeaveDetail'),
     path('LeaveApprove/<str:pk>', views.LeaveApproval, name='LeaveApprove'),
@@ -19,7 +14,7 @@ urlpatterns = [
 
     path('training', views.Training_Request.as_view(), name='training_request'),
     path('training/detail/<str:pk>', views.TrainingDetail.as_view(), name='TrainingDetail'),
-    path('TrainApprove/<str:pk>', views.TrainingApproval, name='TrainApprove'),
+    path('TrainApprove/<str:pk>', views.TrainingApproval.as_view(), name='TrainApprove'),
     path('TrainCancel/<str:pk>', views.TrainingCancelApproval, name='TrainCancel'),
     path('FnGenerateTraining/<str:pk>', views.FnGenerateTrainingReport,
          name='FnGenerateTrainingReport'),

@@ -181,6 +181,44 @@
                         <input type="text" class="form-control" placeholder="{{res.Employment_Type}}" readonly>
                     </div>
                 </form>
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <div class="card" id="d-card">
+                            <h4 class="mt-2 mx-2 text-dark">Leave Planner Lines </h4>
+                            <div class="card-body">
+                                <table id="example"
+                                    class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                    style="width:100%">
+                                    <thead>
+                                        <tr id="tops">
+                                            <th id="long">Reliever</th>
+                                            <th>Reliever Employee No.</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for reliever in relievers %}
+                                        <tr>
+                                            <td>{{reliever.StaffName}}</td>
+                                            <td>{{reliever.StaffNo}}</td>
+                                            <td>
+                                                <form action="" method="post" style="display: inline-block;">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="lineNo" value="{{res.Line_No_}}">
+                                                    <button type="submit" class="btn btn-danger" data-toggle="tooltip"
+                                                        data-placement="top" title="Delete"><i
+                                                            class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="row my-2 py-3">
                     <div class="col-md-12">
                         <div class="card">

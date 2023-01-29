@@ -3,7 +3,6 @@ from django.shortcuts import render, redirect
 from datetime import datetime
 import requests
 from requests import Session
-import json
 from django.conf import settings as config
 import datetime as dt
 from django.contrib import messages
@@ -12,7 +11,6 @@ import secrets
 import string
 from django.http import HttpResponse
 import io as BytesIO
-from django.template.response import TemplateResponse
 from zeep import Client
 from zeep.transports import Transport
 from requests.auth import HTTPBasicAuth
@@ -36,7 +34,10 @@ class ImprestRequisition(UserObjectMixin, View):
     def get(self, request):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
+            driver_role = request.session['driver_role']
+            TO_role = request.session['TO_role']
+            mechanical_inspector_role = request.session['mechanical_inspector_role']
+            full_name = request.session['full_name']
 
             Access_Point = config.O_DATA.format(
                 f"/Imprests?$filter=User_Id%20eq%20%27{userID}%27")
@@ -67,8 +68,12 @@ class ImprestRequisition(UserObjectMixin, View):
         ctx = {"today": self.todays_date, "res": openImprest,
                "count": counts, "response": Approved,
                "counter": counter, "pend": pend,
-               "pending": Pending, "year": year,
-               "full": userID}
+               "pending": Pending,
+               "full": full_name,
+               "driver_role":driver_role,
+               "TO_role":TO_role,
+               "mechanical_inspector_role":mechanical_inspector_role
+               }
         return render(request, 'imprestReq.html', ctx)
 
     def post(self, request):
@@ -85,25 +90,21 @@ class ImprestRequisition(UserObjectMixin, View):
                 startDate  = request.POST.get('startDate')
                 completionDate = request.POST.get('completionDate')
                 isImprest = request.POST.get('isImprest')
+        
+                response = config.CLIENT.service.FnImprestHeader(
+                    imprestNo, accountNo, responsibilityCenter, travelType, purpose,
+                    usersId, personalNo,  myAction, startDate, completionDate)
+                if response == True:
+                    messages.success(request, "Request Successful")
+                    return redirect('imprestReq')
             except ValueError:
                 messages.error(request, "Missing Input")
                 return redirect('imprestReq')
             except KeyError:
                 messages.info(request, "Session Expired. Please Login")
                 return redirect('auth')
-            if not imprestNo:
-                imprestNo = ""
-            # if isImprest == False:
-            #     messages.info(request, "Imprest cannot be empty.")
-            #     return redirect('imprestReq')
-        
-            try:
-                response = config.CLIENT.service.FnImprestHeader(
-                    imprestNo, accountNo, responsibilityCenter, travelType, purpose, usersId, personalNo,  myAction, startDate, completionDate)
-                messages.success(request, "Request Successful")
-                # print(response)
             except Exception as e:
-                messages.error(request, e)
+                messages.error(request, f'{e}')
                 print(e)
                 return redirect('imprestReq')
         return redirect('imprestReq')
@@ -113,13 +114,15 @@ class ImprestDetails(UserObjectMixin, View):
     def get(self, request, pk):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
-            # res = ''
+            driver_role = request.session['driver_role']
+            TO_role = request.session['TO_role']
+            mechanical_inspector_role = request.session['mechanical_inspector_role']
+            full_name = request.session['full_name']
+            res = {}
             Access_Point = config.O_DATA.format( f"/Imprests?$filter=No_%20eq%20%27{pk}%27%20and%20User_Id%20eq%20%27{userID}%27")
             response = self.get_object(Access_Point)
             for imprest in response['value']:
                 res = imprest  
-                print(res) 
 
             Imprest_Type = config.O_DATA.format(
                 "/QyReceiptsAndPaymentTypes?$filter=Type%20eq%20%27Imprest%27")
@@ -164,11 +167,6 @@ class ImprestDetails(UserObjectMixin, View):
             print(e)
             messages.info(request, "Wrong UserID")
             return redirect('imprestReq')
-
-        # ctx = {"today": self.todays_date, "res": res,"line": openLines,"Approvers": Approvers,
-        #        "type": res_type,"area": Area, "biz": BizGroup,"Local": Local, "year": year,
-        #        "full": userID, "Foreign": ForegnDest, "dest": destination,"file":allFiles,"Comments":Comments}
-
         ctx = {
             "today": self.todays_date,
             "res": res,
@@ -178,12 +176,14 @@ class ImprestDetails(UserObjectMixin, View):
             "area": Area,
             "biz": BizGroup,
             "Local": Local,
-            "year": year,
-            "full": userID,
             "Foreign": ForegnDest,
             "dest": destination,
             "file": allFiles,
-            "Comments": Comments
+            "Comments": Comments,
+            "full": full_name,
+            "driver_role":driver_role,
+            "TO_role":TO_role,
+            "mechanical_inspector_role":mechanical_inspector_role
         }
         return render(request, 'imprestDetail.html', ctx)
 
@@ -204,7 +204,7 @@ def UploadAttachment(request, pk):
                 response = config.CLIENT.service.FnUploadAttachedDocument(
                     pk, fileName, attachment, tableID, request.session['User_ID'])
             except Exception as e:
-                messages.error(request, e)
+                messages.error(request, f'{e}')
                 print(e)
         if response == True:
             messages.success(request, "File(s) Upload Successful")
@@ -229,7 +229,7 @@ def FnDeleteImprestLine(request, pk):
             print(response)
             return redirect('IMPDetails', pk=pk)
         except Exception as e:
-            messages.info(request, e)
+            messages.info(request, f'{e}')
             print(e)
             return redirect('IMPDetails', pk=pk)
     return redirect('IMPDetails', pk=pk)
@@ -254,7 +254,7 @@ def FnGenerateImprestReport(request, pk):
             responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
             return responses
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
             return redirect('auth')
     return redirect('IMPDetails', pk=pk)
@@ -272,16 +272,16 @@ def DeleteImprestAttachment(request, pk):
                 messages.success(request, "Deleted Successfully ")
                 return redirect('IMPDetails', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
     return redirect('IMPDetails', pk=pk)
 
 
 def FnRequestPaymentApproval(request, pk):
     Username = request.session['User_ID']
-    Password = request.session['password']
+    Password = request.session['soap_headers']
     AUTHS = Session()
-    AUTHS.auth = HTTPBasicAuth(Username, Password)
+    AUTHS.auth = HTTPBasicAuth(Username, Password['password'])
     CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
     if request.method == 'POST':
         try:
@@ -295,7 +295,7 @@ def FnRequestPaymentApproval(request, pk):
             print(response)
             return redirect('IMPDetails', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
             return redirect('auth')
     return redirect('IMPDetails', pk=pk)
@@ -314,7 +314,7 @@ def FnCancelPaymentApproval(request, pk):
             print(response)
             return redirect('IMPDetails', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
             return redirect('auth')
     return redirect('IMPDetails', pk=pk)
@@ -358,7 +358,7 @@ def CreateImprestLines(request, pk):
             print(response)
             return redirect('IMPDetails', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request,f'{e}')
             print(e)
             return redirect('IMPDetails', pk=pk)
     return redirect('IMPDetails', pk=pk)
@@ -368,7 +368,10 @@ class ImprestSurrender(UserObjectMixin, View):
     def get(self, request):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
+            driver_role = request.session['driver_role']
+            TO_role = request.session['TO_role']
+            mechanical_inspector_role = request.session['mechanical_inspector_role']
+            full_name = request.session['full_name']
 
             Access_Point = config.O_DATA.format(
                 f"/QyImprestSurrenders?$filter=User_Id%20eq%20%27{userID}%27")
@@ -403,10 +406,13 @@ class ImprestSurrender(UserObjectMixin, View):
             return redirect('auth')
 
         ctx = {"today": self.todays_date, "res": openSurrender,
-               "count": counts, "full": userID,
-               "response": Approved, "counter": counter,
-               "app": APPImp, "year": year,
-               "pend": pend, "pending": Pending}
+               "count": counts,"response": Approved, "counter": counter,
+               "app": APPImp,"pend": pend, "pending": Pending,
+               "full": full_name,
+                "driver_role":driver_role,
+                "TO_role":TO_role,
+                "mechanical_inspector_role":mechanical_inspector_role
+            }
 
         return render(request, 'imprestSurr.html', ctx)
 
@@ -434,7 +440,7 @@ class ImprestSurrender(UserObjectMixin, View):
                 messages.success(request, "Request Successful")
                 print(response)
             except Exception as e:
-                messages.error(request, e)
+                messages.error(request, f'{e}')
                 print(e)
                 return redirect('imprestSurr')
         return redirect('imprestSurr')
@@ -444,7 +450,12 @@ class SurrenderDetails(UserObjectMixin, View):
     def get(self, request, pk):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
+            driver_role = request.session['driver_role']
+            TO_role = request.session['TO_role']
+            mechanical_inspector_role = request.session['mechanical_inspector_role']
+            full_name = request.session['full_name']
+
+            res ={}
 
             Access_Point = config.O_DATA.format(
                 f"/QyImprestSurrenders?$filter=No_%20eq%20%27{pk}%27%20and%20User_Id%20eq%20%27{userID}%27")
@@ -486,7 +497,13 @@ class SurrenderDetails(UserObjectMixin, View):
             return redirect('auth')
 
         ctx = {"today": self.todays_date, "res": res, "line": openLines,
-               "Approvers": Approvers, "type": res_type, "year": year, "full": userID, "file": allFiles, "Comments": Comments}
+               "Approvers": Approvers, "type": res_type, 
+               "file": allFiles, "Comments": Comments,
+               "full": full_name,
+                "driver_role":driver_role,
+                "TO_role":TO_role,
+                "mechanical_inspector_role":mechanical_inspector_role
+            }
 
         return render(request, 'SurrenderDetail.html', ctx)
 
@@ -495,17 +512,14 @@ class SurrenderDetails(UserObjectMixin, View):
             try:
                 lineNo = int(request.POST.get('lineNo'))
                 actualSpent = float(request.POST.get('actualSpent'))
-            except ValueError:
-                messages.error(request, "Missing Input")
-                return redirect('IMPDetails', pk=pk)
-            try:
+
                 response = config.CLIENT.service.FnImprestSurrenderLine(
                     lineNo, pk, actualSpent)
                 messages.success(request, "Request Successful")
                 print(response)
                 return redirect('IMPSurrender', pk=pk)
             except Exception as e:
-                messages.error(request, e)
+                messages.error(request, f'{e}')
                 print(e)
                 return redirect('IMPSurrender', pk=pk)
         return redirect('IMPSurrender', pk=pk)
@@ -516,22 +530,19 @@ def UploadSurrenderAttachment(request, pk):
         try:
             tableID = 52177430
             attach = request.FILES.getlist('attachment')
-        except Exception as e:
-            return redirect('IMPSurrender', pk=pk)
-        for files in attach:
-            fileName = request.FILES['attachment'].name
-            attachment = base64.b64encode(files.read())
-            try:
+            for files in attach:
+                fileName = request.FILES['attachment'].name
+                attachment = base64.b64encode(files.read())
                 response = config.CLIENT.service.FnUploadAttachedDocument(
-                    pk, fileName, attachment, tableID, request.session['User_ID'])
-            except Exception as e:
-                messages.error(request, e)
-                print(e)
-        if response == True:
-            messages.success(request, "File(s) Upload Successful")
-            return redirect('IMPSurrender', pk=pk)
-        else:
-            messages.error(request, "Failed, Try Again")
+                        pk, fileName, attachment, tableID, request.session['User_ID'])
+
+                if response == True:
+                    messages.success(request, "File(s) Upload Successful")
+                    return redirect('IMPSurrender', pk=pk)
+                else:
+                    messages.error(request, "Failed, Try Again")
+                    return redirect('IMPSurrender', pk=pk)
+        except Exception as e:
             return redirect('IMPSurrender', pk=pk)
     return redirect('IMPSurrender', pk=pk)
 
@@ -548,7 +559,7 @@ def DeleteSurrenderAttachment(request, pk):
                 messages.success(request, "Deleted Successfully ")
                 return redirect('IMPSurrender', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
     return redirect('IMPSurrender', pk=pk)
 
@@ -571,7 +582,7 @@ def FnGenerateImprestSurrenderReport(request, pk):
             responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
             return responses
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
             return redirect('IMPSurrender', pk=pk)
     return redirect('IMPSurrender', pk=pk)
@@ -579,9 +590,9 @@ def FnGenerateImprestSurrenderReport(request, pk):
 
 def SurrenderApproval(request, pk):
     Username = request.session['User_ID']
-    Password = request.session['password']
+    Password = request.session['soap_headers']
     AUTHS = Session()
-    AUTHS.auth = HTTPBasicAuth(Username, Password)
+    AUTHS.auth = HTTPBasicAuth(Username, Password['password'])
     CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
     if request.method == 'POST':
         try:
@@ -595,7 +606,7 @@ def SurrenderApproval(request, pk):
             print(response)
             return redirect('IMPSurrender', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
     return redirect('IMPSurrender', pk=pk)
 
@@ -613,7 +624,7 @@ def FnCancelSurrenderApproval(request, pk):
             print(response)
             return redirect('IMPSurrender', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
     return redirect('IMPSurrender', pk=pk)
 
@@ -622,7 +633,11 @@ class StaffClaim(UserObjectMixin, View):
     def get(self, request):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
+            driver_role = request.session['driver_role']
+            TO_role = request.session['TO_role']
+            mechanical_inspector_role = request.session['mechanical_inspector_role']
+            full_name = request.session['full_name']
+
 
             Access_Point = config.O_DATA.format(
                 f"/QyStaffClaims?$filter=User_Id%20eq%20%27{userID}%27")
@@ -643,7 +658,7 @@ class StaffClaim(UserObjectMixin, View):
             pend = len(Pending)
         except requests.exceptions.ConnectionError as e:
             print(e)
-            messages.info(request, e)
+            messages.info(request, f'{e}')
             return redirect('auth')
         except KeyError:
             messages.info(request, "Session Expired. Please Login")
@@ -652,8 +667,12 @@ class StaffClaim(UserObjectMixin, View):
         ctx = {"today": self.todays_date, "res": openClaim,
                "count": counts, "response": Approved, "claim": counter,
                "my_claim": My_Claim, "pend": pend,
-               "year": year, "pending": Pending,
-               "full": userID}
+               "pending": Pending,
+               "full": full_name,
+                "driver_role":driver_role,
+                "TO_role":TO_role,
+                "mechanical_inspector_role":mechanical_inspector_role
+               }
         return render(request, 'staffClaim.html', ctx)
 
     def post(self, request):
@@ -677,7 +696,7 @@ class StaffClaim(UserObjectMixin, View):
                 print(response)
                 return redirect('claim')
             except Exception as e:
-                messages.error(request, e)
+                messages.error(request, f'{e}')
                 print(e)
         return redirect('claim')
 
@@ -686,7 +705,11 @@ class ClaimDetails(UserObjectMixin, View):
     def get(self, request, pk):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
+            driver_role = request.session['driver_role']
+            TO_role = request.session['TO_role']
+            mechanical_inspector_role = request.session['mechanical_inspector_role']
+            full_name = request.session['full_name']
+            res = {}
 
             Access_Point = config.O_DATA.format(
                 f"/QyStaffClaims?$filter=No_%20eq%20%27{pk}%27%20and%20User_Id%20eq%20%27{userID}%27")
@@ -728,7 +751,11 @@ class ClaimDetails(UserObjectMixin, View):
 
         ctx = {"today": self.todays_date, "res": res,
                "res_type": res_type, "Approvers": Approvers, "line": openLines,
-               "year": year, "full": userID, "file": allFiles, "Comments": Comments}
+               "file": allFiles, "Comments": Comments,
+               "full": full_name,
+                "driver_role":driver_role,
+                "TO_role":TO_role,
+                "mechanical_inspector_role":mechanical_inspector_role}
 
         return render(request, "ClaimDetail.html", ctx)
 
@@ -778,20 +805,20 @@ def CreateClaimLines(request, pk):
                             messages.error(request, "Failed, Try Again")
                             return redirect('ClaimDetail', pk=pk)
                     except Exception as e:
-                        messages.error(request, e)
+                        messages.error(request, f'{e}')
                         print(e)
 
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
     return redirect('ClaimDetail', pk=pk)
 
 
 def ClaimApproval(request, pk):
     Username = request.session['User_ID']
-    Password = request.session['password']
+    Password = request.session['soap_headers']
     AUTHS = Session()
-    AUTHS.auth = HTTPBasicAuth(Username, Password)
+    AUTHS.auth = HTTPBasicAuth(Username, Password['password'])
     CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
     if request.method == 'POST':
         try:
@@ -805,7 +832,7 @@ def ClaimApproval(request, pk):
             print(response)
             return redirect('ClaimDetail', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
     return redirect('ClaimDetail', pk=pk)
 
@@ -822,7 +849,7 @@ def DeleteClaimAttachment(request, pk):
                 messages.success(request, "Deleted Successfully ")
                 return redirect('ClaimDetail', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
     return redirect('ClaimDetail', pk=pk)
 
@@ -840,7 +867,7 @@ def FnCancelClaimApproval(request, pk):
             print(response)
             return redirect('ClaimDetail', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
     return redirect('ClaimDetail', pk=pk)
 
@@ -854,7 +881,7 @@ def FnDeleteStaffClaimLine(request, pk):
             messages.success(request, "Successfully Deleted")
             print(response)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request,f'{e}')
             print(e)
     return redirect('ClaimDetail', pk=pk)
 
@@ -878,6 +905,6 @@ def FnGenerateStaffClaimReport(request, pk):
             responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
             return responses
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
     return redirect('ClaimDetail', pk=pk)

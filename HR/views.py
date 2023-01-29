@@ -1,7 +1,9 @@
 import base64
+import logging
+import aiohttp
 from django.shortcuts import render, redirect
 from datetime import datetime
-# from isodate import date_isoformat
+from asgiref.sync import sync_to_async
 import requests
 from requests import Session
 import json
@@ -16,8 +18,8 @@ from requests.auth import HTTPBasicAuth
 from zeep import Client
 from zeep.transports import Transport
 from django.views import View
-# Create your views here.
-
+from myRequest .views import UserObjectMixins
+import asyncio
 
 class UserObjectMixin(object):
     model = None
@@ -30,177 +32,91 @@ class UserObjectMixin(object):
         return response
 
 
-class Leave_Planner(UserObjectMixin, View):
-    def get(self, request):
+class Leave_Request(UserObjectMixins, View):
+    async def get(self, request):
         try:
-            userId = request.session['User_ID']
-            year = request.session['years']
-            empNo = request.session['Employee_No_']
-
-            Access_Point = config.O_DATA.format(
-                f"/QyLeavePlannerHeaders?$filter=Employee_No_%20eq%20%27{empNo}%27")
-            response = self.get_object(Access_Point)
-            Plans = [x for x in response['value']]
-        except KeyError as e:
-            messages.info(request, "Session Expired. Please Login")
-            print(e)
-            return redirect('auth')
-        except requests.exceptions.ConnectionError as e:
-            print(e)
-        ctx = {"today": self.todays_date, "res": Plans,
-               "year": year, "full": userId}
-        return render(request, 'planner.html', ctx)
-
-    def post(self, request):
-        plannerNo = ""
-        empNo = request.session['Employee_No_']
-        myAction = request.POST.get('myAction')
-        try:
-            response = config.CLIENT.service.FnLeavePlannerHeader(
-                plannerNo, empNo, myAction)
-            if response == True:
-                messages.success(request, "Request Successful")
-                print(response)
-                return redirect('LeavePlanner')
-        except Exception as e:
-            messages.error(request, e)
-            print(e)
-        return redirect('LeavePlanner')
-
-
-class PlanDetail(UserObjectMixin, View):
-    def get(self, request, pk):
-        fullname = request.session['User_ID']
-        year = request.session['years']
-        empNo = request.session['Employee_No_']
-
-        try:
-            Access_Point = config.O_DATA.format(
-                f"/QyLeavePlannerHeaders?$filter=Employee_No_%20eq%20%27{empNo}%27%20and%20No_%20eq%20%27{pk}%27")
-            response = self.get_object(Access_Point)
-            for plan in response['value']:
-                res = plan
-            Lines_Res = config.O_DATA.format(
-                f"/QyLeavePlannerLines?$filter=Employee_No_%20eq%20%27{empNo}%27%20and%20Document_No_%20eq%20%27{pk}%27")
-            LinesRes = self.get_object(Lines_Res)
-            openLines = [x for x in LinesRes['value']
-                         if x['Document_No_'] == pk]
-
-        except requests.exceptions.ConnectionError as e:
-            print(e)
-        ctx = {"today": self.todays_date,
-               "year": year, "full": fullname,
-               "line": openLines, "res": res}
-        return render(request, 'planDetails.html', ctx)
-
-    def post(self, request, pk):
-        try:
-            plannerNo = pk
-            lineNo = int(request.POST.get('lineNo'))
-            startDate = datetime.strptime(
-                (request.POST.get('startDate')), '%Y-%m-%d').date()
-            endDate = datetime.strptime(
-                (request.POST.get('endDate')), '%Y-%m-%d').date()
-            myAction = request.POST.get('myAction')
-
-            response = config.CLIENT.service.FnLeavePlannerLine(
-                lineNo, plannerNo, startDate, endDate, myAction)
-
-            if response == True:
-                messages.success(request, "Request Successful")
-                print(response)
-                return redirect('PlanDetail', pk=pk)
-        except ValueError as e:
-            messages.error(request, "Missing Input")
-            return redirect('PlanDetail', pk=pk)
-        except Exception as e:
-            messages.error(request, e)
-            print(e)
-        return redirect('PlanDetail', pk=pk)
-
-
-def FnDeleteLeavePlannerLine(request, pk):
-    if request.method == 'POST':
-        lineNo = int(request.POST.get('lineNo'))
-        try:
-            response = config.CLIENT.service.FnDeleteLeavePlannerLine(
-                pk, lineNo)
-            if response == True:
-                messages.success(request, "Successfully  Deleted!!")
-                print(response)
-                return redirect('PlanDetail', pk=pk)
-        except Exception as e:
-            messages.error(request, e)
-            print(e)
-    return redirect('PlanDetail', pk=pk)
-
-
-class Leave_Request(UserObjectMixin, View):
-    def get(self, request):
-        try:
-            UserId = request.session['User_ID']
-            year = request.session['years']
-            empNo = request.session['Employee_No_']
-
-            Access_Point = config.O_DATA.format(
-                f"/QyLeaveApplications?$filter=User_ID%20eq%20%27{UserId}%27")
-            response = self.get_object(Access_Point)
-            openLeave = [x for x in response['value'] if x['Status'] == 'Open']
-            pendingLeave = [x for x in response['value']
-                            if x['Status'] == 'Pending Approval']
-            approvedLeave = [x for x in response['value']
-                             if x['Status'] == 'Released']
-
-            LeaveTypes = config.O_DATA.format("/QyLeaveTypes")
-            res_types = self.get_object(LeaveTypes)
-            Leave = [x for x in res_types['value']]
-
-            LeavePlanner = config.O_DATA.format(
-                f"/QyLeavePlannerLines?$filter=Employee_No_%20eq%20%27{empNo}%27")
-            res_planner = self.get_object(LeavePlanner)
-            Plan = [x for x in res_planner['value']]
-
-            counts = len(openLeave)
-            pend = len(pendingLeave)
-            counter = len(approvedLeave)
+            UserId = await sync_to_async(request.session.__getitem__)('User_ID')
+            department = await sync_to_async(request.session.__getitem__)('User_Responsibility_Center')
+            full_name = await sync_to_async(request.session.__getitem__)('full_name')
+            driver_role = await sync_to_async(request.session.__getitem__)('driver_role')
+            TO_role =await sync_to_async(request.session.__getitem__)('TO_role')
+            mechanical_inspector_role =await sync_to_async(request.session.__getitem__)('mechanical_inspector_role')
+            
+            async with aiohttp.ClientSession() as session:
+                task_get_leave = asyncio.ensure_future(self.fetch_one_filtered_data(session,"/QyLeaveApplications",
+                                                                                    "User_ID","eq",UserId))
+                task_get_leave_types = asyncio.ensure_future(self.simple_fetch_data(session,"/QyLeaveTypes"))
+                
+                task_get_reliever = asyncio.ensure_future(self.fetch_one_filtered_data(session,"/QYEmployees",
+                                                                                       "Global_Dimension_1_Code","eq",
+                                                                                       department))
+  
+                                
+                response  = await asyncio.gather(task_get_leave,task_get_leave_types,task_get_reliever)
+                
+                openLeave = [x for x in response[0]['data'] if x['Status'] == 'Open']  # type: ignore
+                pendingLeave = [x for x in response[0]['data'] if x['Status'] == 'Pending Approval'] # type: ignore
+                approvedLeave = [x for x in response[0]['data'] if x['Status'] == 'Released'] # type: ignore
+                Leave = [x for x in response[1]] # type: ignore
+                relievers = [x for x in response[2]['data']] # type: ignore
 
         except KeyError:
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
-        except requests.exceptions.ConnectionError as e:
+        except Exception as e:
+            messages.error(request, "connection refused,non-200 response")
             print(e)
-
-        ctx = {"today": self.todays_date, "res": openLeave,
-               "count": counts, "response": approvedLeave,
-               "counter": counter, 'leave': Leave,
-               "plan": Plan, "pend": pend,
-               "pending": pendingLeave, "year": year,
-               "full": UserId}
+            return redirect('dashboard')
+        ctx = {"today": self.todays_date, 
+               "res": openLeave,
+               "response": approvedLeave,
+               'leave': Leave,
+               "pending": pendingLeave,
+               'relievers':relievers,
+               "full": full_name,
+               "driver_role":driver_role,
+               "TO_role":TO_role,
+               "mechanical_inspector_role":mechanical_inspector_role,
+               }
         return render(request, 'leave.html', ctx)
 
-    def post(self, request):
-        if request.method == 'POST':
-            dimension3 = ''
-            employeeNo = request.session['Employee_No_']
-            usersId = request.session['User_ID']
+    async def post(self, request):
+        try:
+            Employee_No_ = await sync_to_async(request.session.__getitem__)('Employee_No_')
+            usersId = await sync_to_async(request.session.__getitem__)('User_ID')
             applicationNo = request.POST.get('applicationNo')
             leaveType = request.POST.get('leaveType')
             plannerStartDate = request.POST.get('plannerStartDate')
             daysApplied = request.POST.get('daysApplied')
             isReturnSameDay = eval(request.POST.get('isReturnSameDay'))
             myAction = request.POST.get('myAction')
+            staffNo = request.POST.get('reliever')
             if not daysApplied:
                 daysApplied = 0
             plannerStartDate = datetime.strptime(
                 plannerStartDate, '%Y-%m-%d').date()
-            try:
-                response = config.CLIENT.service.FnLeaveApplication(
-                    applicationNo, employeeNo, usersId, dimension3, leaveType, plannerStartDate, int(daysApplied), isReturnSameDay, myAction)
-                messages.success(request, "Request Successful")
-                print(response)
-            except Exception as e:
-                messages.error(request, e)
-                print(e)
+            soap_headers = await sync_to_async(request.session.__getitem__)('soap_headers')
+        
+            response =  self.make_soap_request(soap_headers,'FnLeaveApplication',
+                                                   applicationNo,Employee_No_,usersId,leaveType,
+                                                   plannerStartDate,daysApplied,isReturnSameDay,myAction)
+            if response !='0':
+                add_reliever = self.make_soap_request(soap_headers,"FnLeaveReliver",
+                                                      response,staffNo,myAction)
+                print("reliever response:",add_reliever)
+                if add_reliever == True:
+                    messages.success(request, "Request Successful")
+                    return redirect('LeaveDetail', pk=response)
+                if add_reliever == False:
+                    messages.info(request, f"Leave reliever not added. Add it on the leave :{response} details section")
+                    return redirect('LeaveDetail', pk=response)
+            if response == '0':
+                messages.error(request,"Not Added")
+                return redirect('leave')
+        except Exception as e:
+            messages.error(request, f'{e}')
+            print(e)
+            return redirect('leave')
         return redirect('leave')
 
 
@@ -208,7 +124,11 @@ class LeaveDetail(UserObjectMixin, View):
     def get(self, request, pk):
         try:
             userId = request.session['User_ID']
-            year = request.session['years']
+            driver_role = request.session['driver_role']
+            TO_role = request.session['TO_role']
+            mechanical_inspector_role = request.session['mechanical_inspector_role']
+            full_name = request.session['full_name']
+            res ={}
 
             Access_Point = config.O_DATA.format(
                 f"/QyLeaveApplications?$filter=User_ID%20eq%20%27{userId}%27%20and%20Application_No%20eq%20%27{pk}%27")
@@ -229,6 +149,11 @@ class LeaveDetail(UserObjectMixin, View):
                 f"/QyApprovalCommentLines?$filter=Document_No_%20eq%20%27{pk}%27")
             RejectedResponse = self.get_object(RejectComments)
             Comments = [x for x in RejectedResponse['value']]
+            
+            leave_reliever = config.O_DATA.format(
+                f"/QyLeaveRelivers?$filter=LeaveCode%20eq%20%27{pk}%27")
+            reliever_response = self.get_object(leave_reliever)
+            relievers = [x for x in reliever_response['value']]
         except KeyError:
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
@@ -238,34 +163,45 @@ class LeaveDetail(UserObjectMixin, View):
             return redirect('leave')
 
         ctx = {"today": self.todays_date, "res": res,
-               "Approvers": Approvers, "year": year,
-               "full": userId, "file": allFiles, "Comments": Comments}
+               "Approvers": Approvers,
+               "relievers":relievers,
+               "full": full_name,
+               "file": allFiles,
+               "Comments": Comments,
+               "full": full_name,
+               "driver_role":driver_role,
+               "TO_role":TO_role,
+               "mechanical_inspector_role":mechanical_inspector_role,
+               }
         return render(request, 'leaveDetail.html', ctx)
 
     def post(self, request, pk):
-        if request.method == "POST":
-            try:
-                attach = request.FILES.getlist('attachment')
-                docNo = pk
-                tableID = 52177494
-                for files in attach:
-                    fileName = request.FILES['attachment'].name
-                    attachment = base64.b64encode(files.read())
+        try:
+            attachments = request.FILES.getlist('attachment')
+            tableID = 52177494
+            attachment_names = []
+            response = False
 
-                    response = config.CLIENT.service.FnUploadAttachedDocument(
-                        docNo, fileName, attachment, tableID, request.session['User_ID'])
+            for file in attachments:
+                fileName = file.name
+                attachment_names.append(fileName)
+                attachment = base64.b64encode(file.read())
+
+                response = config.CLIENT.service.FnUploadAttachedDocument(
+                        pk, fileName, attachment, tableID, request.session['User_ID'])
+                
+            if response is not None:
                 if response == True:
-                    messages.success(request, "Uploaded successfully")
+                    messages.success(request, "Uploaded {} attachments successfully".format(len(attachments)))
                     return redirect('LeaveDetail', pk=pk)
-                else:
-                    messages.error(request, "Upload Not Successful")
-                    return redirect('LeaveDetail', pk=pk)
-
-            except Exception as e:
-                messages.error(request, e)
-                print(e)
-        return redirect('LeaveDetail', pk=pk)
-
+                messages.error(request, "Upload failed: {}".format(response))
+                return redirect('LeaveDetail', pk=pk)
+            messages.error(request, "Upload failed: Response from server was None")
+            return redirect('LeaveDetail', pk=pk)
+        except Exception as e:
+            messages.error(request, "Upload failed: {}".format(e))
+            logging.exception(e)
+            return redirect('LeaveDetail', pk=pk)
 
 def DeleteLeaveAttachment(request, pk):
     if request.method == "POST":
@@ -279,7 +215,7 @@ def DeleteLeaveAttachment(request, pk):
                 messages.success(request, "Deleted Successfully ")
                 return redirect('LeaveDetail', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
     return redirect('LeaveDetail', pk=pk)
 
@@ -305,7 +241,7 @@ def LeaveApproval(request, pk):
         print(response)
         return redirect('LeaveDetail', pk=pk)
     except Exception as e:
-        messages.error(request, e)
+        messages.error(request, f'{e}')
         print(e)
     return redirect('LeaveDetail', pk=pk)
 
@@ -326,7 +262,7 @@ def LeaveCancelApproval(request, pk):
         print(response)
         return redirect('LeaveDetail', pk=pk)
     except Exception as e:
-        messages.error(request, e)
+        messages.error(request, f'{e}')
         print(e)
     return redirect('LeaveDetail', pk=pk)
 
@@ -334,9 +270,11 @@ def LeaveCancelApproval(request, pk):
 class Training_Request(UserObjectMixin, View):
     def get(self, request):
         try:
-            userId = request.session['User_ID']
-            year = request.session['years']
             empNo = request.session['Employee_No_']
+            driver_role = request.session['driver_role']
+            TO_role = request.session['TO_role']
+            mechanical_inspector_role = request.session['mechanical_inspector_role']
+            full_name = request.session['full_name']
 
             Access_Point = config.O_DATA.format(
                 f"/QyTrainingRequests?$filter=Employee_No%20eq%20%27{empNo}%27")
@@ -370,7 +308,11 @@ class Training_Request(UserObjectMixin, View):
                "counter": counter,
                "train": trains,
                "pend": pend, "pending": pendingTraining,
-               "year": year, "full": userId}
+               "full": full_name,
+               "full": full_name,
+               "driver_role":driver_role,
+               "TO_role":TO_role,
+               "mechanical_inspector_role":mechanical_inspector_role,}
         return render(request, 'training.html', ctx)
 
     def post(self, request):
@@ -397,7 +339,7 @@ class Training_Request(UserObjectMixin, View):
                 messages.success(request, "Successfully Added!!")
                 print(response)
             except Exception as e:
-                messages.error(request, e)
+                messages.error(request, f'{e}')
                 print(e)
                 return redirect('training_request')
         return redirect('training_request')
@@ -406,9 +348,12 @@ class Training_Request(UserObjectMixin, View):
 class TrainingDetail(UserObjectMixin, View):
     def get(self, request, pk):
         try:
-            userID = request.session['User_ID']
-            year = request.session['years']
             empNo = request.session['Employee_No_']
+            driver_role = request.session['driver_role']
+            TO_role = request.session['TO_role']
+            mechanical_inspector_role = request.session['mechanical_inspector_role']
+            full_name = request.session['full_name']
+            res ={}
 
             Access_Point = config.O_DATA.format(
                 f"/QyTrainingRequests?$filter=Employee_No%20eq%20%27{empNo}%27%20and%20Request_No_%20eq%20%27{pk}%27")
@@ -447,13 +392,18 @@ class TrainingDetail(UserObjectMixin, View):
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
             return redirect('training_request')
 
         ctx = {"today": self.todays_date, "res": res,
-               "Approvers": Approvers, "year": year, "full": userID,
-               "line": openLines, "local": Local, "foreign": Foreign, "Comments": Comments}
+               "Approvers": Approvers,"line": openLines,
+               "local": Local, "foreign": Foreign, "Comments": Comments,
+               "full": full_name,
+               "driver_role":driver_role,
+               "TO_role":TO_role,
+               "mechanical_inspector_role":mechanical_inspector_role,
+               }
         return render(request, 'trainingDetail.html', ctx)
 
     def post(self, request, pk):
@@ -496,7 +446,7 @@ class TrainingDetail(UserObjectMixin, View):
                 print(response)
                 return redirect('TrainingDetail', pk=pk)
             except Exception as e:
-                messages.error(request, e)
+                messages.error(request, f'{e}')
                 print(e)
         return redirect('TrainingDetail', pk=pk)
 
@@ -520,7 +470,7 @@ def UploadTrainingAttachment(request, pk):
                 response = config.CLIENT.service.FnUploadAttachedDocument(
                     docNo, fileName, attachment, tableID, request.session['User_ID'])
             except Exception as e:
-                messages.error(request, e)
+                messages.error(request, f'{e}')
                 print(e)
         if response == True:
             messages.success(request, "Successfully Sent !!")
@@ -562,7 +512,7 @@ def FnAdhocTrainingEdit(request, pk, no):
         print(response)
         return redirect('TrainingDetail', pk=pk)
     except Exception as e:
-        messages.error(request, e)
+        messages.error(request, f'{e}')
         print(e)
     return redirect('TrainingDetail', pk=pk)
 
@@ -585,35 +535,35 @@ def FnAdhocLineDelete(request, pk):
             print(response)
             return redirect('TrainingDetail', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
     return redirect('TrainingDetail', pk=pk)
 
 
-def TrainingApproval(request, pk):
-    myUserID = request.session['User_ID']
-    trainingNo = ""
-    Username = request.session['User_ID']
-    Password = request.session['password']
-    AUTHS = Session()
-    AUTHS.auth = HTTPBasicAuth(Username, Password)
-    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
-    if request.method == 'POST':
+class TrainingApproval(UserObjectMixins, View):
+    async def post(self,request,pk):
         try:
             trainingNo = request.POST.get('trainingNo')
-        except ValueError as e:
-            messages.error(request, "Not sent. Invalid Input, Try Again!!")
-            return redirect('TrainingDetail', pk=pk)
-        try:
-            response = CLIENT.service.FnRequestTrainingApproval(
-                myUserID, trainingNo)
-            messages.success(request, "Approval Request Successfully Sent!!")
-            print(response)
-            return redirect('TrainingDetail', pk=pk)
-        except Exception as e:
-            messages.error(request, e)
+            userID = await sync_to_async(request.session.__getitem__)('User_ID')
+            soap_headers = await sync_to_async(request.session.__getitem__)('soap_headers')
+            response =  self.make_soap_request(soap_headers,'FnRequestTrainingApproval',userID,trainingNo)
+            if response == True:
+                messages.success(request, 'Request Submitted successfully')
+                return redirect('TrainingDetail', pk=pk)
+            if response == False:
+                messages.success(request, 'Request Failed')
+                return redirect('TrainingDetail', pk=pk)
+        except (aiohttp.ClientError, aiohttp.ServerDisconnectedError, aiohttp.ClientResponseError) as e:
             print(e)
-    return redirect('TrainingDetail', pk=pk)
+            messages.error(request,"connect timed out")
+            return redirect('TrainingDetail', pk=pk)
+        except KeyError:
+            messages.info(request, "Session Expired. Please Login")
+            return redirect('auth')
+        except Exception as e:
+            messages.error(request, f'{e}')
+            print(e)
+        return redirect('TrainingDetail', pk=pk)
 
 
 def TrainingCancelApproval(request, pk):
@@ -632,7 +582,7 @@ def TrainingCancelApproval(request, pk):
         print(response)
         return redirect('TrainingDetail', pk=pk)
     except Exception as e:
-        messages.error(request, e)
+        messages.error(request, f'{e}')
         print(e)
     return redirect('TrainingDetail', pk=pk)
 
@@ -640,8 +590,10 @@ def TrainingCancelApproval(request, pk):
 class PNineRequest(UserObjectMixin, View):
     def get(self, request):
         try:
-            userID = request.session['User_ID']
-            year = request.session['years']
+            driver_role = request.session['driver_role']
+            TO_role = request.session['TO_role']
+            mechanical_inspector_role = request.session['mechanical_inspector_role']
+            full_name = request.session['full_name']
 
             Access_Point = config.O_DATA.format("/QyPayrollPeriods")
             response = self.get_object(Access_Point)
@@ -652,11 +604,14 @@ class PNineRequest(UserObjectMixin, View):
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
             return redirect('pNine')
         ctx = {"today": self.todays_date,
-               "year": year, "full": userID, "res": res}
+               "full": full_name, "res": res,
+               "driver_role":driver_role,
+               "TO_role":TO_role,
+               "mechanical_inspector_role":mechanical_inspector_role}
         return render(request, "p9.html", ctx)
 
     def post(self, request):
@@ -666,11 +621,10 @@ class PNineRequest(UserObjectMixin, View):
                                     for i in range(5))
                 employeeNo = request.session['Employee_No_']
                 startDate = request.POST.get('startDate')[0:4]
-                year = request.session['years']
             except ValueError as e:
                 messages.error(request, "Not sent. Invalid Input, Try Again!!")
                 return redirect('pNine')
-            filenameFromApp = "P9_For_" + str(nameChars) + str(year) + ".pdf"
+            filenameFromApp = "P9_For_" + str(nameChars) + ".pdf"
             year = int(startDate)
             try:
                 response = config.CLIENT.service.FnGeneratePNine(
@@ -690,7 +644,7 @@ class PNineRequest(UserObjectMixin, View):
                         request, "Payslip not found for the selected period")
                     return redirect('pNine')
             except Exception as e:
-                messages.error(request, e)
+                messages.error(request, f'{e}')
                 print(e)
                 return redirect('pNine')
 
@@ -698,8 +652,10 @@ class PNineRequest(UserObjectMixin, View):
 class PayslipRequest(UserObjectMixin, View):
     def get(self, request):
         try:
-            userID = request.session['User_ID']
-            year = request.session['years']
+            driver_role = request.session['driver_role']
+            TO_role = request.session['TO_role']
+            mechanical_inspector_role = request.session['mechanical_inspector_role']
+            full_name = request.session['full_name']
 
             Access_Point = config.O_DATA.format(
                 f"/QyPayrollPeriods?$filter=Closed%20eq%20true")
@@ -710,12 +666,15 @@ class PayslipRequest(UserObjectMixin, View):
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
             return redirect('payslip')
 
-        ctx = {"today": self.todays_date, "year": year,
-               "full": userID, "res": Payslip}
+        ctx = {"today": self.todays_date, 
+               "full": full_name, "res": Payslip,
+               "driver_role":driver_role,
+               "TO_role":TO_role,
+               "mechanical_inspector_role":mechanical_inspector_role,}
 
         return render(request, "payslip.html", ctx)
 
@@ -752,7 +711,7 @@ class PayslipRequest(UserObjectMixin, View):
                         request, "Payslip not found for the selected period")
                     return redirect('payslip')
             except Exception as e:
-                messages.error(request, e)
+                messages.error(request, f'{e}')
                 print(e)
 
 
@@ -784,7 +743,7 @@ def FnGenerateLeaveReport(request, pk):
             responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
             return responses
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
     return redirect('LeaveDetail', pk=pk)
 # Training report
@@ -816,21 +775,21 @@ def FnGenerateTrainingReport(request, pk):
         responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
         return responses
     except Exception as e:
-        messages.error(request, e)
+        messages.error(request, f'{e}')
         print(e)
     return redirect('TrainingDetail', pk=pk)
 
 
 def Disciplinary(request):
     fullname = request.session['User_ID']
-    year = request.session['years']
     session = requests.Session()
     session.auth = config.AUTHS
 
     Access_Point = config.O_DATA.format("/QyEmployeeDisciplinaryCases")
+    openCase =[]
+    counts = 0
     try:
         response = session.get(Access_Point, timeout=10).json()
-        openCase = []
         for case in response['value']:
             if case['Employee_No'] == request.session['Employee_No_'] and case['Posted'] == False and case['Sent_to_employee'] == True and case['Submit'] == False:
                 output_json = json.dumps(case)
@@ -842,17 +801,17 @@ def Disciplinary(request):
 
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": openCase,
-           "year": year, "full": fullname,
+            "full": fullname,
            "count": counts}
     return render(request, 'disciplinary.html', ctx)
 
 
 def DisciplineDetail(request, pk):
     fullname = request.session['User_ID']
-    year = request.session['years']
     session = requests.Session()
     session.auth = config.AUTHS
     res = ''
+    openLines = []
     Access_Point = config.O_DATA.format("/QyEmployeeDisciplinaryCases")
     try:
         response = session.get(Access_Point, timeout=10).json()
@@ -869,7 +828,6 @@ def DisciplineDetail(request, pk):
     Lines_Res = config.O_DATA.format("/QyEmployeeDisciplinaryLines")
     try:
         responses = session.get(Lines_Res, timeout=10).json()
-        openLines = []
         for cases in responses['value']:
             if cases['Refference_No'] == pk and cases['Employee_No'] == request.session['Employee_No_']:
                 output_json = json.dumps(cases)
@@ -878,7 +836,7 @@ def DisciplineDetail(request, pk):
         print(e)
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": res,
-           "full": fullname, "year": year, "line": openLines}
+           "full": fullname,"line": openLines}
     return render(request, 'disciplineDetail.html', ctx)
 
 
@@ -901,23 +859,8 @@ def DisciplinaryResponse(request, pk):
         print(response)
         return redirect('DisciplineDetail', pk=pk)
     except Exception as e:
-        messages.error(request, e)
+        messages.error(request, f'{e}')
         print(e)
     return redirect('DisciplineDetail', pk=pk)
 
 
-class appraisal(UserObjectMixin, View):
-    pass
-    # def get(self, request):
-    #     try:
-    #         UserID = request.session['User_ID']
-    #         year = request.session['years']
-            
-    #         Access_Point = config.O_DATA.format(
-    #             f"/QyEmployeeAppraisal?$filter=AppraiseeID%20eq%20%27{UserID}%27"
-    #         )
-    #         response = self.get_object(Access_Point)
-    #         Appraisee = [x for x in response['value']]
-    #     except KeyError as e:
-    #         messages.error(request, e)
-    #         return pass

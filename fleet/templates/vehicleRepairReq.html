@@ -3,7 +3,7 @@
 {% load static %}
 {% block main %}
 <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
-        crossorigin="anonymous"></script>
+    crossorigin="anonymous"></script>
 <section class="dash2">
     <!-- top banner -->
     <div class="content-wrapper general-bg">
@@ -13,9 +13,9 @@
                     <img src="../../../static/img/logo/fav.png" width="70px" class="img-fluid" alt="" srcset="">
                     <h2 class="text-dark font-weight-bold ml-3"> Vehicle Repair </h2>
                     <button class="btn btn-successs align-items-center p-3" data-bs-toggle="modal"
-                            data-bs-target="#staticBackdrop"
-                            style="margin-left: auto;margin-right:0;outline: none;border: none;"><i
-                           class="las la-plus text-white" style="font-size:15px;"></i> New Repair Request</button>
+                        data-bs-target="#staticBackdrop"
+                        style="margin-left: auto;margin-right:0;outline: none;border: none;"><i
+                            class="las la-plus text-white" style="font-size:15px;"></i> New Repair Request</button>
                 </span>
             </div>
         </div>
@@ -31,23 +31,15 @@
                         <ul class="nav nav-tabs d-flex" id="myTab">
                             <li class="nav-item flex-fill">
                                 <a href="#home" class="nav-link active" data-bs-toggle="tab">Open
-                                    ({{count}})</a>
+                                    ({{openRepairReq|length}})</a>
                             </li>
                             <li class="nav-item flex-fill">
                                 <a href="#pending" class="nav-link" data-bs-toggle="tab">Pending Approval
-                                    ({{pend}})</a>
+                                    ({{pending|length}})</a>
                             </li>
                             <li class="nav-item flex-fill">
                                 <a href="#approved" class="nav-link" data-bs-toggle="tab">Approved
-                                    ({{counter}})</a>
-                            </li>
-                            <li class="nav-item flex-fill">
-                                <a href="#repaired" class="nav-link" data-bs-toggle="tab">Repaired
-                                    (0)</a>
-                            </li>
-                            <li class="nav-item flex-fill">
-                                <a href="#crepaired" class="nav-link" data-bs-toggle="tab">Confirmed Repaired
-                                    (0)</a>
+                                    ({{approved|length}})</a>
                             </li>
                         </ul>
                         <div class="tab-content">
@@ -55,8 +47,8 @@
                                 <h4 class="mt-2 text-dark">Open Vehicle Repair Request</h4>
                                 <div class="card-body">
                                     <table id="example"
-                                           class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                                           style="width:100%">
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
 
                                         <thead>
                                             <tr id="tops">
@@ -68,59 +60,74 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {% for res in open %}
+                                            {% for res in openRepairReq %}
                                             {% if res.Rejected_By_Approver == True and res.Status == 'Open' %}
                                             <tr>
-                                                <td>{{res.No}}</td>
-                                                <td>{{res.PostingDate}}</td>
-                                                <td>{{res.VehicleRegistrationNo}}</td>
+                                                <td>{{res.No_}}</td>
+                                                <td>{{res.Document_Date}}</td>
+                                                <td>{{res.Vehicle_Registration_No_}}</td>
                                                 <td>
                                                     <button class="btn btn-primary" data-bs-toggle="modal"
-                                                            data-bs-target="#repair{{res.No}}" data-toggle="tooltip" data-placement="top"
-                                                            title="edit">Edit <i class="fas fa-edit"></i>
+                                                        data-bs-target="#repair{{res.No_}}" data-toggle="tooltip"
+                                                        data-placement="top" title="edit">Edit <i
+                                                            class="fas fa-edit"></i>
                                                     </button>
-                                                    <div class="modal fade" id="repait{{res.No}}"
-                                                         data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-                                                         aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                    <div class="modal fade" id="repait{{res.No_}}"
+                                                        data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                                        aria-labelledby="staticBackdropLabel" aria-hidden="true">
                                                         <div
-                                                             class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                                            class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title" id="staticBackdropLabel">
                                                                         <i class="las la-edit"></i> Edit Imprest
-                                                                        <span class="editSpan">{{res.No}}</span>
+                                                                        <span class="editSpan">{{res.No_}}</span>
                                                                     </h5>
-                                                                    <button type="button" class="btn-close btn-close-white"
-                                                                            data-bs-dismiss="modal"
-                                                                            aria-label="Close"></button>
+                                                                    <button type="button"
+                                                                        class="btn-close btn-close-white"
+                                                                        data-bs-dismiss="modal"
+                                                                        aria-label="Close"></button>
                                                                 </div>
                                                                 <div class="modal-body">
-                                                                    <form class="myForm needs-validation" action="" method="post" novalidate>
+                                                                    <form class="myForm needs-validation" action=""
+                                                                        method="post" novalidate>
                                                                         {% csrf_token %}
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <input type="hidden" name="reqNo" value="{{res.No}}">
+                                                                                <input type="hidden" name="reqNo"
+                                                                                    value="{{res.No_}}">
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <label class="form-label">Vehicle <span class="text-danger">*</span></label>
-                                                                                <select class="form-select" name="vehicle" required>
-                                                                                    <option selected disabled value="">Select Option</option>
+                                                                                <label class="form-label">Vehicle <span
+                                                                                        class="text-danger">*</span></label>
+                                                                                <select class="form-select"
+                                                                                    name="vehicle" required>
+                                                                                    <option selected disabled value="">
+                                                                                        Select Option</option>
                                                                                     {% for list in Vehicle_No %}
-                                                                                    <option value="{{list.Registration_No}}">{{list.Registration_No}}</option>
-                                                                                    {% endfor %}                                    
+                                                                                    <option
+                                                                                        value="{{list.Registration_No}}">
+                                                                                        {{list.Registration_No}}
+                                                                                    </option>
+                                                                                    {% endfor %}
                                                                                 </select>
                                                                             </div>
                                                                         </div>
 
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <label for="" class="form-label">Driver</label>
-                                                                                <select class="form-select" name="driver" required>
-                                                                                    <option selected disabled value="">Select Option</option>
+                                                                                <label for=""
+                                                                                    class="form-label">Driver</label>
+                                                                                <select class="form-select"
+                                                                                    name="driver" required>
+                                                                                    <option selected disabled value="">
+                                                                                        Select Option</option>
                                                                                     {% for list in drivers %}
-                                                                                    <option value="{{list.No_}}">{{list.First_Name}} {{list.Middle_Name}}
+                                                                                    <option value="{{list.No_}}">
+                                                                                        {{list.First_Name}}
+                                                                                        {{list.Middle_Name}}
                                                                                         {{list.Last_Name}}</option>
                                                                                     {% endfor %}
                                                                                 </select>
@@ -129,26 +136,34 @@
 
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <label for="" class="form-label">Odometer Reading<span class="text-danger">*</span></label>
-                                                                                <input type="text" name="odometerReading" class="form-control" required>
+                                                                                <label for=""
+                                                                                    class="form-label">Odometer
+                                                                                    Reading<span
+                                                                                        class="text-danger">*</span></label>
+                                                                                <input type="text"
+                                                                                    name="odometerReading"
+                                                                                    class="form-control" required>
                                                                             </div>
                                                                         </div>
-                                                                        
+
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <input type="hidden" name="myAction" value="modify">
+                                                                                <input type="hidden" name="myAction"
+                                                                                    value="modify">
                                                                             </div>
                                                                         </div>
-                                                                        
-                                                                        <button type="submit" id="sasa" class="btn btn-success my-3 w-100">Submit</button>
+
+                                                                        <button type="submit" id="sasa"
+                                                                            class="btn btn-success my-3 w-100">Submit</button>
                                                                     </form>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <a href="{% url 'vehicleRepairDetails' res.No %}"
-                                                       class="btn btn-success btn-icon-text" type="button"
-                                                       data-toggle="tooltip" data-placement="top" title="Click to View">
+                                                    <a href="{% url 'vehicleRepairDetails' res.No_ %}"
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top"
+                                                        title="Click to View">
                                                         View
                                                         <i class="far fa-eye"></i>
                                                     </a>
@@ -156,53 +171,71 @@
                                             </tr>
                                             {% else %}
                                             <tr>
-                                                <td>{{res.No}}</td>
-                                                <td>{{res.PostingDate}}</td>
-                                                <td>{{res.VehicleRegistrationNo}}</td>
+                                                <td>{{res.No_}}</td>
+                                                <td>{{res.Document_Date}}</td>
+                                                <td>{{res.Vehicle_Registration_No_}}</td>
                                                 <td>
                                                     <button class="btn btn-primary" data-bs-toggle="modal"
-                                                            data-bs-target="#repair{{res.No}}" data-toggle="tooltip" data-placement="top"
-                                                            title="edit">Edit <i class="fas fa-edit"></i>
+                                                        data-bs-target="#repair{{res.No_}}" data-toggle="tooltip"
+                                                        data-placement="top" title="edit">Edit <i
+                                                            class="fas fa-edit"></i>
                                                     </button>
-                                                    <div class="modal fade" id="repair{{res.No}}"
-                                                         data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-                                                         aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                                                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                                    <div class="modal fade" id="repair{{res.No_}}"
+                                                        data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                                        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                        <div
+                                                            class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title" id="staticBackdropLabel">
                                                                         <i class="las la-edit"></i> Edit Repair Request
-                                                                        <span class="editSpan">{{res.No}}</span>
+                                                                        <span class="editSpan">{{res.No_}}</span>
                                                                     </h5>
-                                                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                    <button type="button"
+                                                                        class="btn-close btn-close-white"
+                                                                        data-bs-dismiss="modal"
+                                                                        aria-label="Close"></button>
                                                                 </div>
                                                                 <div class="modal-body">
-                                                                    <form class="myForm needs-validation" action="" method="post" novalidate>
+                                                                    <form class="myForm needs-validation" action=""
+                                                                        method="post" novalidate>
                                                                         {% csrf_token %}
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <input type="hidden" name="reqNo" value="{{res.No}}">
+                                                                                <input type="hidden" name="reqNo"
+                                                                                    value="{{res.No_}}">
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <label class="form-label">Vehicle <span class="text-danger">*</span></label>
-                                                                                <select class="form-select" name="vehicle" required>
-                                                                                    <option selected disabled value="">Select Option</option>
+                                                                                <label class="form-label">Vehicle <span
+                                                                                        class="text-danger">*</span></label>
+                                                                                <select class="form-select"
+                                                                                    name="vehicle" required>
+                                                                                    <option selected disabled value="">
+                                                                                        Select Option</option>
                                                                                     {% for list in Vehicle_No %}
-                                                                                    <option value="{{list.Registration_No}}">{{list.Registration_No}}</option>
-                                                                                    {% endfor %}                                    
+                                                                                    <option
+                                                                                        value="{{list.Registration_No}}">
+                                                                                        {{list.Registration_No}}
+                                                                                    </option>
+                                                                                    {% endfor %}
                                                                                 </select>
                                                                             </div>
                                                                         </div>
 
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <label for="" class="form-label">Driver</label>
-                                                                                <select class="form-select" name="driver" required>
-                                                                                    <option selected disabled value="">Select Option</option>
+                                                                                <label for=""
+                                                                                    class="form-label">Driver</label>
+                                                                                <select class="form-select"
+                                                                                    name="driver" required>
+                                                                                    <option selected disabled value="">
+                                                                                        Select Option</option>
                                                                                     {% for list in drivers %}
-                                                                                    <option value="{{list.No_}}">{{list.First_Name}} {{list.Middle_Name}}
+                                                                                    <option value="{{list.No_}}">
+                                                                                        {{list.First_Name}}
+                                                                                        {{list.Middle_Name}}
                                                                                         {{list.Last_Name}}</option>
                                                                                     {% endfor %}
                                                                                 </select>
@@ -211,30 +244,44 @@
 
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <label for="" class="form-label">Odometer Reading<span class="text-danger">*</span></label>
-                                                                                <input type="text" name="odometerReading" class="form-control" required>
+                                                                                <label for=""
+                                                                                    class="form-label">Odometer
+                                                                                    Reading<span
+                                                                                        class="text-danger">*</span></label>
+                                                                                <input type="text"
+                                                                                    name="odometerReading"
+                                                                                    class="form-control" required>
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <label for="" class="form-label">Repair Instruction Sheet<span class="text-danger">*</span></label>
-                                                                                <textarea name="repairInstractionSheet" class="form-control" required></textarea>
+                                                                                <label for="" class="form-label">Repair
+                                                                                    Instruction Sheet<span
+                                                                                        class="text-danger">*</span></label>
+                                                                                <textarea name="repairInstractionSheet"
+                                                                                    class="form-control"
+                                                                                    required></textarea>
                                                                             </div>
                                                                         </div>
-                                                                        
+
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <input type="hidden" name="myAction" value="modify">
+                                                                                <input type="hidden" name="myAction"
+                                                                                    value="modify">
                                                                             </div>
                                                                         </div>
-                                                                        
-                                                                        <button type="submit" id="sasa" class="btn btn-success my-3 w-100">Submit</button>
+
+                                                                        <button type="submit" id="sasa"
+                                                                            class="btn btn-success my-3 w-100">Submit</button>
                                                                     </form>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <a href="{% url 'vehicleRepairDetails' res.No %}" class="btn btn-success btn-icon-text" type="button" data-toggle="tooltip" data-placement="top" title="Click to View">
+                                                    <a href="{% url 'vehicleRepairDetails' res.No_ %}"
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top"
+                                                        title="Click to View">
                                                         View <i class="far fa-eye"></i>
                                                     </a>
                                                 </td>
@@ -250,7 +297,9 @@
                             <div class="tab-pane fade" id="pending">
                                 <h4 class="mt-2 text-dark">Pending Repair Request</h4>
                                 <div class="card-body">
-                                    <table id="example" class="display table table-striped table-bordered dt-responsive table-responsive-lg" style="width:100%">
+                                    <table id="example"
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
                                         <thead>
                                             <tr id="tops">
                                                 <th id="long">Request No.</th>
@@ -261,20 +310,22 @@
                                         </thead>
                                         <tbody>
                                             {% for res in pending %}
-                                            
+
                                             <tr>
-                                                <td>{{res.No}}</td>
-                                                <td>{{res.PostingDate}}</td>
-                                                <td>{{res.VehicleRegistrationNo}}</td>
+                                                <td>{{res.No_}}</td>
+                                                <td>{{res.Document_Date}}</td>
+                                                <td>{{res.Vehicle_Registration_No_}}</td>
                                                 <td>
-                                                    <a href="{% url 'vehicleRepairDetails' res.No %}" class="btn btn-success btn-icon-text" type="button"
-                                                       data-toggle="tooltip" data-placement="top" title="Click to View">
+                                                    <a href="{% url 'vehicleRepairDetails' res.No_ %}"
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top"
+                                                        title="Click to View">
                                                         View
                                                         <i class="far fa-eye"></i>
                                                     </a>
                                                 </td>
                                             </tr>
-                                            
+
                                             {% endfor %}
                                         </tbody>
                                     </table>
@@ -286,35 +337,61 @@
                                 <h4 class="mt-2 text-dark">Approved Repair Request</h4>
                                 <div class="card-body">
                                     <table id="example"
-                                           class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                                           style="width:100%">
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
 
                                         <thead>
                                             <tr id="tops">
                                                 <th id="long">Request No.</th>
                                                 <th>Date Created</th>
                                                 <th>Vehicle</th>
-                                                <!-- <th>Travel Type</th> -->
+                                                <th>Repair Cost</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {% for res in approved %}
-                                            
+
                                             <tr>
-                                                <td>{{res.No}}</td>
-                                                <td>{{res.PostingDate}}</td>
-                                                <td>{{res.VehicleRegistrationNo}}</td>
+                                                <td>{{res.No_}}</td>
+                                                <td>{{res.Document_Date}}</td>
+                                                <td>{{res.Vehicle_Registration_No_}}</td>
+                                                <td id="total_amt{{res.No_}}">{{res.Cost_Of_Repair}}</td>
+                                                <script>
+                                                    $(document).ready(function () {
+                                                        $("#total_amt{{res.No_}}").empty().append(currency(
+                                                            '{{res.Cost_Of_Repair}}', {
+                                                                separator: ','
+                                                            }).format());
+                                                    })
+                                                </script>
                                                 <td>
-                                                    <a href="{% url 'vehicleRepairDetails' res.No %}"
-                                                       class="btn btn-success btn-icon-text" type="button"
-                                                       data-toggle="tooltip" data-placement="top" title="Click to View">
-                                                        View
-                                                        <i class="far fa-eye"></i>
+                                                    <form action="{% url ' FnConfirmRepaireRequest' res.No_ %}"
+                                                        method="post" style="display: inline-block;">
+                                                        {% csrf_token %}
+                                                        {% if res.Confirmed_As_Repaired == True %}
+                                                        <button class="btn btn-dark" type="button" disabled>
+                                                            <i class="las la-tools"></i> Repaired <i
+                                                                class="las la-check-double"></i>
+                                                        </button>
+                                                        {% elif res.Confirmed_As_Repaired == False %}
+                                                        <button class="btn btn-dark" type="submit" data-toggle="tooltip"
+                                                            data-placement="top" title="confirm repair">
+                                                            <i class="las la-tools"></i> confirm repair <i
+                                                                class="las la-check-double"></i>
+                                                        </button>
+                                                        {% endif %}
+                                                    </form>
+                                                    <a href="{% url 'vehicleRepairDetails' res.No_ %}"
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top" title="Click to View"
+                                                        style="display: inline-block;">
+                                                        View <i class="far fa-eye"></i>
                                                     </a>
                                                 </td>
+
                                             </tr>
-                                            
+
                                             {% endfor %}
                                         </tbody>
                                     </table>
@@ -330,13 +407,13 @@
 
         <!-- Modal -->
         <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-             aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content">
-                    <div class="modal-header">New Repair request 
+                    <div class="modal-header">New Repair request
                         </h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
+                            aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <form class="myForm needs-validation" action="" method="post" novalidate>
@@ -352,8 +429,8 @@
                                     <select class="form-select" name="vehicle" required>
                                         <option selected disabled value="">Select Option</option>
                                         {% for list in Vehicle_No %}
-                                        <option value="{{list.Registration_No}}">{{list.Registration_No}}</option>
-                                        {% endfor %}                                    
+                                        <option value="{{list.No_}}">{{list.Description}}</option>
+                                        {% endfor %}
                                     </select>
                                 </div>
                             </div>
@@ -373,23 +450,25 @@
 
                             <div class="row">
                                 <div class="col-md-12">
-                                    <label for="" class="form-label">Odometer Reading<span class="text-danger">*</span></label>
+                                    <label for="" class="form-label">Odometer Reading<span
+                                            class="text-danger">*</span></label>
                                     <input type="text" name="odometerReading" class="form-control" required>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
-                                    <label for="" class="form-label">Repair Instruction Sheet<span class="text-danger">*</span></label>
+                                    <label for="" class="form-label">Repair Instruction Sheet<span
+                                            class="text-danger">*</span></label>
                                     <textarea name="repairInstractionSheet" class="form-control" required></textarea>
                                 </div>
                             </div>
-                            
+
                             <div class="row">
                                 <div class="col-md-12">
                                     <input type="hidden" name="myAction" value="insert">
                                 </div>
                             </div>
-                            
+
                             <button type="submit" id="sasa" class="btn btn-success my-3 w-100">Submit</button>
                         </form>
                     </div>

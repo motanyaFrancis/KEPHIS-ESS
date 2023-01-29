@@ -29,6 +29,10 @@ class Dashboard(UserObjectMixins, View):
             Employee_No_ = await sync_to_async(request.session.__getitem__)('Employee_No_')
             HOD_User = await sync_to_async(request.session.__getitem__)('HOD_User')
             full_name = await sync_to_async(request.session.__getitem__)('full_name')
+            driver_role = await sync_to_async(request.session.__getitem__)('driver_role')
+            TO_role =await sync_to_async(request.session.__getitem__)('TO_role')
+            mechanical_inspector_role =await sync_to_async(request.session.__getitem__)('mechanical_inspector_role')
+            
             empAppraisal = ''
             pending_approval_count = 0
             total_leave =0
@@ -102,7 +106,7 @@ class Dashboard(UserObjectMixins, View):
                 open_advances = sum(1 for advance in response[8] if advance['Loan_Status'] == 'Application') # type: ignore
                 Pending_advances = sum([1 for advance in response[8]  if advance['Loan_Status'] == 'Being Processed']) # type: ignore
                 approved_advances = sum([1 for advance in response[8] if advance['Loan_Status'] == 'Approved'])  # type: ignore 
-                                 
+                           
             ctx ={
                 "total_leave":total_leave,"open_leave":open_leave,"app_leave_list":app_leave_list,
                 "pending_leave":pending_leave,"total_training":total_training,"open_training":open_training,
@@ -116,8 +120,8 @@ class Dashboard(UserObjectMixins, View):
                 "pending_repair":pending_repair,"total_store":total_store,"open_store":open_store,
                 "app_store_list":app_store_list,"pending_store":pending_store,"empAppraisal":empAppraisal,
                 "pending_approval_count":pending_approval_count,"today": self.todays_date,"full":full_name,
-                "HOD_User":HOD_User,"open_advances":open_advances,
-                "Pending_advances":Pending_advances,"approved_advances":approved_advances
+                "HOD_User":HOD_User,"open_advances":open_advances,"driver_role":driver_role,"TO_role":TO_role,
+                "Pending_advances":Pending_advances,"approved_advances":approved_advances,"mechanical_inspector_role":mechanical_inspector_role,
             }
         except (aiohttp.ClientError, aiohttp.ServerDisconnectedError, aiohttp.ClientResponseError) as e:
             print(e)
@@ -141,3 +145,14 @@ class Manual(View):
             return redirect('auth')
         ctx = {"today": todays_date, "full": userId, }
         return render(request, "manual.html", ctx)
+
+class OffCanvas(UserObjectMixin,View):
+    def get(self, request):
+        driver_role =request.session['driver_role']
+        TO_role =request.session['TO_role']
+        mechanical_inspector_role =request.session['mechanical_inspector_role']
+        ctx ={
+            "driver_role":driver_role,
+            "mechanical_inspector_role":mechanical_inspector_role,
+        }
+        return render(request,'base.html',ctx)

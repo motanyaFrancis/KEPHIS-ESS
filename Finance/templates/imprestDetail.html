@@ -8,7 +8,7 @@
             <h2 class="text-dark font-weight-bold mb-2"> Imprest Requisition
                 {% if res.Status == "Open" %}
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Attachment"> <i
-                       class="las la-plus"></i> Upload Attachment</button>
+                        class="las la-plus"></i> Upload Attachment</button>
                 {% endif %}
             </h2>
 
@@ -16,13 +16,13 @@
                 <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
                     {% if res.Status == "Open" %}
                     <button class="btn btn-successs p-3 d-flex align-items-center" data-bs-toggle="modal"
-                            data-bs-target="#staticBackdrop" type="button"> <i class="las la-plus text-white"
-                           style="font-size:15px;"></i> Add Imprest
+                        data-bs-target="#staticBackdrop" type="button"> <i class="las la-plus text-white"
+                            style="font-size:15px;"></i> Add Imprest
                         Lines
                     </button>
                     {% elif res.Status == "Released" %}
                     <form action="{% url 'FnGenerateImprestReport' res.No_%}" method="post"
-                          style="display:inline-block">
+                        style="display:inline-block">
                         {% csrf_token %}
                         <button class="btn btn-successs" type="submit"> Preview
                             Report</button>
@@ -51,8 +51,8 @@
                         </div>
                         <div class="progress mt-1 " data-height="8" style="height: 8px;">
                             <div class="progress-bar l-bg-red" role="progressbar" data-width="50%" aria-valuenow="25"
-                                 aria-valuemin="0" aria-valuemax="100"
-                                 style="width: 50%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
+                                aria-valuemin="0" aria-valuemax="100"
+                                style="width: 50%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
                             </div>
                         </div>
                         {% elif res.Status == "Pending Approval" %}
@@ -65,8 +65,8 @@
                         </div>
                         <div class="progress mt-1 " data-height="8" style="height: 8px;">
                             <div class="progress-bar l-bg-yellow" role="progressbar" data-width="25%" aria-valuenow="25"
-                                 aria-valuemin="0" aria-valuemax="100"
-                                 style="width: 75%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
+                                aria-valuemin="0" aria-valuemax="100"
+                                style="width: 75%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
                             </div>
                         </div>
                         {% elif res.Status == "Released" %}
@@ -79,8 +79,8 @@
                         </div>
                         <div class="progress mt-1 " data-height="8" style="height: 8px;">
                             <div class="progress-bar l-bg-green" role="progressbar" data-width="75%" aria-valuenow="75"
-                                 aria-valuemin="0" aria-valuemax="100"
-                                 style="width: 100%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
+                                aria-valuemin="0" aria-valuemax="100"
+                                style="width: 100%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
                             </div>
                         </div>
                         {% endif %}
@@ -104,7 +104,7 @@
                     </div>
                 </div>
             </div>
-            <!-- <div class="col-md-3">
+            <div class="col-md-3">
                 <div class="card l-bg-cherry statCard h-100">
                     <div class="card-statistic-3 p-4">
                         <div class="card-icon card-icon-large"><i class="fas fa-dollar-sign"></i></div>
@@ -120,7 +120,7 @@
                         </div>
                     </div>
                 </div>
-            </div> -->
+            </div>
             <div class="col-md-3">
                 <div class="card l-bg-orange-dark statCard h-100">
                     <div class="card-statistic-3 p-4">
@@ -156,10 +156,6 @@
                         <input type="text" class="form-control" placeholder="{{res.Account_No_}}" readonly>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Status</label>
-                        <input type="text" class="form-control" placeholder="{{res.Status}}" readonly>
-                    </div>
-                    <div class="col-md-4">
                         <label class="form-label">Travel Type</label>
                         <input type="text" class="form-control" placeholder="{{res.Travel_Type}}" readonly>
                     </div>
@@ -169,25 +165,13 @@
                         <input type="text" class="form-control" placeholder="{{res.Account_Type}}" readonly>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Imprest Amount</label>
-                        <input type="text" class="form-control" placeholder="{{res.Imprest_Amount}}" readonly>
-                    </div>
-                    <!-- <div class="col-md-4">
-                        <label class="form-label">DSA Amount</label>
-                        <input type="text" class="form-control" placeholder="{{res.DSA_Allowance_Amount}}" readonly>
-                    </div> -->
-                    <div class="col-md-4">
                         <label class="form-label">Imprest</label>
                         <input type="text" class="form-control" placeholder="{{res.Imprest}}" readonly>
                     </div>
-                    <!-- <div class="col-md-12">
-                        <label class="form-label">DSA</label>
-                        <input type="text" class="form-control" placeholder="{{res.DSA}}" readonly>
-                    </div> -->
                     <div class="col-12">
                         <label for="inputAddress" class="form-label">purpose</label>
                         <textarea class="form-control" placeholder="{{res.Payment_Narration}}" rows="3"
-                                  readonly></textarea>
+                            readonly></textarea>
                     </div>
                 </form>
             </div>
@@ -199,8 +183,8 @@
                     <h4 class="mt-2 mx-2 text-dark">Imprest Requisitions Lines</h4>
                     <div class="card-body">
                         <table id="example"
-                               class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                               style="width:100%">
+                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                            style="width:100%">
                             <thead>
                                 <tr id="tops">
                                     <th id="long">Destination</th>
@@ -229,11 +213,11 @@
                                     <td>
 
                                         <form action="{% url 'FnDeleteImprestLine' line.AuxiliaryIndex1 %}"
-                                              method="post" style="display: inline-block;">
+                                            method="post" style="display: inline-block;">
                                             {% csrf_token %}
                                             <input type="hidden" name="lineNo" value="{{line.Line_No}}">
                                             <button type="submit" class="btn btn-danger" data-toggle="tooltip"
-                                                    data-placement="top" title="Delete"><i class="fas fa-trash-alt"></i>
+                                                data-placement="top" title="Delete"><i class="fas fa-trash-alt"></i>
                                             </button>
                                         </form>
                                     </td>
@@ -264,7 +248,7 @@
                                         <input type="hidden" name="docID" value="{{data.AuxiliaryIndex2}}">
                                         <input type="hidden" name="tableID" value="{{data.Table_ID}}">
                                         <button class="file-close" id="file-close"><i
-                                               class="fa fa-times-circle"></i></button>
+                                                class="fa fa-times-circle"></i></button>
                                     </form>
                                     {% endif %}
                                     <div class="file-img-box"><img src="../../static/img/logo/f1.png" alt="icon"></div>
@@ -274,7 +258,7 @@
                                         <input type="hidden" name="File_Name" value="{{data.File_Name}}">
                                         <input type="hidden" name="File_Extension" value="{{data.File_Extension}}">
                                         <button class="file-download mx-1"><i
-                                               class="fa fa-download text-success"></i></button>
+                                                class="fa fa-download text-success"></i></button>
                                     </form>
                                     <div class="file-man-title">
                                         <h5 class="mb-0 text-overflow">
@@ -353,8 +337,8 @@
                     <h4 class="mt-2 mx-2 text-dark">Document Approvers</h4>
                     <div class="card-body">
                         <table id="example"
-                               class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                               style="width:100%">
+                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                            style="width:100%">
                             <thead>
                                 <tr id="tops">
                                     <th id="long">Entry No</th>
@@ -381,18 +365,18 @@
         {% endif %}
     </div>
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-         aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="staticBackdropLabel">New Imprest Line
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form class="myForm needs-validation" id="frm_" action="{% url 'CreateImpLines' res.No_%}"
-                          method="post" novalidate>
+                        method="post" novalidate>
                         {% csrf_token %}
                         <div class="row">
                             <div class="col-md-12">
@@ -456,9 +440,9 @@
                         <div class="row" style="display: none;" id="imprestTypeRow">
                             <div class="col-md-12">
                                 <label for="" class="form-label">Requisition Type <span
-                                          class="text-danger">*</span></label>
+                                        class="text-danger">*</span></label>
                                 <select name="requisitionType" class="form-select" id="imprestTypess"
-                                        onchange="getRep()" disabled>
+                                    onchange="getRep()" disabled>
                                     <option value='' selected='selected'>Select</option>
                                     {% for res in type %}
                                     {% if res.Type == 'Imprest' %}
@@ -473,7 +457,7 @@
                         <div class="row" style="display: none;" id="DSATypeRow">
                             <div class="col-md-12">
                                 <label for="" class="form-label">Requisition Type <span
-                                          class="text-danger">*</span></label>
+                                        class="text-danger">*</span></label>
                                 <select id="DSAType" name="DSAType" class="form-select" onchange="getReps()" disabled>
                                     <option value='' selected='selected'>Select</option>
                                     {% for res in type %}
@@ -497,7 +481,7 @@
             </div>
         </div>
     </div>
-    
+
 </section>
 <!-- Modal -->
 <div class="modal fade" id="Attachment" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -506,11 +490,11 @@
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Upload Attachment</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form action="{% url 'UploadAttachment' res.No_ %}" method="post" class="myForm"
-                      enctype="multipart/form-data">
+                    enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class=" mb-3">
                         <label class="form-label">Attachments </label>
@@ -527,7 +511,7 @@
 <script>
     function getRep() {
         var ren = document.forms['frm_'].elements['requisitionType'].options[document.forms['frm_'].elements[
-            'requisitionType'].selectedIndex]
+                'requisitionType'].selectedIndex]
             .getAttribute('ren');
 
         if (ren === 'False') {
@@ -541,7 +525,7 @@
 
     function getReps() {
         var rens = document.forms['frm_'].elements['DSAType'].options[document.forms['frm_'].elements[
-            'DSAType'].selectedIndex]
+                'DSAType'].selectedIndex]
             .getAttribute('rens');
 
         if (rens === 'False') {

@@ -435,14 +435,34 @@
         $('#itemType').on('change', function (e) {
             e.preventDefault();
             var ItemCode = $("#itemType").val();
-            if (ItemCode == '2') {
-                $('#Unit_of_MeasureRow').show(1000)
-                $('#Unit_of_Measure').prop('disabled', false);
-            } else {
+            if (ItemCode == '1') {
                 $('#Unit_of_Measure').prop('disabled', true);
                 $('#Unit_of_MeasureRow').hide(1000);
-            }
-            if (ItemCode != null) {
+                $("#PurchaseForm select[name='itemNo']").find('.after').nextAll().remove();
+                $.ajax({
+                    type: 'get',
+                    url: '{% url "RequisitionCategory" %}',
+                    dataType: 'json',
+                    data: {
+                        ItemCode: ItemCode
+                    },
+                    success: function (response) {
+                        let options = '';
+                        for (var i = 0; i < response.value.length; i++) {
+                            options += '<option value=' + response.value[i]
+                                .No_ + '>' + response.value[i].Name + '</option>';
+                        }
+                        $("#PurchaseForm select[name='itemNo']").find('.after').after(
+                            options);
+
+                    },
+                    error: function (response) {
+                        console.log('Something went wrong');
+                    }
+                });
+            } else if (ItemCode == '2') {
+                $('#Unit_of_MeasureRow').show(1000)
+                $('#Unit_of_Measure').prop('disabled', false);
                 $("#PurchaseForm select[name='itemNo']").find('.after').nextAll().remove();
                 $.ajax({
                     type: 'get',
@@ -465,6 +485,32 @@
                         console.log('Something went wrong');
                     }
                 });
+            } else if (ItemCode == '3') {
+                $('#Unit_of_Measure').prop('disabled', true);
+                $('#Unit_of_MeasureRow').hide(1000);
+                $("#PurchaseForm select[name='itemNo']").find('.after').nextAll().remove();
+                $.ajax({
+                    type: 'get',
+                    url: '{% url "RequisitionCategory" %}',
+                    dataType: 'json',
+                    data: {
+                        ItemCode: ItemCode
+                    },
+                    success: function (response) {
+                        let options = '';
+                        for (var i = 0; i < response.value.length; i++) {
+                            options += '<option value=' + response.value[i]
+                                .No_ + '>' + response.value[i].Description + '</option>';
+                        }
+                        $("#PurchaseForm select[name='itemNo']").find('.after').after(
+                            options);
+
+                    },
+                    error: function (response) {
+                        console.log('Something went wrong');
+                    }
+                });
+
             } else {
                 $("#PurchaseForm select[name='itemNo']").find('.after').nextAll().remove();
             }

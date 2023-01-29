@@ -1,21 +1,27 @@
+import asyncio
 import base64
+import json
+# from io import BytesIO
+import aiohttp
 from django.shortcuts import render, redirect
-from datetime import datetime
-# from isodate import date_isoformat
 import requests
 from requests import Session
-import json
 from django.conf import settings as config
 import datetime as dt
 from django.contrib import messages
-from django.http import HttpResponse
-import io as BytesIO
-import secrets
-import string
 from requests.auth import HTTPBasicAuth
 from zeep.client import Client
 from zeep.transports import Transport
 from django.views import View
+from django.http import HttpResponse, JsonResponse
+from asgiref.sync import sync_to_async
+from myRequest.views import UserObjectMixins
+from base64 import b64decode
+import io as BytesIO
+from django.template.loader import render_to_string
+import ast
+
+
 
 # Create your views here.
 
@@ -29,20 +35,35 @@ class UserObjectMixin(object):
     def get_object(self, endpoint):
         response = self.session.get(endpoint, timeout=10).json()
         return response
-
-
+class get_prev_tickets(UserObjectMixin,View):
+    def get(self,request):
+        value_to_filter = request.GET.get('vehicle')
+        work_ticket_endpoint = config.O_DATA.format(f"/QyWorkTicket?$filter=Vehicle%20eq%20%27{value_to_filter}%27%20and%20TicketIssued%20eq%20true")
+        api_data = self.get_object(work_ticket_endpoint)
+        if 'value' in api_data:
+            filtered_data = [item for item in api_data['value'] if item['Work_Ticket_No'] != '']
+            options = render_to_string('options.html', {'options': filtered_data})
+            options = options.replace("\\", "").replace("\"", "")
+            return HttpResponse(options, content_type='application/json')
+        else:
+            return HttpResponse('error')
 class WorkTicket(UserObjectMixin, View):
 
     def get(self, request):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
-            empNo = request.session['Employee_No_']
+            driver_role =request.session['driver_role']
+            TO_role =request.session['TO_role']
+            mechanical_inspector_role =request.session['mechanical_inspector_role']
+            full_name = request.session['full_name']
+            
+            if TO_role == True and driver_role ==True and mechanical_inspector_role == True:
+                messages.error(request,"You can not hold driver, mechanical inspector and transport officer roles")
+                return redirect('dashboard')
 
             Access_Point = config.O_DATA.format(
                 f"/QyWorkTicket?$filter=CreatedBy%20eq%20%27{userID}%27")
             response = self.get_object(Access_Point)
-            Access_Point_List = [x for x in response]
 
             openTicket = [
                 x for x in response['value'] if x['Status'] == 'Open'
@@ -58,20 +79,21 @@ class WorkTicket(UserObjectMixin, View):
             IssuedTicket = [
                 x for x in response['value'] if x['Status'] == 'Approved' and x['TicketIssued'] == True
             ]
-
+            tickets_waiting_issuing = config.O_DATA.format(
+                f"/QyWorkTicket?$filter=Status%20eq%20%27Approved%27%20and%20TicketIssued%20eq%20false")
+            tickets_waiting_issuing_response = self.get_object(tickets_waiting_issuing)
+            issued_open = [x for x in tickets_waiting_issuing_response['value']]
+            
             counts = len(openTicket)
             pend = len(PendingTicket)
             counter = len(ApprovedTicket)
             issued = len(IssuedTicket)
 
 
-            vehicle = config.O_DATA.format("/QyFixedAssets")
+            vehicle = config.O_DATA.format("/QyFixedAssets?$filter=Fixed_Asset_Type%20eq%20%27Fleet%27")
             res_veh = self.get_object(vehicle)
             Vehicle_No = [x for x in res_veh['value']]
-
-            Ticket = config.O_DATA.format(f"/QyWorkTicket")
-            res_tkt = self.get_object(Ticket)
-            tkt_no = [x for x in res_tkt['value']]
+           
 
             driver = config.O_DATA.format(f"/QyDrivers")
             req_driver = self.get_object(driver)
@@ -91,74 +113,85 @@ class WorkTicket(UserObjectMixin, View):
             "today": self.todays_date,
             "open": openTicket,
             "count": counts,
+            "driver_role":driver_role,
+            "mechanical_inspector_role":mechanical_inspector_role,
+            "TO_role":TO_role,
+            "issued_open":issued_open,
             'issued': issued,
             "approved": ApprovedTicket,
             "counter": counter,
             "pend": pend,
             "pending": PendingTicket,
-            "year": year,
-            "full": userID,
+            "full": full_name,
             'Vehicle_No': Vehicle_No,
-            'tkt_no': tkt_no,
             'drivers': drivers,
         }
-        return render(request, 'workticket.html', ctx)
+        return render(request, 'workTicket.html', ctx)
+    
 
     def post(self, request):
         if request.method == 'POST':
             try:
                 employeeNo = request.session['Employee_No_']
                 myUserId = request.session['User_ID']
-                workTicketNo = request.POST.get('No')
-                previoursWorkTicketNo = request.POST.get(
-                    'previoursWorkTicketNo')
+                
+                workTicketNo = request.POST.get('workTicketNo')
+                prevWorkTicketNo =request.POST.get('prevWorkTicketNo')
                 driver = request.POST.get('driver')
-                reasoForReplacement = request.POST.get('reasoForReplacement')
-                currentworkTicketNo = request.POST.get('currentworkTicketNo')
+                reasonForReplacement = request.POST.get('reasonForReplacement')
+                currentWorkTicketNo = request.POST.get('currentWorkTicketNo')
                 kmCovered = request.POST.get('kmCovered')
                 vehicle = request.POST.get('vehicle')
                 myAction = request.POST.get('myAction')
+                                
+                if not prevWorkTicketNo:
+                    prevWorkTicketNo ='None'
 
-            except ValueError:
-                messages.error(request, "Missing Input")
+                response = config.CLIENT.service.FnWorkTicket(workTicketNo,employeeNo,myAction,
+                                                                prevWorkTicketNo,driver,reasonForReplacement,
+                 
+                                                               currentWorkTicketNo,kmCovered,myUserId,vehicle)
+                if response == True:
+                    messages.success(request, "Request Successful")
+                    return redirect('workTicket')
+                if response == False:
+                    messages.error(request, response)
                 return redirect('workTicket')
-            except KeyError:
-                messages.info(request, "Session Expired. Please Login")
-                return redirect('auth')
-
-            if not workTicketNo:
-                workTicketNo = " "
-
-            try:
-                response = config.CLIENT.service.FnWorkTicket(
-                    workTicketNo,
-                    employeeNo,
-                    myAction,
-                    previoursWorkTicketNo,
-                    driver,
-                    reasoForReplacement,
-                    currentworkTicketNo,
-                    kmCovered,
-                    myUserId,
-                    vehicle,
-                    )
-                messages.success(request, "Request Successful")
-                print(response)
-
             except Exception as e:
                 messages.error(request, "OOps!! Something went wrong")
                 print(e)
                 return redirect('workTicket')
         return redirect('workTicket')
-
+    
+class FnIssueWorkTicket(UserObjectMixins,View):
+    async def post(self,request,pk):
+        try:
+            user_id = await sync_to_async(request.session.__getitem__)('User_ID')
+            soap_headers = await sync_to_async(request.session.__getitem__)('soap_headers')
+            response =  self.make_soap_request(soap_headers,'FnIssueWorkTicket',
+                                               pk, user_id)
+            
+            if response == True:
+                messages.success(request, f"Work ticket {pk} issued successfully")
+                return redirect('workTicket')
+            if response == False:
+                messages.error(request,"Issuing Failed")
+                return redirect('workTicket')
+        except Exception as e:
+            messages.error(request, f'{e}')
+            print(e)
+            return redirect('workTicket')  
 
 class WorkTicketDetails(UserObjectMixin, View):
 
     def get(self, request, pk):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
-            empNo = request.session['Employee_No_']
+            full_name = request.session['full_name']
+            driver_role = request.session['driver_role']
+            TO_role = request.session['TO_role']
+            mechanical_inspector_role = request.session['mechanical_inspector_role']
+            res = {}
 
             Access_Point = config.O_DATA.format(
                 f"/QyWorkTicket?$filter=No%20eq%20%27{pk}%27%20and%20CreatedBy%20eq%20%27{userID}%27"
@@ -187,7 +220,10 @@ class WorkTicketDetails(UserObjectMixin, View):
             'res': res,
             'file': allFiles,
             'Approvers': Approvers,
-            "full": userID,
+            "full": full_name,
+            "driver_role":driver_role,
+            "TO_role":TO_role,
+            "mechanical_inspector_role":mechanical_inspector_role,
         }
 
         return render(request, 'workTicketDetails.html', ctx)
@@ -199,7 +235,7 @@ def UploadTicketAttachment(request, pk):
     if request.method == "POST":
         try:
             attach = request.FILES.getlist('attachment')
-            tableID = 52177430
+            tableID = 52178012
         except Exception as e:
             return redirect('WorkTicketDetails', pk=pk)
         for files in attach:
@@ -238,29 +274,34 @@ def DeleteTicketAttachment(request, pk):
     return redirect('WorkTicketDetails', pk=pk)
 
 
-def FnSubmitWorkTicket(request, pk):
-    Username = request.session['User_ID']
-    Password = request.session['password']
-    AUTHS = Session()
-    AUTHS.auth = HTTPBasicAuth(Username, Password)
-    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
-    workTicketNo = ""
-    if request.method == 'POST':
-        workTicketNo = request.POST.get('workTicketNo')
-        myUserID = request.session['User_ID']
+class FnSubmitWorkTicket(UserObjectMixins, View):
+    async def post(self,request, pk):
+        if request.method == "POST":
+            try:
+                userID = await sync_to_async(request.session.__getitem__)('User_ID')
+                workTicketNo = request.POST.get('workTicketNo')
+                soap_headers = await sync_to_async(request.session.__getitem__)('soap_headers')
+        
+                response =  self.make_soap_request(soap_headers,'FnSubmitWorkTicket', workTicketNo,userID)
 
-        try:
-            response = config.CLIENT.service.FnSubmitWorkTicket(
-                workTicketNo,
-                myUserID,
-            )
-            messages.success(request, "Approval Request Sent Successfully")
-            return redirect('WorkTicketDetails', pk=pk)
-        except Exception as e:
-            messages.error(request, "OOps!! Something went wrong")
-            print(e)
-            return redirect('WorkTicketDetails', pk=pk)
-    return redirect('WorkTicketDetails', pk=pk)
+                if response == True:
+                    messages.success(request, 'Request Submitted successfully')
+                    return redirect('WorkTicketDetails', pk=pk)
+                if response == False:
+                    messages.success(request, 'Request Failed')
+                    return redirect('WorkTicketDetails', pk=pk)
+            except (aiohttp.ClientError, aiohttp.ServerDisconnectedError, aiohttp.ClientResponseError) as e:
+                print(e)
+                messages.error(request,"connect timed out")
+                return redirect('WorkTicketDetails', pk=pk)
+            except KeyError:
+                messages.info(request, "Session Expired. Please Login")
+                return redirect('auth')
+            except Exception as e:
+                messages.error(request, "OOps!! Something went wrong")
+                print(e)
+                return redirect('WorkTicketDetails', pk=pk)
+        return redirect('WorkTicketDetails', pk=pk)
 
 
 def FnCancelWorkTicket(request, pk):
@@ -277,10 +318,30 @@ def FnCancelWorkTicket(request, pk):
             print(response)
             return redirect('WorkTicketDetails', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
             return redirect('auth')
     return redirect('WorkTicketDetails', pk=pk)
+        
+class FnGenerateWorkTicketReport(UserObjectMixins, View):
+    async def post(self,request,pk):
+        try:
+            filenameFromApp = "work_ticket_" + pk + ".pdf"
+            user_id = await sync_to_async(request.session.__getitem__)('User_ID')
+            soap_headers = await sync_to_async(request.session.__getitem__)('soap_headers')
+            response =  self.make_soap_request(soap_headers,'FnWorkTicketReqister',pk,
+                                                                                filenameFromApp,user_id)
+            buffer = BytesIO.BytesIO()
+            content = base64.b64decode(response)
+            buffer.write(content)
+            responses = HttpResponse(
+            buffer.getvalue(),content_type="application/pdf",)
+            responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
+            return responses
+        except Exception as e:
+                messages.error(request, f'{e}')
+                print(e)
+                return redirect('WorkTicketDetails', pk=pk)
 
 # vehicle repair
 class VehicleRepairRequest(UserObjectMixin, View):
@@ -288,14 +349,17 @@ class VehicleRepairRequest(UserObjectMixin, View):
     def get(self, request):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
-            empNo = request.session['Employee_No_']
+            full_name = request.session['full_name']
+            driver_role = request.session['driver_role']
+            TO_role = request.session['TO_role']
+            mechanical_inspector_role = request.session['mechanical_inspector_role']
 
             Access_Point = config.O_DATA.format(
-                f"/QyRepairRequest?$filter=RequestedBy%20eq%20%27{userID}%27%20and%20DocumentType%20eq%20%27Repair%27")
+                f"/QyRepairRequest?$filter=Requested_By%20eq%20%27{userID}%27%20and%20Document_Type%20eq%20%27Repair%27")
             response = self.get_object(Access_Point)
+            
 
-            vehicle = config.O_DATA.format("/QyFixedAssets")
+            vehicle = config.O_DATA.format("/QyFixedAssets?$filter=Fixed_Asset_Type%20eq%20%27Fleet%27")
             res_veh = self.get_object(vehicle)
             Vehicle_No = [x for x in res_veh['value']]
 
@@ -315,14 +379,6 @@ class VehicleRepairRequest(UserObjectMixin, View):
                 x for x in response['value'] if x['Status'] == 'Released'
             ]
 
-            Repaired = [
-                x for x in response['value'] if x['Status'] == 'Releases'
-            ]
-
-            counts = len(openRepairReq)
-            pend = len(PendingRepairReq)
-
-            counter = len(ApprovedRepair)
         except requests.exceptions.RequestException as e:
             print(e)
             messages.info(
@@ -335,16 +391,15 @@ class VehicleRepairRequest(UserObjectMixin, View):
             return redirect('auth')
         ctx = {
             "today": self.todays_date,
-            "open": openRepairReq,
-            "count": counts,
-            "approved": ApprovedRepair,
-            "counter": counter,
-            "pend": pend,
-            "pending": PendingRepairReq,
-            "year": year,
-            "full": userID,
+            "openRepairReq":openRepairReq,
+            "pending":PendingRepairReq,
+            "approved":ApprovedRepair,
             "Vehicle_No": Vehicle_No,
             'drivers': drivers,
+            "full": full_name,
+            "driver_role":driver_role,
+            "TO_role":TO_role,
+            "mechanical_inspector_role":mechanical_inspector_role,
         }
         return render(request, 'vehicleRepairReq.html', ctx)
 
@@ -382,17 +437,49 @@ class VehicleRepairRequest(UserObjectMixin, View):
                 return redirect('vehicleRepairRequest')
         return redirect('vehicleRepairRequest')
 
+class FnConfirmRepaireRequest (UserObjectMixins,View):
+    async def post(self,request,pk):
+        if request.method == 'POST':
+            try:
+                userID = await sync_to_async(request.session.__getitem__)('User_ID')
+                soap_headers = await sync_to_async(request.session.__getitem__)('soap_headers')
+        
+                response =  self.make_soap_request(soap_headers,'FnConfirmRepaireRequest',pk,userID)
+                print(response)
+
+                if response == True:
+                    messages.success(request, 'Confirmation successful')
+                    return redirect('vehicleRepairRequest')
+                if response == False:
+                    messages.success(request, 'Request Failed')
+                    return redirect('vehicleRepairRequest')
+            except (aiohttp.ClientError, aiohttp.ServerDisconnectedError, aiohttp.ClientResponseError) as e:
+                print(e)
+                messages.error(request,"connect timed out")
+                return redirect('vehicleRepairRequest')
+            except KeyError:
+                messages.info(request, "Session Expired. Please Login")
+                return redirect('auth')
+            except Exception as e:
+                messages.error(request, "OOps!! Something went wrong")
+                print(e)
+                return redirect('vehicleRepairRequest')
+        return redirect('vehicleRepairRequest')
+                
 
 class VehicleRepairRequestDetails(UserObjectMixin, View):
 
     def get(self, request, pk):
         try:
-            empNo = request.session['Employee_No_']
             userID = request.session['User_ID']
-            year = request.session['years']
+            full_name = request.session['full_name']
+            driver_role = request.session['driver_role']
+            TO_role = request.session['TO_role']
+            mechanical_inspector_role = request.session['mechanical_inspector_role']
+
 
             Access_Point = config.O_DATA.format(
-                f"/QyRepairRequest?$filter=RequestedBy%20eq%20%27{userID}%27%20and%20No%20eq%20%27{pk}%27"
+                f"/QyRepairRequest?$filter=No_%20eq%20%27{pk}%27%20and%20Requested_By%20eq%20%27{userID}%27"
             )
             response = self.get_object(Access_Point)
             repair_response = [x for x in response['value']]
@@ -417,7 +504,7 @@ class VehicleRepairRequestDetails(UserObjectMixin, View):
             allFiles = [x for x in res_file['value']]
 
         except Exception as e:
-            messages.info(request, e)
+            messages.info(request, f'{e}')
             return redirect('vehicleRepairRequest')
 
         context = {
@@ -426,6 +513,10 @@ class VehicleRepairRequestDetails(UserObjectMixin, View):
             "line": openLines,
             'allFiles': allFiles,
             "Approvers": Approvers,
+            "full": full_name,
+            "driver_role":driver_role,
+            "TO_role":TO_role,
+            "mechanical_inspector_role":mechanical_inspector_role,
         }
 
         return render(request, 'vehicleRepairDetails.html', context)
@@ -437,7 +528,7 @@ def UploadRepairAttachment(request, pk):
     if request.method == "POST":
         try:
             attach = request.FILES.getlist('attachment')
-            tableID = 52177430
+            tableID = 52177432
         except Exception as e:
             return redirect('vehicleRepairDetails', pk=pk)
         for files in attach:
@@ -487,6 +578,8 @@ def FnRepairRequestLines(request, pk):
             lineNo = request.POST.get('lineNo')
             myUserId = request.session['User_ID']
             myAction = request.POST.get('myAction')
+            
+            print(specification)
 
         except ValueError:
             messages.error(request, "Missing Input")
@@ -504,35 +597,41 @@ def FnRepairRequestLines(request, pk):
             messages.success(request, "Request Successful")
             return redirect('vehicleRepairDetails', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             return redirect('vehicleRepairDetails', pk=pk)
     return redirect('vehicleRepairDetails', pk=pk)
 
 
-def FnRaiseRepairRequest(request, pk):
-    Username = request.session['User_ID']
-    Password = request.session['password']
-    AUTHS = Session()
-    AUTHS.auth = HTTPBasicAuth(Username, Password)
-    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
+class FnRaiseRepairRequest(UserObjectMixins, View):
+    async def post(self,request,pk):
+        if request.method == 'POST':
+            try:
+                userID = await sync_to_async(request.session.__getitem__)('User_ID')
+                insNo = request.POST.get('insNo')
+                soap_headers = await sync_to_async(request.session.__getitem__)('soap_headers')
+        
+                response =  self.make_soap_request(soap_headers,'FnRaiseRepairRequest', insNo,userID)
+                
+                print(response)
 
-    if request.method == 'POST':
-        try:
-            insNo = request.POST.get('insNo')
-            myUserId = request.session['User_ID']
-        except ValueError as e:
-            return redirect('vehicleRepairDetails', pk=pk)
-
-        try:
-            response = CLIENT.service.FnRaiseRepairRequest(insNo, myUserId)
-            print(response)
-            messages.success(request, "Repair Request Successful")
-
-        except Exception as e:
-            messages.error(request, "OOps!! Something went wrong")
-            print(e)
-            return redirect('auth')
-    return redirect('vehicleRepairDetails', pk=pk)
+                if response == True:
+                    messages.success(request, 'Request Submitted successfully')
+                    return redirect('vehicleRepairDetails', pk=pk)
+                if response == False:
+                    messages.success(request, 'Request Failed')
+                    return redirect('vehicleRepairDetails', pk=pk)
+            except (aiohttp.ClientError, aiohttp.ServerDisconnectedError, aiohttp.ClientResponseError) as e:
+                print(e)
+                messages.error(request,"connect timed out")
+                return redirect('vehicleRepairDetails', pk=pk)
+            except KeyError:
+                messages.info(request, "Session Expired. Please Login")
+                return redirect('auth')
+            except Exception as e:
+                messages.error(request, "OOps!! Something went wrong")
+                print(e)
+                return redirect('vehicleRepairDetails', pk=pk)
+        return redirect('vehicleRepairDetails', pk=pk)
 
 
 def FnCancelRepairRequest(request, pk):
@@ -549,7 +648,7 @@ def FnCancelRepairRequest(request, pk):
             print(response)
             return redirect('vehicleRepairDetails', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
             return redirect('auth')
     return redirect('vehicleRepairDetails', pk=pk)
@@ -559,9 +658,11 @@ class VehicleInspection(UserObjectMixin, View):
 
     def get(self, request):
         try:
-            EmployeeNo = request.session['Employee_No_']
             userID = request.session['User_ID']
-            year = request.session['years']
+            driver_role = request.session['driver_role']
+            TO_role = request.session['TO_role']
+            mechanical_inspector_role = request.session['mechanical_inspector_role']
+            full_name = request.session['full_name']
 
             Access_Point = config.O_DATA.format(
                 f"/QyVehicleInspection?$filter=CreatedBy%20eq%20%27{userID}%27"
@@ -635,12 +736,14 @@ class VehicleInspection(UserObjectMixin, View):
             'inspected': Inspected,
             'inspectedCount': inspectedCount,
             "pending": PendingInspectionReq,
-            "year": year,
-            "full": userID,
             "Vehicle_No": Vehicle_No,
             'drivers': drivers,
             'Inspectors': Inspectors,
-            'TransportOfficers': TransportOfficers
+            'TransportOfficers': TransportOfficers,
+            "full": full_name,
+            "driver_role":driver_role,
+            "TO_role":TO_role,
+            "mechanical_inspector_role":mechanical_inspector_role,
         }
         return render(request, 'vehicleInspection.html', ctx)
 
@@ -657,6 +760,8 @@ class VehicleInspection(UserObjectMixin, View):
                 mechanicalInspectionRecommedation = request.POST.get(
                     'mechanicalInspectionRecommedation')
                 transportOfficer = request.POST.get('transportOfficer')
+                
+                print(vehicle)
             
             except ValueError:
                 messages.error(request, "Missing Input")
@@ -682,7 +787,7 @@ class VehicleInspection(UserObjectMixin, View):
                     )
                 messages.success(request, 'Request successful')
             except Exception as e:
-                messages.error(request, e)
+                messages.error(request, f'{e}')
                 return redirect('vehicleInspection')
         return redirect('vehicleInspection')
 
@@ -692,7 +797,10 @@ class VehicleInspectionDetails(UserObjectMixin, View):
     def get(self, request, pk):
         try:
             userID = request.session['User_ID']
-            # year = request.session['years']
+            driver_role = request.session['driver_role']
+            TO_role = request.session['TO_role']
+            mechanical_inspector_role = request.session['mechanical_inspector_role']
+            full_name = request.session['full_name']
 
             Access_Point = config.O_DATA.format(
                 f"/QyVehicleInspection?$filter=No%20eq%20%27{pk}%27%20and%20CreatedBy%20eq%20%27{userID}%27"
@@ -721,35 +829,32 @@ class VehicleInspectionDetails(UserObjectMixin, View):
             'res': res,
             'Approvers': Approvers,
             'allFiles': allFiles,
+            "full": full_name,
+            "driver_role":driver_role,
+            "TO_role":TO_role,
+            "mechanical_inspector_role":mechanical_inspector_role,
         }
         return render(request, 'VehicleInspectionDetails.html', context)
 
 
 def UploadInspectionAttachment(request, pk):
-
-    response = ''
-    if request.method == "POST":
-        try:
-            attach = request.FILES.getlist('attachment')
-            tableID = 52177430
-        except Exception as e:
-            return redirect('VehicleInspectionDetails', pk=pk)
+    try:
+        attach = request.FILES.getlist('attachment')
+        tableID = 52178014
         for files in attach:
             fileName = request.FILES['attachment'].name
+            print(tableID)
             attachment = base64.b64encode(files.read())
-            try:
-                response = config.CLIENT.service.FnUploadAttachedDocument(
+            response = config.CLIENT.service.FnUploadAttachedDocument(
                     pk, fileName, attachment, tableID,
                     request.session['User_ID'])
-            except Exception as e:
-                messages.error(request, e)
-                print(e)
-        if response == True:
-            messages.success(request, "File(s) Upload Successful")
-            return redirect('VehicleInspectionDetails', pk=pk)
-        else:
-            messages.error(request, "Failed, Try Again")
-            return redirect('VehicleInspectionDetails', pk=pk)
+                
+            if response == True:
+                messages.success(request, "File(s) Upload Successful")
+                return redirect('VehicleInspectionDetails', pk=pk)
+    except Exception as e:
+        messages.error(request, f'{e}')
+        print(e)
     return redirect('VehicleInspectionDetails', pk=pk)
 
 
@@ -765,7 +870,7 @@ def DeleteInspectionAttachment(request, pk):
                 messages.success(request, "Deleted Successfully ")
                 return redirect('VehicleInspectionDetails', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
     return redirect('VehicleInspectionDetails', pk=pk)
 
@@ -789,7 +894,7 @@ def FnSubmitVehicleInspection(request, pk):
             messages.success(request, "Request Successfull")
 
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
             return redirect('auth')
     return redirect('VehicleInspectionDetails', pk=pk)
@@ -814,7 +919,7 @@ def FnBookForInspection(request, pk):
             messages.success(request, "Booking for Inspection Successful")
 
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
             return redirect('auth')
     return redirect('VehicleInspectionDetails', pk=pk)
@@ -833,7 +938,7 @@ def FnCancelBooking(request, pk):
             print(response)
             return redirect('VehicleInspectionDetails', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
             return redirect('auth')
     return redirect('VehicleInspectionDetails', pk=pk)
@@ -844,7 +949,10 @@ class Accidents(UserObjectMixin, View):
     def get(self, request):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
+            driver_role = request.session['driver_role']
+            TO_role = request.session['TO_role']
+            mechanical_inspector_role = request.session['mechanical_inspector_role']
+            full_name = request.session['full_name']
 
             Access_Point = config.O_DATA.format(
                 f"/QyaccidentsMaintenance?$filter=CreatedBy%20eq%20%27{userID}%27"
@@ -881,11 +989,14 @@ class Accidents(UserObjectMixin, View):
             "today": self.todays_date,
             "count": count,
             'submit_count': submit_count,
-            "User_ID": userID,
             "Vehicle_No": Vehicle_No,
             'drivers': drivers,
             "report": report,
             'submitted': submitted,
+            "full": full_name,
+            "driver_role":driver_role,
+            "TO_role":TO_role,
+            "mechanical_inspector_role":mechanical_inspector_role,
         }
 
         return render(request, 'Accidents.html', ctx)
@@ -934,7 +1045,7 @@ class Accidents(UserObjectMixin, View):
                 messages.success(request, "Request Successful")
                 # print(response)
             except Exception as e:
-                messages.error(request, e)
+                messages.error(request, f'{e}')
                 print(e)
                 return redirect('Accidents')
         return redirect('Accidents')
@@ -945,7 +1056,11 @@ class AccidentDetails(UserObjectMixin, View):
     def get(self, request, pk):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
+            driver_role = request.session['driver_role']
+            TO_role = request.session['TO_role']
+            mechanical_inspector_role = request.session['mechanical_inspector_role']
+            full_name = request.session['full_name']
+            res = {}
 
             Access_Point = config.O_DATA.format(
                 f"/QyaccidentsMaintenance?$filter=No%20eq%20%27{pk}%27%20and%20CreatedBy%20eq%20%27{userID}%27"
@@ -973,6 +1088,10 @@ class AccidentDetails(UserObjectMixin, View):
             "res": res,
             'Approvers': Approvers,
             'allFiles': allFiles,
+            "full": full_name,
+            "driver_role":driver_role,
+            "TO_role":TO_role,
+            "mechanical_inspector_role":mechanical_inspector_role,
         }
         return render(request, 'AccidentDetails.html', ctx)
 
@@ -994,7 +1113,7 @@ def UploadAccidentAttachment(request, pk):
                     pk, fileName, attachment, tableID,
                     request.session['User_ID'])
             except Exception as e:
-                messages.error(request, e)
+                messages.error(request, f'{e}')
                 print(e)
         if response == True:
             messages.success(request, "File(s) Upload Successful")
@@ -1017,38 +1136,37 @@ def DeleteAccidentAttachment(request, pk):
                 messages.success(request, "Deleted Successfully ")
                 return redirect('AccidentDetails', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
     return redirect('AccidentDetails', pk=pk)
 
 
-def FnSubmitAccidents(request, pk):
-    Username = request.session['User_ID']
-    Password = request.session['password']
-    AUTHS = Session()
-    AUTHS.auth = HTTPBasicAuth(Username, Password)
-    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
-
-    accidentNo = ""
-
-    if request.method == 'POST':
+class  FnSubmitAccidents(UserObjectMixins, View):
+    async def post(self,request,pk):
         try:
-            myUserId = request.session['User_ID']
+            userID = await sync_to_async(request.session.__getitem__)('User_ID')
             accidentNo = request.POST.get('accidentNo')
+            soap_headers = await sync_to_async(request.session.__getitem__)('soap_headers')
+        
+            response =  self.make_soap_request(soap_headers,'FnSubmitAccidents',accidentNo,userID)
+
+            if response == True:
+                messages.success(request, 'Submitted Successfully')
+                return redirect('AccidentDetails', pk=pk)
+            if response == False:
+                messages.success(request, 'Request Failed')
+                return redirect('AccidentDetails', pk=pk)
+        except (aiohttp.ClientError, aiohttp.ServerDisconnectedError, aiohttp.ClientResponseError) as e:
+            print(e)
+            messages.error(request,"connect timed out")
+            return redirect('AccidentDetails', pk=pk)
         except KeyError:
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
-
-        try:
-            response = config.CLIENT.service.FnSubmitAccidents(
-                accidentNo, myUserId
-            )
-            messages.success(request, 'Report Submitted successfuly')
-            return redirect('AccidentDetails', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             return redirect('AccidentDetails', pk=pk)
-    return redirect('AccidentDetails', pk=pk)
+        return redirect('AccidentDetails', pk=pk)
 
 
 class TransportRequest(UserObjectMixin, View):
@@ -1056,7 +1174,10 @@ class TransportRequest(UserObjectMixin, View):
     def get(self, request):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
+            driver_role = request.session['driver_role']
+            TO_role = request.session['TO_role']
+            mechanical_inspector_role = request.session['mechanical_inspector_role']
+            full_name = request.session['full_name']
 
             Access_Point = config.O_DATA.format(
                 f"/QyTransportRequest?$filter=UserID%20eq%20%27{userID}%27"
@@ -1110,10 +1231,11 @@ class TransportRequest(UserObjectMixin, View):
             "counter": counter,
             "pend": pend,
             "pending": Pending,
-            "year": year,
-            "User_ID": userID,
-            "full": userID,
             'Local': Local,
+            "full": full_name,
+            "driver_role":driver_role,
+            "TO_role":TO_role,
+            "mechanical_inspector_role":mechanical_inspector_role,
         }
 
         return render(request, 'TransportRequest.html', ctx)
@@ -1150,7 +1272,7 @@ class TransportRequest(UserObjectMixin, View):
                 messages.success(request, "Request Successful")
                 print(response)
             except Exception as e:
-                messages.error(request, e)
+                messages.error(request, f'{e}')
                 print(e)
                 return redirect('TransportRequest')
         return redirect('TransportRequest')
@@ -1161,7 +1283,12 @@ class TransportRequestDetails(UserObjectMixin, View):
     def get(self, request, pk):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
+            driver_role = request.session['driver_role']
+            TO_role = request.session['TO_role']
+            mechanical_inspector_role = request.session['mechanical_inspector_role']
+            full_name = request.session['full_name']
+            res = {}
+
             Access_Point = config.O_DATA.format(
                 f"/QyTransportRequest?$filter=RequestNo%20eq%20%27{pk}%27%20and%20UserID%20eq%20%27{userID}%27"
             )
@@ -1205,13 +1332,16 @@ class TransportRequestDetails(UserObjectMixin, View):
         ctx = {
             "res": res,
             "today": self.todays_date,
-             "year": year,
             'Approvers': Approvers,
             'allFiles': allFiles,
             "line": openLines,
             'Employees': Employees,
             'Local': Local,
             'Foreign': Foreign,
+            "full": full_name,
+            "driver_role":driver_role,
+            "TO_role":TO_role,
+            "mechanical_inspector_role":mechanical_inspector_role,
         }
         return render(request, 'TransportRequestDetails.html', ctx)
 
@@ -1236,7 +1366,7 @@ def FnTravelEmployeeLine(request, pk):
             return redirect('TransportRequestDetails', pk=pk )
 
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             return redirect('TransportRequestDetails', pk=pk )
     return redirect('TransportRequestDetails', pk=pk )
 
@@ -1259,7 +1389,7 @@ def UploadTransportRequestAttachment(request, pk):
                     pk, fileName, attachment, tableID,
                     request.session['User_ID'])
             except Exception as e:
-                messages.error(request, e)
+                messages.error(request, f'{e}')
                 print(e)
         if response == True:
             messages.success(request, "File(s) Upload Successful")
@@ -1282,7 +1412,7 @@ def DeleteTransportRequestAttachment(request, pk):
                 messages.success(request, "Deleted Successfully ")
                 return redirect('TransportRequestDetails', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
     return redirect('TransportRequestDetails', pk=pk)
 
@@ -1310,108 +1440,117 @@ def FnSubmitTravelRequest(request, pk):
             messages.success(request, 'Request Submitted successfully')
             return redirect('TransportRequestDetails', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
             return redirect('TransportRequestDetails', pk=pk)
     return redirect('TransportRequestDetails', pk=pk)
 
 
-class ServiceRequest(UserObjectMixin, View):
-    def get(self, request):
+        
+class ServiceRequest(UserObjectMixins, View):
+    async def get(self, request):
         try:
-            userID = request.session['User_ID']
-            year = request.session['years']
+            User_ID = await sync_to_async(request.session.__getitem__)('User_ID')
+            full_name = await sync_to_async(request.session.__getitem__)('full_name')
+            driver_role = await sync_to_async(request.session.__getitem__)('driver_role')
+            TO_role =await sync_to_async(request.session.__getitem__)('TO_role')
+            mechanical_inspector_role =await sync_to_async(request.session.__getitem__)('mechanical_inspector_role')
+            openServiceRequest = []
+            Pending = []
+            Approved = []
+            Vehicle_No = []
+            drivers = []
+            
+            async with aiohttp.ClientSession() as session:
+                task_get_service = asyncio.ensure_future(self.simple_double_filtered_data(session,"/QyServiceRequest",
+                                    "RequestedBy","eq",User_ID,"and","Document_Type","eq","Service"))
+                
+                task_get_assets = asyncio.ensure_future(self.simple_fetch_data(session,"/QyFixedAssets"))
+                
+                task_get_drivers = asyncio.ensure_future(self.simple_fetch_data(session,'/QyDrivers'))
+                
+                response = await asyncio.gather(task_get_service,task_get_assets,task_get_drivers)
+                
+                openServiceRequest = [x for x in response[0] if x['Status'] == 'Open' ] # type: ignore
+                Pending = [x for x in response[0] if x['Status'] == 'Pending Approval'] #type:ignore
+                Approved = [x for x in response[0] if x['Status'] == 'Approved'] #type:ignore
 
-            Access_Point  = config.O_DATA.format(
-                f"/QyServiceRequest?$filter=RequestedBy%20eq%20%27{userID}%27%20and%20Document_Type%20eq%20%27Service%27"
-            )
-            response = self.get_object(Access_Point)
-
-            openServiceRequest = [
-                x for x in response['value'] if x['Status'] == 'Open'
-            ]
-
-            Pending = [
-                x for x in response['value']
-                if x['Status'] == 'Pending Approval'
-            ]
-
-            Approved = [
-                x for x in response['value'] if x['Status'] == 'Approved'
-            ]
-
-            counts = len(openServiceRequest)
-
-            pend = len(Pending)
-
-            counter = len(Approved)
-
-
-            vehicle = config.O_DATA.format("/QyFixedAssets")
-            res_veh = self.get_object(vehicle)
-            Vehicle_No = [x for x in res_veh['value']]
-
-            driver = config.O_DATA.format(f"/QyDrivers")
-            req_driver = self.get_object(driver)
-            drivers = [x for x in req_driver['value']]
-
-        except requests.exceptions.RequestException as e:
+                Vehicle_No = [x for x in response[1]] # type: ignore
+                
+                drivers = [x for x in response[2]] # type: ignore
+        except (aiohttp.ClientError, aiohttp.ServerDisconnectedError, aiohttp.ClientResponseError) as e:
             print(e)
-            messages.info(
-                request,
-                "Whoops! Something went wrong. Please Login to Continue")
-            return redirect('auth')
+            messages.error(request,"Authentication Error: Invalid credentials")
+            return redirect('dashboard')   
         except KeyError as e:
             print(e)
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
+        except Exception as e:
+            print(e)
+            messages.error(
+                request,
+                "Whoops! Something went wrong. Please Login to Continue")
+            return redirect('dashboard')
 
         ctx = {
             "today": self.todays_date,
             "res": openServiceRequest,
-            "count": counts,
             "response": Approved,
-            "counter": counter,
-            "pend": pend,
             "pending": Pending,
-            "year": year,
-            "User_ID": userID,
-            "full": userID,
+            "User_ID": User_ID,
             "Vehicle_No": Vehicle_No,
             'drivers': drivers,
+            "full": full_name,
+            "driver_role":driver_role,
+            "TO_role":TO_role,
+            "mechanical_inspector_role":mechanical_inspector_role
         }
         return render(request, 'ServiceRequest.html', ctx)
 
 
-    def post(self, request):
-        if request.method == 'POST':
-            try:
-                reqNo = request.POST.get('reqNo')
-                myUserId = request.session['User_ID']
-                vehicle = request.POST.get('vehicle')
-                driver = request.POST.get('driver')
-                serviceType = request.POST.get('serviceType')
-                currentMileage = request.POST.get('currentMileage')
-                costOfRepair = request.POST.get('costOfRepair')
-                myAction = request.POST.get('myAction')
-            except ValueError:
-                messages.error(request, 'Missing Input')
-                return redirect('ServiceRequest')
-            except KeyError:
-                messages.info(request, 'Session Expired, please Login')
-                return redirect('auth')
-            if not reqNo:
-                reqNo = ""
+    async def post(self, request):
+        try:
+            reqNo = request.POST.get('reqNo')
+            vehicle = request.POST.get('vehicle')
+            driver = request.POST.get('driver')
+            serviceType = request.POST.get('serviceType')
+            currentMileage = request.POST.get('currentMileage')
+            costOfRepair = request.POST.get('costOfRepair')
+            myAction = request.POST.get('myAction')
+            
+            userID = await sync_to_async(request.session.__getitem__)('User_ID')
 
-            try:
-                response = config.CLIENT.service.FnServiceRequest(
-                    reqNo, myUserId, vehicle, driver, serviceType, currentMileage, costOfRepair, myAction )
-                messages.success(request, 'Request Successful')
+            soap_headers = await sync_to_async(request.session.__getitem__)('soap_headers')
+        
+            response =  self.make_soap_request(soap_headers,'FnServiceRequest',
+                                               reqNo, userID, vehicle, driver,
+                                               serviceType, currentMileage,
+                                               costOfRepair, myAction )
+            
+            print(response)
 
-            except Exception as e:
-                messages.error(request, e)
-                print(e)
+            if response == True:
+                messages.success(request, 'Success')
                 return redirect('ServiceRequest')
+            if response == False:
+                messages.success(request, 'Request Failed')
+                return redirect('ServiceRequest')
+        except (aiohttp.ClientError, aiohttp.ServerDisconnectedError, aiohttp.ClientResponseError) as e:
+            print(e)
+            messages.error(request,"connect timed out")
+            return redirect('ServiceRequest')
+        except ValueError:
+            messages.error(request, 'Missing Input')
+            return redirect('ServiceRequest')
+        except KeyError:
+            messages.info(request, 'Session Expired, please Login')
+            return redirect('auth')
+
+        except Exception as e:
+            messages.error(request, f'{e}')
+            print(e)
+            return redirect('ServiceRequest')
         return redirect('ServiceRequest')
 
 
@@ -1420,7 +1559,11 @@ class ServiceRequestDetails(UserObjectMixin, View):
     def get(self, request, pk):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
+            driver_role = request.session['driver_role']
+            TO_role = request.session['TO_role']
+            mechanical_inspector_role = request.session['mechanical_inspector_role']
+            full_name = request.session['full_name']
+            res ={}
 
             Access_Point = config.O_DATA.format(
                 f"/QyServiceRequest?$filter=No%20eq%20%27{pk}%27%20and%20RequestedBy%20eq%20%27{userID}%27%20and%20Document_Type%20eq%20%27Service%27"
@@ -1429,11 +1572,11 @@ class ServiceRequestDetails(UserObjectMixin, View):
             for service_req in response['value']:
                 res = service_req
 
-            Access = config.O_DATA.format(f"/QyServiceRequestLine")
+            Access = config.O_DATA.format(f"/QyServiceRequestLine?$filter=Document_No_%20eq%20%27{pk}%27")
             LinesRes = self.get_object(Access)
-            line = [ x for x in LinesRes['value']
-                if x['AuxiliaryIndex1'] == {pk} ]
-            print(line)
+            
+            line = [line for line in LinesRes['value']]
+            
 
             Approver = config.O_DATA.format(
                 f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
@@ -1454,7 +1597,11 @@ class ServiceRequestDetails(UserObjectMixin, View):
             "res": res,
             'Approvers': Approvers,
             'allFiles': allFiles,
-            "line": line,
+            "line":line,
+            "full": full_name,
+            "driver_role":driver_role,
+            "TO_role":TO_role,
+            "mechanical_inspector_role":mechanical_inspector_role,
         }
         return render(request, 'ServiceRequestDetails.html', ctx)
 
@@ -1462,33 +1609,32 @@ class ServiceRequestDetails(UserObjectMixin, View):
 def FnServiceRequestLine(request, pk):
     if request.method == 'POST':
         try:
-            lineNo = request.POST.get('lineNo')
+            lineNo = int(request.POST.get('lineNo'))
             reqNo = request.POST.get('reqNo')
             myAction = request.POST.get('myAction')
             myUserId = request.session['User_ID']
             defectsType = request.POST.get('defectsType')
             severity = request.POST.get('severity')
             recommendedAction = request.POST.get('recommendedAction')
-            serviceDueKM = request.POST.get('serviceDueKM')
-        except ValueError:
-            messages.error(request, "Missing Input")
-            return redirect('ServiceRequestDetails', pk=pk)
-        try:
+            
             response = config.CLIENT.service.FnServiceRequestLine(
-                lineNo,
                 reqNo,
-                myAction,
-                myUserId,
                 defectsType,
                 severity,
                 recommendedAction,
-                serviceDueKM,
+                lineNo,
+                myUserId,
+                myAction
             )
-            messages.success(request, 'request Successful')
-            return redirect('ServiceRequestDetails', pk=pk )
-
+            print(response)
+            if response == True:
+                messages.success(request, 'request Successful')
+                return redirect('ServiceRequestDetails', pk=pk )
+        except ValueError:
+            messages.error(request, "Missing Input")
+            return redirect('ServiceRequestDetails', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             return redirect('ServiceRequestDetails', pk=pk )
     return redirect('ServiceRequestDetails', pk=pk )
 
@@ -1510,7 +1656,7 @@ def UploadServiceRequestAttachment(request, pk):
                     pk, fileName, attachment, tableID,
                     request.session['User_ID'])
             except Exception as e:
-                messages.error(request, e)
+                messages.error(request, f'{e}')
                 print(e)
         if response == True:
             messages.success(request, "File(s) Upload Successful")
@@ -1533,38 +1679,39 @@ def DeleteServiceRequestAttachment(request, pk):
                 messages.success(request, "Deleted Successfully ")
                 return redirect('ServiceRequestDetails', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
     return redirect('ServiceRequestDetails', pk=pk)
 
 
-def FnSubmitServiceRequest(request, pk):
-    Username = request.session['User_ID']
-    Password = request.session['password']
-    AUTHS = Session()
-    AUTHS.auth = HTTPBasicAuth(Username, Password)
-    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
-
-    insNo = ""
-
-    if request.method == 'POST':
+class FnSubmitServiceRequest(UserObjectMixins, View):
+    async def post(self, request,pk):
         try:
-            myUserId = request.session['User_ID']
+            userID = await sync_to_async(request.session.__getitem__)('User_ID')
             insNo = request.POST.get('insNo')
+            soap_headers = await sync_to_async(request.session.__getitem__)('soap_headers')
+        
+            response =  self.make_soap_request(soap_headers,'FnSubmitServiceRequest',insNo,userID)
+
+            if response == True:
+                messages.success(request, 'Submitted Successfully')
+                return redirect('AccidentDetails', pk=pk)
+            if response == False:
+                messages.success(request, 'Request Failed')
+                return redirect('AccidentDetails', pk=pk)
+        except (aiohttp.ClientError, aiohttp.ServerDisconnectedError, aiohttp.ClientResponseError) as e:
+            print(e)
+            messages.error(request,"connect timed out")
+            return redirect('ServiceRequestDetails', pk=pk)
+           
         except KeyError:
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
 
-        try:
-            response = config.CLIENT.service.FnSubmitServiceRequest(
-                insNo, myUserId
-            )
-            messages.success(request, 'Request Submited successfuly')
-            return redirect('ServiceRequestDetails', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             return redirect('ServiceRequestDetails', pk=pk)
-    return redirect('ServiceRequestDetails', pk=pk)
+        return redirect('ServiceRequestDetails', pk=pk)
 
 
 def FnCancelServiceRequest(request, pk):
@@ -1581,7 +1728,7 @@ def FnCancelServiceRequest(request, pk):
             print(response)
             return redirect('ServiceRequestDetails', pk=pk)
         except Exception as e:
-            messages.error(request, e)
+            messages.error(request, f'{e}')
             print(e)
             return redirect('auth')
     return redirect('ServiceRequestDetails', pk=pk)

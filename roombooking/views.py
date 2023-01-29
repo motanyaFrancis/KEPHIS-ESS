@@ -1,19 +1,9 @@
 import base64
 from django.shortcuts import render, redirect
-from datetime import datetime
-import requests
 from requests import Session
-import json
 from django.conf import settings as config
 import datetime as dt
 from django.contrib import messages
-from django.http import HttpResponse
-import io as BytesIO
-import secrets
-import string
-from requests.auth import HTTPBasicAuth
-from zeep import Client
-from zeep.transports import Transport
 from django.views import View
 from myRequest.views import UserObjectMixins
 import asyncio
@@ -38,6 +28,10 @@ class InternalRoomBooking(UserObjectMixins, View):
     async def get(self, request):
         try:   
             User_ID = await sync_to_async(request.session.__getitem__)('User_ID')
+            driver_role = await sync_to_async(request.session.__getitem__)['driver_role']
+            TO_role = await sync_to_async(request.session.__getitem__)['TO_role']
+            mechanical_inspector_role = await sync_to_async(request.session.__getitem__)('mechanical_inspector_role')
+            full_name = await sync_to_async(request.session.__getitem__)('full_name')
             openRequest =[]
             Pending = []
             Approved = []
@@ -58,7 +52,10 @@ class InternalRoomBooking(UserObjectMixins, View):
                 "pending":Pending,
                 'approved':Approved,
                 "today": self.todays_date,
-                "full": User_ID,
+                "full": full_name,
+                "driver_role":driver_role,
+                "TO_role":TO_role,
+                "mechanical_inspector_role":mechanical_inspector_role
             }
         except Exception as e:
             messages.error(request, "connection refused,non-200 response")
@@ -105,7 +102,10 @@ class InternalRoomBookingDetails(UserObjectMixin, View):
     def get(self, request, pk):
         try:
             userID = request.session['User_ID']
-            empNo = request.session['Employee_No_']
+            full_name = request.session['full_name']
+            driver_role = request.session['driver_role']
+            TO_role = request.session['TO_role']
+            mechanical_inspector_role = request.session['mechanical_inspector_role']
             full_name = request.session['full_name']
             res ={}
 
@@ -178,7 +178,6 @@ class InternalRoomBookingDetails(UserObjectMixin, View):
             'res': res,
             'file': allFiles,
             'Approvers': Approvers,
-            'full': full_name,
             'AccommodationRoom': AccommodationRoom,
             'meeting_room': meeting_room,
             'room_items': room_items,
@@ -186,8 +185,10 @@ class InternalRoomBookingDetails(UserObjectMixin, View):
             'MeetingRoomService': MeetingRoomService,
             'AccommodationService': AccommodationService,
             'room_type': room_type,
-            # 'Employees': Employees,
-            # 'BookingAttendees': BookingAttendees,
+            "full": full_name,
+            "driver_role":driver_role,
+            "TO_role":TO_role,
+            "mechanical_inspector_role":mechanical_inspector_role
         }
 
         return render(request, 'InternalRoomDetails.html', ctx)
@@ -252,7 +253,41 @@ def FnAccommodationBookingLine(request, pk):
             return redirect('InternalRoomDetails', pk=pk)
     return redirect('InternalRoomDetails', pk=pk)
 
-
+class DisabilityDetails(UserObjectMixins,View):
+    async def post(self, request,pk):
+        if request.method == 'POST':
+            try:
+                userID = await sync_to_async(request.session.__getitem__)('User_ID')
+                bookingNo = request.POST.get('bookingNo')
+                myAction = request.POST.get('myAction')
+                typeOfService = int(request.POST.get('typeOfService'))
+                exaplainDisability = request.POST.get('exaplainDisability')
+                soap_headers = await sync_to_async(request.session.__getitem__)('soap_headers')
+                Employee_No_ = await sync_to_async(request.session.__getitem__)('Employee_No_')
+        
+                response =  self.make_soap_request(soap_headers,'FnInternalBookingCard', bookingNo,
+                                                   myAction,typeOfService,True,exaplainDisability,
+                                                   userID,Employee_No_)
+                if response !='0':
+                    messages.success(request,"Added successfully")
+                    return redirect('InternalRoomDetails', pk=response)
+                if response == 'o':
+                    messages.error(request,"Failed, non-201 error")
+                    return redirect('InternalRoomDetails', pk=pk)
+                
+            except (aiohttp.ClientError, aiohttp.ServerDisconnectedError, aiohttp.ClientResponseError) as e:
+                print(e)
+                messages.error(request,"connect timed out")
+                return redirect('InternalRoomDetails', pk=pk)
+            except KeyError:
+                messages.info(request, "Session Expired. Please Login")
+                return redirect('auth')
+            except Exception as e:
+                messages.error(request, f'{e}')
+                print(e)
+                return redirect('InternalRoomDetails', pk=pk)
+        return redirect('InternalRoomDetails', pk=pk)
+    
 def UploadRoomBookingAttachment(request, pk):
 
     response = ''
@@ -317,7 +352,7 @@ class FnCancelInternalRoomBooking(UserObjectMixins, View):
                 bookingNo = request.POST.get('bookingNo')
                 soap_headers = await sync_to_async(request.session.__getitem__)('soap_headers')
         
-                response =  self.make_soap_request(soap_headers,'FnSubmitInternalRoomBooking', bookingNo,userID)
+                response =  self.make_soap_request(soap_headers,'FnCancelBooking', bookingNo,userID)
 
                 if response == True:
                     messages.success(request, 'Success')
