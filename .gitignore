@@ -5,3 +5,4 @@ notes.txt
 Pipfile
 Pipfile.lock
 mydatabase
+__pycache__/

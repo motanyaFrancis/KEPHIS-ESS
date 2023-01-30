@@ -28,8 +28,8 @@ class InternalRoomBooking(UserObjectMixins, View):
     async def get(self, request):
         try:   
             User_ID = await sync_to_async(request.session.__getitem__)('User_ID')
-            driver_role = await sync_to_async(request.session.__getitem__)['driver_role']
-            TO_role = await sync_to_async(request.session.__getitem__)['TO_role']
+            driver_role = await sync_to_async(request.session.__getitem__)('driver_role')
+            TO_role = await sync_to_async(request.session.__getitem__)('TO_role')
             mechanical_inspector_role = await sync_to_async(request.session.__getitem__)('mechanical_inspector_role')
             full_name = await sync_to_async(request.session.__getitem__)('full_name')
             openRequest =[]

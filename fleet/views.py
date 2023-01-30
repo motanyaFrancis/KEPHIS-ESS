@@ -1451,10 +1451,11 @@ class ServiceRequest(UserObjectMixins, View):
     async def get(self, request):
         try:
             User_ID = await sync_to_async(request.session.__getitem__)('User_ID')
-            full_name = await sync_to_async(request.session.__getitem__)('full_name')
-            driver_role = await sync_to_async(request.session.__getitem__)('driver_role')
+            driver_role =await sync_to_async(request.session.__getitem__)('driver_role')
             TO_role =await sync_to_async(request.session.__getitem__)('TO_role')
             mechanical_inspector_role =await sync_to_async(request.session.__getitem__)('mechanical_inspector_role')
+            full_name =await sync_to_async(request.session.__getitem__)('full_name')
+            
             openServiceRequest = []
             Pending = []
             Approved = []
@@ -1504,7 +1505,7 @@ class ServiceRequest(UserObjectMixins, View):
             "full": full_name,
             "driver_role":driver_role,
             "TO_role":TO_role,
-            "mechanical_inspector_role":mechanical_inspector_role
+            "mechanical_inspector_role":mechanical_inspector_role,
         }
         return render(request, 'ServiceRequest.html', ctx)
 
@@ -1561,8 +1562,9 @@ class ServiceRequestDetails(UserObjectMixin, View):
             userID = request.session['User_ID']
             driver_role = request.session['driver_role']
             TO_role = request.session['TO_role']
-            mechanical_inspector_role = request.session['mechanical_inspector_role']
+            mechanical_inspector_role = request.session['User_Responsibility_Center']
             full_name = request.session['full_name']
+            
             res ={}
 
             Access_Point = config.O_DATA.format(
