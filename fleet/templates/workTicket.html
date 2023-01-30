@@ -12,10 +12,12 @@
                 <span class="d-flex align-items-center purchase-popup">
                     <img src="../../../static/img/logo/fav.png" width="70px" class="img-fluid" alt="" srcset="">
                     <h2 class="text-dark font-weight-bold ml-3"> Work Ticket </h2>
+                    {% if driver_role == True or mechanical_inspector_role == True %}
                     <button class="btn btn-successs align-items-center p-3" data-bs-toggle="modal"
                         data-bs-target="#staticBackdrop"
                         style="margin-left: auto;margin-right:0;outline: none;border: none;"><i
                             class="las la-plus text-white" style="font-size:15px;"></i> Work Ticket Replacement</button>
+                    {% endif %}
                 </span>
             </div>
         </div>
@@ -568,7 +570,7 @@
                                 <div class="col-md-12">
                                     <label for="" class="form-label">Previous Ticket Number<span
                                             class="text-danger">*</span></label>
-                                    <select class="form-select" name="prevWorkTicketNo" id="prevWorkTicketNo" required>
+                                    <select class="form-select" name="prevWorkTicketNo" id="prevWorkTicketNo">
                                         <option class="after" value="" disabled>
                                             --Select--
                                         </option>

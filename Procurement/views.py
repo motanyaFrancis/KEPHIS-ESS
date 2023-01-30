@@ -1073,7 +1073,7 @@ class GeneralRequisitionDetails(UserObjectMixin, View):
             userID = request.session['User_ID']
             driver_role = request.session['driver_role']
             TO_role = request.session['TO_role']
-            mechanical_inspector_role = request.session['mechanical_inspector_role']
+            mechanical_inspector_role = request.session['User_Responsibility_Center']
             full_name = request.session['full_name']
             res = {}
 

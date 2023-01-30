@@ -877,9 +877,9 @@ def DeleteInspectionAttachment(request, pk):
 
 def FnSubmitVehicleInspection(request, pk):
     Username = request.session['User_ID']
-    Password = request.session['password']
+    Password = request.session['soap_headers']
     AUTHS = Session()
-    AUTHS.auth = HTTPBasicAuth(Username, Password)
+    AUTHS.auth = HTTPBasicAuth(Username, Password['password'])
     CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
 
     if request.method == 'POST':
@@ -902,9 +902,9 @@ def FnSubmitVehicleInspection(request, pk):
 
 def FnBookForInspection(request, pk):
     Username = request.session['User_ID']
-    Password = request.session['password']
+    Password = request.session['soap_headers']
     AUTHS = Session()
-    AUTHS.auth = HTTPBasicAuth(Username, Password)
+    AUTHS.auth = HTTPBasicAuth(Username, Password['password'])
     CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
 
     if request.method == 'POST':
@@ -1419,9 +1419,9 @@ def DeleteTransportRequestAttachment(request, pk):
 
 def FnSubmitTravelRequest(request, pk):
     Username = request.session['User_ID']
-    Password = request.session['password']
+    Password = request.session['soap_headers']
     AUTHS = Session()
-    AUTHS.auth = HTTPBasicAuth(Username, Password)
+    AUTHS.auth = HTTPBasicAuth(Username, Password['password'])
     CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
 
     tReqNo = ""
@@ -1697,10 +1697,10 @@ class FnSubmitServiceRequest(UserObjectMixins, View):
 
             if response == True:
                 messages.success(request, 'Submitted Successfully')
-                return redirect('AccidentDetails', pk=pk)
+                return redirect('ServiceRequestDetails', pk=pk)
             if response == False:
                 messages.success(request, 'Request Failed')
-                return redirect('AccidentDetails', pk=pk)
+                return redirect('ServiceRequestDetails', pk=pk)
         except (aiohttp.ClientError, aiohttp.ServerDisconnectedError, aiohttp.ClientResponseError) as e:
             print(e)
             messages.error(request,"connect timed out")
