@@ -51,7 +51,6 @@
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane fade show active" id="home">
-                                <h4 class="mt-2 text-dark">Open Vehicle Inspection Request</h4>
                                 <div class="card-body">
                                     <table id="example"
                                         class="display table table-striped table-bordered dt-responsive table-responsive-lg"
@@ -374,7 +373,6 @@
 
                             </div>
                             <div class="tab-pane fade " id="pending">
-                                <h4 class="mt-2 text-dark">Pending Inspection Request</h4>
                                 <div class="card-body">
                                     <table id="example"
                                         class="display table table-striped table-bordered dt-responsive table-responsive-lg"
@@ -663,7 +661,7 @@
                         <ul class="nav nav-tabs d-flex" id="myTab">
                             <li class="nav-item flex-fill">
                                 <a href="#home-me" class="nav-link active" data-bs-toggle="tab">New Inspection Requests
-                                    ({{count}})</a>
+                                    ({{mechanical_response|length}})</a>
                             </li>
                         </ul>
                         <div class="tab-content">
@@ -683,18 +681,14 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {% for res in open %}
-                                            {% if res.Rejected_By_Approver == True and res.Status == 'Open' %}
+                                            {% for res in mechanical_response %}
+
                                             <tr>
                                                 <td>{{res.No}}</td>
                                                 <td>{{res.Date}}</td>
                                                 <td>{{res.Vehicle}}</td>
                                                 <td>{{res.CreatedBy }}</td>
                                                 <td>
-                                                    <button class="btn btn-primary" data-bs-toggle="modal"
-                                                        data-bs-target="#" data-toggle="tooltip" data-placement="top"
-                                                        title="edit">Edit <i class="fas fa-edit"></i>
-                                                    </button>
                                                     <a href="{% url 'VehicleInspectionDetails' res.No %}"
                                                         class="btn btn-success btn-icon-text" type="button"
                                                         data-toggle="tooltip" data-placement="top"
@@ -702,290 +696,101 @@
                                                         View
                                                         <i class="far fa-eye"></i>
                                                     </a>
-                                                    <div class="modal fade" id="" data-bs-backdrop="static"
-                                                        data-bs-keyboard="false" tabindex="-1"
-                                                        aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                                                        <div
-                                                            class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                    <h5 class="modal-title" id="staticBackdropLabel">
-                                                                        <i class="las la-edit"></i> Edit Imprest
-                                                                        <span class="editSpan">{{res.No_}}</span>
-                                                                    </h5>
-                                                                    <button type="button"
-                                                                        class="btn-close btn-close-white"
-                                                                        data-bs-dismiss="modal"
-                                                                        aria-label="Close"></button>
-                                                                </div>
-                                                                <div class="modal-body">
-                                                                    <form class="myForm needs-validation" action=""
-                                                                        method="post" novalidate>
-                                                                        {% csrf_token %}
-                                                                        <div class="row">
-                                                                            <div class="col-md-12">
-                                                                                <input type="hidden" name="insNo"
-                                                                                    value="{{res.No}}">
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="row">
-                                                                            <div class="col-md-12">
-                                                                                <label class="form-label">Vehicle <span
-                                                                                        class="text-danger">*</span></label>
-                                                                                <select class="form-select"
-                                                                                    name="vehicle" required>
-                                                                                    <option selected
-                                                                                        value="{{ res.Vehicle }}">
-                                                                                        {{ res.Vehicle }}</option>
-                                                                                    {% for list in Vehicle_No %}
-                                                                                    <option value="{{ list.No_ }}">
-                                                                                        {{ list.Registration_No }}
-                                                                                    </option>
-                                                                                    {% endfor %}
-                                                                                </select>
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <div class="row">
-                                                                            <div class="col-md-12">
-                                                                                <label for=""
-                                                                                    class="form-label">Driver</label>
-                                                                                <select class="form-select"
-                                                                                    name="driver" required>
-                                                                                    <option selected disabled value="">
-                                                                                        Select Option</option>
-                                                                                    {% for list in drivers %}
-                                                                                    <option value="{{list.No_}}">
-                                                                                        {{list.First_Name}}
-                                                                                        {{list.Middle_Name}}
-                                                                                        {{list.Last_Name}}</option>
-                                                                                    {% endfor %}
-                                                                                </select>
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <div class="row">
-                                                                            <div class="col-md-12">
-                                                                                <label for=""
-                                                                                    class="form-label">Mechanical
-                                                                                    Inspector</label>
-                                                                                <select class="form-select"
-                                                                                    name="mechanicalInspector" required>
-                                                                                    <option selected disabled value="">
-                                                                                        Select Option</option>
-                                                                                    {% for list in Inspectors %}
-                                                                                    <option value="{{list.No_}}">
-                                                                                        {{list.First_Name}}
-                                                                                        {{list.Middle_Name}}
-                                                                                        {{list.Last_Name}}</option>
-                                                                                    {% endfor %}
-                                                                                </select>
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <div class="row">
-                                                                            <div class="col-md-12">
-                                                                                <input type="hidden" name="myAction"
-                                                                                    value="modify">
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <div class="row">
-                                                                            <div class="col-md-12">
-                                                                                <label class="form-label">Mechanical
-                                                                                    Inspector Recommendation<span
-                                                                                        class="text-danger">*</span></label>
-                                                                                <textarea class="form-control"
-                                                                                    name="mechanicalInspectionRecommedation"
-                                                                                    rows="3" required
-                                                                                    value="{{res.ServiceInstruction}}">{{res.ServiceInstruction}}</textarea>
-
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <div class="row">
-                                                                            <div class="col-md-12">
-                                                                                <label for=""
-                                                                                    class="form-label">Transport
-                                                                                    Officer</label>
-                                                                                <select class="form-select"
-                                                                                    name="transportOfficer" required>
-                                                                                    <option selected disabled value="">
-                                                                                        Select Option</option>
-                                                                                    {% for list in TransportOfficers %}
-                                                                                    <option value="{{list.No_}}">
-                                                                                        {{list.First_Name}}
-                                                                                        {{list.Middle_Name}}
-                                                                                        {{list.Last_Name}}</option>
-                                                                                    {% endfor %}
-                                                                                </select>
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <button type="submit" id="sasa"
-                                                                            class="btn btn-success my-3 w-100">Submit</button>
-                                                                    </form>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
                                                 </td>
                                             </tr>
-                                            {% else %}
-                                            <tr>
-                                                <td>{{res.No}}</td>
-                                                <td>{{res.Date}}</td>
-                                                <td>{{res.Vehicle}}</td>
-                                                <td>{{res.CreatedBy }}</td>
-                                                <td>
-                                                    <button class="btn btn-primary" data-bs-toggle="modal"
-                                                        data-bs-target="#inspectionEdit{{res.No}}" data-toggle="tooltip"
-                                                        data-placement="top" title="edit">Edit <i
-                                                            class="fas fa-edit"></i>
-                                                    </button>
-                                                    <a href="{% url 'VehicleInspectionDetails' res.No %}"
-                                                        class="btn btn-success btn-icon-text" type="button"
-                                                        data-toggle="tooltip" data-placement="top"
-                                                        title="Click to View">
-                                                        View
-                                                        <i class="far fa-eye"></i>
-                                                    </a>
-                                                    <div class="modal fade" id="inspectionEdit{{res.No}}"
-                                                        data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-                                                        aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                                                        <div
-                                                            class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                    <h5 class="modal-title" id="staticBackdropLabel">
-                                                                        <i class="las la-edit"></i> Edit Inspection
-                                                                        <span class="editSpan">{{res.No}}</span>
-                                                                    </h5>
-                                                                    <button type="button"
-                                                                        class="btn-close btn-close-white"
-                                                                        data-bs-dismiss="modal"
-                                                                        aria-label="Close"></button>
-                                                                </div>
-                                                                <div class="modal-body">
-                                                                    <form class="myForm needs-validation" action=""
-                                                                        method="post" novalidate>
-                                                                        {% csrf_token %}
-                                                                        <div class="row">
-                                                                            <div class="col-md-12">
-                                                                                <input type="hidden" name="insNo"
-                                                                                    value="{{res.No}}">
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="row">
-                                                                            <div class="col-md-12">
-                                                                                <label class="form-label">Vehicle <span
-                                                                                        class="text-danger">*</span></label>
-                                                                                <select class="form-select"
-                                                                                    name="vehicle" required>
-                                                                                    <option selected
-                                                                                        value="{{ res.Vehicle }}">
-                                                                                        {{ res.Vehicle }}</option>
-                                                                                    {% for list in Vehicle_No %}
-                                                                                    <option value="{{ list.No_ }}">
-                                                                                        {{ list.Registration_No }}
-                                                                                    </option>
-                                                                                    {% endfor %}
-                                                                                </select>
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <div class="row">
-                                                                            <div class="col-md-12">
-                                                                                <label for=""
-                                                                                    class="form-label">Driver</label>
-                                                                                <select class="form-select"
-                                                                                    name="driver" required>
-                                                                                    <option selected disabled value="">
-                                                                                        Select Option</option>
-                                                                                    {% for list in drivers %}
-                                                                                    <option value="{{list.No_}}">
-                                                                                        {{list.First_Name}}
-                                                                                        {{list.Middle_Name}}
-                                                                                        {{list.Last_Name}}</option>
-                                                                                    {% endfor %}
-                                                                                </select>
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <div class="row">
-                                                                            <div class="col-md-12">
-                                                                                <label for=""
-                                                                                    class="form-label">Mechanical
-                                                                                    Inspector</label>
-                                                                                <select class="form-select"
-                                                                                    name="mechanicalInspector" required>
-                                                                                    <option selected disabled value="">
-                                                                                        Select Option</option>
-                                                                                    {% for list in Inspectors %}
-                                                                                    <option value="{{list.No_}}">
-                                                                                        {{list.First_Name}}
-                                                                                        {{list.Middle_Name}}
-                                                                                        {{list.Last_Name}}</option>
-                                                                                    {% endfor %}
-                                                                                </select>
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <div class="row">
-                                                                            <div class="col-md-12">
-                                                                                <input type="hidden" name="myAction"
-                                                                                    value="modify">
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <div class="row">
-                                                                            <div class="col-md-12">
-                                                                                <label class="form-label">Mechanical
-                                                                                    Inspector Recommendation<span
-                                                                                        class="text-danger">*</span></label>
-                                                                                <textarea class="form-control"
-                                                                                    name="mechanicalInspectionRecommedation"
-                                                                                    rows="3" required
-                                                                                    value="{{res.ServiceInstruction}}">{{res.ServiceInstruction}}</textarea>
-
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <div class="row">
-                                                                            <div class="col-md-12">
-                                                                                <label for=""
-                                                                                    class="form-label">Transport
-                                                                                    Officer</label>
-                                                                                <select class="form-select"
-                                                                                    name="transportOfficer" required>
-                                                                                    <option selected disabled value="">
-                                                                                        Select Option</option>
-                                                                                    {% for list in TransportOfficers %}
-                                                                                    <option value="{{list.No_}}">
-                                                                                        {{list.First_Name}}
-                                                                                        {{list.Middle_Name}}
-                                                                                        {{list.Last_Name}}</option>
-                                                                                    {% endfor %}
-                                                                                </select>
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <button type="submit" id="sasa"
-                                                                            class="btn btn-success my-3 w-100">Submit</button>
-                                                                    </form>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                </td>
-                                            </tr>
-                                            {% endif%}
                                             {%endfor%}
                                         </tbody>
                                     </table>
 
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% elif driver_role == False and mechanical_inspector_role == False and TO_role == True  %}
+    <div class="content-wrapper general-bg">
+        <div class="row" id="proBanner">
+            <div class="col-12">
+                <span class="d-flex align-items-center purchase-popup">
+                    <img src="../../../static/img/logo/fav.png" width="70px" class="img-fluid">
+                    <h2 class="text-dark font-weight-bold ml-3"> Vehicle Inspection </h2>
+                </span>
+            </div>
+        </div>
+        {% include 'alerts.html' %}
+        <div class="row my-2">
+            <div class="col-md-12">
+                <div class="card" id="d-card">
+                    <div class="m-4">
+                        <ul class="nav nav-tabs d-flex" id="myTab">
+                            <li class="nav-item flex-fill">
+                                <a href="#home-me" class="nav-link active" data-bs-toggle="tab">Inspection Requests
+                                    ({{mechanical_response|length}})</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="home-me">
+                                <div class="card-body">
+                                    <table id="example"
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
+
+                                        <thead>
+                                            <tr id="tops">
+                                                <th id="long">Request No.</th>
+                                                <th>Date Requested</th>
+                                                <th>Vehicle</th>
+                                                <th>Requested By</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for res in mechanical_response %}
+
+                                            <tr>
+                                                <td>{{res.No}}</td>
+                                                <td>{{res.Date}}</td>
+                                                <td>{{res.Vehicle}}</td>
+                                                <td>{{res.CreatedBy }}</td>
+                                                <td>
+                                                    {% if res.BookForInspection == False %}
+                                                    <form action="{% url 'FnBookForInspection' res.No %}" method="post"
+                                                        style="display: inline-block;">
+                                                        {% csrf_token %}
+                                                        <button class="btn btn-dark" type="submit" data-toggle="tooltip"
+                                                            data-placement="top" title="confirm repair">
+                                                            <i class="las la-tools"></i> Book for Inspection <i
+                                                                class="las la-check-double"></i>
+                                                        </button>
+                                                    </form>
+                                                    {% elif res.BookForInspection == True %}
+                                                    <form action="{% url 'FnMarkInspected' res.No %}" method="post"
+                                                        style="display: inline-block;">
+                                                        {% csrf_token %}
+                                                        <button class="btn btn-warning" type="submit"
+                                                            data-toggle="tooltip" data-placement="top"
+                                                            title="confirm repair">
+                                                            <i class="las la-tools"></i> Mark Inspected <i
+                                                                class="las la-check-double"></i>
+                                                        </button>
+                                                    </form>
+                                                    {% endif %}
+                                                    <a href="{% url 'VehicleInspectionDetails' res.No %}"
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top"
+                                                        title="Click to View">
+                                                        View
+                                                        <i class="far fa-eye"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            {%endfor%}
+                                        </tbody>
+                                    </table>
                                 </div>
 
                             </div>

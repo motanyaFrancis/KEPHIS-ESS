@@ -186,45 +186,44 @@
                                 <a class="nav-link" href="{% url 'vehicleRepairRequest' %}">
                                     <i class="las la-arrow-right mr-2"></i> Vehicle Repair
                                 </a>
-
-                                <a class="nav-link" href="{% url 'TransportRequest' %}">
-                                    <i class="las la-arrow-right mr-2"></i> Transport Request
-                                </a>
                                 <a class="nav-link" href="{% url 'Accidents' %}">
                                     <i class="las la-arrow-right mr-2"></i> Accidents
                                 </a>
                                 {% endif %}
-                                {% if driver_role == True or mechanical_inspector_role == True %}
-                            <li class="nav-item"> <a class="nav-link" href="{% url 'ServiceRequest' %}"><i
-                                        class="las la-arrow-right mr-2"></i>Service Request</a></li>
-                            <a class="nav-link" href="{% url 'vehicleInspection' %}">
-                                <i class="las la-arrow-right mr-2"></i> Vehicle Inspection
-                            </a>
-                            {% endif %}
-                </li>
+                                <a class="nav-link" href="{% url 'TransportRequest' %}">
+                                    <i class="las la-arrow-right mr-2"></i> Transport Request
+                                </a>
+                                <a class="nav-link" href="{% url 'ServiceRequest' %}"><i
+                                        class="las la-arrow-right mr-2"></i>Service Request</a>
+                                {% if driver_role == True or TO_role == True or mechanical_inspector_role == True %}
+                                <a class="nav-link" href="{% url 'vehicleInspection' %}">
+                                    <i class="las la-arrow-right mr-2"></i> Vehicle Inspection
+                                </a>
+                                {% endif %}
+                            </li>
 
-            </ul>
-    </div>
-    </li>
-    <!-- <li class="nav-item">
+                        </ul>
+                    </div>
+                </li>
+                <!-- <li class="nav-item">
         <a class="nav-link" href="{% url 'approve' %}">
             <span class="icon-bg"><i class="las la-stamp"></i></span>
             <span class="menu-title">Approvals </span>
         </a>
     </li> -->
-    <li class="nav-item">
-        <a class="nav-link" href="{% url 'InternalRoomBooking' %}">
-            <span class="icon-bg"><i class="las la-home"></i></span>
-            <span class="menu-title">Room Booking</span>
-        </a>
-    </li>
-    <!-- <li class="nav-item">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'InternalRoomBooking' %}">
+                        <span class="icon-bg"><i class="las la-home"></i></span>
+                        <span class="menu-title">Room Booking</span>
+                    </a>
+                </li>
+                <!-- <li class="nav-item">
         <a class="nav-link" href="{% url 'advance' %}">
             <span class="icon-bg"><i class="las la-briefcase"></i></span>
             <span class="menu-title">Salary Advance </span>
         </a>
     </li> -->
-    <!-- <li class="nav-item" style="margin-top:.1rem;">
+                <!-- <li class="nav-item" style="margin-top:.1rem;">
                     <a class="nav-link" href="../../static/img/2.jpg" download>
                         <span class="icon-bg"><i class="las la-file-pdf"></i></span>
 
@@ -232,42 +231,43 @@
                             class="las la-download text-danger"></i>
                     </a>
                 </li> -->
-    <li class="nav-item sidebar-user-actions" style="margin-top:.1rem;">
-        <div class="sidebar-user-menu">
-            <a href="{% url 'logout' %}" class="nav-link"><i class="las la-sign-out-alt"></i>
-                <span class="menu-title">Log Out</span></a>
-        </div>
-    </li>
-    <li class="nav-item documentation-link" style="margin-top:-.8rem !important;">
-        <a class="nav-link" href="#">
-            <span class="icon-bg">
-                <i class="las la-external-link-alt"></i>
-            </span>
-            <span class="menu-title" style="font-size: 12px !important">{{today}} <span id="timer"></span></span>
-        </a>
-    </li>
-    </ul>
-    </nav>
-    <div class="main-panel">
-        <!-- Weka content -->
-        {% block main %}
-        {% endblock %}
-    </div>
-</div>
-<footer class="footer">
-    <div class="footer-inner-wraper">
-        <div class="d-sm-flex justify-content-center justify-content-sm-between align-items-center">
-            <div>
-                <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © Kenya Plant
-                    Health Inspectorate Service {{year}}</span>
-            </div>
-            <div>
-                <span class="text-muted d-block text-center text-sm-left d-sm-inline-block text-200"> Powered by <a
-                        class="" href="https://www.kobby.co.ke/" target="_blank" style="color: #000;"> Kobby
-                        Technologies Limited </a> </span>
-            </div>
+                <li class="nav-item sidebar-user-actions" style="margin-top:.1rem;">
+                    <div class="sidebar-user-menu">
+                        <a href="{% url 'logout' %}" class="nav-link"><i class="las la-sign-out-alt"></i>
+                            <span class="menu-title">Log Out</span></a>
+                    </div>
+                </li>
+                <li class="nav-item documentation-link" style="margin-top:-.8rem !important;">
+                    <a class="nav-link" href="#">
+                        <span class="icon-bg">
+                            <i class="las la-external-link-alt"></i>
+                        </span>
+                        <span class="menu-title" style="font-size: 12px !important">{{today}} <span
+                                id="timer"></span></span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <div class="main-panel">
+            <!-- Weka content -->
+            {% block main %}
+            {% endblock %}
         </div>
     </div>
-</footer>
+    <footer class="footer">
+        <div class="footer-inner-wraper">
+            <div class="d-sm-flex justify-content-center justify-content-sm-between align-items-center">
+                <div>
+                    <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © Kenya Plant
+                        Health Inspectorate Service {{year}}</span>
+                </div>
+                <div>
+                    <span class="text-muted d-block text-center text-sm-left d-sm-inline-block text-200"> Powered by <a
+                            class="" href="https://www.kobby.co.ke/" target="_blank" style="color: #000;"> Kobby
+                            Technologies Limited </a> </span>
+                </div>
+            </div>
+        </div>
+    </footer>
 </div>
 {% endblock %}

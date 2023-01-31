@@ -691,6 +691,12 @@ class VehicleInspection(UserObjectMixin, View):
                 if x['Status'] == 'Inspected'
             ]
 
+            mechanical_e_url = config.O_DATA.format(
+                f"/QyVehicleInspection?$filter=Status%20eq%20%27Approved%27%20and%20Booked_For_Inspection%20eq%20false"
+            )
+            m_response = self.get_object(mechanical_e_url)
+            
+            mechanical_response = [x for x in m_response['value']]
 
             counts = len(openInspectionReq)
             pend = len(PendingInspectionReq)
@@ -743,6 +749,7 @@ class VehicleInspection(UserObjectMixin, View):
             "full": full_name,
             "driver_role":driver_role,
             "TO_role":TO_role,
+            "mechanical_response":mechanical_response,
             "mechanical_inspector_role":mechanical_inspector_role,
         }
         return render(request, 'vehicleInspection.html', ctx)
@@ -796,14 +803,13 @@ class VehicleInspectionDetails(UserObjectMixin, View):
 
     def get(self, request, pk):
         try:
-            userID = request.session['User_ID']
             driver_role = request.session['driver_role']
             TO_role = request.session['TO_role']
             mechanical_inspector_role = request.session['mechanical_inspector_role']
             full_name = request.session['full_name']
 
             Access_Point = config.O_DATA.format(
-                f"/QyVehicleInspection?$filter=No%20eq%20%27{pk}%27%20and%20CreatedBy%20eq%20%27{userID}%27"
+                f"/QyVehicleInspection?$filter=No%20eq%20%27{pk}%27"
             )
             response = self.get_object(Access_Point)
             res = [x for x in response['value']]
@@ -819,6 +825,11 @@ class VehicleInspectionDetails(UserObjectMixin, View):
                 f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27")
             res_file = self.get_object(Access_File)
             allFiles = [x for x in res_file['value']]
+            
+            Lines_Res = config.O_DATA.format(
+                f"/QyVehicleInspectionLines?$filter=No%20eq%20%27VIN00074%27")
+            responses = self.get_object(Lines_Res)
+            openLines = [x for x in responses['value']]
 
         except Exception as e:
             print(e)
@@ -832,9 +843,36 @@ class VehicleInspectionDetails(UserObjectMixin, View):
             "full": full_name,
             "driver_role":driver_role,
             "TO_role":TO_role,
+            "openLines":openLines,
             "mechanical_inspector_role":mechanical_inspector_role,
         }
         return render(request, 'VehicleInspectionDetails.html', context)
+
+def InspectionDefects(request, pk):
+    if request.method == 'POST':
+        try:
+            defectsType = request.POST.get('defectsType')
+            severity = request.POST.get('severity')
+            specification = request.POST.get('specification')
+            lineNo = int(request.POST.get('lineNo'))
+            myUserId = request.session['User_ID']
+            myAction = request.POST.get('myAction')
+
+            response = config.CLIENT.service.FnVehicleInspectionLines(
+                pk,
+                myAction,lineNo,myUserId,defectsType,severity,
+                specification
+                )
+            if response == True:
+                messages.success(request, "Request Successful")
+                return redirect('VehicleInspectionDetails', pk=pk)
+            if response == False:
+                messages.error(request,f'{response}')
+                return redirect('VehicleInspectionDetails', pk=pk)
+        except Exception as e:
+            messages.error(request, f'{e}')
+            return redirect('VehicleInspectionDetails', pk=pk)
+    return redirect('VehicleInspectionDetails', pk=pk)
 
 
 def UploadInspectionAttachment(request, pk):
@@ -899,8 +937,7 @@ def FnSubmitVehicleInspection(request, pk):
             return redirect('auth')
     return redirect('VehicleInspectionDetails', pk=pk)
 
-
-def FnBookForInspection(request, pk):
+def Submit2_TO(request, pk):
     Username = request.session['User_ID']
     Password = request.session['soap_headers']
     AUTHS = Session()
@@ -909,20 +946,67 @@ def FnBookForInspection(request, pk):
 
     if request.method == 'POST':
         try:
-            insNo = request.POST.get('insNo')
             myUserId = request.session['User_ID']
-        except ValueError as e:
-            return redirect('VehicleInspectionDetails', pk=pk)
 
-        try:
-            response = CLIENT.service.FnBookForInspection(insNo, myUserId)
-            messages.success(request, "Booking for Inspection Successful")
-
+            response = CLIENT.service.FnSubmitVehicleInspection(pk, myUserId)
+            if response == True:
+                messages.success(request, "Submitted")
+                return redirect('VehicleInspectionDetails', pk=pk)
+            if response == False:
+                messages.success(request, f'{response}')
+                return redirect('VehicleInspectionDetails', pk=pk)
         except Exception as e:
             messages.error(request, f'{e}')
             print(e)
             return redirect('auth')
     return redirect('VehicleInspectionDetails', pk=pk)
+
+def FnMarkInspected(request, pk):
+    Username = request.session['User_ID']
+    Password = request.session['soap_headers']
+    AUTHS = Session()
+    AUTHS.auth = HTTPBasicAuth(Username, Password['password'])
+    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
+
+    if request.method == 'POST':
+        try:
+            myUserId = request.session['User_ID']
+
+            response = CLIENT.service.FnMarkInspected(pk, myUserId)
+            if response == True:
+                messages.success(request, "Submitted")
+                return redirect('vehicleInspection')
+            if response == False:
+                messages.success(request, f'{response}')
+                return redirect('vehicleInspection')
+        except Exception as e:
+            messages.error(request, f'{e}')
+            print(e)
+            return redirect('dashboard')
+    return redirect('vehicleInspection')
+
+def FnBookForInspection(request, pk):
+    Username = request.session['User_ID']
+    Password = request.session['soap_headers']
+    AUTHS = Session()
+    AUTHS.auth = HTTPBasicAuth(Username, Password['password'])
+    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
+    if request.method == 'POST':
+        try:
+            myUserId = request.session['User_ID']
+            
+            response = CLIENT.service.FnBookForInspection(pk, myUserId)
+            if response == True:
+                messages.success(request, "Booking for Inspection Successful")
+                return redirect('vehicleInspection')
+            elif response == False:
+                messages.error(request, f"{response}")
+                return redirect('vehicleInspection')
+        except Exception as e:
+            messages.error(request, f'{e}')
+            print(e)
+            return redirect('auth')
+    return redirect('vehicleInspection')
 
 def FnCancelBooking(request, pk):
     if request.method == 'POST':

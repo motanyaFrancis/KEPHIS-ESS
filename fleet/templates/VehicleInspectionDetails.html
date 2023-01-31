@@ -8,21 +8,19 @@
             <h2 class="text-dark font-weight-bold mb-2"> Vehicle Inspection Request
                 {% if res.Status == "Open" %}
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Attachment"> <i
-                       class="las la-plus"></i> Upload Attachment</button>
+                        class="las la-plus"></i> Upload Attachment</button>
+                {% endif %}
+                {% if mechanical_inspector_role == True and res.Booked_For_Inspection == False and res.Status == "Approved" %}
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#inspectionReport"> <i
+                        class="las la-plus"></i> Upload Inspection Report</button>
                 {% endif %}
             </h2>
 
             <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
                 <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
-                    {% if res.Status == "Open" %}
-
-                    {% elif res.Status == "Approved" and res.Booked_For_Inspection == fal %}
-                    <form action="{% url 'FnBookForInspection' res.No %}" method="POST"
-                          style="display:inline-block">
-                        {% csrf_token %}
-                        <input type="text" name="insNo" id=""  value="{{res.No}}" hidden>
-                        <button class="btn btn-successs" type="submit"> Book for Inspection</button>
-                    </form>
+                    {% if mechanical_inspector_role == True and res.Booked_For_Inspection == False and res.Status == "Approved" %}
+                    <button class="btn btn-successs" data-bs-toggle="modal" data-bs-target="#vehicle_defects"> <i
+                            class="las la-plus"></i> Vehicle Defects</button>
                     {% endif %}
                 </div>
             </div>
@@ -49,8 +47,8 @@
                         </div>
                         <div class="progress mt-1 " data-height="8" style="height: 8px;">
                             <div class="progress-bar l-bg-red" role="progressbar" data-width="50%" aria-valuenow="25"
-                                 aria-valuemin="0" aria-valuemax="100"
-                                 style="width: 20%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
+                                aria-valuemin="0" aria-valuemax="100"
+                                style="width: 20%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
                             </div>
                         </div>
 
@@ -64,8 +62,8 @@
                         </div>
                         <div class="progress mt-1 " data-height="8" style="height: 8px;">
                             <div class="progress-bar l-bg-yellow" role="progressbar" data-width="25%" aria-valuenow="25"
-                                 aria-valuemin="0" aria-valuemax="100"
-                                 style="width: 40%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
+                                aria-valuemin="0" aria-valuemax="100"
+                                style="width: 40%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
                             </div>
                         </div>
                         {% elif res.Status == "Approved" %}
@@ -78,8 +76,8 @@
                         </div>
                         <div class="progress mt-1 " data-height="8" style="height: 8px;">
                             <div class="progress-bar l-bg-green" role="progressbar" data-width="75%" aria-valuenow="75"
-                                 aria-valuemin="0" aria-valuemax="100"
-                                 style="width: 60%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
+                                aria-valuemin="0" aria-valuemax="100"
+                                style="width: 60%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
                             </div>
                         </div>
                         {% elif Status == 'Approved' and res.Booked_For_Inspection == true %}
@@ -92,8 +90,8 @@
                         </div>
                         <div class="progress mt-1 " data-height="8" style="height: 8px;">
                             <div class="progress-bar l-bg-green" role="progressbar" data-width="75%" aria-valuenow="75"
-                                 aria-valuemin="0" aria-valuemax="100"
-                                 style="width: 80%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
+                                aria-valuemin="0" aria-valuemax="100"
+                                style="width: 80%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
                             </div>
                         </div>
                         {% elif res.Status == "Inspected" %}
@@ -106,8 +104,8 @@
                         </div>
                         <div class="progress mt-1 " data-height="8" style="height: 8px;">
                             <div class="progress-bar l-bg-green" role="progressbar" data-width="75%" aria-valuenow="75"
-                                 aria-valuemin="0" aria-valuemax="100"
-                                 style="width: 100%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
+                                aria-valuemin="0" aria-valuemax="100"
+                                style="width: 100%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
                             </div>
                         </div>
                         {% endif %}
@@ -148,7 +146,7 @@
                     </div>
                 </div>
             </div>
-            
+
 
         </div>
         <div class="row">
@@ -178,19 +176,49 @@
                         <label class="form-label">Status</label>
                         <input type="text" class="form-control" placeholder="{{res.Status}}" readonly>
                     </div>
-                    
-                    
+
+
 
                     <div class="col-12">
                         <label for="inputAddress" class="form-label">Service Instruction</label>
                         <textarea class="form-control" placeholder="{{res.ServiceInstruction}}" rows="3"
-                                  readonly></textarea>
+                            readonly></textarea>
                     </div>
                 </form>
             </div>
         </div>
+        {% if mechanical_inspector_role == True and res.Booked_For_Inspection == False and res.Status == "Approved" %}
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card" id="d-card">
+                    <h4 class="mt-2 mx-2 text-dark">Vehicle Defects</h4>
+                    <div class="card-body">
+                        <table id="example"
+                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                            style="width:100%">
+                            <thead>
+                                <tr id="tops">
+                                    <th id="long">Defects Type</th>
+                                    <th>Severity</th>
+                                    <th>Comments</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for line in openLines %}
+                                <tr>
+                                    <td>{{line.DefectsType}}</td>
+                                    <td>{{line.Severity}}</td>
+                                    <td>{{line.Comments}}</td>
+                                </tr>
 
-
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
         <div class="row my-2 py-3">
             <div class="col-md-12">
                 <div class="card">
@@ -208,7 +236,7 @@
                                         <input type="hidden" name="docID" value="{{data.AuxiliaryIndex2}}">
                                         <input type="hidden" name="tableID" value="{{data.Table_ID}}">
                                         <button class="file-close" id="file-close"><i
-                                               class="fa fa-times-circle"></i></button>
+                                                class="fa fa-times-circle"></i></button>
                                     </form>
                                     {% endif %}
                                     <div class="file-img-box"><img src="../../static/img/logo/f1.png" alt="icon"></div>
@@ -218,7 +246,7 @@
                                         <input type="hidden" name="File_Name" value="{{data.File_Name}}">
                                         <input type="hidden" name="File_Extension" value="{{data.File_Extension}}">
                                         <button class="file-download mx-1"><i
-                                               class="fa fa-download text-success"></i></button>
+                                                class="fa fa-download text-success"></i></button>
                                     </form>
                                     <div class="file-man-title">
                                         <h5 class="mb-0 text-overflow">
@@ -268,9 +296,10 @@
         {% endif %}
         <div class="row">
             <div class="col-md-12">
-                {% if res.Status == "Open" %}
+                {% if res.Status == "Open" and driver_role == True and res.Booked_For_Inspection == False %}
                 <div class="myForm my-3">
-                    <form action="{% url 'FnSubmitVehicleInspection' res.No%}" method="POST" style="display: inline-block;">
+                    <form action="{% url 'FnSubmitVehicleInspection' res.No%}" method="POST"
+                        style="display: inline-block;">
                         {% csrf_token %}
                         <div class="mb-3">
                             <input type="hidden" hidden name="insNo" value="{{res.No}}">
@@ -278,23 +307,12 @@
                         <button class="btn btn-info" type="submit">Request Approval</button>
                     </form>
                 </div>
-                {% elif res.Status == "Pending Approval" %}
-                <div class="row">
-
-                </div>
-                {% elif res.Status == "Approved" and res.Booked_For_Inspection == False %}
+                {% elif res.Status == "Approved" and driver_role == False and res.Booked_For_Inspection == False and mechanical_inspector_role == True %}
                 <div class="myForm my-3">
-                    <form action="{% url 'FnBookForInspection' res.No%}" method="POST" style="display: inline-block;">
+                    <form action="{% url 'Submit2_TO' res.No %}" method="POST" style="display: inline-block;">
                         {% csrf_token %}
-                        <div class="mb-3">
-                            <input type="hidden" hidden name="insNo" value="{{res.No}}">
-                        </div>
-                        <button class="btn btn-info" type="submit">Book For Inspection</button>
+                        <button class="btn btn-info" type="submit">Submit Document</button>
                     </form>
-                </div>
-                {% else %}
-                <div class="row">
-
                 </div>
                 {% endif %}
             </div>
@@ -306,8 +324,8 @@
                     <h4 class="mt-2 mx-2 text-dark">Document Approvers</h4>
                     <div class="card-body">
                         <table id="example"
-                               class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                               style="width:100%">
+                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                            style="width:100%">
                             <thead>
                                 <tr id="tops">
                                     <th id="long">Entry No</th>
@@ -342,11 +360,11 @@
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Upload Attachment</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form action="{% url 'UploadInspectionAttachment' res.No %}" method="post" class="myForm"
-                      enctype="multipart/form-data">
+                    enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class=" mb-3">
                         <label class="form-label">Attachments </label>
@@ -355,6 +373,78 @@
                     <button type="submit" class="btn btn-success my-3 w-100">Submit</button>
                 </form>
 
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="inspectionReport" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Upload Inspection Report</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'UploadInspectionAttachment' res.No %}" method="post" class="myForm"
+                    enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class=" mb-3">
+                        <label class="form-label">Attachments </label>
+                        <input class="form-control" name="attachment" type="file" multiple>
+                    </div>
+                    <button type="submit" class="btn btn-success my-3 w-100">Submit</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="vehicle_defects" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Add Vehicle Defects
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="myForm needs-validation" id="frm_" action="{% url 'InspectionDefects' res.No %}"
+                    method="post" novalidate>
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <input type="number" name="lineNo" value="0" hidden>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="form-label">Defect Type <span class="text-danger">*</span></label>
+                            <input type="text" name="defectsType" class="form-control">
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label for="" class="form-label">Severity <span class="text-danger">*</span></label>
+                            <input type="text" name="severity" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label for="" class="form-label">Specification<span class="text-danger">*</span></label>
+                            <input type="text" name="specification" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <input type="hidden" name="myAction" value="insert">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success my-3 w-100">Submit</button>
+                </form>
             </div>
         </div>
     </div>

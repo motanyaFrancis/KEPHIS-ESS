@@ -19,9 +19,12 @@ urlpatterns = [
     path('UploadInspectionAttachment/<str:pk>', views.UploadInspectionAttachment, name='UploadInspectionAttachment'),
     path('DeleteInspectionAttachment/<str:pk>', views.DeleteInspectionAttachment, name='DeleteInspectionAttachment'),
     path('FnSubmitVehicleInspection/<str:pk>', views.FnSubmitVehicleInspection, name='FnSubmitVehicleInspection' ),
-    path('FnBookForInspection/<str:pk>', views.FnBookForInspection, name='FnBookForInspection' ),
-    path('FnCancelBooking/<str:pk>', views.FnCancelBooking, name='FnCancelBooking' ),
-
+    path('FnBookForInspection/<str:pk>', views.FnBookForInspection, name='FnBookForInspection'),
+    path('FnCancelBooking/<str:pk>', views.FnCancelBooking, name='FnCancelBooking'),
+    path('InspectionDefects/<str:pk>', views.InspectionDefects, name='InspectionDefects'),
+    path('Submit2_TO/<str:pk>', views.Submit2_TO, name='Submit2_TO'),
+    path('FnMarkInspected/<str:pk>', views.FnMarkInspected, name='FnMarkInspected'),
+    
     # repair request
     path('vehicleRepairRequest', views.VehicleRepairRequest.as_view(), name='vehicleRepairRequest'),
     path('vehicleRepairDetails/<str:pk>', views.VehicleRepairRequestDetails.as_view(), name='vehicleRepairDetails'),
