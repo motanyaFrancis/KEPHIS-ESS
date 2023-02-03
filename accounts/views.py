@@ -21,9 +21,9 @@ class Login(UserObjectMixins,View):
                                                                         "/QYUserSetup","User_ID","eq"))
                 
                 user_response = await asyncio.gather(task_get_user_setup)
-                                   
-                if user_response[0]['status_code'] == 200: #type:ignore
-                    for data in user_response[0]['data']: #type:ignore
+                                                   
+                if user_response[0]['status_code'] == 200:#type:ignore
+                    for data in user_response[0]['data']:#type:ignore
                         await sync_to_async(request.session.__setitem__)('Employee_No_', data['Employee_No_'])
                         await sync_to_async(request.session.__setitem__)('Customer_No_', data['Customer_No_'])
                         await sync_to_async(request.session.__setitem__)('User_ID', data['User_ID'])
@@ -36,24 +36,24 @@ class Login(UserObjectMixins,View):
                         }
                         await sync_to_async(request.session.__setitem__)('soap_headers', soap_headers)
                         await sync_to_async(request.session.save)()
-                        
+                                                
                         Employee_No_ = await sync_to_async(request.session.__getitem__)('Employee_No_')
  
                         task_get_employee = asyncio.ensure_future(self.fetch_one_filtered_data(session,
                                                        "/QYEmployees","No_","eq",Employee_No_))
                     
                         employee_response = await asyncio.gather(task_get_employee)
-                    
                         for data in employee_response[0]['data']: #type:ignore
                             await sync_to_async(request.session.__setitem__)('full_name', data['First_Name'] + " " + data['Last_Name'] )
                             await sync_to_async(request.session.__setitem__)('driver_role', data['Driver'])
-                            await sync_to_async(request.session.__setitem__)('TO_role', data['TransportOfficer'])
+                            await sync_to_async(request.session.__setitem__)('TO_role', data['TO_MI'])
                             await sync_to_async(request.session.__setitem__)('mechanical_inspector_role', data['Mechanical_Inspector'])
                             await sync_to_async(request.session.save)()
                             messages.success(request,f"Success. Logged in as {request.session['full_name']}")
-                            return redirect('dashboard')
-                messages.error(request,"Authentication Error: Invalid credentials")
-                return redirect('auth')
+                            return redirect('auth')
+                if user_response[0]['status_code'] != 200:#type:ignore
+                    messages.error(request,"Authentication Error: Invalid credentials")
+                    return redirect('auth')
         except (aiohttp.ClientError, aiohttp.ServerDisconnectedError, aiohttp.ClientResponseError) as e:
             print(e)
             messages.error(request,"Authentication Error: Invalid credentials")
