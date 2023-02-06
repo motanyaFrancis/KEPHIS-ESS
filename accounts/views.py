@@ -47,10 +47,10 @@ class Login(UserObjectMixins,View):
                             await sync_to_async(request.session.__setitem__)('full_name', data['First_Name'] + " " + data['Last_Name'] )
                             await sync_to_async(request.session.__setitem__)('driver_role', data['Driver'])
                             await sync_to_async(request.session.__setitem__)('TO_role', data['TO_MI'])
-                            await sync_to_async(request.session.__setitem__)('mechanical_inspector_role', data['Mechanical_Inspector'])
+                            await sync_to_async(request.session.__setitem__)('mechanical_inspector_role', False)
                             await sync_to_async(request.session.save)()
                             messages.success(request,f"Success. Logged in as {request.session['full_name']}")
-                            return redirect('auth')
+                            return redirect('dashboard')
                 if user_response[0]['status_code'] != 200:#type:ignore
                     messages.error(request,"Authentication Error: Invalid credentials")
                     return redirect('auth')
