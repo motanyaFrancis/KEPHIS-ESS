@@ -60,6 +60,17 @@
                                     class="brs">({{countStore}})</span></a>
                         </li>
                         <li class="nav-item flex-fill">
+                            <a class="nav-item nav-link" id="nav-Other-tab" data-toggle="tab" href="#nav-inspect"
+                                role="tab" aria-controls="nav-Other" aria-selected="false">Vehicle Inspection <span
+                                    class="brs">({{countInspection}})</span></a>
+                        </li>
+                        <li class="nav-item flex-fill">
+                            <a class="nav-item nav-link" id="nav-Other-tab" data-toggle="tab" href="#nav-tkt"
+                                role="tab" aria-controls="nav-Other" aria-selected="false">Work Ticket <span
+                                    class="brs">({{countTickets}})</span></a>
+                        </li>
+                        
+                        <li class="nav-item flex-fill">
                             <a class="nav-item nav-link" id="nav-Other-tab" data-toggle="tab" href="#nav-Other"
                                 role="tab" aria-controls="nav-Other" aria-selected="false">Other <span
                                     class="brs">({{countOther}})</span></a>
@@ -1011,6 +1022,279 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Vehicle inspection -->
+                    <div class="tab-pane fade" id="nav-inspect" role="tabpanel" aria-labelledby="nav-tkt-tab">
+                        <div class="card" id="d-card">
+                            <div class="m-4">
+                                <ul class="nav nav-tabs d-flex" id="myTab">
+                                    <li class="nav-item flex-fill">
+                                        <a href="#openInspect" class="nav-link active" data-bs-toggle="tab">
+                                            Documents
+                                            Pending Your
+                                            Approval
+                                            ({{countInspection}})</a>
+                                    </li>
+                                    <li class="nav-item flex-fill">
+                                        <a href="#appInspect" class="nav-link" data-bs-toggle="tab"> Documents You
+                                            Approved
+                                        </a>
+                                    </li>
+                                    <li class="nav-item flex-fill">
+                                        <a href="#rejInspect" class="nav-link" data-bs-toggle="tab">Documents You
+                                            Rejected
+                                        </a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div class="tab-pane fade show active" id="openInspect">
+                                        <div class="card-body">
+                                            <table id="example"
+                                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                                style="width:100%">
+                                                <thead>
+                                                    <tr id="tops">
+                                                        <th id="long">Document No</th>
+                                                        <th>Document Type</th>
+                                                        <th>Date Sent</th>
+                                                        <th>Sender</th>
+                                                        <th>Status</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for res in openInspection %}
+                                                    <tr>
+                                                        <td>{{res.Document_No_}}</td>
+                                                        <td id="rap">{{res.Document_Type}}</td>
+                                                        <td>{{res.Date_Time_Sent_for_Approval}}</td>
+                                                        <td>{{res.Sender_ID}}</td>
+                                                        <td>{{res.Status}}</td>
+                                                        <td>
+                                                            <a href="{% url 'ApproveData' res.Document_No_ %}"
+                                                                class="btn btn-success btn-icon-text" type="button"
+                                                                data-toggle="tooltip" data-placement="top" title="View"
+                                                                style="background: #25CC88;"><i class="fa fa-table"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="appInspect">
+                                        <div class="card-body">
+                                            <table id="example"
+                                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                                style="width:100%">
+                                                <thead>
+                                                    <tr id="tops">
+                                                        <th id="long">Document No</th>
+                                                        <th>Document Type</th>
+                                                        <th>Date Sent</th>
+                                                        <th>Sender</th>
+                                                        <th>Status</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for res in appInspection %}
+                                                    <tr>
+                                                        <td>{{res.Document_No_}}</td>
+                                                        <td id="rap">{{res.Document_Type}}</td>
+                                                        <td>{{res.Date_Time_Sent_for_Approval}}</td>
+                                                        <td>{{res.Sender_ID}}</td>
+                                                        <td>{{res.Status}}</td>
+                                                        <td>
+                                                            <a href="{% url 'ApproveData' res.Document_No_ %}"
+                                                                class="btn btn-success btn-icon-text" type="button"
+                                                                data-toggle="tooltip" data-placement="top" title="View"
+                                                                style="background: #25CC88;"><i class="fa fa-table"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="rejInspect">
+                                        <div class="card-body">
+                                            <table id="example"
+                                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                                style="width:100%">
+                                                <thead>
+                                                    <tr id="tops">
+                                                        <th id="long">Document No</th>
+                                                        <th>Document Type</th>
+                                                        <th>Date Sent</th>
+                                                        <th>Sender</th>
+                                                        <th>Status</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for res in rejInspection %}
+                                                    <tr>
+                                                        <td>{{res.Document_No_}}</td>
+                                                        <td id="rap">{{res.Document_Type}}</td>
+                                                        <td>{{res.Date_Time_Sent_for_Approval}}</td>
+                                                        <td>{{res.Sender_ID}}</td>
+                                                        <td>{{res.Status}}</td>
+                                                        <td>
+                                                            <a href="{% url 'ApproveData' res.Document_No_ %}"
+                                                                class="btn btn-success btn-icon-text" type="button"
+                                                                data-toggle="tooltip" data-placement="top" title="View"
+                                                                style="background: #25CC88;"><i class="fa fa-table"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Work Ticket Replacement -->
+                    <div class="tab-pane fade" id="nav-tkt" role="tabpanel" aria-labelledby="nav-tkt-tab">
+                        <div class="card" id="d-card">
+                            <div class="m-4">
+                                <ul class="nav nav-tabs d-flex" id="myTab">
+                                    <li class="nav-item flex-fill">
+                                        <a href="#openTkt" class="nav-link active" data-bs-toggle="tab">
+                                            Documents
+                                            Pending Your
+                                            Approval
+                                            ({{countOther}})</a>
+                                    </li>
+                                    <li class="nav-item flex-fill">
+                                        <a href="#appTkt" class="nav-link" data-bs-toggle="tab"> Documents You
+                                            Approved
+                                        </a>
+                                    </li>
+                                    <li class="nav-item flex-fill">
+                                        <a href="#rejTkt" class="nav-link" data-bs-toggle="tab">Documents You
+                                            Rejected
+                                        </a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div class="tab-pane fade show active" id="openTkt">
+                                        <div class="card-body">
+                                            <table id="example"
+                                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                                style="width:100%">
+                                                <thead>
+                                                    <tr id="tops">
+                                                        <th id="long">Document No</th>
+                                                        <th>Document Type</th>
+                                                        <th>Date Sent</th>
+                                                        <th>Sender</th>
+                                                        <th>Status</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for res in openTickets %}
+                                                    <tr>
+                                                        <td>{{res.Document_No_}}</td>
+                                                        <td id="rap">{{res.Document_Type}}</td>
+                                                        <td>{{res.Date_Time_Sent_for_Approval}}</td>
+                                                        <td>{{res.Sender_ID}}</td>
+                                                        <td>{{res.Status}}</td>
+                                                        <td>
+                                                            <a href="{% url 'ApproveData' res.Document_No_ %}"
+                                                                class="btn btn-success btn-icon-text" type="button"
+                                                                data-toggle="tooltip" data-placement="top" title="View"
+                                                                style="background: #25CC88;"><i class="fa fa-table"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="appTkt">
+                                        <div class="card-body">
+                                            <table id="example"
+                                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                                style="width:100%">
+                                                <thead>
+                                                    <tr id="tops">
+                                                        <th id="long">Document No</th>
+                                                        <th>Document Type</th>
+                                                        <th>Date Sent</th>
+                                                        <th>Sender</th>
+                                                        <th>Status</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for res in appTickets %}
+                                                    <tr>
+                                                        <td>{{res.Document_No_}}</td>
+                                                        <td id="rap">{{res.Document_Type}}</td>
+                                                        <td>{{res.Date_Time_Sent_for_Approval}}</td>
+                                                        <td>{{res.Sender_ID}}</td>
+                                                        <td>{{res.Status}}</td>
+                                                        <td>
+                                                            <a href="{% url 'ApproveData' res.Document_No_ %}"
+                                                                class="btn btn-success btn-icon-text" type="button"
+                                                                data-toggle="tooltip" data-placement="top" title="View"
+                                                                style="background: #25CC88;"><i class="fa fa-table"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="rejTkt">
+                                        <div class="card-body">
+                                            <table id="example"
+                                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                                style="width:100%">
+                                                <thead>
+                                                    <tr id="tops">
+                                                        <th id="long">Document No</th>
+                                                        <th>Document Type</th>
+                                                        <th>Date Sent</th>
+                                                        <th>Sender</th>
+                                                        <th>Status</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for res in rejTickets %}
+                                                    <tr>
+                                                        <td>{{res.Document_No_}}</td>
+                                                        <td id="rap">{{res.Document_Type}}</td>
+                                                        <td>{{res.Date_Time_Sent_for_Approval}}</td>
+                                                        <td>{{res.Sender_ID}}</td>
+                                                        <td>{{res.Status}}</td>
+                                                        <td>
+                                                            <a href="{% url 'ApproveData' res.Document_No_ %}"
+                                                                class="btn btn-success btn-icon-text" type="button"
+                                                                data-toggle="tooltip" data-placement="top" title="View"
+                                                                style="background: #25CC88;"><i class="fa fa-table"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div class="tab-pane fade" id="nav-Other" role="tabpanel" aria-labelledby="nav-Other-tab">
                         <div class="card" id="d-card">
                             <div class="m-4">
@@ -1146,6 +1430,7 @@
                             </div>
                         </div>
                     </div>
+                    
                 </div>
 
             </div>

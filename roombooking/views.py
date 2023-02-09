@@ -120,12 +120,12 @@ class InternalRoomBookingDetails(UserObjectMixin, View):
             Accommodation = config.O_DATA.format(f"/QyAccommodationBookingLines?$filter=RoomNo%20eq%20%27{pk}%27")
             res_accommodation = self.get_object(Accommodation)
             AccommodationRoom = [x for x in res_accommodation['value']]
-            print(Accommodation)
+            # print(Accommodation)
 
             MeetingRoom = config.O_DATA.format(f"/QyRoomBookingLines?$filter=RoomNo%20eq%20%27{pk}%27")
             Room = self.get_object(MeetingRoom)
             meeting_room = [x for x in Room['value']]
-            print(meeting_room)
+            # print(meeting_room)
 
 
             BookingItems = config.O_DATA.format(f"/QYRoomBookingItems?$filter=LineNo%20eq%20%27{pk}%27")

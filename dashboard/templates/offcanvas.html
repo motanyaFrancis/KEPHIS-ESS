@@ -6,10 +6,14 @@
     <!-- partial:partials/_navbar.html -->
     <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
         <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-            <a class="navbar-brand brand-logo" href="{% url 'dashboard' %}"><i class='las la-industry'
-                    style="font-size:22px"></i> KEPHIS</a>
-            <a class="navbar-brand brand-logo-mini" href="{% url 'dashboard' %}"><i class='las la-industry'
-                    style="font-size:22px"></i></a>
+            <a class="navbar-brand brand-logo" href="{% url 'dashboard' %}">
+                <!-- <i class='las la-industry' style="font-size:22px"></i>  -->
+                <img src="../../static/img/logo/fav.png" style="height:60px; width:unset;" alt="">
+            </a>
+            <a class="navbar-brand brand-logo-mini" href="{% url 'dashboard' %}">
+                <!-- <i class='las la-industry' style="font-size:22px"></i> -->
+                <img src="../../static/img/logo/fav.png" style="height:60px; width:unset;" alt="">
+            </a>
         </div>
         <div class="navbar-menu-wrapper d-flex align-items-stretch">
             <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize"
@@ -91,7 +95,7 @@
         <!-- sidebar -->
         <nav class="sidebar sidebar-offcanvas" id="sidebar">
             <ul class="nav">
-                <li class="nav-item nav-category">ESS PORTAL</li>
+                <li class="nav-item nav-category">Self Service Portal</li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'dashboard' %}" max="1">
                         <span class="icon-bg"><i class="las la-grip-horizontal nav_icon"></i></span>
@@ -176,41 +180,53 @@
                     <div class="collapse" id="fl">
                         <ul class="nav flex-column sub-menu">
 
+                            {% if driver_role == True or TO_role == True or mechanical_inspector_role == True %}
                             <li class="nav-item">
-                                {% if driver_role == True or TO_role == True or mechanical_inspector_role == True %}
                                 <a class="nav-link" href="{% url 'workTicket' %}">
                                     <i class="las la-arrow-right mr-2"></i> Work Ticket
                                 </a>
-                                {% endif %}
-                                {% if driver_role == True or mechanical_inspector_role == True %}
+                            </li>
+                            {% endif %}
+                            {% if driver_role == True or TO_role == True %}
+                            <li class="nav-item">
                                 <a class="nav-link" href="{% url 'vehicleRepairRequest' %}">
                                     <i class="las la-arrow-right mr-2"></i> Vehicle Repair
                                 </a>
+                            </li>
+                            {% endif %}
+                            {% if TO_role == True %}
+                            <li class="nav-item">
                                 <a class="nav-link" href="{% url 'Accidents' %}">
                                     <i class="las la-arrow-right mr-2"></i> Accidents
                                 </a>
-                                {% endif %}
+                            </li>
+                            {% endif %}
+                            <li class="nav-item">
                                 <a class="nav-link" href="{% url 'TransportRequest' %}">
                                     <i class="las la-arrow-right mr-2"></i> Transport Request
                                 </a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="{% url 'ServiceRequest' %}"><i
                                         class="las la-arrow-right mr-2"></i>Service Request</a>
-                                {% if driver_role == True or TO_role == True or mechanical_inspector_role == True %}
+                            </li>
+                            {% if TO_role == True %}
+                            <li class="nav-item">
                                 <a class="nav-link" href="{% url 'vehicleInspection' %}">
                                     <i class="las la-arrow-right mr-2"></i> Vehicle Inspection
                                 </a>
-                                {% endif %}
                             </li>
+                            {% endif %}
 
                         </ul>
                     </div>
                 </li>
-                <!-- <li class="nav-item">
-        <a class="nav-link" href="{% url 'approve' %}">
-            <span class="icon-bg"><i class="las la-stamp"></i></span>
-            <span class="menu-title">Approvals </span>
-        </a>
-    </li> -->
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'approve' %}">
+                        <span class="icon-bg"><i class="las la-stamp"></i></span>
+                        <span class="menu-title">Approvals </span>
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'InternalRoomBooking' %}">
                         <span class="icon-bg"><i class="las la-home"></i></span>
@@ -237,7 +253,7 @@
                             <span class="menu-title">Log Out</span></a>
                     </div>
                 </li>
-                <li class="nav-item documentation-link" style="margin-top:-.8rem !important;">
+                <li class="nav-item documentation-link">
                     <a class="nav-link" href="#">
                         <span class="icon-bg">
                             <i class="las la-external-link-alt"></i>

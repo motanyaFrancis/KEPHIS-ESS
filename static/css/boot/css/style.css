@@ -542,14 +542,14 @@ fieldset:disabled a.btn {
 
 .btn-primary {
   color: #fff;
-  background-color: #144a85 !important;
-  border-color: #144a85 !important;
+  background-color: #02a552 !important;
+  border-color: #02a552 !important;
 }
 
 .btn-primary:hover {
   color: #fff;
-  background-color: #0053d9;
-  border-color: #004ecc;
+  background-color: #f79621;
+  border-color: #f79621;
 }
 
 .btn-primary:focus,
@@ -12509,7 +12509,7 @@ dl li {
   -webkit-transition: width 0.25s ease, background 0.25s ease;
   -moz-transition: width 0.25s ease, background 0.25s ease;
   -ms-transition: width 0.25s ease, background 0.25s ease;
-  background: #181824;
+  background: #02a552;
   width: 291px;
   height: 64px;
 }
@@ -12949,7 +12949,7 @@ dl li {
 /* Sidebar */
 .sidebar {
   min-height: calc(100vh - 64px);
-  background: #181824;
+  background: #02a552;
   font-family: "nunito-medium", sans-serif;
   padding: 0;
   width: 300px;
@@ -12972,7 +12972,7 @@ dl li {
 }
 
 .sidebar .nav .nav-item {
-  padding: 0 2.375rem;
+  padding: 0.5rem 2.375rem;
   -webkit-transition-duration: 0.25s;
   transition-duration: 0.25s;
   transition-property: background;
@@ -12992,7 +12992,7 @@ dl li {
   -ms-flex-align: center;
   align-items: center;
   white-space: nowrap;
-  margin-bottom: 1.6rem;
+  /* margin-bottom: 1.6rem; */
   padding: 0.625rem 0 0.625rem 0;
   color: var(--nav);
   -webkit-transition-duration: 0.45s;
@@ -13087,7 +13087,7 @@ dl li {
 }
 
 .sidebar .nav .nav-item .nav-link .menu-title {
-  color: inherit;
+  color: white;
   display: inline-block;
   font-size: 0.937rem;
   line-height: 1;
@@ -13105,17 +13105,18 @@ dl li {
 
 .sidebar .nav .nav-item.active {
   background: transparent;
+  font-weight: 900;
 }
 
 .sidebar .nav .nav-item.active>.nav-link:before {
   content: "";
   position: absolute;
   left: 0;
-  top: .5rem;
-  bottom: 0;
+  top: .9rem;
+  /* bottom: 0; */
   background: white;
-  height: 24px;
-  width: 4px;
+  height: 30px;
+  width: 10px;
 }
 
 .rtl .sidebar .nav .nav-item.active>.nav-link:before {
@@ -13133,7 +13134,7 @@ dl li {
 }
 
 .sidebar .nav .nav-item:hover {
-  background: #161621;
+  background: #f79621;
 }
 
 .sidebar .nav .nav-item.nav-profile .nav-link {
@@ -13192,12 +13193,17 @@ dl li {
 }
 
 .sidebar .nav .nav-item.nav-category {
-  color: #001737;
+  color: #ffffff;
   font-size: 0.8125rem;
   line-height: 16px;
   margin: 25px 0px 10px 0px;
-  color: #8e94a9;
+  /* color: #8e94a9; */
   font-family: "nunito-bold", sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  text-transform: uppercase;
+  padding-block-end: 25px;
+
 }
 
 .sidebar .nav .nav-item.nav-category .nav-link {
@@ -13213,7 +13219,7 @@ dl li {
 }
 
 .sidebar .nav .nav-item.documentation-link .nav-link {
-  background: #0062ff;
+  background: transparent;
   color: white !important;
   border-radius: 2px;
   padding: .875rem 0;
@@ -13295,12 +13301,16 @@ dl li {
 }
 
 .sidebar .nav.sub-menu .nav-item {
-  padding: 0;
+  padding: .1em 0;
+}
+
+.sidebar .nav.sub-menu .nav-item:hover {
+  background-color: #f6e384;
 }
 
 /* dropdown style */
 .sidebar .nav.sub-menu .nav-item .nav-link {
-  color: #888;
+  color: #fff;
   padding: 0.75rem 2rem 0.75rem 2rem;
   position: relative;
   font-size: 0.8125rem;
@@ -13312,7 +13322,7 @@ dl li {
 .sidebar .nav.sub-menu .nav-item .nav-link:before {
   content: "\F054";
   font-family: "Material Design Icons";
-  display: block;
+  display: none;
   position: absolute;
   left: 0px;
   top: 50%;
