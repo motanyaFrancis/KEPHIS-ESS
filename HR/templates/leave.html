@@ -436,6 +436,7 @@
                         <div class="mb-2">
                             <input type="hidden" name="applicationNo" value="">
                             <input type="hidden" name="myAction" value="insert">
+                            <input type="hidden" name="isReturnSameDay" value="False">
                             <div class="row mt-3">
                                 <div class="col-md-12">
                                     <label class="form-label"> Leave Type</label>
@@ -453,21 +454,10 @@
                                     <input type="date" class="form-control" name="plannerStartDate" id="LeaveStartDate">
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <label for="isReturnSameDay" class="form-label"> Return Same Day</label>
-                                    <select class="form-select" id="isReturnSameDay" name="isReturnSameDay" required>
-                                        <option value="0" disabled selected>--Select--</option>
-                                        <option value="True">Yes</option>
-                                        <option value="False">No</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row my-2" id="daysAppliedRow" style="display:none;">
+                            <div class="row my-2">
                                 <div class="col-md-12">
                                     <label for="daysApplied" class="form-label">Days Applied</label>
-                                    <input type="number" class="form-control" id="daysApplied" name="daysApplied"
-                                        disabled>
+                                    <input type="number" class="form-control" name="daysApplied" required>
                                 </div>
                             </div>
                             <div class="row">

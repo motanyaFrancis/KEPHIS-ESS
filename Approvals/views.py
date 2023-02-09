@@ -76,7 +76,6 @@ class Approve(UserObjectMixin,View):
             openOther = [x for x in response['value'] if (x['Status'] == 'Open' and x['Document_Type']=='Payment Voucher') or (x['Status']=='Open' and x['Document_Type']=='Petty Cash') or (x['Status']=='Open' and x['Document_Type']=='Petty Cash Surrender') or (x['Status']=='Open' and x['Document_Type']=='Staff Payroll Approval') or (x['Status']=='Open' and x['Document_Type']=='Invoice') or (x['Status']=='Open' and x['Document_Type']=='Order')]
             appOther = [x for x in response['value'] if (x['Status'] == 'Approved' and x['Document_Type']=='Payment Voucher') or (x['Status']=='Approved' and x['Document_Type']=='Petty Cash') or (x['Status']=='Approved' and x['Document_Type']=='Petty Cash Surrender') or (x['Status']=='Approved' and x['Document_Type']=='Staff Payroll Approval') or (x['Status']=='Approved' and x['Document_Type']=='Invoice') or (x['Status']=='Approved' and x['Document_Type']=='Order')]
             rejOther = [x for x in response['value'] if (x['Status'] == 'Rejected' and x['Document_Type']=='Payment Voucher') or (x['Status']=='Rejected' and x['Document_Type']=='Petty Cash') or (x['Status']=='Rejected' and x['Document_Type']=='Petty Cash Surrender') or (x['Status']=='Rejected' and x['Document_Type']=='Staff Payroll Approval') or (x['Status']=='Rejected' and x['Document_Type']=='Invoice') or (x['Status']=='Rejected' and x['Document_Type']=='Order')]
-<<<<<<< HEAD
  
             openFleet = [x for x in response['value'] 
                          if (x['Status'] == 'Open' and x['Document_Type']=='WorkTicketReplacement')
@@ -88,20 +87,6 @@ class Approve(UserObjectMixin,View):
                         if (x['Status'] == 'Rejected' and x['Document_Type']=='WorkTicketReplacement')
                         or (x['Status'] == 'Rejected' and x['Document_Type']=='VehicleInspection')]
  
-=======
-
-            #Vehicle Inspection
-            openInspection = [x for x in response['value'] if x['Status'] == 'Open' and x['Document_Type']=='VehicleInspection']
-            appInspection = [x for x in response['value'] if x['Status'] == 'Approved' and x['Document_Type']=='VehicleInspection']
-            rejInspection = [x for x in response['value'] if x['Status'] == 'Rejected' and x['Document_Type']=='VehicleInspection']
-            
-            #Work Ticket
-            openTickets = [x for x in response['value'] if x['Status'] == 'Open' and x['Document_Type']=='WorkTicketReplacement']
-            appTickets = [x for x in response['value'] if x['Status'] == 'Approved' and x['Document_Type']=='WorkTicketReplacement']
-            rejTickets = [x for x in response['value'] if x['Status'] == 'Rejected' and x['Document_Type']=='WorkTicketReplacement']
-
-            countIMP = len(openImp)
->>>>>>> 8c3946cb991e9f19b10f5cc3bc4e60eaeb2d9c42
             CountLeave = len(openLeave)
             countPurchase = len(openPurchase)
             countRepair = len(openRepair)

@@ -189,7 +189,6 @@
 
                             {% if driver_role == True or TO_role == True or mechanical_inspector_role == True %}
                             <li class="nav-item">
-<<<<<<< HEAD
                                 {% if driver_role == True or TO_role == True  %}
                                 <a class="nav-link" href="{% url 'workTicket' %}">
                                     <i class="las la-arrow-right mr-2"></i> Work Ticket
@@ -206,51 +205,13 @@
                                     <i class="las la-arrow-right mr-2"></i> Accidents
                                 </a>
                                 {% endif %}
-=======
-                                <a class="nav-link" href="{% url 'workTicket' %}">
-                                    <i class="las la-arrow-right mr-2"></i> Work Ticket
-                                </a>
-                            </li>
-                            {% endif %}
-                            {% if driver_role == True or TO_role == True %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'vehicleRepairRequest' %}">
-                                    <i class="las la-arrow-right mr-2"></i> Vehicle Repair
-                                </a>
-                            </li>
-                            {% endif %}
-                            {% if TO_role == True %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'Accidents' %}">
-                                    <i class="las la-arrow-right mr-2"></i> Accidents
-                                </a>
-                            </li>
-                            {% endif %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'TransportRequest' %}">
-                                    <i class="las la-arrow-right mr-2"></i> Transport Request
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'ServiceRequest' %}"><i
-                                        class="las la-arrow-right mr-2"></i>Service Request</a>
-                            </li>
-                            {% if TO_role == True %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'vehicleInspection' %}">
-                                    <i class="las la-arrow-right mr-2"></i> Vehicle Inspection
-                                </a>
->>>>>>> 8c3946cb991e9f19b10f5cc3bc4e60eaeb2d9c42
                             </li>
                             {% endif %}
 
                         </ul>
                     </div>
                 </li>
-<<<<<<< HEAD
                 {% endif %}
-=======
->>>>>>> 8c3946cb991e9f19b10f5cc3bc4e60eaeb2d9c42
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'approve' %}">
                         <span class="icon-bg"><i class="las la-stamp"></i></span>
