@@ -12,19 +12,16 @@
                 <span class="d-flex align-items-center purchase-popup">
                     <img src="../../../static/img/logo/fav.png" width="70px" class="img-fluid" alt="" srcset="">
                     <h2 class="text-dark font-weight-bold ml-3"> Work Ticket </h2>
-                    {% if driver_role == True or mechanical_inspector_role == True %}
                     <button class="btn btn-successs align-items-center p-3" data-bs-toggle="modal"
                         data-bs-target="#staticBackdrop"
                         style="margin-left: auto;margin-right:0;outline: none;border: none;"><i
                             class="las la-plus text-white" style="font-size:15px;"></i> Work Ticket Replacement</button>
-                    {% endif %}
                 </span>
             </div>
         </div>
 
         <!-- Alerts  -->
         {% include 'alerts.html' %}
-        {% if driver_role == True or mechanical_inspector_role == True %}
         <div class="row my-2">
             <div class="col-md-12">
                 <div class="card" id="d-card">
@@ -417,7 +414,6 @@
                                             <tr id="tops">
                                                 <th id="long">Ticket No.</th>
                                                 <th>Date Requested</th>
-                                                <th>Distance Covered</th>
                                                 <th>Requested By</th>
                                                 <th>Ticket Issued</th>
                                                 <th>Action</th>
@@ -428,7 +424,6 @@
                                             <tr>
                                                 <td>{{res.No}}</td>
                                                 <td>{{res.Date}}</td>
-                                                <td>{{res.KmGone}}</td>
                                                 <td>{{res.CreatedBy}}</td>
                                                 <td>
                                                     {% if res.TicketIssued == True %}
@@ -440,62 +435,7 @@
                                                     {% endif %}
                                                 </td>
                                                 <td>
-
-                                                    <a href="{% url 'WorkTicketDetails' res.No %}"
-                                                        class="btn btn-success btn-icon-text" type="button"
-                                                        data-toggle="tooltip" data-placement="top"
-                                                        title="Click to View">
-                                                        View
-                                                        <i class="far fa-eye"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endif %}
-        {% if TO_role == True and driver_role == False and mechanical_inspector_role == False %}
-        <div class="row my-2">
-            <div class="col-md-12">
-                <div class="card" id="d-card">
-                    <div class="m-4">
-                        <ul class="nav nav-tabs d-flex" id="myTab">
-                            <li class="nav-item flex-fill">
-                                <a href="#issue" class="nav-link active" data-bs-toggle="tab">Open for Issuing
-                                    ({{issued_open|length}})</a>
-                            </li>
-                        </ul>
-                        <div class="tab-content">
-                            <div class="tab-pane fade show active" id="issue">
-                                <div class="card-body">
-                                    <table id="example"
-                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                                        style="width:100%">
-
-                                        <thead>
-                                            <tr id="tops">
-                                                <th id="long">Ticket No.</th>
-                                                <th>Date Requested</th>
-                                                <th>Distance Covered</th>
-                                                <th>Requested By</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for res in issued_open %}
-                                            <tr>
-                                                <td>{{res.No}}</td>
-                                                <td>{{res.Date}}</td>
-                                                <td>{{res.KmGone}}</td>
-                                                <td>{{res.CreatedBy}}</td>
-                                                <td>
+                                                    {% if TO_role == True and res.TicketIssued == False %}
                                                     <form action="{% url 'FnIssueWorkTicket' res.No %}" method="post"
                                                         style="display: inline-block;">
                                                         {% csrf_token %}
@@ -504,6 +444,7 @@
                                                                 class="las la-check-double"></i>
                                                         </button>
                                                     </form>
+                                                    {% endif %}
                                                     <a href="{% url 'WorkTicketDetails' res.No %}"
                                                         class="btn btn-success btn-icon-text" type="button"
                                                         data-toggle="tooltip" data-placement="top"
@@ -523,7 +464,6 @@
                 </div>
             </div>
         </div>
-        {% endif %}
         <!-- Modal -->
         <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
             aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -566,7 +506,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="row">
+                            <!-- <div class="row">
                                 <div class="col-md-12">
                                     <label for="" class="form-label">Previous Ticket Number<span
                                             class="text-danger">*</span></label>
@@ -576,7 +516,7 @@
                                         </option>
                                     </select>
                                 </div>
-                            </div>
+                            </div> -->
 
                             <div class="row">
                                 <div class="col-md-12">

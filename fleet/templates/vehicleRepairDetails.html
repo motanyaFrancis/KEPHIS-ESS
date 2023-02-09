@@ -5,7 +5,7 @@
 <section class="dash2">
     <div class="content-wrapper">
         <div class="d-xl-flex justify-content-between align-items-start">
-            <h2 class="text-dark font-weight-bold mb-2"> Vehicle Repair Request
+            <h2 class="text-dark font-weight-bold mb-2"> Vehicle {{res.Document_Type}} Request
                 {% if res.Status == "Open" %}
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Attachment"> <i
                         class="las la-plus"></i> Upload Attachment</button>
@@ -123,7 +123,7 @@
             <div class="col-md-12">
                 <form class="row g-3">
                     <div class="col-md-6">
-                        <label class="form-label">Odometer Reading</label>
+                        <label class="form-label">Current Odometer Reading</label>
                         <input type="text" class="form-control" placeholder="{{res.Odometer_Reading}}" readonly>
                     </div>
                     <div class="col-md-6">
@@ -326,7 +326,7 @@
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">New Repair Request Line
+                    <h5 class="modal-title" id="staticBackdropLabel">New {{res.Document_Type}} Request Line
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                         aria-label="Close"></button>
@@ -339,6 +339,7 @@
                             <div class="col-md-12">
                                 <input type="number" name="lineNo" value="1000" hidden>
                                 <input type="text" name="requisitionNo" value="{{res.No_}}" hidden>
+                                <input type="hidden" name="myAction" value="insert">
                             </div>
                         </div>
                         <div class="row">
@@ -350,22 +351,11 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <label for="" class="form-label">Severity <span class="text-danger">*</span></label>
-                                <input type="text" name="severity" class="form-control">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <label for="" class="form-label">Specification<span class="text-danger">*</span></label>
+                                <label for="" class="form-label">Description of {{res.Document_Type}}<span
+                                        class="text-danger">*</span></label>
                                 <input type="text" name="specification" class="form-control">
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <input type="hidden" name="myAction" value="insert">
-                            </div>
-                        </div>
-
 
                         <button type="submit" class="btn btn-success my-3 w-100">Submit</button>
                     </form>

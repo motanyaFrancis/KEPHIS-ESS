@@ -32,7 +32,6 @@ class Approve(UserObjectMixin,View):
             userID = request.session['User_ID']
             driver_role = request.session['driver_role']
             TO_role = request.session['TO_role']
-            mechanical_inspector_role = request.session['mechanical_inspector_role']
             full_name = request.session['full_name']
           
 
@@ -42,22 +41,22 @@ class Approve(UserObjectMixin,View):
             openLeave = [x for x in response['value'] if (x['Status'] == 'Open' and x['Document_Type']=='LeaveApplication') or (x['Status']=='Open' and x['Document_Type']=='TrainingRequest')]
             approvedLeave = [x for x in response['value'] if (x['Status'] == 'Approved' and x['Document_Type']=='LeaveApplication') or (x['Status']=='Approved' and x['Document_Type']=='TrainingRequest')]
             rejectedLeave = [x for x in response['value'] if (x['Status'] == 'Rejected' and x['Document_Type']=='LeaveApplication') or (x['Status']=='Rejected' and x['Document_Type']=='TrainingRequest')]
-
-            # Imprests
-            openImp = [x for x in response['value'] if x['Status'] == 'Open' and x['Document_Type']=='Imprest']
-            approvedImp = [x for x in response['value'] if x['Status'] == 'Approved' and x['Document_Type']=='Imprest']
-            rejectedImp = [x for x in response['value'] if x['Status'] == 'Rejected' and x['Document_Type']=='Imprest']
-
-            # Surrender
-            openSurrender = [x for x in response['value'] if x['Status'] == 'Open' and x['Document_Type']=='Imprest Surrender']
-            approveSurrender = [x for x in response['value'] if x['Status'] == 'Approved' and x['Document_Type']=='Imprest Surrender']
-            rejectSurrender = [x for x in response['value'] if x['Status'] == 'Rejected' and x['Document_Type']=='Imprest Surrender']
-
-            # Staff Claim
-            openClaim = [x for x in response['value'] if x['Status'] == 'Open' and x['Document_Type']=='Staff Claim']
-            approveClaim = [x for x in response['value'] if x['Status'] == 'Approved' and x['Document_Type']=='Staff Claim']
-            rejectClaim = [x for x in response['value'] if x['Status'] == 'Rejected' and x['Document_Type']=='Staff Claim']
-
+            
+            # Finance
+            openFinance = [x for x in response['value'] 
+                       if (x['Status'] == 'Open' and x['Document_Type']=='Imprest') 
+                       or (x['Status']=='Open' and x['Document_Type']=='Imprest Surrender')
+                       or (x['Status']=='Open' and x['Document_Type']=='Staff Claim')]
+            approvedFinance = [x for x in response['value']
+                               if (x['Status'] == 'Approved' and x['Document_Type']=='Imprest')
+                               or (x['Status']=='Approved' and x['Document_Type']=='Imprest Surrender')
+                               or (x['Status']=='Approved' and x['Document_Type']=='Staff Claim')
+                               ]
+            rejectedFinance = [x for x in response['value']
+                               if (x['Status'] == 'Rejected' and x['Document_Type']=='Imprest')
+                               or (x['Status']=='Rejected' and x['Document_Type']=='Imprest Surrender')
+                               or (x['Status']=='Rejected' and x['Document_Type']=='Staff Claim')
+                               ]
             # Purchase Request
             openPurchase = [x for x in response['value'] if x['Status'] == 'Open' and x['Document_Type']=='Purchase Requisitions']
             approvePurchase = [x for x in response['value'] if x['Status'] == 'Approved' and x['Document_Type']=='Purchase Requisitions']
@@ -78,10 +77,17 @@ class Approve(UserObjectMixin,View):
             appOther = [x for x in response['value'] if (x['Status'] == 'Approved' and x['Document_Type']=='Payment Voucher') or (x['Status']=='Approved' and x['Document_Type']=='Petty Cash') or (x['Status']=='Approved' and x['Document_Type']=='Petty Cash Surrender') or (x['Status']=='Approved' and x['Document_Type']=='Staff Payroll Approval') or (x['Status']=='Approved' and x['Document_Type']=='Invoice') or (x['Status']=='Approved' and x['Document_Type']=='Order')]
             rejOther = [x for x in response['value'] if (x['Status'] == 'Rejected' and x['Document_Type']=='Payment Voucher') or (x['Status']=='Rejected' and x['Document_Type']=='Petty Cash') or (x['Status']=='Rejected' and x['Document_Type']=='Petty Cash Surrender') or (x['Status']=='Rejected' and x['Document_Type']=='Staff Payroll Approval') or (x['Status']=='Rejected' and x['Document_Type']=='Invoice') or (x['Status']=='Rejected' and x['Document_Type']=='Order')]
  
-            countIMP = len(openImp)
+            openFleet = [x for x in response['value'] 
+                         if (x['Status'] == 'Open' and x['Document_Type']=='WorkTicketReplacement')
+                         or (x['Status'] == 'Open' and x['Document_Type']=='VehicleInspection')]
+            appFleet = [x for x in response['value'] 
+                        if (x['Status'] == 'Approved' and x['Document_Type']=='WorkTicketReplacement')
+                        or (x['Status'] == 'Approved' and x['Document_Type']=='VehicleInspection')]
+            rejFleet = [x for x in response['value'] 
+                        if (x['Status'] == 'Rejected' and x['Document_Type']=='WorkTicketReplacement')
+                        or (x['Status'] == 'Rejected' and x['Document_Type']=='VehicleInspection')]
+ 
             CountLeave = len(openLeave)
-            countSurrender = len(openSurrender)
-            countClaim = len(openClaim)
             countPurchase = len(openPurchase)
             countRepair = len(openRepair)
             countStore = len(openStore)
@@ -97,19 +103,19 @@ class Approve(UserObjectMixin,View):
             return redirect('auth') 
 
         ctx = {
-            "today": self.todays_date, "imprest": openImp, "full": userID,
-            "countIMP": countIMP, "approvedIMP":approvedImp,"rejectedImp":rejectedImp,
+            "today": self.todays_date, "openFinance": openFinance, "full": userID,
+            'appFleet':appFleet,
             "openLeave":openLeave,"CountLeave":CountLeave,"approvedLeave":approvedLeave,
-            "rejectedLeave":rejectedLeave,"openSurrender":openSurrender,"countSurrender":countSurrender,"approveSurrender":approveSurrender,"rejectSurrender":rejectSurrender,
-            "countClaim":countClaim,"openClaim":openClaim,"approveClaim":approveClaim,"rejectClaim":rejectClaim,
-            "countPurchase":countPurchase,"openPurchase":openPurchase,"approvePurchase":approvePurchase,
+            "rejectedLeave":rejectedLeave,
+            "countPurchase":countPurchase,"openPurchase":openPurchase,
+            "approvePurchase":approvePurchase,
             "rejectPurchase":rejectPurchase, "countRepair":countRepair,"appRepair":appRepair,"rejRepair":rejRepair,
             "countStore":countStore,"openStore":openStore,"appStore":appStore,"rejStore":rejStore,
             "openOther":openOther,"appOther":appOther,"rejOther":rejOther,"countOther":countOther,
             "full": full_name,
             "driver_role":driver_role,
             "TO_role":TO_role,
-            "mechanical_inspector_role":mechanical_inspector_role
+            "openFleet":openFleet
             }
               
         return render(request, 'Approve.html', ctx)

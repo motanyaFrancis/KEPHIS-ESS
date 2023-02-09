@@ -267,7 +267,7 @@ def LeaveCancelApproval(request, pk):
     return redirect('LeaveDetail', pk=pk)
 
 
-class Training_Request(UserObjectMixin, View):
+class Training_Request(UserObjectMixins, View):
     def get(self, request):
         try:
             empNo = request.session['Employee_No_']
@@ -318,29 +318,32 @@ class Training_Request(UserObjectMixin, View):
     def post(self, request):
         if request.method == 'POST':
             try:
+                soap_headers = request.session['soap_headers']
+                requestNo = request.POST.get('requestNo')
                 employeeNo = request.session['Employee_No_']
                 usersId = request.session['User_ID']
-                requestNo = request.POST.get('requestNo')
                 isAdhoc = eval(request.POST.get('isAdhoc'))
-                trainingNeed = request.POST.get('trainingNeed')
                 sponsorType = request.POST.get('sponsorType')
+                trainingNeed = request.POST.get('trainingNeed')
                 myAction = request.POST.get('myAction')
-            except ValueError:
-                messages.error(request, "Not sent. Invalid Input, Try Again!!")
-                return redirect('training_request')
-            if not requestNo:
-                requestNo = ""
 
-            if not trainingNeed:
-                trainingNeed = ''
-            try:
-                response = config.CLIENT.service.FnTrainingRequest(
+                if not trainingNeed:
+                    trainingNeed = ''
+
+                response = self.make_soap_request(soap_headers,"FnTrainingRequest",
                     requestNo, employeeNo, usersId, isAdhoc, sponsorType , trainingNeed, myAction)
-                messages.success(request, "Successfully Added!!")
-                print(response)
+                if response == True:
+                    messages.success(request, "success")
+                    return redirect('training_request')
+                elif response == False:
+                    messages.error(request, "failed")
+                    return redirect('training_request')
+                else:
+                    messages.error(request, f'{response}')
+                    return redirect('training_request')
             except Exception as e:
                 messages.error(request, f'{e}')
-                print(e)
+                logging.exception(e)
                 return redirect('training_request')
         return redirect('training_request')
 

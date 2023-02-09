@@ -167,6 +167,13 @@
                     </div>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="{% url 'TransportRequest' %}">
+                        <span class="icon-bg"><i class="las la-car"></i></span>
+                        <span class="menu-title">Transport Request </span>
+                    </a>
+                </li>
+                {% if driver_role == True or TO_role == True %}
+                <li class="nav-item">
                     <a class="nav-link" data-toggle="collapse" href="#fl" aria-expanded="false"
                         aria-controls="ui-basic">
                         <span class="icon-bg"><i class="las la-coins"></i></span>
@@ -177,27 +184,20 @@
                         <ul class="nav flex-column sub-menu">
 
                             <li class="nav-item">
-                                {% if driver_role == True or TO_role == True or mechanical_inspector_role == True %}
+                                {% if driver_role == True or TO_role == True  %}
                                 <a class="nav-link" href="{% url 'workTicket' %}">
                                     <i class="las la-arrow-right mr-2"></i> Work Ticket
                                 </a>
-                                {% endif %}
-                                {% if driver_role == True or mechanical_inspector_role == True %}
                                 <a class="nav-link" href="{% url 'vehicleRepairRequest' %}">
                                     <i class="las la-arrow-right mr-2"></i> Vehicle Repair
                                 </a>
-                                <a class="nav-link" href="{% url 'Accidents' %}">
-                                    <i class="las la-arrow-right mr-2"></i> Accidents
-                                </a>
                                 {% endif %}
-                                <a class="nav-link" href="{% url 'TransportRequest' %}">
-                                    <i class="las la-arrow-right mr-2"></i> Transport Request
-                                </a>
-                                <a class="nav-link" href="{% url 'ServiceRequest' %}"><i
-                                        class="las la-arrow-right mr-2"></i>Service Request</a>
-                                {% if driver_role == True or TO_role == True or mechanical_inspector_role == True %}
+                                {% if driver_role == False and TO_role == True %}
                                 <a class="nav-link" href="{% url 'vehicleInspection' %}">
                                     <i class="las la-arrow-right mr-2"></i> Vehicle Inspection
+                                </a>
+                                <a class="nav-link" href="{% url 'Accidents' %}">
+                                    <i class="las la-arrow-right mr-2"></i> Accidents
                                 </a>
                                 {% endif %}
                             </li>
@@ -205,12 +205,13 @@
                         </ul>
                     </div>
                 </li>
-                <!-- <li class="nav-item">
-        <a class="nav-link" href="{% url 'approve' %}">
-            <span class="icon-bg"><i class="las la-stamp"></i></span>
-            <span class="menu-title">Approvals </span>
-        </a>
-    </li> -->
+                {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'approve' %}">
+                        <span class="icon-bg"><i class="las la-stamp"></i></span>
+                        <span class="menu-title">Approvals </span>
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'InternalRoomBooking' %}">
                         <span class="icon-bg"><i class="las la-home"></i></span>

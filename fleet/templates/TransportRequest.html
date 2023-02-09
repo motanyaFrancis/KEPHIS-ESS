@@ -3,7 +3,7 @@
 {% load static %}
 {% block main %}
 <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
-        crossorigin="anonymous"></script>
+    crossorigin="anonymous"></script>
 <section class="dash2">
     <!-- top banner -->
     <div class="content-wrapper general-bg">
@@ -13,9 +13,9 @@
                     <img src="../../../static/img/logo/fav.png" width="70px" class="img-fluid" alt="" srcset="">
                     <h2 class="text-dark font-weight-bold ml-3"> Transport Request </h2>
                     <button class="btn btn-successs align-items-center p-3" data-bs-toggle="modal"
-                            data-bs-target="#staticBackdrop"
-                            style="margin-left: auto;margin-right:0;outline: none;border: none;"><i
-                           class="las la-plus text-white" style="font-size:15px;"></i> New Transport Request</button>
+                        data-bs-target="#staticBackdrop"
+                        style="margin-left: auto;margin-right:0;outline: none;border: none;"><i
+                            class="las la-plus text-white" style="font-size:15px;"></i> New Transport Request</button>
                 </span>
             </div>
         </div>
@@ -47,8 +47,8 @@
                                 <h4 class="mt-2 text-dark">Open Transport Request</h4>
                                 <div class="card-body">
                                     <table id="example"
-                                           class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                                           style="width:100%">
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
 
                                         <thead>
                                             <tr id="tops">
@@ -69,63 +69,84 @@
                                                 <td>{{res.TripPlannedEndDate}}</td>
                                                 <td>
                                                     <button class="btn btn-primary" data-bs-toggle="modal"
-                                                            data-bs-target="#" data-toggle="tooltip" data-placement="top"
-                                                            title="edit">Edit <i class="fas fa-edit"></i>
+                                                        data-bs-target="#" data-toggle="tooltip" data-placement="top"
+                                                        title="edit">Edit <i class="fas fa-edit"></i>
                                                     </button>
-                                                    <div class="modal fade" id=""
-                                                         data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-                                                         aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                    <div class="modal fade" id="" data-bs-backdrop="static"
+                                                        data-bs-keyboard="false" tabindex="-1"
+                                                        aria-labelledby="staticBackdropLabel" aria-hidden="true">
                                                         <div
-                                                             class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                                            class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title" id="staticBackdropLabel">
-                                                                        <i class="las la-edit"></i> Edit Transport Request
+                                                                        <i class="las la-edit"></i> Edit Transport
+                                                                        Request
                                                                         <span class="editSpan">{{res.RequestNo}}</span>
                                                                     </h5>
-                                                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                    <button type="button"
+                                                                        class="btn-close btn-close-white"
+                                                                        data-bs-dismiss="modal"
+                                                                        aria-label="Close"></button>
                                                                 </div>
                                                                 <div class="modal-body">
-                                                                    <form class="myForm needs-validation" action="" method="post" novalidate>
+                                                                    <form class="myForm needs-validation" action=""
+                                                                        method="post" novalidate>
                                                                         {% csrf_token %}
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <input type="hidden" name="requisitionNo" value="{{res.RequestNo}}">
+                                                                                <input type="hidden"
+                                                                                    name="requisitionNo"
+                                                                                    value="{{res.RequestNo}}">
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <label class="form-label">Vehicle <span class="text-danger">*</span></label>
-                                                                                <select class="form-select" name="vehicle" required>
-                                                                                    <option selected disabled value="">Select Option</option>
+                                                                                <label class="form-label">Vehicle <span
+                                                                                        class="text-danger">*</span></label>
+                                                                                <select class="form-select"
+                                                                                    name="vehicle" required>
+                                                                                    <option selected disabled value="">
+                                                                                        Select Option</option>
                                                                                     {% for list in Vehicle_No %}
-                                                                                    <option value="{{list.Registration_No}}">{{list.Registration_No}}</option>
-                                                                                    {% endfor %}                                    
+                                                                                    <option
+                                                                                        value="{{list.Registration_No}}">
+                                                                                        {{list.Registration_No}}
+                                                                                    </option>
+                                                                                    {% endfor %}
                                                                                 </select>
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <label for="" class="form-label">Odometer Reading<span class="text-danger">*</span></label>
-                                                                                <input type="text" name="odometerReading" class="form-control" required>
+                                                                                <label for=""
+                                                                                    class="form-label">Odometer
+                                                                                    Reading<span
+                                                                                        class="text-danger">*</span></label>
+                                                                                <input type="text"
+                                                                                    name="odometerReading"
+                                                                                    class="form-control" required>
                                                                             </div>
                                                                         </div>
-                                                                        
+
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <input type="hidden" name="myAction" value="insert">
+                                                                                <input type="hidden" name="myAction"
+                                                                                    value="insert">
                                                                             </div>
                                                                         </div>
-                                                                        
-                                                                        <button type="submit" id="sasa" class="btn btn-success my-3 w-100">Submit</button>
+
+                                                                        <button type="submit" id="sasa"
+                                                                            class="btn btn-success my-3 w-100">Submit</button>
                                                                     </form>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <a href="{% url 'TransportRequestDetails' res.RequestNo %}"
-                                                       class="btn btn-success btn-icon-text" type="button"
-                                                       data-toggle="tooltip" data-placement="top" title="Click to View">
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top"
+                                                        title="Click to View">
                                                         View
                                                         <i class="far fa-eye"></i>
                                                     </a>
@@ -139,104 +160,142 @@
                                                 <td>{{res.TripPlannedEndDate}}</td>
                                                 <td>
                                                     <button class="btn btn-primary" data-bs-toggle="modal"
-                                                            data-bs-target="#repair" data-toggle="tooltip" data-placement="top"
-                                                            title="edit">Edit <i class="fas fa-edit"></i>
+                                                        data-bs-target="#repair" data-toggle="tooltip"
+                                                        data-placement="top" title="edit">Edit <i
+                                                            class="fas fa-edit"></i>
                                                     </button>
-                                                    <div class="modal fade" id="repair"
-                                                         data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-                                                         aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                                                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                                    <div class="modal fade" id="repair" data-bs-backdrop="static"
+                                                        data-bs-keyboard="false" tabindex="-1"
+                                                        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                        <div
+                                                            class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title" id="staticBackdropLabel">
-                                                                        <i class="las la-edit"></i> Edit Transport Request
+                                                                        <i class="las la-edit"></i> Edit Transport
+                                                                        Request
                                                                         <span class="editSpan">{{res.RequestNo}}</span>
                                                                     </h5>
-                                                                    <button type="button" class="btn-close btn-close-white"
-                                                                            data-bs-dismiss="modal"
-                                                                            aria-label="Close"></button>
+                                                                    <button type="button"
+                                                                        class="btn-close btn-close-white"
+                                                                        data-bs-dismiss="modal"
+                                                                        aria-label="Close"></button>
                                                                 </div>
                                                                 <div class="modal-body">
-                                                                    <form class="myForm needs-validation" action="" method="post" novalidate>
+                                                                    <form class="myForm needs-validation" action=""
+                                                                        method="post" novalidate>
                                                                         {% csrf_token %}
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <input type="hidden" name="tReqNo" value="{{res.RequestNo}}">
+                                                                                <input type="hidden" name="tReqNo"
+                                                                                    value="{{res.RequestNo}}">
                                                                             </div>
                                                                         </div>
-                                                                        
+
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <label for="" class="form-label">Reason for Travel<span class="text-danger">*</span></label>
-                                                                                <input type="text" name="reasonForTravel" class="form-control" required>
+                                                                                <label for="" class="form-label">Reason
+                                                                                    for Travel<span
+                                                                                        class="text-danger">*</span></label>
+                                                                                <input type="text"
+                                                                                    name="reasonForTravel"
+                                                                                    class="form-control" required>
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <label class="form-label">Type of Transport <span class="text-danger">*</span></label>
-                                                                                <select class="form-select" name="typeOfTransport" required>
-                                                                                    <option selected disabled value="">Select Option</option>
+                                                                                <label class="form-label">Type of
+                                                                                    Transport <span
+                                                                                        class="text-danger">*</span></label>
+                                                                                <select class="form-select"
+                                                                                    name="typeOfTransport" required>
+                                                                                    <option selected disabled value="">
+                                                                                        Select Option</option>
                                                                                     <option value="1">Road</option>
-                                                                                    <option value="2">Public Transport</option>
+                                                                                    <option value="2">Public Transport
+                                                                                    </option>
                                                                                     <option value="3">Air</option>
                                                                                     <option value="4">Train</option>
                                                                                     <option value="4">Sea</option>
                                                                                     <option value="4">Taxi</option>
-                                                                                                                       
+
                                                                                 </select>
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <label for="" class="form-label">Destination<span class="text-danger">*</span></label>
-                                                                                <input type="text" name="destination" class="form-control" required>
+                                                                                <label for=""
+                                                                                    class="form-label">Destination<span
+                                                                                        class="text-danger">*</span></label>
+                                                                                <input type="text" name="destination"
+                                                                                    class="form-control" required>
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <label for="" class="form-label">Approximate Distance (KM)<span class="text-danger">*</span></label>
-                                                                                <input type="text" name="approximateDistanceKM" class="form-control" required>
+                                                                                <label for=""
+                                                                                    class="form-label">Approximate
+                                                                                    Distance (KM)<span
+                                                                                        class="text-danger">*</span></label>
+                                                                                <input type="text"
+                                                                                    name="approximateDistanceKM"
+                                                                                    class="form-control" required>
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-md-6">
-                                                                                <label for="" class="form-label">Trip Start Date<span class="text-danger">*</span></label>
-                                                                                <input type="date" name="tripeStartDate" class="form-control" required>
+                                                                                <label for="" class="form-label">Trip
+                                                                                    Start Date<span
+                                                                                        class="text-danger">*</span></label>
+                                                                                <input type="date" name="tripeStartDate"
+                                                                                    class="form-control" required>
                                                                             </div>
-                                                                        
-                                                                        
+
+
                                                                             <div class="col-md-6">
-                                                                                <label for="" class="form-label">Start Time<span class="text-danger">*</span></label>
-                                                                                <input type="time" name="startTime" class="form-control" required>
+                                                                                <label for="" class="form-label">Start
+                                                                                    Time<span
+                                                                                        class="text-danger">*</span></label>
+                                                                                <input type="time" name="startTime"
+                                                                                    class="form-control" required>
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-md-6">
-                                                                                <label for="" class="form-label">Trip End Date<span class="text-danger">*</span></label>
-                                                                                <input type="date" name="tripeEndDate" class="form-control" required>
+                                                                                <label for="" class="form-label">Trip
+                                                                                    End Date<span
+                                                                                        class="text-danger">*</span></label>
+                                                                                <input type="date" name="tripeEndDate"
+                                                                                    class="form-control" required>
                                                                             </div>
-                                                                       
+
                                                                             <div class="col-md-6">
-                                                                                <label for="" class="form-label">Return Time<span class="text-danger">*</span></label>
-                                                                                <input type="time" name="returnTime" class="form-control" required>
+                                                                                <label for="" class="form-label">Return
+                                                                                    Time<span
+                                                                                        class="text-danger">*</span></label>
+                                                                                <input type="time" name="returnTime"
+                                                                                    class="form-control" required>
                                                                             </div>
                                                                         </div>
-                                                                        
+
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <input type="hidden" name="myAction" value="modify">
+                                                                                <input type="hidden" name="myAction"
+                                                                                    value="modify">
                                                                             </div>
                                                                         </div>
-                                                                        
-                                                                        <button type="submit" id="sasa" class="btn btn-success my-3 w-100">Submit</button>
+
+                                                                        <button type="submit" id="sasa"
+                                                                            class="btn btn-success my-3 w-100">Submit</button>
                                                                     </form>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <a href="{% url 'TransportRequestDetails' res.RequestNo %}"
-                                                       class="btn btn-success btn-icon-text" type="button"
-                                                       data-toggle="tooltip" data-placement="top" title="Click to View">
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top"
+                                                        title="Click to View">
                                                         View
                                                         <i class="far fa-eye"></i>
                                                     </a>
@@ -254,8 +313,8 @@
                                 <h4 class="mt-2 text-dark">Pending Repair Request</h4>
                                 <div class="card-body">
                                     <table id="example"
-                                           class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                                           style="width:100%">
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
 
                                         <thead>
                                             <tr id="tops">
@@ -268,23 +327,24 @@
                                         </thead>
                                         <tbody>
                                             {% for res in pending %}
-                                            
+
                                             <tr>
                                                 <td>{{res.RequestNo}}</td>
                                                 <td>{{res.RequestDate}}</td>
                                                 <td>{{res.TripPlannedStartDate}}</td>
                                                 <td>{{res.TripPlannedEndDate}}</td>
                                                 <td>
-                                                    
+
                                                     <a href="{% url 'TransportRequestDetails' res.RequestNo %}"
-                                                       class="btn btn-success btn-icon-text" type="button"
-                                                       data-toggle="tooltip" data-placement="top" title="Click to View">
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top"
+                                                        title="Click to View">
                                                         View
                                                         <i class="far fa-eye"></i>
                                                     </a>
                                                 </td>
                                             </tr>
-                                            
+
                                             {% endfor %}
                                         </tbody>
                                     </table>
@@ -296,8 +356,8 @@
                                 <h4 class="mt-2 text-dark">Approved Transport Request</h4>
                                 <div class="card-body">
                                     <table id="example"
-                                           class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                                           style="width:100%">
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
 
                                         <thead>
                                             <tr id="tops">
@@ -310,7 +370,7 @@
                                         </thead>
                                         <tbody>
                                             {% for res in response %}
-                                            
+
                                             <tr>
                                                 <td>{{res.RequestNo}}</td>
                                                 <td>{{res.RequestDate}}</td>
@@ -318,14 +378,15 @@
                                                 <td>{{res.TripPlannedEndDate}}</td>
                                                 <td>
                                                     <a href="{% url 'TransportRequestDetails' res.RequestNo %}"
-                                                       class="btn btn-success btn-icon-text" type="button"
-                                                       data-toggle="tooltip" data-placement="top" title="Click to View">
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top"
+                                                        title="Click to View">
                                                         View
                                                         <i class="far fa-eye"></i>
                                                     </a>
                                                 </td>
                                             </tr>
-                                            
+
                                             {% endfor %}
                                         </tbody>
                                     </table>
@@ -341,13 +402,13 @@
 
         <!-- Modal -->
         <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-             aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content">
-                    <div class="modal-header">New Transpot request 
+                    <div class="modal-header">New Transport request
                         </h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
+                            aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <form class="myForm needs-validation" action="" method="post" novalidate>
@@ -357,76 +418,66 @@
                                     <input type="hidden" name="tReqNo" value="">
                                 </div>
                             </div>
-                            
+
                             <div class="row">
                                 <div class="col-md-12">
-                                    <label for="" class="form-label">Reason for Travel<span class="text-danger">*</span></label>
+                                    <label for="" class="form-label">Reason for Travel<span
+                                            class="text-danger">*</span></label>
                                     <input type="text" name="reasonForTravel" class="form-control" required>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
-                                    <label class="form-label">Type of Transport <span class="text-danger">*</span></label>
+                                    <label class="form-label">Type of Transport <span
+                                            class="text-danger">*</span></label>
                                     <select class="form-select" name="typeOfTransport" required>
-                                        <option selected disabled value="">Select Option</option>
+                                        <option selected disabled value="0">Select Option</option>
                                         <option value="1">Road</option>
                                         <option value="2">Public Transport</option>
                                         <option value="3">Air</option>
                                         <option value="4">Train</option>
-                                        <option value="4">Sea</option>
-                                        <option value="4">Taxi</option>
-                                                                           
+                                        <option value="5">Sea</option>
+                                        <option value="6">Taxi</option>
+                                        <option value="7">Self Drive</option>
+                                        <option value="8">Employee Own Vehicle</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
-                                    <label for="" class="form-label">Destination<span class="text-danger">*</span></label>
-                                    <select class="form-select" name="destination" required>
-                                        <option selected disabled value="">Select Destination</option>
-                                        {% for res in Local %}
-                                        <option value="{{res.Destination_Code}}">
-                                            {{res.Destination_Code}}</option>
-                                        {% endfor %}
-                                    </select>
+                                    <label for="" class="form-label">Destination<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" name="destination" required>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <label for="" class="form-label">Approximate Distance (KM)<span class="text-danger">*</span></label>
-                                    <input type="text" name="approximateDistanceKM" class="form-control" required>
-                                </div>
-                            </div>
+
                             <div class="row">
                                 <div class="col-md-6">
-                                    <label for="" class="form-label">Trip Start Date<span class="text-danger">*</span></label>
+                                    <label for="" class="form-label">Trip Start Date<span
+                                            class="text-danger">*</span></label>
                                     <input type="date" name="tripeStartDate" class="form-control" required>
                                 </div>
-                            
-                            
+
+
                                 <div class="col-md-6">
-                                    <label for="" class="form-label">Start Time<span class="text-danger">*</span></label>
+                                    <label for="" class="form-label">Start Time<span
+                                            class="text-danger">*</span></label>
                                     <input type="time" name="startTime" class="form-control" required>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-6">
-                                    <label for="" class="form-label">Trip End Date<span class="text-danger">*</span></label>
+                                <div class="col-md-12">
+                                    <label for="" class="form-label">Trip End Date<span
+                                            class="text-danger">*</span></label>
                                     <input type="date" name="tripeEndDate" class="form-control" required>
                                 </div>
-                           
-                                <div class="col-md-6">
-                                    <label for="" class="form-label">Return Time<span class="text-danger">*</span></label>
-                                    <input type="time" name="returnTime" class="form-control" required>
-                                </div>
                             </div>
-                            
                             <div class="row">
                                 <div class="col-md-12">
                                     <input type="hidden" name="myAction" value="insert">
                                 </div>
                             </div>
-                            
+
                             <button type="submit" id="sasa" class="btn btn-success my-3 w-100">Submit</button>
                         </form>
                     </div>
@@ -436,6 +487,6 @@
 
     </div>
 
-</secton>
+    </secton>
 
-{% endblock %}
+    {% endblock %}

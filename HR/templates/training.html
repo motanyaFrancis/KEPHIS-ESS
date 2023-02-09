@@ -41,19 +41,18 @@
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane fade show active" id="home">
-                                <h4 class="mt-2 text-dark">Open Training Request</h4>
                                 <div class="card-body">
                                     <table id="example"
                                         class="display table table-striped table-bordered dt-responsive table-responsive-lg"
                                         style="width:100%">
                                         <thead>
                                             <tr id="tops">
-                                                <th id="long">Request No</th>
+                                                <th id="long">Request No.</th>
                                                 <th>Request Date</th>
                                                 <th>Adhoc</th>
                                                 <th>Start Date</th>
                                                 <th>End Date</th>
-                                                <th>No Of Days</th>
+                                                <th>No. Of Days</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -62,23 +61,61 @@
                                             {% if res.Rejected_By_Approver == True and res.Status == 'Open' %}
                                             <tr style="background: #fee36e !important;">
                                                 <td>{{res.Request_No_}}</td>
-                                                <td id="rap">{{res.Request_Date}}</td>
-                                                <td>{{res.Adhoc}}</td>
+                                                <td id="rejected_request_date{{res.Request_No_}}">{{res.Request_Date}}
+                                                </td>
                                                 <td>
-                                                    {% if res.Adhoc == False %}
+                                                    {% if res.Adhoc == True %}
+                                                    <img src="../../static/icons/check-mark.png" height="10" width="10"
+                                                        class="img-fluid" alt="icon">
+                                                    {% elif res.Adhoc == False %}
+                                                    <img src="../../static/icons/cancel.png" height="10" width="10"
+                                                        class="img-fluid" alt="icon">
+                                                    {% endif %}
+                                                </td>
+                                                {% if res.Adhoc == False %}
+                                                <td id="rejected_planned_start_date{{res.Request_No_}}">
                                                     {{res.Planned_Start_Date}}
-                                                    {% endif %}
                                                 </td>
+                                                {% else %}
                                                 <td>
-                                                    {% if res.Adhoc == False %}
-                                                    {{res.Planned_End_Date}}
-                                                    {% endif %}
+                                                    <img src="../../static/icons/e1.png" class="img-fluid" alt="">
                                                 </td>
+                                                {% endif %}
+                                                {% if res.Adhoc == False %}
+                                                <td id="rejected_planned_end_date{{res.Request_No_}}">
+                                                    {{res.Planned_End_Date}}
+                                                </td>
+                                                {% else %}
+                                                <td>
+                                                    <img src="../../static/icons/e1.png" class="img-fluid" alt="">
+                                                </td>
+                                                {% endif %}
                                                 <td>
                                                     {% if res.Adhoc == False %}
                                                     {{res.No__Of_Days}}
+                                                    {% else %}
+                                                    <img src="../../static/icons/e1.png" class="img-fluid" alt="">
                                                     {% endif %}
                                                 </td>
+                                                <script>
+                                                    $(document).ready(function () {
+                                                        $("#rejected_request_date{{res.Request_No_}}")
+                                                            .empty().append(moment(
+                                                                    '{{res.Request_Date}}', "YYYY-MM-DD")
+                                                                .format(
+                                                                    'Do MMM YYYY'));
+                                                        $("#rejected_planned_start_date{{res.Request_No_}}")
+                                                            .empty().append(moment(
+                                                                    '{{res.Planned_Start_Date}}', "YYYY-MM-DD")
+                                                                .format(
+                                                                    'Do MMM YYYY'));
+                                                        $("#rejected_planned_end_date{{res.Request_No_}}")
+                                                            .empty().append(moment(
+                                                                    '{{res.Planned_End_Date}}', "YYYY-MM-DD")
+                                                                .format(
+                                                                    'Do MMM YYYY'));
+                                                    })
+                                                </script>
                                                 <td>
 
                                                     <button class="btn btn-primary" data-toggle="tooltip"
@@ -118,11 +155,19 @@
                                                                         <div class="mb-2">
                                                                             <div class="row mt-3">
                                                                                 <div class="col-md-12">
-                                                                                    <label class="form-label">Adhoc</label>
-                                                                                    <select class="form-select EditAdhoc" name="isAdhoc" required>
-                                                                                        <option selected disabled value=""> Select </option>
-                                                                                        <option value="True">Yes </option>
-                                                                                        <option value="False">No</option>
+                                                                                    <label
+                                                                                        class="form-label">Adhoc</label>
+                                                                                    <select
+                                                                                        class="form-select EditAdhoc"
+                                                                                        name="isAdhoc" required>
+                                                                                        <option selected disabled
+                                                                                            value="">
+                                                                                            Select
+                                                                                        </option>
+                                                                                        <option value="True">Yes
+                                                                                        </option>
+                                                                                        <option value="False">No
+                                                                                        </option>
                                                                                     </select>
                                                                                     <div class="invalid-feedback">
                                                                                         Please select a valid option.
@@ -146,19 +191,6 @@
                                                                                             {{res.Description}}</option>
                                                                                         {% endfor %}
                                                                                     </select>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="row mt-3">
-                                                                                <div class="col-md-12">
-                                                                                    <label for="sponsorType" class="form-label">Sponsor Type</label>
-                                                                                    <select class="form-select" id="sponsorType" name="sponsorType" required>
-                                                                                        <option selected disabled value="">--Select--</option>
-                                                                                        <option value="1">Self Sponsored</option>
-                                                                                        <option value="2">Organiation Sponsored</option>
-                                                                                    </select>
-                                                                                    <div class="invalid-feedback">
-                                                                                        Please select a valid option.
-                                                                                    </div>
                                                                                 </div>
                                                                             </div>
 
@@ -188,23 +220,60 @@
                                             {% else %}
                                             <tr>
                                                 <td>{{res.Request_No_}}</td>
-                                                <td id="rap">{{res.Request_Date}}</td>
-                                                <td>{{res.Adhoc}}</td>
+                                                <td id="open_request_date{{res.Request_No_}}">{{res.Request_Date}}</td>
                                                 <td>
-                                                    {% if res.Adhoc == False %}
+                                                    {% if res.Adhoc == True %}
+                                                    <img src="../../static/icons/check-mark.png" height="10" width="10"
+                                                        class="img-fluid" alt="icon">
+                                                    {% else %}
+                                                    <img src="../../static/icons/cancel.png" height="10" width="10"
+                                                        class="img-fluid" alt="icon">
+                                                    {% endif %}
+                                                </td>
+                                                {% if res.Adhoc == False %}
+                                                <td id="open_planned_start_date{{res.Request_No_}}">
                                                     {{res.Planned_Start_Date}}
-                                                    {% endif %}
                                                 </td>
+                                                {% else %}
                                                 <td>
-                                                    {% if res.Adhoc == False %}
-                                                    {{res.Planned_End_Date}}
-                                                    {% endif %}
+                                                    <img src="../../static/icons/e1.png" class="img-fluid" alt="">
                                                 </td>
+                                                {% endif %}
+                                                {% if res.Adhoc == False %}
+                                                <td id="open_planned_end_date{{res.Request_No_}}">
+                                                    {{res.Planned_End_Date}}
+                                                </td>
+                                                {% else %}
+                                                <td>
+                                                    <img src="../../static/icons/e1.png" class="img-fluid" alt="">
+                                                </td>
+                                                {% endif %}
                                                 <td>
                                                     {% if res.Adhoc == False %}
                                                     {{res.No__Of_Days}}
+                                                    {% else %}
+                                                    <img src="../../static/icons/e1.png" class="img-fluid" alt="">
                                                     {% endif %}
                                                 </td>
+                                                <script>
+                                                    $(document).ready(function () {
+                                                        $("#open_request_date{{res.Request_No_}}")
+                                                            .empty().append(moment(
+                                                                    '{{res.Request_Date}}', "YYYY-MM-DD")
+                                                                .format(
+                                                                    'Do MMM YYYY'));
+                                                        $("#open_planned_start_date{{res.Request_No_}}")
+                                                            .empty().append(moment(
+                                                                    '{{res.Planned_Start_Date}}', "YYYY-MM-DD")
+                                                                .format(
+                                                                    'Do MMM YYYY'));
+                                                        $("#open_planned_end_date{{res.Request_No_}}")
+                                                            .empty().append(moment(
+                                                                    '{{res.Planned_End_Date}}', "YYYY-MM-DD")
+                                                                .format(
+                                                                    'Do MMM YYYY'));
+                                                    })
+                                                </script>
                                                 <td>
 
                                                     <button class="btn btn-primary" data-toggle="tooltip"
@@ -281,19 +350,7 @@
                                                                                     </select>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="row mt-3">
-                                                                                <div class="col-md-12">
-                                                                                    <label for="sponsorType" class="form-label">Sponsor Type</label>
-                                                                                    <select class="form-select" id="sponsorType" name="sponsorType" required>
-                                                                                        <option selected disabled value="">--Select--</option>
-                                                                                        <option value="1">Self Sponsored</option>
-                                                                                        <option value="2">Organiation Sponsored</option>
-                                                                                    </select>
-                                                                                    <div class="invalid-feedback">
-                                                                                        Please select a valid option.
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
+
                                                                             <div class="row">
                                                                                 <div class="col-md-12">
                                                                                     <input type="hidden" name="myAction"
@@ -324,19 +381,18 @@
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="profile">
-                                <h4 class="mt-2">Approved Training Request</h4>
                                 <div class="card-body">
                                     <table id="example"
                                         class="display table table-striped table-bordered dt-responsive table-responsive-lg"
                                         style="width:100%">
                                         <thead>
                                             <tr id="tops">
-                                                <th id="long">Request No</th>
+                                                <th id="long">Request No.</th>
                                                 <th>Request Date</th>
                                                 <th>Adhoc</th>
                                                 <th>Start Date</th>
                                                 <th>End Date</th>
-                                                <th>No Of Days</th>
+                                                <th>No. Of Days</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -344,23 +400,61 @@
                                             {% for res in response %}
                                             <tr>
                                                 <td>{{res.Request_No_}}</td>
-                                                <td id="rap">{{res.Request_Date}}</td>
-                                                <td>{{res.Adhoc}}</td>
+                                                <td id="approved_request_date{{res.Request_No_}}">{{res.Request_Date}}
+                                                </td>
                                                 <td>
-                                                    {% if res.Adhoc == False %}
+                                                    {% if res.Adhoc == True %}
+                                                    <img src="../../static/icons/check-mark.png" class="img-fluid"
+                                                        alt="icon">
+                                                    {% else %}
+                                                    <img src="../../static/icons/cancel.png" class="img-fluid"
+                                                        alt="icon">
+                                                    {% endif %}
+                                                </td>
+                                                {% if res.Adhoc == False %}
+                                                <td id="approved_planned_start_date{{res.Request_No_}}">
                                                     {{res.Planned_Start_Date}}
-                                                    {% endif %}
                                                 </td>
+                                                {% else %}
                                                 <td>
-                                                    {% if res.Adhoc == False %}
-                                                    {{res.Planned_End_Date}}
-                                                    {% endif %}
+                                                    <img src="../../static/icons/e1.png" class="img-fluid" alt="">
                                                 </td>
+                                                {% endif %}
+                                                {% if res.Adhoc == False %}
+                                                <td id="approved_planned_end_date{{res.Request_No_}}">
+                                                    {{res.Planned_End_Date}}
+                                                </td>
+                                                {% else %}
+                                                <td>
+                                                    <img src="../../static/icons/e1.png" class="img-fluid" alt="">
+                                                </td>
+                                                {% endif %}
                                                 <td>
                                                     {% if res.Adhoc == False %}
                                                     {{res.No__Of_Days}}
+                                                    {% else %}
+                                                    <img src="../../static/icons/e1.png" class="img-fluid" alt="">
                                                     {% endif %}
                                                 </td>
+                                                <script>
+                                                    $(document).ready(function () {
+                                                        $("#approved_request_date{{res.Request_No_}}")
+                                                            .empty().append(moment(
+                                                                    '{{res.Request_Date}}', "YYYY-MM-DD")
+                                                                .format(
+                                                                    'Do MMM YYYY'));
+                                                        $("#approved_planned_start_date{{res.Request_No_}}")
+                                                            .empty().append(moment(
+                                                                    '{{res.Planned_Start_Date}}', "YYYY-MM-DD")
+                                                                .format(
+                                                                    'Do MMM YYYY'));
+                                                        $("#approved_planned_end_date{{res.Request_No_}}")
+                                                            .empty().append(moment(
+                                                                    '{{res.Planned_End_Date}}', "YYYY-MM-DD")
+                                                                .format(
+                                                                    'Do MMM YYYY'));
+                                                    })
+                                                </script>
                                                 <td>
                                                     <a href="{% url 'TrainingDetail' res.Request_No_ %}"
                                                         class="btn btn-success btn-icon-text" type="button"
@@ -375,19 +469,18 @@
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="pending">
-                                <h4 class="mt-2">Pending Approval Training Request</h4>
                                 <div class="card-body">
                                     <table id="example"
                                         class="display table table-striped table-bordered dt-responsive table-responsive-lg"
                                         style="width:100%">
                                         <thead>
                                             <tr id="tops">
-                                                <th id="long">Request No</th>
+                                                <th id="long">Request No.</th>
                                                 <th>Request Date</th>
                                                 <th>Adhoc</th>
                                                 <th>Start Date</th>
                                                 <th>End Date</th>
-                                                <th>No Of Days</th>
+                                                <th>No. Of Days</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -395,23 +488,60 @@
                                             {% for res in pending %}
                                             <tr>
                                                 <td>{{res.Request_No_}}</td>
-                                                <td id="rap">{{res.Request_Date}}</td>
-                                                <td>{{res.Adhoc}}</td>
+                                                <td id="pending_request_date">{{res.Request_Date}}</td>
                                                 <td>
-                                                    {% if res.Adhoc == False %}
+                                                    {% if res.Adhoc == True %}
+                                                    <img src="../../static/icons/check-mark.png" class="img-fluid"
+                                                        alt="icon">
+                                                    {% else %}
+                                                    <img src="../../static/icons/cancel.png" class="img-fluid"
+                                                        alt="icon">
+                                                    {% endif %}
+                                                </td>
+                                                {% if res.Adhoc == False %}
+                                                <td id="pending_planned_start_date{{res.Request_No_}}">
                                                     {{res.Planned_Start_Date}}
-                                                    {% endif %}
                                                 </td>
+                                                {% else %}
                                                 <td>
-                                                    {% if res.Adhoc == False %}
-                                                    {{res.Planned_End_Date}}
-                                                    {% endif %}
+                                                    <img src="../../static/icons/e1.png" class="img-fluid" alt="">
                                                 </td>
+                                                {% endif %}
+                                                {% if res.Adhoc == False %}
+                                                <td id="pending_planned_end_date{{res.Request_No_}}">
+                                                    {{res.Planned_End_Date}}
+                                                </td>
+                                                {% else %}
+                                                <td>
+                                                    <img src="../../static/icons/e1.png" class="img-fluid" alt="">
+                                                </td>
+                                                {% endif %}
                                                 <td>
                                                     {% if res.Adhoc == False %}
                                                     {{res.No__Of_Days}}
+                                                    {% else %}
+                                                    <img src="../../static/icons/e1.png" class="img-fluid" alt="">
                                                     {% endif %}
                                                 </td>
+                                                <script>
+                                                    $(document).ready(function () {
+                                                        $("#pending_request_date{{res.Request_No_}}")
+                                                            .empty().append(moment(
+                                                                    '{{res.Request_Date}}', "YYYY-MM-DD")
+                                                                .format(
+                                                                    'Do MMM YYYY'));
+                                                        $("#pending_planned_start_date{{res.Request_No_}}")
+                                                            .empty().append(moment(
+                                                                    '{{res.Planned_Start_Date}}', "YYYY-MM-DD")
+                                                                .format(
+                                                                    'Do MMM YYYY'));
+                                                        $("#pending_planned_end_date{{res.Request_No_}}")
+                                                            .empty().append(moment(
+                                                                    '{{res.Planned_End_Date}}', "YYYY-MM-DD")
+                                                                .format(
+                                                                    'Do MMM YYYY'));
+                                                    })
+                                                </script>
                                                 <td>
                                                     <a href="{% url 'TrainingDetail' res.Request_No_ %}"
                                                         class="btn btn-success btn-icon-text" type="button"
@@ -446,11 +576,8 @@
                     <form class="myForm" action="{% url 'training_request' %}" method="post">
                         {% csrf_token %}
                         <div class="mb-2">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <input type="hidden" name="myAction" value="insert">
-                                </div>
-                            </div>
+                            <input type="hidden" name="myAction" value="insert">
+                            <input type="hidden" name="requestNo" value="">
                             <div class="row mt-3">
                                 <div class="col-md-12">
                                     <label for="isAdhoc" class="form-label">Adhoc</label>
@@ -459,9 +586,6 @@
                                         <option value="True">Yes</option>
                                         <option value="False">No</option>
                                     </select>
-                                    <div class="invalid-feedback">
-                                        Please select a valid option.
-                                    </div>
                                 </div>
                             </div>
                             <div class="row mt-3">
@@ -472,9 +596,6 @@
                                         <option value="1">Self Sponsored</option>
                                         <option value="2">Organiation Sponsored</option>
                                     </select>
-                                    <div class="invalid-feedback">
-                                        Please select a valid option.
-                                    </div>
                                 </div>
                             </div>
                             <div class="row" id="trainingNeedRow" style="display: none;">
@@ -486,13 +607,8 @@
                                         <option value="{{res.Code}}">{{res.Description}}</option>
                                         {% endfor %}
                                     </select>
-                                    <div class="invalid-feedback">
-                                        Please select a valid Training Need.
-                                    </div>
-
                                 </div>
                             </div>
-
                             <button type="submit" id="sasa" class="btn btn-success my-3 w-100">Submit</button>
                         </div>
                     </form>

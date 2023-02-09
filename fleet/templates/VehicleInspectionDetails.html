@@ -6,11 +6,11 @@
     <div class="content-wrapper">
         <div class="d-xl-flex justify-content-between align-items-start">
             <h2 class="text-dark font-weight-bold mb-2"> Vehicle Inspection Request
-                {% if res.Status == "Open" %}
+                {% if res.Status == "Open" and driver_role == True %}
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Attachment"> <i
                         class="las la-plus"></i> Upload Attachment</button>
                 {% endif %}
-                {% if mechanical_inspector_role == True and res.Booked_For_Inspection == False and res.Status == "Approved" %}
+                {% if res.Booked_For_Inspection == False and res.Status == "Open" and TO_role == True %}
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#inspectionReport"> <i
                         class="las la-plus"></i> Upload Inspection Report</button>
                 {% endif %}
@@ -18,7 +18,7 @@
 
             <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
                 <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
-                    {% if mechanical_inspector_role == True and res.Booked_For_Inspection == False and res.Status == "Approved" %}
+                    {% if  res.Booked_For_Inspection == False and res.Status == "Open" %}
                     <button class="btn btn-successs" data-bs-toggle="modal" data-bs-target="#vehicle_defects"> <i
                             class="las la-plus"></i> Vehicle Defects</button>
                     {% endif %}
@@ -187,7 +187,6 @@
                 </form>
             </div>
         </div>
-        {% if mechanical_inspector_role == True and res.Booked_For_Inspection == False and res.Status == "Approved" %}
         <div class="row mt-4">
             <div class="col-md-12">
                 <div class="card" id="d-card">
@@ -218,7 +217,6 @@
                 </div>
             </div>
         </div>
-        {% endif %}
         <div class="row my-2 py-3">
             <div class="col-md-12">
                 <div class="card">
@@ -296,7 +294,7 @@
         {% endif %}
         <div class="row">
             <div class="col-md-12">
-                {% if res.Status == "Open" and driver_role == True and res.Booked_For_Inspection == False %}
+                {% if res.Status == "Open" and res.Booked_For_Inspection == False %}
                 <div class="myForm my-3">
                     <form action="{% url 'FnSubmitVehicleInspection' res.No%}" method="POST"
                         style="display: inline-block;">
@@ -305,13 +303,6 @@
                             <input type="hidden" hidden name="insNo" value="{{res.No}}">
                         </div>
                         <button class="btn btn-info" type="submit">Request Approval</button>
-                    </form>
-                </div>
-                {% elif res.Status == "Approved" and driver_role == False and res.Booked_For_Inspection == False and mechanical_inspector_role == True %}
-                <div class="myForm my-3">
-                    <form action="{% url 'Submit2_TO' res.No %}" method="POST" style="display: inline-block;">
-                        {% csrf_token %}
-                        <button class="btn btn-info" type="submit">Submit Document</button>
                     </form>
                 </div>
                 {% endif %}

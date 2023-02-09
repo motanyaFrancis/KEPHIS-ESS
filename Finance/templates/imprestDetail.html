@@ -536,6 +536,13 @@
             $('.tableAmountRow').hide(1000)
         }
     }
+    // date validations 
+    var today = new Date().toISOString().substr(0, 10);
+    document.querySelector("input[name='travel']").setAttribute('min', today);
+    document.querySelector("input[name='travel']").addEventListener('change', function () {
+        document.querySelector("input[name='returnDate']").setAttribute('min', this.value);
+    });
+    // end validations 
     $(document).ready(function () {
         $('#imprestType').on('change', function () {
             if (this.value == "1") {

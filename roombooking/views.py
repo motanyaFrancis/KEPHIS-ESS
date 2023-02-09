@@ -69,13 +69,14 @@ class InternalRoomBooking(UserObjectMixins, View):
                 bookingNo = request.POST.get('bookingNo')
                 myAction = request.POST.get('myAction')
                 typeOfService =request.POST.get('typeOfService')
+                purpose = request.POST.get('purpose')
                 userID = await sync_to_async(request.session.__getitem__)('User_ID')
                 Employee_No_ = await sync_to_async(request.session.__getitem__)('Employee_No_')
                 soap_headers = await sync_to_async(request.session.__getitem__)('soap_headers')
         
                 response =  self.make_soap_request(soap_headers,'FnInternalBookingCard',
                                                    bookingNo,myAction,typeOfService,
-                                                   False,'-None-',userID,Employee_No_)
+                                                   False,'-None-',userID,Employee_No_,purpose)
                                            
                 if response != '0':
                     messages.success(request,"success")
