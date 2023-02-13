@@ -392,7 +392,6 @@
                                                 <th>Adhoc</th>
                                                 <th>Start Date</th>
                                                 <th>End Date</th>
-                                                <th>No. Of Days</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -429,13 +428,7 @@
                                                     <img src="../../static/icons/e1.png" class="img-fluid" alt="">
                                                 </td>
                                                 {% endif %}
-                                                <td>
-                                                    {% if res.Adhoc == False %}
-                                                    {{res.No__Of_Days}}
-                                                    {% else %}
-                                                    <img src="../../static/icons/e1.png" class="img-fluid" alt="">
-                                                    {% endif %}
-                                                </td>
+
                                                 <script>
                                                     $(document).ready(function () {
                                                         $("#approved_request_date{{res.Request_No_}}")
@@ -456,6 +449,17 @@
                                                     })
                                                 </script>
                                                 <td>
+                                                    {% if res.Has_Evaluation == True %}
+                                                    <form action="{% url 'FnTrainingEvaluation' res.Request_No_ %}"
+                                                        method="post" style="display: inline-block;">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="evaluationNo" value="">
+                                                        <input type="hidden" name="myAction" value="insert">
+                                                        <button class="btn btn-warning" type="submit">
+                                                            Start Evaluation<i class="las la-check-double"></i>
+                                                        </button>
+                                                    </form>
+                                                    {% endif %}
                                                     <a href="{% url 'TrainingDetail' res.Request_No_ %}"
                                                         class="btn btn-success btn-icon-text" type="button"
                                                         data-toggle="tooltip" data-placement="top"

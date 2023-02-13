@@ -40,7 +40,6 @@ class Leave_Request(UserObjectMixins, View):
             full_name = await sync_to_async(request.session.__getitem__)('full_name')
             driver_role = await sync_to_async(request.session.__getitem__)('driver_role')
             TO_role =await sync_to_async(request.session.__getitem__)('TO_role')
-            mechanical_inspector_role =await sync_to_async(request.session.__getitem__)('mechanical_inspector_role')
             
             async with aiohttp.ClientSession() as session:
                 task_get_leave = asyncio.ensure_future(self.fetch_one_filtered_data(session,"/QyLeaveApplications",
@@ -76,7 +75,6 @@ class Leave_Request(UserObjectMixins, View):
                "full": full_name,
                "driver_role":driver_role,
                "TO_role":TO_role,
-               "mechanical_inspector_role":mechanical_inspector_role,
                }
         return render(request, 'leave.html', ctx)
 
@@ -126,7 +124,6 @@ class LeaveDetail(UserObjectMixin, View):
             userId = request.session['User_ID']
             driver_role = request.session['driver_role']
             TO_role = request.session['TO_role']
-            mechanical_inspector_role = request.session['User_Responsibility_Center']
             full_name = request.session['full_name']
             res ={}
 
@@ -171,7 +168,6 @@ class LeaveDetail(UserObjectMixin, View):
                "full": full_name,
                "driver_role":driver_role,
                "TO_role":TO_role,
-               "mechanical_inspector_role":mechanical_inspector_role,
                }
         return render(request, 'leaveDetail.html', ctx)
 
@@ -273,7 +269,6 @@ class Training_Request(UserObjectMixins, View):
             empNo = request.session['Employee_No_']
             driver_role = request.session['driver_role']
             TO_role = request.session['TO_role']
-            mechanical_inspector_role = request.session['User_Responsibility_Center']
             full_name = request.session['full_name']
 
             Access_Point = config.O_DATA.format(
@@ -312,7 +307,7 @@ class Training_Request(UserObjectMixins, View):
                "full": full_name,
                "driver_role":driver_role,
                "TO_role":TO_role,
-               "mechanical_inspector_role":mechanical_inspector_role,}
+               }
         return render(request, 'training.html', ctx)
 
     def post(self, request):
@@ -354,7 +349,6 @@ class TrainingDetail(UserObjectMixin, View):
             empNo = request.session['Employee_No_']
             driver_role = request.session['driver_role']
             TO_role = request.session['TO_role']
-            mechanical_inspector_role = request.session['User_Responsibility_Center']
             full_name = request.session['full_name']
             res ={}
 
@@ -405,7 +399,6 @@ class TrainingDetail(UserObjectMixin, View):
                "full": full_name,
                "driver_role":driver_role,
                "TO_role":TO_role,
-               "mechanical_inspector_role":mechanical_inspector_role,
                }
         return render(request, 'trainingDetail.html', ctx)
 
@@ -543,6 +536,33 @@ def FnAdhocLineDelete(request, pk):
     return redirect('TrainingDetail', pk=pk)
 
 
+class FnTrainingEvaluation(UserObjectMixins,View):
+    def get(self, request,pk):
+        return render(request,"evaluation.html")
+    def post(self,request, pk):
+        try:
+            soap_headers = request.session['soap_headers']
+            evaluationNo = request.POST.get('evaluationNo')
+            trainingRequestNo = pk
+            employeeNo = request.session['Employee_No_']
+            myAction = request.POST.get('myAction')
+            
+            response = self.make_soap_request(soap_headers,'FnTrainingEvaluation',
+                                evaluationNo,trainingRequestNo,employeeNo,myAction)
+            if response !='0':
+                messages.success(request,f"Started evaluation for Training: {trainingRequestNo}")
+                return redirect('evaluation',pk=response)
+            else:
+                messages.error(request,"Evaluation request failed")
+                print(response)
+                return redirect('training_request')
+        except Exception as e:
+            logging.exception(e)
+            messages.error(request,"Request failed")
+            return redirect('training_request')
+
+        
+
 class TrainingApproval(UserObjectMixins, View):
     async def post(self,request,pk):
         try:
@@ -595,7 +615,6 @@ class PNineRequest(UserObjectMixin, View):
         try:
             driver_role = request.session['driver_role']
             TO_role = request.session['TO_role']
-            mechanical_inspector_role = request.session['User_Responsibility_Center']
             full_name = request.session['full_name']
 
             Access_Point = config.O_DATA.format("/QyPayrollPeriods")
@@ -614,7 +633,7 @@ class PNineRequest(UserObjectMixin, View):
                "full": full_name, "res": res,
                "driver_role":driver_role,
                "TO_role":TO_role,
-               "mechanical_inspector_role":mechanical_inspector_role}
+               }
         return render(request, "p9.html", ctx)
 
     def post(self, request):
@@ -657,7 +676,6 @@ class PayslipRequest(UserObjectMixin, View):
         try:
             driver_role = request.session['driver_role']
             TO_role = request.session['TO_role']
-            mechanical_inspector_role = request.session['User_Responsibility_Center']
             full_name = request.session['full_name']
 
             Access_Point = config.O_DATA.format(
@@ -677,7 +695,7 @@ class PayslipRequest(UserObjectMixin, View):
                "full": full_name, "res": Payslip,
                "driver_role":driver_role,
                "TO_role":TO_role,
-               "mechanical_inspector_role":mechanical_inspector_role,}
+               }
 
         return render(request, "payslip.html", ctx)
 

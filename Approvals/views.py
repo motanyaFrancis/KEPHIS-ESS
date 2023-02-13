@@ -131,7 +131,6 @@ class ApproveDetails(UserObjectMixin, View):
             userID = request.session['User_ID']
             driver_role = request.session['driver_role']
             TO_role = request.session['TO_role']
-            mechanical_inspector_role = request.session['mechanical_inspector_role']
             full_name = request.session['full_name']
             data = ''
             state = ''
@@ -277,7 +276,6 @@ class ApproveDetails(UserObjectMixin, View):
             "full": full_name,
             "driver_role":driver_role,
             "TO_role":TO_role,
-            "mechanical_inspector_role":mechanical_inspector_role
             }
         return render(request, 'approveDetails.html', ctx)
 

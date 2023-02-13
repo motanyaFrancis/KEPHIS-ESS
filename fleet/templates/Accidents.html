@@ -3,8 +3,8 @@
 {% load static %}
 {% block main %}
 <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
-        crossorigin="anonymous"></script>
-<secton class="dash2">
+    crossorigin="anonymous"></script>
+<section class="dash2">
     <!-- top banner -->
     <div class="content-wrapper general-bg">
         <div class="row" id="proBanner">
@@ -13,9 +13,9 @@
                     <img src="../../../static/img/logo/fav.png" width="70px" class="img-fluid" alt="" srcset="">
                     <h2 class="text-dark font-weight-bold ml-3">Accidents </h2>
                     <button class="btn btn-successs align-items-center p-3" data-bs-toggle="modal"
-                            data-bs-target="#staticBackdrop"
-                            style="margin-left: auto;margin-right:0;outline: none;border: none;"><i
-                           class="las la-plus text-white" style="font-size:15px;"></i> New Accident Report</button>
+                        data-bs-target="#staticBackdrop"
+                        style="margin-left: auto;margin-right:0;outline: none;border: none;"><i
+                            class="las la-plus text-white" style="font-size:15px;"></i> New Accident Report</button>
                 </span>
             </div>
         </div>
@@ -43,8 +43,8 @@
                                 <!-- <h4 class="mt-2 text-dark">Accident Reports ({{count}})</h4> -->
                                 <div class="card-body">
                                     <table id="example"
-                                           class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                                           style="width:100%">
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
 
                                         <thead>
                                             <tr id="tops">
@@ -64,118 +64,161 @@
                                                 <td>{{res.DocumentStage}}</td>
                                                 <td>
                                                     <button class="btn btn-primary" data-bs-toggle="modal"
-                                                            data-bs-target="#AccidentEdit" data-toggle="tooltip" data-placement="top"
-                                                            title="edit">Edit <i class="fas fa-edit"></i>
+                                                        data-bs-target="#AccidentEdit" data-toggle="tooltip"
+                                                        data-placement="top" title="edit">Edit <i
+                                                            class="fas fa-edit"></i>
                                                     </button>
-                                                    <div class="modal fade" id="AccidentEdit"
-                                                         data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-                                                         aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                    <div class="modal fade" id="AccidentEdit" data-bs-backdrop="static"
+                                                        data-bs-keyboard="false" tabindex="-1"
+                                                        aria-labelledby="staticBackdropLabel" aria-hidden="true">
                                                         <div
-                                                             class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                                            class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title" id="staticBackdropLabel">
                                                                         <i class="las la-edit"></i> Edit Accident Report
                                                                         <span class="editSpan">{{res.No}}</span>
                                                                     </h5>
-                                                                    <button type="button" class="btn-close btn-close-white"
-                                                                            data-bs-dismiss="modal"
-                                                                            aria-label="Close"></button>
+                                                                    <button type="button"
+                                                                        class="btn-close btn-close-white"
+                                                                        data-bs-dismiss="modal"
+                                                                        aria-label="Close"></button>
                                                                 </div>
                                                                 <div class="modal-body">
-                                                                    <form class="myForm needs-validation" action="" method="post" novalidate>
+                                                                    <form class="myForm needs-validation" action=""
+                                                                        method="post" novalidate>
                                                                         {% csrf_token %}
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <input type="hidden" name="accidentNo" value="{{res.No}}">
+                                                                                <input type="hidden" name="accidentNo"
+                                                                                    value="{{res.No}}">
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-md-4">
-                                                                                <label class="form-label">Vehicle <span class="text-danger">*</span></label>
-                                                                                <select class="form-select" name="vehicle" required>
-                                                                                    <option selected disabled value="">Select Option</option>
+                                                                                <label class="form-label">Vehicle <span
+                                                                                        class="text-danger">*</span></label>
+                                                                                <select class="form-select"
+                                                                                    name="vehicle" required>
+                                                                                    <option selected disabled value="">
+                                                                                        Select Option</option>
                                                                                     {% for list in Vehicle_No %}
-                                                                                    <option value="{{list.No_}}">{{list.Registration_No}}</option>
-                                                                                    {% endfor %}                                    
+                                                                                    <option value="{{list.No_}}">
+                                                                                        {{list.Registration_No}}
+                                                                                    </option>
+                                                                                    {% endfor %}
                                                                                 </select>
                                                                             </div>
-                                                                        
+
                                                                             <div class="col-md-8">
-                                                                                <label class="form-label">Driver <span class="text-danger">*</span></label>
-                                                                                <select class="form-select" name="driver" required>
-                                                                                    <option selected disabled value="">Select Option</option>
+                                                                                <label class="form-label">Driver <span
+                                                                                        class="text-danger">*</span></label>
+                                                                                <select class="form-select"
+                                                                                    name="driver" required>
+                                                                                    <option selected disabled value="">
+                                                                                        Select Option</option>
                                                                                     {% for list in drivers %}
-                                                                                    <option value="{{list.No_}}">{{list.First_Name}}  {{list.Middle_Name}} {{list.Last_Name}}</option>
-                                                                                    {% endfor %}                                    
+                                                                                    <option value="{{list.No_}}">
+                                                                                        {{list.First_Name}}
+                                                                                        {{list.Middle_Name}}
+                                                                                        {{list.Last_Name}}</option>
+                                                                                    {% endfor %}
                                                                                 </select>
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-md-6">
-                                                                                <label for="" class="form-label">Date of Accident<span class="text-danger">*</span></label>
-                                                                                <input type="date" name="dateOfAccident" class="form-control" required>
+                                                                                <label for="" class="form-label">Date of
+                                                                                    Accident<span
+                                                                                        class="text-danger">*</span></label>
+                                                                                <input type="date" name="dateOfAccident"
+                                                                                    class="form-control" required>
                                                                             </div>
                                                                             <div class="col-md-6">
-                                                                                <label for="" class="form-label">Time of Accident<span class="text-danger">*</span></label>
-                                                                                <input type="time" name="timeOfAccident" class="form-control" required>
+                                                                                <label for="" class="form-label">Time of
+                                                                                    Accident<span
+                                                                                        class="text-danger">*</span></label>
+                                                                                <input type="time" name="timeOfAccident"
+                                                                                    class="form-control" required>
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <label for="" class="form-label">Description of Accident<span class="text-danger">*</span></label>
-                                                                                <textarea name="descriptionOfAccident" class="form-control" required></textarea>
-                                                                                
+                                                                                <label for=""
+                                                                                    class="form-label">Description of
+                                                                                    Accident<span
+                                                                                        class="text-danger">*</span></label>
+                                                                                <textarea name="descriptionOfAccident"
+                                                                                    class="form-control"
+                                                                                    required></textarea>
+
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <label for="" class="form-label">Location of Accident<span class="text-danger">*</span></label>
-                                                                                <input type="text" name="location" class="form-control" required>
+                                                                                <label for=""
+                                                                                    class="form-label">Location of
+                                                                                    Accident<span
+                                                                                        class="text-danger">*</span></label>
+                                                                                <input type="text" name="location"
+                                                                                    class="form-control" required>
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-md-7">
-                                                                                <label for="" class="form-label">Police station<span class="text-danger">*</span></label>
-                                                                                <input type="text" name="policeStation" class="form-control" required>
+                                                                                <label for="" class="form-label">Police
+                                                                                    station<span
+                                                                                        class="text-danger">*</span></label>
+                                                                                <input type="text" name="policeStation"
+                                                                                    class="form-control" required>
                                                                             </div>
-                                                                        
+
                                                                             <div class="col-md-5">
-                                                                                <label for="" class="form-label">OB Number<span class="text-danger">*</span></label>
-                                                                                <input type="text" name="oBNo" class="form-control" required>
+                                                                                <label for="" class="form-label">OB
+                                                                                    Number<span
+                                                                                        class="text-danger">*</span></label>
+                                                                                <input type="text" name="oBNo"
+                                                                                    class="form-control" required>
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <label class="form-label">Vehicle status <span class="text-danger">*</span></label>
-                                                                                <select class="form-select" name="insuranceStatus" required>
-                                                                                    <option selected disabled value="">Select Option</option>
+                                                                                <label class="form-label">Vehicle status
+                                                                                    <span
+                                                                                        class="text-danger">*</span></label>
+                                                                                <select class="form-select"
+                                                                                    name="insuranceStatus" required>
+                                                                                    <option selected disabled value="">
+                                                                                        Select Option</option>
                                                                                     <option value="1">Active</option>
                                                                                     <option value="2">Inactive</option>
-                                                                                                                        
+
                                                                                 </select>
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <input type="hidden" name="myAction" value="modify">
+                                                                                <input type="hidden" name="myAction"
+                                                                                    value="modify">
                                                                             </div>
                                                                         </div>
-                                                                        
-                                                                        <button type="submit" id="sasa" class="btn btn-success my-3 w-100">Submit</button>
+
+                                                                        <button type="submit" id="sasa"
+                                                                            class="btn btn-success my-3 w-100">Submit</button>
                                                                     </form>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <a href="{% url 'AccidentDetails' res.No %}"
-                                                       class="btn btn-success btn-icon-text" type="button"
-                                                       data-toggle="tooltip" data-placement="top" title="Click to View">
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top"
+                                                        title="Click to View">
                                                         View
                                                         <i class="far fa-eye"></i>
                                                     </a>
                                                 </td>
-                                            </tr>                                                                                       
+                                            </tr>
                                             {% endfor %}
                                         </tbody>
                                     </table>
@@ -184,8 +227,8 @@
                             <div class="tab-pane fade" id="submitted">
                                 <div class="card-body">
                                     <table id="example"
-                                           class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                                           style="width:100%">
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
 
                                         <thead>
                                             <tr id="tops">
@@ -205,118 +248,161 @@
                                                 <td>{{res.DocumentStage}}</td>
                                                 <td>
                                                     <button class="btn btn-primary" data-bs-toggle="modal"
-                                                            data-bs-target="#AccidentEdit" data-toggle="tooltip" data-placement="top"
-                                                            title="edit">Edit <i class="fas fa-edit"></i>
+                                                        data-bs-target="#AccidentEdit" data-toggle="tooltip"
+                                                        data-placement="top" title="edit">Edit <i
+                                                            class="fas fa-edit"></i>
                                                     </button>
-                                                    <div class="modal fade" id="AccidentEdit"
-                                                         data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-                                                         aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                    <div class="modal fade" id="AccidentEdit" data-bs-backdrop="static"
+                                                        data-bs-keyboard="false" tabindex="-1"
+                                                        aria-labelledby="staticBackdropLabel" aria-hidden="true">
                                                         <div
-                                                             class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                                            class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title" id="staticBackdropLabel">
                                                                         <i class="las la-edit"></i> Edit Accident Report
                                                                         <span class="editSpan">{{res.No}}</span>
                                                                     </h5>
-                                                                    <button type="button" class="btn-close btn-close-white"
-                                                                            data-bs-dismiss="modal"
-                                                                            aria-label="Close"></button>
+                                                                    <button type="button"
+                                                                        class="btn-close btn-close-white"
+                                                                        data-bs-dismiss="modal"
+                                                                        aria-label="Close"></button>
                                                                 </div>
                                                                 <div class="modal-body">
-                                                                    <form class="myForm needs-validation" action="" method="post" novalidate>
+                                                                    <form class="myForm needs-validation" action=""
+                                                                        method="post" novalidate>
                                                                         {% csrf_token %}
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <input type="hidden" name="accidentNo" value="{{res.No}}">
+                                                                                <input type="hidden" name="accidentNo"
+                                                                                    value="{{res.No}}">
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-md-4">
-                                                                                <label class="form-label">Vehicle <span class="text-danger">*</span></label>
-                                                                                <select class="form-select" name="vehicle" required>
-                                                                                    <option selected disabled value="">Select Option</option>
+                                                                                <label class="form-label">Vehicle <span
+                                                                                        class="text-danger">*</span></label>
+                                                                                <select class="form-select"
+                                                                                    name="vehicle" required>
+                                                                                    <option selected disabled value="">
+                                                                                        Select Option</option>
                                                                                     {% for list in Vehicle_No %}
-                                                                                    <option value="{{list.No_}}">{{list.Registration_No}}</option>
-                                                                                    {% endfor %}                                    
+                                                                                    <option value="{{list.No_}}">
+                                                                                        {{list.Registration_No}}
+                                                                                    </option>
+                                                                                    {% endfor %}
                                                                                 </select>
                                                                             </div>
-                                                                        
+
                                                                             <div class="col-md-8">
-                                                                                <label class="form-label">Driver <span class="text-danger">*</span></label>
-                                                                                <select class="form-select" name="driver" required>
-                                                                                    <option selected disabled value="">Select Option</option>
+                                                                                <label class="form-label">Driver <span
+                                                                                        class="text-danger">*</span></label>
+                                                                                <select class="form-select"
+                                                                                    name="driver" required>
+                                                                                    <option selected disabled value="">
+                                                                                        Select Option</option>
                                                                                     {% for list in drivers %}
-                                                                                    <option value="{{list.No_}}">{{list.First_Name}}  {{list.Middle_Name}} {{list.Last_Name}}</option>
-                                                                                    {% endfor %}                                    
+                                                                                    <option value="{{list.No_}}">
+                                                                                        {{list.First_Name}}
+                                                                                        {{list.Middle_Name}}
+                                                                                        {{list.Last_Name}}</option>
+                                                                                    {% endfor %}
                                                                                 </select>
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-md-6">
-                                                                                <label for="" class="form-label">Date of Accident<span class="text-danger">*</span></label>
-                                                                                <input type="date" name="dateOfAccident" class="form-control" required>
+                                                                                <label for="" class="form-label">Date of
+                                                                                    Accident<span
+                                                                                        class="text-danger">*</span></label>
+                                                                                <input type="date" name="dateOfAccident"
+                                                                                    class="form-control" required>
                                                                             </div>
                                                                             <div class="col-md-6">
-                                                                                <label for="" class="form-label">Time of Accident<span class="text-danger">*</span></label>
-                                                                                <input type="time" name="timeOfAccident" class="form-control" required>
+                                                                                <label for="" class="form-label">Time of
+                                                                                    Accident<span
+                                                                                        class="text-danger">*</span></label>
+                                                                                <input type="time" name="timeOfAccident"
+                                                                                    class="form-control" required>
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <label for="" class="form-label">Description of Accident<span class="text-danger">*</span></label>
-                                                                                <textarea name="descriptionOfAccident" class="form-control" required></textarea>
-                                                                                
+                                                                                <label for=""
+                                                                                    class="form-label">Description of
+                                                                                    Accident<span
+                                                                                        class="text-danger">*</span></label>
+                                                                                <textarea name="descriptionOfAccident"
+                                                                                    class="form-control"
+                                                                                    required></textarea>
+
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <label for="" class="form-label">Location of Accident<span class="text-danger">*</span></label>
-                                                                                <input type="text" name="location" class="form-control" required>
+                                                                                <label for=""
+                                                                                    class="form-label">Location of
+                                                                                    Accident<span
+                                                                                        class="text-danger">*</span></label>
+                                                                                <input type="text" name="location"
+                                                                                    class="form-control" required>
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-md-7">
-                                                                                <label for="" class="form-label">Police station<span class="text-danger">*</span></label>
-                                                                                <input type="text" name="policeStation" class="form-control" required>
+                                                                                <label for="" class="form-label">Police
+                                                                                    station<span
+                                                                                        class="text-danger">*</span></label>
+                                                                                <input type="text" name="policeStation"
+                                                                                    class="form-control" required>
                                                                             </div>
-                                                                        
+
                                                                             <div class="col-md-5">
-                                                                                <label for="" class="form-label">OB Number<span class="text-danger">*</span></label>
-                                                                                <input type="text" name="oBNo" class="form-control" required>
+                                                                                <label for="" class="form-label">OB
+                                                                                    Number<span
+                                                                                        class="text-danger">*</span></label>
+                                                                                <input type="text" name="oBNo"
+                                                                                    class="form-control" required>
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <label class="form-label">Vehicle status <span class="text-danger">*</span></label>
-                                                                                <select class="form-select" name="insuranceStatus" required>
-                                                                                    <option selected disabled value="">Select Option</option>
+                                                                                <label class="form-label">Vehicle status
+                                                                                    <span
+                                                                                        class="text-danger">*</span></label>
+                                                                                <select class="form-select"
+                                                                                    name="insuranceStatus" required>
+                                                                                    <option selected disabled value="">
+                                                                                        Select Option</option>
                                                                                     <option value="1">Active</option>
                                                                                     <option value="2">Inactive</option>
-                                                                                                                        
+
                                                                                 </select>
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-md-12">
-                                                                                <input type="hidden" name="myAction" value="modify">
+                                                                                <input type="hidden" name="myAction"
+                                                                                    value="modify">
                                                                             </div>
                                                                         </div>
-                                                                        
-                                                                        <button type="submit" id="sasa" class="btn btn-success my-3 w-100">Submit</button>
+
+                                                                        <button type="submit" id="sasa"
+                                                                            class="btn btn-success my-3 w-100">Submit</button>
                                                                     </form>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <a href="{% url 'AccidentDetails' res.No %}"
-                                                       class="btn btn-success btn-icon-text" type="button"
-                                                       data-toggle="tooltip" data-placement="top" title="Click to View">
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top"
+                                                        title="Click to View">
                                                         View
                                                         <i class="far fa-eye"></i>
                                                     </a>
                                                 </td>
-                                            </tr>                                                                                       
+                                            </tr>
                                             {% endfor %}
                                         </tbody>
                                     </table>
@@ -330,86 +416,119 @@
 
         <!-- Modal -->
         <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-             aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
                 <div class="modal-content">
                     <div class="modal-header">New Accident
                         </h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
+                            aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <form class="myForm needs-validation" action="" method="post" novalidate>
                             {% csrf_token %}
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <input type="hidden" name="accidentNo" value="">
+                            <input type="hidden" name="accidentNo" value="">
+                            <div class="row gx-2">
+                                <div class="col-md-4">
+                                    <label class="form-label">Reinstatement Fee </label>
+                                    <input type="text" name="ReinstatementFee" class="form-control" placeholder="0.00">
                                 </div>
-                            </div>
-                            <div class="row">
                                 <div class="col-md-4">
                                     <label class="form-label">Vehicle <span class="text-danger">*</span></label>
                                     <select class="form-select" name="vehicle" required>
                                         <option selected disabled value="">Select Option</option>
                                         {% for list in Vehicle_No %}
                                         <option value="{{list.No_}}">{{list.Registration_No}}</option>
-                                        {% endfor %}                                    
+                                        {% endfor %}
                                     </select>
                                 </div>
-                            
-                                <div class="col-md-8">
+
+                                <div class="col-md-4">
                                     <label class="form-label">Driver <span class="text-danger">*</span></label>
                                     <select class="form-select" name="driver" required>
                                         <option selected disabled value="">Select Option</option>
                                         {% for list in drivers %}
-                                        <option value="{{list.No_}}">{{list.First_Name}}  {{list.Middle_Name}} {{list.Last_Name}}</option>
-                                        {% endfor %}                                    
+                                        <option value="{{list.No_}}">{{list.First_Name}} {{list.Middle_Name}}
+                                            {{list.Last_Name}}</option>
+                                        {% endfor %}
                                     </select>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <label for="" class="form-label">Date of Accident<span class="text-danger">*</span></label>
+                            <div class="row gx-2">
+                                <div class="col-md-4">
+                                    <label for="" class="form-label">Date of Accident<span
+                                            class="text-danger">*</span></label>
                                     <input type="date" name="dateOfAccident" class="form-control" required>
                                 </div>
-                                <div class="col-md-6">
-                                    <label for="" class="form-label">Time of Accident<span class="text-danger">*</span></label>
+                                <div class="col-md-4">
+                                    <label for="" class="form-label">Time of Accident<span
+                                            class="text-danger">*</span></label>
                                     <input type="time" name="timeOfAccident" class="form-control" required>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <label for="" class="form-label">Description of Accident<span class="text-danger">*</span></label>
-                                    <textarea name="descriptionOfAccident" class="form-control" required></textarea>
-                                    
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <label for="" class="form-label">Location of Accident<span class="text-danger">*</span></label>
+                                <div class="col-md-4">
+                                    <label for="" class="form-label">Location of Accident<span
+                                            class="text-danger">*</span></label>
                                     <input type="text" name="location" class="form-control" required>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-7">
-                                    <label for="" class="form-label">Police station<span class="text-danger">*</span></label>
+
+                            <div class="row gx-2">
+                                <div class="col-md-4">
+                                    <label for="" class="form-label">Police station<span
+                                            class="text-danger">*</span></label>
                                     <input type="text" name="policeStation" class="form-control" required>
                                 </div>
-                            
-                                <div class="col-md-5">
+
+                                <div class="col-md-4">
                                     <label for="" class="form-label">OB Number<span class="text-danger">*</span></label>
                                     <input type="text" name="oBNo" class="form-control" required>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-4">
                                     <label class="form-label">Vehicle status <span class="text-danger">*</span></label>
                                     <select class="form-select" name="insuranceStatus" required>
                                         <option selected disabled value="">Select Option</option>
                                         <option value="1">Repairable</option>
                                         <option value="2">Written off</option>
-                                                                            
+
                                     </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label class="form-label">Cost of Repair</label>
+                                    <input type="text" name="damage_repair_cost" class="form-control"
+                                        placeholder="0.00">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Towing Cost</label>
+                                    <input type="text" name="Towing_cost" class="form-control" placeholder="0.00">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Excess Cost</label>
+                                    <input type="text" name="Excess_cost" class="form-control" placeholder="0.00">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label for="" class="form-label">Damage/Repair<span
+                                            class="text-danger">*</span></label>
+                                    <textarea name="damage_repair" class="form-control" required></textarea>
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label for="" class="form-label">Description of Accident<span
+                                            class="text-danger">*</span></label>
+                                    <textarea name="descriptionOfAccident" class="form-control" required></textarea>
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label for="" class="form-label">Remarks<span class="text-danger">*</span></label>
+                                    <textarea name="Remarks" class="form-control" required></textarea>
+
                                 </div>
                             </div>
                             <div class="row">
@@ -417,7 +536,7 @@
                                     <input type="hidden" name="myAction" value="insert">
                                 </div>
                             </div>
-                            
+
                             <button type="submit" id="sasa" class="btn btn-success my-3 w-100">Add Report</button>
                         </form>
                     </div>
@@ -427,6 +546,6 @@
 
     </div>
 
-</secton>
+</section>
 
 {% endblock %}

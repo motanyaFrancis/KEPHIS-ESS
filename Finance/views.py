@@ -36,7 +36,6 @@ class ImprestRequisition(UserObjectMixin, View):
             userID = request.session['User_ID']
             driver_role = request.session['driver_role']
             TO_role = request.session['TO_role']
-            mechanical_inspector_role = request.session['mechanical_inspector_role']
             full_name = request.session['full_name']
 
             Access_Point = config.O_DATA.format(
@@ -72,7 +71,6 @@ class ImprestRequisition(UserObjectMixin, View):
                "full": full_name,
                "driver_role":driver_role,
                "TO_role":TO_role,
-               "mechanical_inspector_role":mechanical_inspector_role
                }
         return render(request, 'imprestReq.html', ctx)
 
@@ -116,7 +114,6 @@ class ImprestDetails(UserObjectMixin, View):
             userID = request.session['User_ID']
             driver_role = request.session['driver_role']
             TO_role = request.session['TO_role']
-            mechanical_inspector_role = request.session['mechanical_inspector_role']
             full_name = request.session['full_name']
             res = {}
             Access_Point = config.O_DATA.format( f"/Imprests?$filter=No_%20eq%20%27{pk}%27%20and%20User_Id%20eq%20%27{userID}%27")
@@ -183,7 +180,6 @@ class ImprestDetails(UserObjectMixin, View):
             "full": full_name,
             "driver_role":driver_role,
             "TO_role":TO_role,
-            "mechanical_inspector_role":mechanical_inspector_role
         }
         return render(request, 'imprestDetail.html', ctx)
 
@@ -370,7 +366,6 @@ class ImprestSurrender(UserObjectMixin, View):
             userID = request.session['User_ID']
             driver_role = request.session['driver_role']
             TO_role = request.session['TO_role']
-            mechanical_inspector_role = request.session['mechanical_inspector_role']
             full_name = request.session['full_name']
 
             Access_Point = config.O_DATA.format(
@@ -411,7 +406,6 @@ class ImprestSurrender(UserObjectMixin, View):
                "full": full_name,
                 "driver_role":driver_role,
                 "TO_role":TO_role,
-                "mechanical_inspector_role":mechanical_inspector_role
             }
 
         return render(request, 'imprestSurr.html', ctx)
@@ -452,7 +446,6 @@ class SurrenderDetails(UserObjectMixin, View):
             userID = request.session['User_ID']
             driver_role = request.session['driver_role']
             TO_role = request.session['TO_role']
-            mechanical_inspector_role = request.session['mechanical_inspector_role']
             full_name = request.session['full_name']
 
             res ={}
@@ -502,7 +495,6 @@ class SurrenderDetails(UserObjectMixin, View):
                "full": full_name,
                 "driver_role":driver_role,
                 "TO_role":TO_role,
-                "mechanical_inspector_role":mechanical_inspector_role
             }
 
         return render(request, 'SurrenderDetail.html', ctx)
@@ -635,7 +627,6 @@ class StaffClaim(UserObjectMixin, View):
             userID = request.session['User_ID']
             driver_role = request.session['driver_role']
             TO_role = request.session['TO_role']
-            mechanical_inspector_role = request.session['mechanical_inspector_role']
             full_name = request.session['full_name']
 
 
@@ -671,7 +662,6 @@ class StaffClaim(UserObjectMixin, View):
                "full": full_name,
                 "driver_role":driver_role,
                 "TO_role":TO_role,
-                "mechanical_inspector_role":mechanical_inspector_role
                }
         return render(request, 'staffClaim.html', ctx)
 
@@ -707,7 +697,6 @@ class ClaimDetails(UserObjectMixin, View):
             userID = request.session['User_ID']
             driver_role = request.session['driver_role']
             TO_role = request.session['TO_role']
-            mechanical_inspector_role = request.session['mechanical_inspector_role']
             full_name = request.session['full_name']
             res = {}
 
@@ -755,24 +744,15 @@ class ClaimDetails(UserObjectMixin, View):
                "full": full_name,
                 "driver_role":driver_role,
                 "TO_role":TO_role,
-                "mechanical_inspector_role":mechanical_inspector_role}
+            }
 
         return render(request, "ClaimDetail.html", ctx)
 
 
 def CreateClaimLines(request, pk):
-    lineNo = ""
-    claimNo = pk
-    claimType = ""
-
-    amount = ""
-    claimReceiptNo = ""
-    dimension3 = ''
-    expenditureDate = ""
-    expenditureDescription = ""
-    myAction = ''
     if request.method == 'POST':
         try:
+            claimNo = pk
             accountNo = request.session['Customer_No_']
             lineNo = int(request.POST.get('lineNo'))
             claimType = request.POST.get('claimType')
@@ -783,14 +763,9 @@ def CreateClaimLines(request, pk):
             attach = request.FILES.getlist('attachment')
             myAction = request.POST.get('myAction')
             tableID = 52177431
-        except Exception as e:
-            messages.error(request, "Invalid Input.")
-            return redirect('ClaimDetail', pk=pk)
-
-        try:
             response = config.CLIENT.service.FnStaffClaimLine(
-                lineNo, claimNo, claimType, accountNo, amount, claimReceiptNo, dimension3, expenditureDate, expenditureDescription, myAction)
-            print(response)
+                lineNo, claimNo, claimType, accountNo, amount, expenditureDate, expenditureDescription, myAction)
+            print(amount)
             if response != 0:
                 for files in attach:
                     fileName = request.FILES['attachment'].name

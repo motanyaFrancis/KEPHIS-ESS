@@ -59,7 +59,7 @@
                                                 {% if res.Rejected_By_Approver == True and res.Status == 'Open' %}
                                                 <tr style="background: #fee36e !important;">
                                                     <td>{{res.No_}}</td>
-                                                    <td id="rap">{{res.Time_Inserted}}</td>
+                                                    <td id="rap">{{res.Date}}</td>
                                                     <td>{{res.Claim_Type}}</td>
                                                     <td>{{res.Status}}</td>
                                                     <td>
@@ -75,16 +75,18 @@
                                                         </a>
                                                         <!-- Modal -->
                                                         <div class="modal fade" id="trainedit{{res.No_}}"
-                                                            data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-                                                            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                            data-bs-backdrop="static" data-bs-keyboard="false"
+                                                            tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                                            aria-hidden="true">
                                                             <div
                                                                 class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                                                                 <div class="modal-content">
                                                                     <div class="modal-header">
-                                                                        <h5 class="modal-title" id="staticBackdropLabel">
+                                                                        <h5 class="modal-title"
+                                                                            id="staticBackdropLabel">
                                                                             <i class="las la-edit"></i> Edit Staff Claim
                                                                             <span class="editSpan">{{res.No_}}</span>
-    
+
                                                                         </h5>
                                                                         <button type="button"
                                                                             class="btn-close  btn-close-white"
@@ -113,9 +115,11 @@
                                                                                     <label class="form-label">Claim Type
                                                                                         <span
                                                                                             class="text-danger">*</span></label>
-                                                                                    <select class="form-select claimTypes"
+                                                                                    <select
+                                                                                        class="form-select claimTypes"
                                                                                         name="claimType" required>
-                                                                                        <option selected disabled value="">
+                                                                                        <option selected disabled
+                                                                                            value="">
                                                                                             Select Claim Type</option>
                                                                                         <option value="1">General Claim
                                                                                         </option>
@@ -133,8 +137,10 @@
                                                                                         Surrender No</label>
                                                                                     <select
                                                                                         class="form-select imprestSurrDocNos"
-                                                                                        name="imprestSurrDocNo" disabled>
-                                                                                        <option selected disabled value="">
+                                                                                        name="imprestSurrDocNo"
+                                                                                        disabled>
+                                                                                        <option selected disabled
+                                                                                            value="">
                                                                                             Select Imprest Surrender No
                                                                                         </option>
                                                                                         {% for res in my_claim %}
@@ -144,23 +150,24 @@
                                                                                         </option>
                                                                                         {% endfor %}
                                                                                     </select>
-    
+
                                                                                 </div>
                                                                             </div>
                                                                             <div class="row">
                                                                                 <div class="col-md-12">
-                                                                                    <label class="form-label">Purpose <span
+                                                                                    <label class="form-label">Purpose
+                                                                                        <span
                                                                                             class="text-danger">*</span></label>
                                                                                     <textarea class="form-control"
                                                                                         name="purpose" rows="3"
                                                                                         required></textarea>
-    
+
                                                                                 </div>
                                                                             </div>
                                                                             <button type="submit"
                                                                                 class="btn btn-success my-3 w-100">Submit</button>
                                                                         </form>
-    
+
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -170,7 +177,7 @@
                                                 {% else %}
                                                 <tr>
                                                     <td>{{res.No_}}</td>
-                                                    <td id="rap">{{res.Time_Inserted}}</td>
+                                                    <td id="rap">{{res.Date}}</td>
                                                     <td>{{res.Claim_Type}}</td>
                                                     <td>{{res.Status}}</td>
                                                     <td>
@@ -186,13 +193,15 @@
                                                         </a>
                                                         <!-- Modal -->
                                                         <div class="modal fade" id="trainedit{{res.No_}}"
-                                                            data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-                                                            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                            data-bs-backdrop="static" data-bs-keyboard="false"
+                                                            tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                                            aria-hidden="true">
                                                             <div
                                                                 class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                                                                 <div class="modal-content">
                                                                     <div class="modal-header">
-                                                                        <h5 class="modal-title" id="staticBackdropLabel">
+                                                                        <h5 class="modal-title"
+                                                                            id="staticBackdropLabel">
                                                                             <i class="las la-edit"></i> Edit Staff Claim
                                                                             <span class="editSpan">{{res.No_}}</span>
                                                                         </h5>
@@ -223,9 +232,11 @@
                                                                                     <label class="form-label">Claim Type
                                                                                         <span
                                                                                             class="text-danger">*</span></label>
-                                                                                    <select class="form-select claimTypes"
+                                                                                    <select
+                                                                                        class="form-select claimTypes"
                                                                                         name="claimType" required>
-                                                                                        <option selected disabled value="">
+                                                                                        <option selected disabled
+                                                                                            value="">
                                                                                             Select Claim Type</option>
                                                                                         <option value="1">General Claim
                                                                                         </option>
@@ -243,8 +254,10 @@
                                                                                         Surrender No</label>
                                                                                     <select
                                                                                         class="form-select imprestSurrDocNos"
-                                                                                        name="imprestSurrDocNo" disabled>
-                                                                                        <option selected disabled value="">
+                                                                                        name="imprestSurrDocNo"
+                                                                                        disabled>
+                                                                                        <option selected disabled
+                                                                                            value="">
                                                                                             Select Imprest Surrender No
                                                                                         </option>
                                                                                         {% for res in my_claim %}
@@ -254,23 +267,24 @@
                                                                                         </option>
                                                                                         {% endfor %}
                                                                                     </select>
-    
+
                                                                                 </div>
                                                                             </div>
                                                                             <div class="row">
                                                                                 <div class="col-md-12">
-                                                                                    <label class="form-label">Purpose <span
+                                                                                    <label class="form-label">Purpose
+                                                                                        <span
                                                                                             class="text-danger">*</span></label>
                                                                                     <textarea class="form-control"
                                                                                         name="purpose" rows="3"
                                                                                         required></textarea>
-    
+
                                                                                 </div>
                                                                             </div>
                                                                             <button type="submit"
                                                                                 class="btn btn-success my-3 w-100">Submit</button>
                                                                         </form>
-    
+
                                                                     </div>
                                                                 </div>
                                                             </div>

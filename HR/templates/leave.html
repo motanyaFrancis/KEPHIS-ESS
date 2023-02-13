@@ -2,8 +2,7 @@
 {% load bootstrap5 %}
 {% load static %}
 {% block main %}
-<script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
-    crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
 <section class="dash2">
     <div class="content-wrapper general-bg" style="padding-bottom: 5rem;">
         <div class="row" id="proBanner">
@@ -41,7 +40,6 @@
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane fade show active" id="home">
-                                <h4>Open Leave</h4>
                                 <div class="card-body">
                                     <table id="example"
                                         class="display table table-striped table-bordered dt-responsive table-responsive-lg"
@@ -49,9 +47,9 @@
                                         <thead>
                                             <tr id="tops">
                                                 <th id="long">Application No</th>
-                                                <th>Status</th>
                                                 <th>Leave Start Date</th>
                                                 <th>Return same day</th>
+                                                <th>Resumption Date</th>
                                                 <th>Days Applied</th>
                                                 <th>Action</th>
                                             </tr>
@@ -61,15 +59,15 @@
                                             {% if res.Rejected_By_Approver == True and res.Status == 'Open' %}
                                             <tr style="background: #fee36e !important;">
                                                 <td>{{res.Application_No}}</td>
-                                                <td id="rap">{{res.Status}}</td>
                                                 <td>{{res.Planner_Start_Date}}</td>
                                                 <td>{{res.Return_same_day}}</td>
+                                                <td>{{res.Resumption_Date}}</td>
                                                 <td>{{res.Days_Applied}}</td>
                                                 <td>
-                                                    <button class="btn btn-primary" data-toggle="tooltip"
+                                                    <!-- <button class="btn btn-primary" data-toggle="tooltip"
                                                         data-placement="top" title="edit" data-bs-toggle="modal"
                                                         data-bs-target="#editLeave">Edit <i class="fas fa-edit"></i>
-                                                    </button>
+                                                    </button> -->
                                                     <a href="{% url 'LeaveDetail' res.Application_No %} "
                                                         class="btn btn-success btn-icon-text" type="button"
                                                         data-toggle="tooltip" data-placement="top" title="View"> View <i
@@ -203,15 +201,15 @@
                                             {% else %}
                                             <tr>
                                                 <td>{{res.Application_No}}</td>
-                                                <td id="rap">{{res.Status}}</td>
                                                 <td>{{res.Planner_Start_Date}}</td>
                                                 <td>{{res.Return_same_day}}</td>
+                                                <td>{{res.Resumption_Date}}</td>
                                                 <td>{{res.Days_Applied}}</td>
                                                 <td>
-                                                    <button class="btn btn-primary" data-toggle="tooltip"
+                                                    <!-- <button class="btn btn-primary" data-toggle="tooltip"
                                                         data-placement="top" title="edit" data-bs-toggle="modal"
                                                         data-bs-target="#editLeave">Edit <i class="fas fa-edit"></i>
-                                                    </button>
+                                                    </button> -->
                                                     <a href="{% url 'LeaveDetail' res.Application_No %} "
                                                         class="btn btn-success btn-icon-text" type="button"
                                                         data-toggle="tooltip" data-placement="top" title="View"> View <i
@@ -342,7 +340,6 @@
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="profile">
-                                <h4 class="mt-2">Approved Leave</h4>
                                 <div class="card-body">
                                     <table id="example"
                                         class="display table table-striped table-bordered dt-responsive table-responsive-lg"
@@ -350,9 +347,9 @@
                                         <thead>
                                             <tr id="tops">
                                                 <th id="long">Application No</th>
-                                                <th>Status</th>
                                                 <th>Leave Start Date</th>
                                                 <th>Return same day</th>
+                                                <th>Resumption Date</th>
                                                 <th>Days Applied</th>
                                                 <th>Action</th>
                                             </tr>
@@ -361,9 +358,9 @@
                                             {% for res in response %}
                                             <tr>
                                                 <td>{{res.Application_No}}</td>
-                                                <td id="rap">{{res.Status}}</td>
                                                 <td>{{res.Planner_Start_Date}}</td>
                                                 <td>{{res.Return_same_day}}</td>
+                                                <td>{{res.Resumption_Date}}</td>
                                                 <td>{{res.Days_Applied}}</td>
                                                 <td>
                                                     <a href="{% url 'LeaveDetail' res.Application_No %} "
@@ -378,7 +375,6 @@
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="pending">
-                                <h4 class="mt-2">Pending Approval Leave</h4>
                                 <div class="card-body">
                                     <table id="example"
                                         class="display table table-striped table-bordered dt-responsive table-responsive-lg"
@@ -386,9 +382,9 @@
                                         <thead>
                                             <tr id="tops">
                                                 <th id="long">Application No</th>
-                                                <th>Status</th>
                                                 <th>Leave Start Date</th>
                                                 <th>Return same day</th>
+                                                <th>Resumption Date</th>
                                                 <th>Days Applied</th>
                                                 <th>Action</th>
                                             </tr>
@@ -397,9 +393,9 @@
                                             {% for res in pending %}
                                             <tr>
                                                 <td>{{res.Application_No}}</td>
-                                                <td id="rap">{{res.Status}}</td>
                                                 <td>{{res.Planner_Start_Date}}</td>
                                                 <td>{{res.Return_same_day}}</td>
+                                                <td>{{res.Resumption_Date}}</td>
                                                 <td>{{res.Days_Applied}}</td>
                                                 <td>
                                                     <a href="{% url 'LeaveDetail' res.Application_No %} "

@@ -28,7 +28,6 @@ class advance(UserObjectMixin,View):
             empNo =request.session['Employee_No_']
             driver_role = request.session['driver_role']
             TO_role = request.session['TO_role']
-            mechanical_inspector_role = request.session['mechanical_inspector_role']
             full_name = request.session['full_name']
 
             Access_Point = config.O_DATA.format(f"/QySalaryAdvances?$filter=Employee_No%20eq%20%27{empNo}%27")
@@ -67,9 +66,7 @@ class advance(UserObjectMixin,View):
             "salary":salary,
             "full": full_name,
             "driver_role":driver_role,
-            "TO_role":TO_role,
-            "mechanical_inspector_role":mechanical_inspector_role
-            
+            "TO_role":TO_role,           
             }
         return render(request,"advance.html",ctx)
     def post(self, request):
@@ -107,7 +104,6 @@ class advanceDetail(UserObjectMixin,View):
         try:
             driver_role = request.session['driver_role']
             TO_role = request.session['TO_role']
-            mechanical_inspector_role = request.session['mechanical_inspector_role']
             full_name = request.session['full_name']
             year = request.session['years']
             empNo =request.session['Employee_No_']
@@ -151,7 +147,6 @@ class advanceDetail(UserObjectMixin,View):
                 "full": full_name,
                 "driver_role":driver_role,
                 "TO_role":TO_role,
-                "mechanical_inspector_role":mechanical_inspector_role
             }
 
         return render(request,"advanceDetails.html",ctx)

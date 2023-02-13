@@ -58,6 +58,10 @@ urlpatterns = [
     path('DeleteServiceRequestAttachment/<str:pk>', views.DeleteServiceRequestAttachment, name='DeleteServiceRequestAttachment'),
     path('FnSubmitServiceRequest/<str:pk>', views.FnSubmitServiceRequest.as_view(), name='FnSubmitServiceRequest'),
     path('FnServiceRequestLine/<str:pk>', views.FnServiceRequestLine, name='FnServiceRequestLine'),
-    path('FnCancelServiceRequest/<str:pk>', views.FnCancelServiceRequest, name='FnCancelServiceRequest')
+    path('FnCancelServiceRequest/<str:pk>', views.FnCancelServiceRequest, name='FnCancelServiceRequest'),
+    
+    path('fuel/consumption', views.FuelConsumption.as_view(), name='fuel')
+    
+    
 
 ]

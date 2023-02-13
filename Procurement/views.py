@@ -38,7 +38,6 @@ class PurchaseRequisition(UserObjectMixin, View):
             empNo = request.session['Employee_No_']
             driver_role = request.session['driver_role']
             TO_role = request.session['TO_role']
-            mechanical_inspector_role = request.session['User_Responsibility_Center']
             full_name = request.session['full_name']
 
             Access_Point = config.O_DATA.format(
@@ -72,7 +71,7 @@ class PurchaseRequisition(UserObjectMixin, View):
                "full": full_name,
                 "driver_role":driver_role,
                 "TO_role":TO_role,
-                "mechanical_inspector_role":mechanical_inspector_role}
+                }
 
         return render(request, 'purchaseReq.html', ctx)
 
@@ -112,7 +111,6 @@ class PurchaseRequestDetails(UserObjectMixin, View):
             empNo = request.session['Employee_No_']
             driver_role = request.session['driver_role']
             TO_role = request.session['TO_role']
-            mechanical_inspector_role = request.session['User_Responsibility_Center']
             full_name = request.session['full_name']
             res ={}
 
@@ -179,7 +177,6 @@ class PurchaseRequestDetails(UserObjectMixin, View):
             "full": full_name,
             "driver_role":driver_role,
             "TO_role":TO_role,
-            "mechanical_inspector_role":mechanical_inspector_role
         }
         return render(request, 'purchaseDetail.html', ctx)
 
@@ -387,7 +384,6 @@ class RepairRequest(UserObjectMixin, View):
             userID = request.session['User_ID']
             driver_role = request.session['driver_role']
             TO_role = request.session['TO_role']
-            mechanical_inspector_role = request.session['User_Responsibility_Center']
             full_name = request.session['full_name']
          
             Access_Point = config.O_DATA.format(
@@ -418,7 +414,7 @@ class RepairRequest(UserObjectMixin, View):
                "full": full_name,
                 "driver_role":driver_role,
                 "TO_role":TO_role,
-                "mechanical_inspector_role":mechanical_inspector_role}
+                }
 
         return render(request, 'repairReq.html', ctx)
 
@@ -459,7 +455,6 @@ class RepairRequestDetails(UserObjectMixin, View):
             userID = request.session['User_ID']
             driver_role = request.session['driver_role']
             TO_role = request.session['TO_role']
-            mechanical_inspector_role = request.session['User_Responsibility_Center']
             full_name = request.session['full_name']
             res = {}
         
@@ -512,7 +507,7 @@ class RepairRequestDetails(UserObjectMixin, View):
                "full": full_name,
                 "driver_role":driver_role,
                 "TO_role":TO_role,
-                "mechanical_inspector_role":mechanical_inspector_role}
+                }
         return render(request, 'repairDetail.html', ctx)
 
     def post(self, request, pk):
@@ -673,7 +668,6 @@ class StoreRequest(UserObjectMixin, View):
             userID = request.session['User_ID']
             driver_role = request.session['driver_role']
             TO_role = request.session['TO_role']
-            mechanical_inspector_role = request.session['User_Responsibility_Center']
             full_name = request.session['full_name']
          
             Access_Point = config.O_DATA.format(
@@ -704,7 +698,7 @@ class StoreRequest(UserObjectMixin, View):
                "full": full_name,
                 "driver_role":driver_role,
                 "TO_role":TO_role,
-                "mechanical_inspector_role":mechanical_inspector_role}
+                }
         return render(request, 'storeReq.html', ctx)
 
     def post(self, request):
@@ -742,7 +736,6 @@ class StoreRequestDetails(UserObjectMixin, View):
             userID = request.session['User_ID']
             driver_role = request.session['driver_role']
             TO_role = request.session['TO_role']
-            mechanical_inspector_role = request.session['User_Responsibility_Center']
             full_name = request.session['full_name']
             res = {}
 
@@ -797,7 +790,7 @@ class StoreRequestDetails(UserObjectMixin, View):
                "full": full_name,
                 "driver_role":driver_role,
                 "TO_role":TO_role,
-                "mechanical_inspector_role":mechanical_inspector_role}
+                }
         return render(request, 'storeDetail.html', ctx)
 
     def post(self, request, pk):
@@ -998,7 +991,6 @@ class GeneralRequisition(UserObjectMixin, View):
             userID = request.session['User_ID']
             driver_role = request.session['driver_role']
             TO_role = request.session['TO_role']
-            mechanical_inspector_role = request.session['User_Responsibility_Center']
             full_name = request.session['full_name']
 
             Access_Point = config.O_DATA.format(
@@ -1032,7 +1024,7 @@ class GeneralRequisition(UserObjectMixin, View):
                "full": full_name,
                 "driver_role":driver_role,
                 "TO_role":TO_role,
-                "mechanical_inspector_role":mechanical_inspector_role}
+                }
         return render(request, "generalReq.html", ctx)
 
     def post(self, request):
@@ -1073,7 +1065,6 @@ class GeneralRequisitionDetails(UserObjectMixin, View):
             userID = request.session['User_ID']
             driver_role = request.session['driver_role']
             TO_role = request.session['TO_role']
-            mechanical_inspector_role = request.session['User_Responsibility_Center']
             full_name = request.session['full_name']
             res = {}
 
@@ -1123,7 +1114,7 @@ class GeneralRequisitionDetails(UserObjectMixin, View):
                "full": full_name,
                 "driver_role":driver_role,
                 "TO_role":TO_role,
-                "mechanical_inspector_role":mechanical_inspector_role}
+                }
         return render(request, "generalDetails.html", ctx)
 
     def post(self, request, pk):

@@ -30,7 +30,6 @@ class InternalRoomBooking(UserObjectMixins, View):
             User_ID = await sync_to_async(request.session.__getitem__)('User_ID')
             driver_role = await sync_to_async(request.session.__getitem__)('driver_role')
             TO_role = await sync_to_async(request.session.__getitem__)('TO_role')
-            mechanical_inspector_role = await sync_to_async(request.session.__getitem__)('mechanical_inspector_role')
             full_name = await sync_to_async(request.session.__getitem__)('full_name')
             openRequest =[]
             Pending = []
@@ -55,7 +54,6 @@ class InternalRoomBooking(UserObjectMixins, View):
                 "full": full_name,
                 "driver_role":driver_role,
                 "TO_role":TO_role,
-                "mechanical_inspector_role":mechanical_inspector_role
             }
         except Exception as e:
             messages.error(request, "connection refused,non-200 response")
@@ -106,7 +104,6 @@ class InternalRoomBookingDetails(UserObjectMixin, View):
             full_name = request.session['full_name']
             driver_role = request.session['driver_role']
             TO_role = request.session['TO_role']
-            mechanical_inspector_role = request.session['mechanical_inspector_role']
             full_name = request.session['full_name']
             res ={}
 
@@ -189,7 +186,6 @@ class InternalRoomBookingDetails(UserObjectMixin, View):
             "full": full_name,
             "driver_role":driver_role,
             "TO_role":TO_role,
-            "mechanical_inspector_role":mechanical_inspector_role
         }
 
         return render(request, 'InternalRoomDetails.html', ctx)

@@ -31,7 +31,6 @@ class Dashboard(UserObjectMixins, View):
             full_name = await sync_to_async(request.session.__getitem__)('full_name')
             driver_role = await sync_to_async(request.session.__getitem__)('driver_role')
             TO_role =await sync_to_async(request.session.__getitem__)('TO_role')
-            mechanical_inspector_role =await sync_to_async(request.session.__getitem__)('mechanical_inspector_role')
             
             empAppraisal = ''
             pending_approval_count = 0
@@ -121,7 +120,7 @@ class Dashboard(UserObjectMixins, View):
                 "app_store_list":app_store_list,"pending_store":pending_store,"empAppraisal":empAppraisal,
                 "pending_approval_count":pending_approval_count,"today": self.todays_date,"full":full_name,
                 "HOD_User":HOD_User,"open_advances":open_advances,"driver_role":driver_role,"TO_role":TO_role,
-                "Pending_advances":Pending_advances,"approved_advances":approved_advances,"mechanical_inspector_role":mechanical_inspector_role,
+                "Pending_advances":Pending_advances,"approved_advances":approved_advances,
             }
         except (aiohttp.ClientError, aiohttp.ServerDisconnectedError, aiohttp.ClientResponseError) as e:
             print(e)
@@ -150,9 +149,7 @@ class OffCanvas(UserObjectMixin,View):
     def get(self, request):
         driver_role =request.session['driver_role']
         TO_role =request.session['TO_role']
-        mechanical_inspector_role =request.session['mechanical_inspector_role']
         ctx ={
             "driver_role":driver_role,
-            "mechanical_inspector_role":mechanical_inspector_role,
         }
         return render(request,'base.html',ctx)

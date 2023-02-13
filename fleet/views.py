@@ -1,7 +1,6 @@
 import asyncio
 import base64
-import json
-# from io import BytesIO
+import logging
 import aiohttp
 from django.shortcuts import render, redirect
 import requests
@@ -57,9 +56,6 @@ class WorkTicket(UserObjectMixin, View):
             TO_role =request.session['TO_role']
             full_name = request.session['full_name']
             
-            if TO_role == True and driver_role ==True and mechanical_inspector_role == True:
-                messages.error(request,"You can not hold driver, mechanical inspector and transport officer roles")
-                return redirect('dashboard')
 
             Access_Point = config.O_DATA.format(
                 f"/QyWorkTicket?$filter=CreatedBy%20eq%20%27{userID}%27")
@@ -188,7 +184,6 @@ class WorkTicketDetails(UserObjectMixin, View):
             full_name = request.session['full_name']
             driver_role = request.session['driver_role']
             TO_role = request.session['TO_role']
-            mechanical_inspector_role = request.session['mechanical_inspector_role']
             res = {}
 
             Access_Point = config.O_DATA.format(
@@ -221,7 +216,6 @@ class WorkTicketDetails(UserObjectMixin, View):
             "full": full_name,
             "driver_role":driver_role,
             "TO_role":TO_role,
-            "mechanical_inspector_role":mechanical_inspector_role,
         }
 
         return render(request, 'workTicketDetails.html', ctx)
@@ -637,7 +631,6 @@ class VehicleInspection(UserObjectMixin, View):
             userID = request.session['User_ID']
             driver_role = request.session['driver_role']
             TO_role = request.session['TO_role']
-            mechanical_inspector_role = request.session['mechanical_inspector_role']
             full_name = request.session['full_name']
 
             Access_Point = config.O_DATA.format(
@@ -726,7 +719,6 @@ class VehicleInspection(UserObjectMixin, View):
             "driver_role":driver_role,
             "TO_role":TO_role,
             "mechanical_response":mechanical_response,
-            "mechanical_inspector_role":mechanical_inspector_role,
         }
         return render(request, 'vehicleInspection.html', ctx)
 
@@ -764,7 +756,6 @@ class VehicleInspectionDetails(UserObjectMixin, View):
         try:
             driver_role = request.session['driver_role']
             TO_role = request.session['TO_role']
-            mechanical_inspector_role = request.session['mechanical_inspector_role']
             full_name = request.session['full_name']
 
             Access_Point = config.O_DATA.format(
@@ -803,7 +794,6 @@ class VehicleInspectionDetails(UserObjectMixin, View):
             "driver_role":driver_role,
             "TO_role":TO_role,
             "openLines":openLines,
-            "mechanical_inspector_role":mechanical_inspector_role,
         }
         return render(request, 'VehicleInspectionDetails.html', context)
 
@@ -994,7 +984,6 @@ class Accidents(UserObjectMixin, View):
             userID = request.session['User_ID']
             driver_role = request.session['driver_role']
             TO_role = request.session['TO_role']
-            mechanical_inspector_role = request.session['mechanical_inspector_role']
             full_name = request.session['full_name']
 
             Access_Point = config.O_DATA.format(
@@ -1039,7 +1028,6 @@ class Accidents(UserObjectMixin, View):
             "full": full_name,
             "driver_role":driver_role,
             "TO_role":TO_role,
-            "mechanical_inspector_role":mechanical_inspector_role,
         }
 
         return render(request, 'Accidents.html', ctx)
@@ -1051,8 +1039,8 @@ class Accidents(UserObjectMixin, View):
                 myUserId = request.session['User_ID']
                 vehicle = request.POST.get('vehicle')
                 driver = request.POST.get('driver')
-                dateOfAccident = request.POST.get('dateOfAccident')
-                timeOfAccident = request.POST.get('timeOfAccident')
+                dateOfAccident =  datetime.strptime(request.POST.get('dateOfAccident'), '%Y-%m-%d').date()
+                timeOfAccident = datetime.strptime(request.POST.get('timeOfAccident'), '%H:%M').time()
                 descriptionOfAccident = request.POST.get(
                     'descriptionOfAccident')
                 location = request.POST.get('location')
@@ -1060,17 +1048,16 @@ class Accidents(UserObjectMixin, View):
                 oBNo = request.POST.get('oBNo')
                 insuranceStatus = request.POST.get('insuranceStatus')
                 myAction = request.POST.get('myAction')
+                ReinstatementFee = float(request.POST.get('ReinstatementFee'))
+                damage_repair_cost = float(request.POST.get('damage_repair_cost'))
+                Towing_cost = float(request.POST.get('Towing_cost'))
+                Excess_cost = float(request.POST.get('Excess_cost'))
+                damage_repair = request.POST.get('damage_repair')
+                Remarks = request.POST.get('Remarks')
+                
+                if not Excess_cost:
+                    Excess_cost  = 0
 
-            except ValueError:
-                messages.error(request, "Missing Input")
-                return redirect('Accidents')
-            except KeyError:
-                messages.info(request, "Session Expired. Please Login")
-                return redirect('auth')
-            if not accidentNo:
-                accidentNo = ""
-
-            try:
                 response = config.CLIENT.service.FnAccidents(
                     accidentNo,
                     myUserId,
@@ -1083,10 +1070,11 @@ class Accidents(UserObjectMixin, View):
                     policeStation,
                     oBNo,
                     insuranceStatus,
-                    myAction,
+                    myAction,ReinstatementFee,damage_repair,Towing_cost,damage_repair_cost,Remarks
                 )
-                messages.success(request, "Request Successful")
-                # print(response)
+                if response == True:
+                    messages.success(request, "Request Successful")
+                    return redirect('Accidents')
             except Exception as e:
                 messages.error(request, f'{e}')
                 print(e)
@@ -1101,7 +1089,6 @@ class AccidentDetails(UserObjectMixin, View):
             userID = request.session['User_ID']
             driver_role = request.session['driver_role']
             TO_role = request.session['TO_role']
-            mechanical_inspector_role = request.session['mechanical_inspector_role']
             full_name = request.session['full_name']
             res = {}
 
@@ -1134,7 +1121,6 @@ class AccidentDetails(UserObjectMixin, View):
             "full": full_name,
             "driver_role":driver_role,
             "TO_role":TO_role,
-            "mechanical_inspector_role":mechanical_inspector_role,
         }
         return render(request, 'AccidentDetails.html', ctx)
 
@@ -1219,7 +1205,6 @@ class TransportRequest(UserObjectMixin, View):
             userID = request.session['User_ID']
             driver_role = request.session['driver_role']
             TO_role = request.session['TO_role']
-            mechanical_inspector_role = request.session['mechanical_inspector_role']
             full_name = request.session['full_name']
 
             Access_Point = config.O_DATA.format(
@@ -1278,7 +1263,6 @@ class TransportRequest(UserObjectMixin, View):
             "full": full_name,
             "driver_role":driver_role,
             "TO_role":TO_role,
-            "mechanical_inspector_role":mechanical_inspector_role,
         }
 
         return render(request, 'TransportRequest.html', ctx)
@@ -1316,7 +1300,6 @@ class TransportRequestDetails(UserObjectMixin, View):
             userID = request.session['User_ID']
             driver_role = request.session['driver_role']
             TO_role = request.session['TO_role']
-            mechanical_inspector_role = request.session['mechanical_inspector_role']
             full_name = request.session['full_name']
             res = {}
 
@@ -1372,7 +1355,6 @@ class TransportRequestDetails(UserObjectMixin, View):
             "full": full_name,
             "driver_role":driver_role,
             "TO_role":TO_role,
-            "mechanical_inspector_role":mechanical_inspector_role,
         }
         return render(request, 'TransportRequestDetails.html', ctx)
 
@@ -1484,7 +1466,6 @@ class ServiceRequest(UserObjectMixins, View):
             User_ID = await sync_to_async(request.session.__getitem__)('User_ID')
             driver_role =await sync_to_async(request.session.__getitem__)('driver_role')
             TO_role =await sync_to_async(request.session.__getitem__)('TO_role')
-            mechanical_inspector_role =await sync_to_async(request.session.__getitem__)('mechanical_inspector_role')
             full_name =await sync_to_async(request.session.__getitem__)('full_name')
             
             openServiceRequest = []
@@ -1536,7 +1517,6 @@ class ServiceRequest(UserObjectMixins, View):
             "full": full_name,
             "driver_role":driver_role,
             "TO_role":TO_role,
-            "mechanical_inspector_role":mechanical_inspector_role,
         }
         return render(request, 'ServiceRequest.html', ctx)
 
@@ -1593,7 +1573,6 @@ class ServiceRequestDetails(UserObjectMixin, View):
             userID = request.session['User_ID']
             driver_role = request.session['driver_role']
             TO_role = request.session['TO_role']
-            mechanical_inspector_role = request.session['User_Responsibility_Center']
             full_name = request.session['full_name']
             
             res ={}
@@ -1634,7 +1613,6 @@ class ServiceRequestDetails(UserObjectMixin, View):
             "full": full_name,
             "driver_role":driver_role,
             "TO_role":TO_role,
-            "mechanical_inspector_role":mechanical_inspector_role,
         }
         return render(request, 'ServiceRequestDetails.html', ctx)
 
@@ -1765,3 +1743,35 @@ def FnCancelServiceRequest(request, pk):
             print(e)
             return redirect('auth')
     return redirect('ServiceRequestDetails', pk=pk)
+
+
+class FuelConsumption(UserObjectMixins,View):
+    async def get(self,request):
+        try:
+            userID = await sync_to_async(request.session.__getitem__)('User_ID')
+            driver_role = await sync_to_async(request.session.__getitem__)('driver_role')
+            TO_role = await sync_to_async(request.session.__getitem__)('TO_role')
+            full_name = await sync_to_async(request.session.__getitem__)('full_name')
+
+            full_name = request.session['full_name']
+            
+            async with aiohttp.ClientSession() as session:
+                task_get_reservations = asyncio.ensure_future(self.fetch_one_filtered_data(
+                    session,"/QyFuelRegister","Created_By","eq",userID))
+
+                reservation_response = await asyncio.gather(task_get_reservations) 
+                
+                if reservation_response[0]['status_code'] == 200: # type: ignore
+                    openRequest = [x for x in reservation_response[0]['data'] if x['Booking_Status'] == 'Open' ] # type: ignore
+                    Pending = [x for x in reservation_response[0]['data'] if x['Booking_Status'] == 'Pending Approval'] #type:ignore
+                    Approved = [x for x in reservation_response[0]['data'] if x['Booking_Status'] == 'Approved'] #type:ignore
+            
+            ctx = {
+               "full": full_name,
+                "driver_role":driver_role,
+                "TO_role":TO_role, 
+            }
+        except Exception as e:
+            logging.exception(e)
+            return redirect('fuel')
+        return render(request,"fuel.html",ctx)
