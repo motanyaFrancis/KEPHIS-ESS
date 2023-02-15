@@ -17,6 +17,10 @@ from zeep.transports import Transport
 from requests.auth import HTTPBasicAuth
 from django.http import JsonResponse
 from django.views import View
+import asyncio
+import aiohttp
+from asgiref.sync import sync_to_async
+from myRequest.views import UserObjectMixins
 
 # Create your views here.
 
@@ -662,67 +666,67 @@ def FnGenerateRepairReport(request, pk):
     return redirect('RepairDetail', pk=pk)
 
 
-class StoreRequest(UserObjectMixin, View):
-    def get(self, request):
+class StoreRequest(UserObjectMixins, View):
+    async def get(self, request):
         try:
-            userID = request.session['User_ID']
-            driver_role = request.session['driver_role']
-            TO_role = request.session['TO_role']
-            full_name = request.session['full_name']
-         
-            Access_Point = config.O_DATA.format(
-                f"/QyStoreRequisitionHeaders?$filter=Requested_By%20eq%20%27{userID}%27")
-            response = self.get_object(Access_Point)
-            openStore = [x for x in response['value'] if x['Status'] == 'Open']
-            Pending = [x for x in response['value']
-                       if x['Status'] == 'Pending Approval']
-            Approved = [x for x in response['value']
-                        if x['Status'] == 'Released']
+            userID = await sync_to_async(request.session.__getitem__)('User_ID')
+            driver_role = await sync_to_async(request.session.__getitem__)('driver_role')
+            TO_role = await sync_to_async(request.session.__getitem__)('TO_role')
+            full_name = await sync_to_async(request.session.__getitem__)('full_name')
+            
+            openStore =[]
+            Pending = []
+            Approved = []
+            locations = []
+  
+            async with aiohttp.ClientSession() as session:
+                task_get_store = asyncio.ensure_future(self.simple_one_filtered_data(
+                    session,"/QyStoreRequisitionHeaders","Requested_By","eq",userID
+                ))
+                task_get_locations = asyncio.ensure_future(self.simple_fetch_data(
+                    session,"/QyLocations"
+                ))
+                response = await asyncio.gather(task_get_store,task_get_locations)
+                
+                openStore = [x for x in response[0] if x['Status'] == 'Open' ] # type: ignore
+                Pending = [x for x in response[0] if x['Status'] == 'Pending Approval' ] # type: ignore
+                Approved = [x for x in response[0] if x['Status'] == 'Released' ] # type: ignore
+                locations = [x for x in response[1]] # type: ignore
 
-            counts = len(openStore)
-            counter = len(Approved)
-            pend = len(Pending)
-
-        except requests.exceptions.RequestException as e:
-            print(e)
-            messages.info(
-                request, "Whoops! Something went wrong. Please Login to Continue")
-            return redirect('auth')
         except KeyError:
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
 
         ctx = {"today": self.todays_date, "res": openStore,
-               "count": counts, "response": Approved,
-               "counter": counter, "pend": pend, "pending": Pending,
+               "response": Approved,
+               "pending": Pending,
                "full": full_name,
                 "driver_role":driver_role,
                 "TO_role":TO_role,
+                "locations":locations,
                 }
         return render(request, 'storeReq.html', ctx)
 
-    def post(self, request):
+    async def post(self, request):
         if request.method == 'POST':
             try:
                 requisitionNo = request.POST.get('requisitionNo')
                 reason = request.POST.get('reason')
                 myAction = request.POST.get('myAction')
-                myUserId = request.session['User_ID']
-                employeeNo = request.session['Employee_No_']
-            except ValueError:
-                messages.error(request, "Missing Input")
-                return redirect('store')
-            except KeyError:
-                messages.info(request, "Session Expired. Please Login")
-                return redirect('auth')
-            if not requisitionNo:
-                requisitionNo = " "
+                issuingStore = request.POST.get('issuingStore')
+                requiredDate = datetime.strptime(request.POST.get('requiredDate'), '%Y-%m-%d').date()
+                userID = await sync_to_async(request.session.__getitem__)('User_ID')
+                Employee_No_ = await sync_to_async(request.session.__getitem__)('Employee_No_')
+                soap_headers = await sync_to_async(request.session.__getitem__)('soap_headers')
 
-            try:
-                response = config.CLIENT.service.FnStoreRequisitionHeader(
-                    requisitionNo, employeeNo, reason, myUserId, myAction)
-                messages.success(request, "Request Successful")
-                print(response)
+                response = self.make_soap_request(soap_headers,'FnStoreRequisitionHeader',
+                    requisitionNo, Employee_No_, reason, userID, myAction,issuingStore,requiredDate)
+                if response == True:
+                    messages.success(request, "Request Successful")
+                    return redirect('store')
+                else:
+                    messages.error(request, f'{response}')
+                    return redirect('store')
             except Exception as e:
                 print(e)
                 messages.info(request, f'{e}')
@@ -801,18 +805,12 @@ class StoreRequestDetails(UserObjectMixin, View):
                 itemCode = request.POST.get('itemCode')
                 quantity = int(request.POST.get('quantity'))
                 myAction = request.POST.get('myAction')
-                Unit_of_Measure = request.POST.get('Unit_of_Measure')
-            except ValueError:
-                messages.error(request, "Missing Input")
-                return redirect('StoreDetail', pk=pk)
-            if not Unit_of_Measure:
-                Unit_of_Measure = ''
-            try:
+
                 response = config.CLIENT.service.FnStoreRequisitionLine(
-                    requisitionNo, lineNo, itemCode, quantity, myAction, Unit_of_Measure)
-                messages.success(request, "Request Successful")
-                print(response)
-                return redirect('StoreDetail', pk=pk)
+                    requisitionNo, lineNo, itemCode, quantity, myAction)
+                if response == True:
+                    messages.success(request, "Request Successful")
+                    return redirect('StoreDetail', pk=pk)
             except Exception as e:
                 messages.error(request, f'{e}')
                 print(e)

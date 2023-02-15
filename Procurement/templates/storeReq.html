@@ -28,19 +28,22 @@
                         <ul class="nav nav-tabs d-flex" id="myTab">
                             <li class="nav-item flex-fill">
                                 <a href="#home" class="nav-link active" data-bs-toggle="tab">Open
-                                    ({{count}})</a>
+                                    ({{res|length}})
+                                </a>
                             </li>
                             <li class="nav-item flex-fill">
-                                <a href="#pending" class="nav-link" data-bs-toggle="tab">Pending Approval ({{pend}})</a>
+                                <a href="#pending" class="nav-link" data-bs-toggle="tab">
+                                    Pending Approval ({{pending|length}})
+                                </a>
                             </li>
                             <li class="nav-item flex-fill">
                                 <a href="#profile" class="nav-link" data-bs-toggle="tab">Approved
-                                    ({{counter}})</a>
+                                    ({{response|length}})
+                                </a>
                             </li>
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane fade show active" id="home">
-                                <h4 class="mt-2 text-dark">Open Store Request</h4>
                                 <div class="card-body">
                                     <table id="example"
                                         class="display table table-striped table-bordered dt-responsive table-responsive-lg"
@@ -63,11 +66,11 @@
                                                 <td>{{res.Location_Code}}</td>
                                                 <td>{{res.Status}}</td>
                                                 <td>
-                                                    <button class="btn btn-primary" data-bs-toggle="modal"
+                                                    <!-- <button class="btn btn-primary" data-bs-toggle="modal"
                                                         data-bs-target="#trainedit{{res.No_}}" data-toggle="tooltip"
                                                         data-placement="top" title="edit"> Edit <i
                                                             class="fas fa-edit"></i>
-                                                    </button>
+                                                    </button> -->
                                                     <a href="{% url 'StoreDetail' res.No_ %}"
                                                         class="btn btn-success btn-icon-text" type="button"
                                                         data-toggle="tooltip" data-placement="top"
@@ -137,11 +140,11 @@
                                                 <td>{{res.Location_Code}}</td>
                                                 <td>{{res.Status}}</td>
                                                 <td>
-                                                    <button class="btn btn-primary" data-bs-toggle="modal"
+                                                    <!-- <button class="btn btn-primary" data-bs-toggle="modal"
                                                         data-bs-target="#trainedit{{res.No_}}" data-toggle="tooltip"
                                                         data-placement="top" title="edit"> Edit <i
                                                             class="fas fa-edit"></i>
-                                                    </button>
+                                                    </button> -->
                                                     <a href="{% url 'StoreDetail' res.No_ %}"
                                                         class="btn btn-success btn-icon-text" type="button"
                                                         data-toggle="tooltip" data-placement="top"
@@ -202,7 +205,6 @@
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="profile">
-                                <h4 class="mt-2">Approved Store Request</h4>
                                 <div class="card-body">
                                     <table id="example"
                                         class="display table table-striped table-bordered dt-responsive table-responsive-lg"
@@ -237,7 +239,6 @@
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="pending">
-                                <h4 class="mt-2">Pending Approval Store Request</h4>
                                 <div class="card-body">
                                     <table id="example"
                                         class="display table table-striped table-bordered dt-responsive table-responsive-lg"
@@ -292,14 +293,25 @@
                     <form class="myForm" action="{% url 'store' %}" method="post" novalidate>
                         {% csrf_token %}
                         <div class="mb-2">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <input type="hidden" name="requisitionNo" value=" ">
+                            <input type="hidden" name="requisitionNo" value="">
+                            <input type="hidden" name="myAction" value="insert">
+                            <div class="row gx-1">
+                                <div class="col-md-6">
+                                    <label class="form-label">Issuing Store </label>
+                                    <select class="form-select" name="issuingStore" required>
+                                        <option selected disabled value="0">--Select--</option>
+                                        {% for location in locations %}
+                                        <option value="{{location.Code}}">{{location.Name}}</option>
+                                        {% empty %}
+                                        <option value="0">No issuing store</option>
+                                        {% endfor %}
+
+                                    </select>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <input type="hidden" name="myAction" value="insert">
+                                <div class="col-md-6">
+                                    <label for="" class="form-label">Required Date <span
+                                            class="text-danger">*</span></label>
+                                    <input type="date" name="requiredDate" class="form-control" required>
                                 </div>
                             </div>
                             <div class="row">

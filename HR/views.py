@@ -318,7 +318,7 @@ class Training_Request(UserObjectMixins, View):
                 employeeNo = request.session['Employee_No_']
                 usersId = request.session['User_ID']
                 isAdhoc = eval(request.POST.get('isAdhoc'))
-                sponsorType = request.POST.get('sponsorType')
+                sponsorType = int(request.POST.get('sponsorType'))
                 trainingNeed = request.POST.get('trainingNeed')
                 myAction = request.POST.get('myAction')
 
@@ -547,8 +547,14 @@ class FnTrainingEvaluation(UserObjectMixins,View):
             employeeNo = request.session['Employee_No_']
             myAction = request.POST.get('myAction')
             
+            print(evaluationNo)
+            print(trainingRequestNo)
+            print(employeeNo)
+            print(myAction)
+            
             response = self.make_soap_request(soap_headers,'FnTrainingEvaluation',
                                 evaluationNo,trainingRequestNo,employeeNo,myAction)
+            print(response)
             if response !='0':
                 messages.success(request,f"Started evaluation for Training: {trainingRequestNo}")
                 return redirect('evaluation',pk=response)

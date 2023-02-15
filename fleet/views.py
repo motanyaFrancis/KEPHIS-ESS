@@ -649,7 +649,7 @@ class VehicleInspection(UserObjectMixin, View):
             ]
             ApprovedInspection = [
                 x for x in response['value']
-                if x['Status'] == 'Approved' and x['Booked_For_Inspection'] == False
+                if x['Status'] == 'Approved' 
             ]
             BookedInspection = [
                 x for x in response['value']
@@ -671,7 +671,6 @@ class VehicleInspection(UserObjectMixin, View):
             pend = len(PendingInspectionReq)
             counter = len(ApprovedInspection)
             bookedCount = len(BookedInspection)
-            inspectedCount = len(Inspected)
 
             vehicle = config.O_DATA.format("/QyFixedAssets")
             res_veh = self.get_object(vehicle)
@@ -709,7 +708,6 @@ class VehicleInspection(UserObjectMixin, View):
             'booked': BookedInspection,
             'bookedCount': bookedCount,
             'inspected': Inspected,
-            'inspectedCount': inspectedCount,
             "pending": PendingInspectionReq,
             "Vehicle_No": Vehicle_No,
             'drivers': drivers,
@@ -946,7 +944,7 @@ def FnBookForInspection(request, pk):
             
             response = CLIENT.service.FnBookForInspection(pk, myUserId)
             if response == True:
-                messages.success(request, "Booking for Inspection Successful")
+                messages.success(request, "Booking Successful")
                 return redirect('vehicleInspection')
             elif response == False:
                 messages.error(request, f"{response}")

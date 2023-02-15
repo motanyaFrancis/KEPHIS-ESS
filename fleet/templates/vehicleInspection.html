@@ -35,6 +35,10 @@
                                 <a href="#approved" class="nav-link" data-bs-toggle="tab">Approved
                                     ({{counter}})</a>
                             </li>
+                            <li class="nav-item flex-fill">
+                                <a href="#inspected" class="nav-link" data-bs-toggle="tab">Inspected
+                                    ({{inspected|length}})</a>
+                            </li>
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane fade show active" id="home">
@@ -359,7 +363,7 @@
                                 </div>
 
                             </div>
-                            <div class="tab-pane fade " id="approved">
+                            <div class="tab-pane fade" id="approved">
                                 <div class="card-body">
                                     <table id="example"
                                         class="display table table-striped table-bordered dt-responsive table-responsive-lg"
@@ -370,19 +374,104 @@
                                                 <th id="long">Request No.</th>
                                                 <th>Date Requested</th>
                                                 <th>Vehicle</th>
-                                                <th>Requested By</th>
+                                                <th>Inspected</th>
                                                 <th>Action</th>
+                                                <th>Booked For Inspection</th>
                                             </tr>
                                         </thead>
                                         <tbody>
 
                                             {% for res in approved %}
-
                                             <tr>
                                                 <td>{{res.No}}</td>
                                                 <td>{{res.Date}}</td>
                                                 <td>{{res.Vehicle}}</td>
-                                                <td>{{res.CreatedBy }}</td>
+                                                <td>
+                                                    {% if res.Inspected == True %}
+                                                    yes
+                                                    {% elif res.Inspected == False %}
+                                                    No
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if res.Booked_For_Inspection == False and res.Inspected == True %}
+                                                    <form action="{% url 'FnBookForInspection' res.No %}" method="post"
+                                                        style="display: inline-block;">
+                                                        {% csrf_token %}
+                                                        <button class="btn btn-dark" type="submit" data-toggle="tooltip"
+                                                            data-placement="top" title="confirm repair">
+                                                            <i class="las la-tools"></i> Book for Inspection <i
+                                                                class="las la-check-double"></i>
+                                                        </button>
+                                                    </form>
+                                                    {% elif res.Booked_For_Inspection == True and res.Inspected == False %}
+                                                    <form action="{% url 'FnMarkInspected' res.No %}" method="post"
+                                                        style="display: inline-block;">
+                                                        {% csrf_token %}
+                                                        <button class="btn btn-warning" type="submit"
+                                                            data-toggle="tooltip" data-placement="top"
+                                                            title="confirm repair">
+                                                            <i class="las la-tools"></i> Mark Inspected <i
+                                                                class="las la-check-double"></i>
+                                                        </button>
+                                                    </form>
+                                                    {% endif %}
+                                                    <a href="{% url 'VehicleInspectionDetails' res.No %}"
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top"
+                                                        title="Click to View">
+                                                        View
+                                                        <i class="far fa-eye"></i>
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    {% if res.Booked_For_Inspection == True %}
+                                                    yes
+                                                    {% elif res.Booked_For_Inspection == False %}
+                                                    No
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+
+                                            {%endfor%}
+
+                                        </tbody>
+                                    </table>
+
+                                </div>
+
+                            </div>
+                            <div class="tab-pane fade " id="inspected">
+                                <div class="card-body">
+                                    <table id="example"
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
+
+                                        <thead>
+                                            <tr id="tops">
+                                                <th id="long">Request No.</th>
+                                                <th>Date Requested</th>
+                                                <th>Vehicle</th>
+                                                <th>Inspected</th>
+                                                <th>Date Passed Inspection</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                            {% for res in inspected %}
+                                            <tr>
+                                                <td>{{res.No}}</td>
+                                                <td>{{res.Date}}</td>
+                                                <td>{{res.Vehicle}}</td>
+                                                <td>
+                                                    {% if res.Inspected == True %}
+                                                    yes
+                                                    {% elif res.Inspected == False %}
+                                                    No
+                                                    {% endif %}
+                                                </td>
+                                                <td>{{res.Date_Passed_Inspection}}</td>
                                                 <td>
                                                     <a href="{% url 'VehicleInspectionDetails' res.No %}"
                                                         class="btn btn-success btn-icon-text" type="button"

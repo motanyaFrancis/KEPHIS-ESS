@@ -43,28 +43,7 @@
                                                 <td>{{res.Vehicle}}</td>
                                                 <td>{{res.CreatedBy }}</td>
                                                 <td>
-                                                    {% if res.BookForInspection == False %}
-                                                    <form action="{% url 'FnBookForInspection' res.No %}" method="post"
-                                                        style="display: inline-block;">
-                                                        {% csrf_token %}
-                                                        <button class="btn btn-dark" type="submit" data-toggle="tooltip"
-                                                            data-placement="top" title="confirm repair">
-                                                            <i class="las la-tools"></i> Book for Inspection <i
-                                                                class="las la-check-double"></i>
-                                                        </button>
-                                                    </form>
-                                                    {% elif res.BookForInspection == True %}
-                                                    <form action="{% url 'FnMarkInspected' res.No %}" method="post"
-                                                        style="display: inline-block;">
-                                                        {% csrf_token %}
-                                                        <button class="btn btn-warning" type="submit"
-                                                            data-toggle="tooltip" data-placement="top"
-                                                            title="confirm repair">
-                                                            <i class="las la-tools"></i> Mark Inspected <i
-                                                                class="las la-check-double"></i>
-                                                        </button>
-                                                    </form>
-                                                    {% endif %}
+                                                   
                                                     <a href="{% url 'VehicleInspectionDetails' res.No %}"
                                                         class="btn btn-success btn-icon-text" type="button"
                                                         data-toggle="tooltip" data-placement="top"
@@ -86,3 +65,7 @@
             </div>
         </div>
     </div>
+
+    Remove Unit of Measure from the function,
+
+    Have Code from QyItems that pick the Item Category from the Item Category Table
