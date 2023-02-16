@@ -234,13 +234,13 @@
         {% endif %}
         {% if res.Status == 'Released' %}
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <div class="card text-white bg-secondary mb-3">
                     <div class="card-header">Questionnaire</div>
                     <div class="card-body">
                         <form>
                             <div class="form-group">
-                                <label for="question1">Do you like white boots?</label>
+                                <label for="question1">Useful of the Course?</label>
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="question1" id="question1"
                                         value="yes">
@@ -582,15 +582,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6">
-                                <label class="form-label">Sponsor Type</label>
-                                <select class="form-select" name="sponsor" required>
-                                    <option selected disabled value="">Select </option>
-                                    <option value="1">Self Sponsored</option>
-                                    <option value="2">Organization Sponsored</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <label for="" class="form-label">Provider</label>
                                 <input type="text" class="form-control" name="provider" required>
                             </div>

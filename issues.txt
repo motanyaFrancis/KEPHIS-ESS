@@ -69,3 +69,5 @@
     Remove Unit of Measure from the function,
 
     Have Code from QyItems that pick the Item Category from the Item Category Table
+
+    Remove SponorType from taining Lines

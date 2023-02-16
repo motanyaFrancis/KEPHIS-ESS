@@ -79,19 +79,20 @@ class ImprestRequisition(UserObjectMixin, View):
             try:
                 imprestNo = request.POST.get('imprestNo')
                 accountNo = request.session['Customer_No_']
-                responsibilityCenter = request.session['User_Responsibility_Center']
                 travelType = int(request.POST.get('travelType'))
                 purpose = request.POST.get('purpose')
                 usersId = request.session['User_ID']
                 personalNo = request.session['Employee_No_']
                 myAction = request.POST.get('myAction')
-                startDate  = request.POST.get('startDate')
-                completionDate = request.POST.get('completionDate')
-                isImprest = request.POST.get('isImprest')
+                startDate  = datetime.strptime(request.POST.get('startDate'), '%Y-%m-%d').date()
+                completionDate = datetime.strptime(request.POST.get('completionDate'), '%Y-%m-%d').date()
+                User_Responsibility_Center = request.session['User_Responsibility_Center']
+                imprestType = int(request.POST.get('imprestType'))
         
                 response = config.CLIENT.service.FnImprestHeader(
-                    imprestNo, accountNo, responsibilityCenter, travelType, purpose,
-                    usersId, personalNo,  myAction, startDate, completionDate)
+                    imprestNo, accountNo, travelType, purpose,
+                    usersId, personalNo,  myAction, startDate, completionDate,imprestType,
+                    User_Responsibility_Center)
                 if response == True:
                     messages.success(request, "Request Successful")
                     return redirect('imprestReq')
@@ -321,38 +322,23 @@ def CreateImprestLines(request, pk):
         try:
             lineNo = int(request.POST.get('lineNo'))
             destination = request.POST.get('destination')
-            imprestTypes = request.POST.get('imprestType')
             requisitionType = request.POST.get('requisitionType')
-            DSAType = request.POST.get('DSAType')
             travelDate = datetime.strptime(
                 request.POST.get('travel'), '%Y-%m-%d').date()
-            amount = float(request.POST.get("amount"))
+            amount = request.POST.get("amount")
             returnDate = datetime.strptime(
                 request.POST.get('returnDate'), '%Y-%m-%d').date()
             myAction = request.POST.get('myAction')
-        except ValueError:
-            messages.error(request, "Missing Input")
-            return redirect('IMPDetails', pk=pk)
 
-        class Data(enum.Enum):
-            values = imprestTypes
-        imprestType = (Data.values).value
+            if not amount:
+                amount = 0
 
-        if not amount:
-            amount = 0
-
-        if not imprestType:
-            messages.info(request, "Both Imprest and DSA can't be empty.")
-            return redirect('IMPDetails', pk=pk)
-
-        if DSAType:
-            requisitionType = DSAType
-        try:
             response = config.CLIENT.service.FnImprestLine(
-                lineNo, pk, imprestType, destination, travelDate, returnDate, requisitionType, float(amount), myAction)
-            messages.success(request, "Request Successful")
-            print(response)
-            return redirect('IMPDetails', pk=pk)
+                lineNo, pk, destination, travelDate, 
+                returnDate, requisitionType,float(amount), myAction)
+            if response == True:
+                messages.success(request, "Request Successful")
+                return redirect('IMPDetails', pk=pk)
         except Exception as e:
             messages.error(request,f'{e}')
             print(e)

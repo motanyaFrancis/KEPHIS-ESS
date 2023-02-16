@@ -109,12 +109,12 @@
                     <div class="card-statistic-3 p-4">
                         <div class="card-icon card-icon-large"><i class="fas fa-dollar-sign"></i></div>
                         <div class="mb-4">
-                            <h5 class="card-title mb-0">DSA Amount</h5>
+                            <h5 class="card-title mb-0">Travel Type</h5>
                         </div>
                         <div class="row align-items-center mb-2 d-flex">
                             <div class="col-md-12">
                                 <h2 class="d-flex align-items-center mb-0">
-                                    {{res.DSA_Allowance_Amount}}
+                                    {{res.Travel_Type}}
                                 </h2>
                             </div>
                         </div>
@@ -154,19 +154,6 @@
                     <div class="col-md-4">
                         <label class="form-label">Account No</label>
                         <input type="text" class="form-control" placeholder="{{res.Account_No_}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Travel Type</label>
-                        <input type="text" class="form-control" placeholder="{{res.Travel_Type}}" readonly>
-                    </div>
-
-                    <div class="col-md-4">
-                        <label class="form-label">Account Type</label>
-                        <input type="text" class="form-control" placeholder="{{res.Account_Type}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Imprest</label>
-                        <input type="text" class="form-control" placeholder="{{res.Imprest}}" readonly>
                     </div>
                     <div class="col-12">
                         <label for="inputAddress" class="form-label">purpose</label>
@@ -409,24 +396,7 @@
 
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <label for="" class="form-label">Imprest Type <span class="text-danger">*</span></label>
-                                <select class="form-select" name="imprestType" id="imprestType" required>
-                                    <option selected disabled value="">Select Imprest Type</option>
-                                    {% if res.Imprest == False and res.DSA == False %}
-                                    <option value="" disabled>You can not have both DSA and Imprest as False</option>
-                                    {% elif res.Imprest == True and res.DSA == True %}
-                                    <option value="1">Imprest</option>
-                                    <option value="2">DSA</option>
-                                    {% elif res.Imprest == True and res.DSA == False %}
-                                    <option value="1">Imprest</option>
-                                    {% elif res.Imprest == False and res.DSA == True %}
-                                    <option value="2">DSA</option>
-                                    {% endif %}
-                                </select>
-                            </div>
-                        </div>
+
                         <div class="row">
                             <div class="col-md-6">
                                 <label for="" class="form-label">Travel Date <span class="text-danger">*</span></label>
@@ -437,34 +407,17 @@
                                 <input type="date" id="to" class="form-control" name="returnDate" required>
                             </div>
                         </div>
-                        <div class="row" style="display: none;" id="imprestTypeRow">
+                        <div class="row" id="imprestTypeRow">
                             <div class="col-md-12">
                                 <label for="" class="form-label">Requisition Type <span
                                         class="text-danger">*</span></label>
                                 <select name="requisitionType" class="form-select" id="imprestTypess"
-                                    onchange="getRep()" disabled>
-                                    <option value='' selected='selected'>Select</option>
+                                    onchange="getRep()">
+                                    <option value='0' selected='selected'>Select</option>
                                     {% for res in type %}
-                                    {% if res.Type == 'Imprest' %}
-                                    <option value='{{res.Code}}' ren='{{res.Based_On_a_Table}}'>
+                                    <option value='{{res.Code}}' ren='{{res.Based_On_Travel_Rates_Table}}'>
                                         {{res.Description}}
                                     </option>
-                                    {% endif %}
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row" style="display: none;" id="DSATypeRow">
-                            <div class="col-md-12">
-                                <label for="" class="form-label">Requisition Type <span
-                                        class="text-danger">*</span></label>
-                                <select id="DSAType" name="DSAType" class="form-select" onchange="getReps()" disabled>
-                                    <option value='' selected='selected'>Select</option>
-                                    {% for res in type %}
-                                    {% if res.DSA == True %}
-                                    <option value='{{res.Code}}' rens='{{res.Based_On_a_Table}}'>{{res.Description}}
-                                    </option>
-                                    {% endif %}
                                     {% endfor %}
                                 </select>
                             </div>
@@ -523,19 +476,6 @@
         }
     }
 
-    function getReps() {
-        var rens = document.forms['frm_'].elements['DSAType'].options[document.forms['frm_'].elements[
-                'DSAType'].selectedIndex]
-            .getAttribute('rens');
-
-        if (rens === 'False') {
-            $('.tableAmountRow').show(1000)
-            $('.tableAmount').prop('disabled', false);
-        } else if (rens === 'True') {
-            $('.tableAmount').prop('disabled', true);
-            $('.tableAmountRow').hide(1000)
-        }
-    }
     // date validations 
     var today = new Date().toISOString().substr(0, 10);
     document.querySelector("input[name='travel']").setAttribute('min', today);

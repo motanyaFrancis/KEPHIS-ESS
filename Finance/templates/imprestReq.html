@@ -3,7 +3,7 @@
 {% load static %}
 {% block main %}
 <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
-        crossorigin="anonymous"></script>
+    crossorigin="anonymous"></script>
 <section class="dash2">
     <div class="content-wrapper general-bg" style="padding-bottom: 5rem;">
         <div class="row" id="proBanner">
@@ -12,9 +12,9 @@
                     <img src="../../../static/img/logo/fav.png" width="70px" class="img-fluid" alt="" srcset="">
                     <h2 class="text-dark font-weight-bold ml-3"> Imprest Requisition </h2>
                     <button class="btn btn-successs align-items-center p-3" data-bs-toggle="modal"
-                            data-bs-target="#staticBackdrop"
-                            style="margin-left: auto;margin-right:0;outline: none;border: none;"><i
-                           class="las la-plus text-white" style="font-size:15px;"></i> New Imprest Requisition</button>
+                        data-bs-target="#staticBackdrop"
+                        style="margin-left: auto;margin-right:0;outline: none;border: none;"><i
+                            class="las la-plus text-white" style="font-size:15px;"></i> New Imprest Requisition</button>
                 </span>
 
             </div>
@@ -41,11 +41,10 @@
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane fade show active" id="home">
-                                <h4 class="mt-2 text-dark">Open Imprest Requisitions</h4>
                                 <div class="card-body">
                                     <table id="example"
-                                           class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                                           style="width:100%">
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
                                         <thead>
                                             <tr id="tops">
                                                 <th id="long">Imprest No</th>
@@ -65,13 +64,16 @@
                                                 <td>{{res.Travel_Type}}</td>
                                                 <td>
 
-                                                    <button class="btn btn-primary" data-bs-toggle="modal"
-                                                            data-bs-target="#trainedit{{res.No_}}" data-toggle="tooltip"
-                                                            data-placement="top" title="edit">Edit <i
-                                                           class="fas fa-edit"></i>
-                                                    </button>
-                                                    <div class="modal fade" id="trainedit{{res.No_}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="0" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                                                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                                    <!-- <button class="btn btn-primary" data-bs-toggle="modal"
+                                                        data-bs-target="#trainedit{{res.No_}}" data-toggle="tooltip"
+                                                        data-placement="top" title="edit">Edit <i
+                                                            class="fas fa-edit"></i>
+                                                    </button> -->
+                                                    <div class="modal fade" id="trainedit{{res.No_}}"
+                                                        data-bs-backdrop="static" data-bs-keyboard="false" tabindex="0"
+                                                        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                        <div
+                                                            class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title" id="staticBackdropLabel">
@@ -79,20 +81,24 @@
                                                                         <span class="editSpan">{{res.No_}}</span>
                                                                     </h5>
                                                                     <button type="button"
-                                                                            class="btn-close btn-close-white"
-                                                                            data-bs-dismiss="modal"
-                                                                            aria-label="Close"></button>
+                                                                        class="btn-close btn-close-white"
+                                                                        data-bs-dismiss="modal"
+                                                                        aria-label="Close"></button>
                                                                 </div>
                                                                 <div class="modal-body">
                                                                     <form class="myForm" action="{% url 'imprestReq' %}"
-                                                                          method="post" novalidate>
+                                                                        method="post" novalidate>
                                                                         {% csrf_token %}
                                                                         <div class="mb-2 myForm">
                                                                             <div class="row">
                                                                                 <div class="col-md-12">
-                                                                                    <label class="form-label">Imprest</label>
-                                                                                    <select class="form-select" name="isImprest" disabled required>
-                                                                                        <option selected value="True">Yes</option>
+                                                                                    <label
+                                                                                        class="form-label">Imprest</label>
+                                                                                    <select class="form-select"
+                                                                                        name="isImprest" disabled
+                                                                                        required>
+                                                                                        <option selected value="True">
+                                                                                            Yes</option>
                                                                                     </select>
                                                                                     <div class="invalid-feedback">
                                                                                         Please select a valid option.
@@ -101,49 +107,69 @@
                                                                             </div>
                                                                             <div class="row">
                                                                                 <div class="col-md-12">
-                                                                                    <label class="form-label">Travel Type <span class="text-danger">*</span></label>
-                                                                                    <select class="form-select" name="travelType" required>
-                                                                                        <option selected disabled value="">Select Option </option>
+                                                                                    <label class="form-label">Travel
+                                                                                        Type <span
+                                                                                            class="text-danger">*</span></label>
+                                                                                    <select class="form-select"
+                                                                                        name="travelType" required>
+                                                                                        <option selected disabled
+                                                                                            value="">Select Option
+                                                                                        </option>
                                                                                         <option value="0">Local</option>
-                                                                                        <option value="1">Foreign </option>
+                                                                                        <option value="1">Foreign
+                                                                                        </option>
                                                                                     </select>
                                                                                 </div>
                                                                             </div>
                                                                             <div class="row">
                                                                                 <div class="col-md-12">
-                                                                                    <input type="hidden" name="myAction" value="modify">
+                                                                                    <input type="hidden" name="myAction"
+                                                                                        value="modify">
                                                                                 </div>
                                                                             </div>
                                                                             <div class="row">
                                                                                 <div class="col-md-12">
-                                                                                    <input type="hidden" name="imprestNo" value="{{res.No_}}">
+                                                                                    <input type="hidden"
+                                                                                        name="imprestNo"
+                                                                                        value="{{res.No_}}">
                                                                                 </div>
                                                                             </div>
                                                                             <div class="row">
                                                                                 <div class="col-md-6">
-                                                                                    <label class="form-label">Start Date</label>
-                                                                                    <input class="form-control" type="date" name="startDate" >
+                                                                                    <label class="form-label">Start
+                                                                                        Date</label>
+                                                                                    <input class="form-control"
+                                                                                        type="date" name="startDate">
                                                                                 </div>
                                                                                 <div class="col-md-6">
-                                                                                    <label class="form-label">Completion Date</label>
-                                                                                    <input class="form-control" type="date" name="completionDate">
+                                                                                    <label class="form-label">Completion
+                                                                                        Date</label>
+                                                                                    <input class="form-control"
+                                                                                        type="date"
+                                                                                        name="completionDate">
                                                                                 </div>
                                                                             </div>
                                                                             <div class="row">
                                                                                 <div class="col-md-12">
-                                                                                    <label for="purpose" class="form-label">Purpose</label>
-                                                                                    <textarea class="form-control" name="purpose" rows="3" required></textarea>
+                                                                                    <label for="purpose"
+                                                                                        class="form-label">Purpose</label>
+                                                                                    <textarea class="form-control"
+                                                                                        name="purpose" rows="3"
+                                                                                        required></textarea>
                                                                                 </div>
                                                                             </div>
-                                                                            <button type="submit" id="sasa" class="btn btn-success my-3 w-100">Submit</button>
+                                                                            <button type="submit" id="sasa"
+                                                                                class="btn btn-success my-3 w-100">Submit</button>
                                                                     </form>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
 
-                                                    <a href="{% url 'IMPDetails' res.No_%}" class="btn btn-success btn-icon-text"
-                                                       type="button" data-toggle="tooltip" data-placement="top" title="Click to View"> View
+                                                    <a href="{% url 'IMPDetails' res.No_%}"
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top"
+                                                        title="Click to View"> View
                                                         <i class="far fa-eye"></i>
                                                     </a>
 
@@ -157,38 +183,49 @@
                                                 <td>{{res.Imprest}}</td>
                                                 <td>{{res.Travel_Type}}</td>
                                                 <td>
-                                                    <button class="btn btn-primary" data-bs-toggle="modal"
+                                                    <!-- <button class="btn btn-primary" data-bs-toggle="modal"
                                                             data-bs-target="#trainedit{{res.No_}}" data-toggle="tooltip"
                                                             data-placement="top" title="edit">Edit <i class="fas fa-edit"></i>
-                                                    </button>
-                                                    
-                                                    <a href="{% url 'IMPDetails' res.No_ %}" class="btn btn-success btn-icon-text" type="button"data-toggle="tooltip" data-placement="top" title="Click to View"> 
+                                                    </button> -->
+
+                                                    <a href="{% url 'IMPDetails' res.No_ %}"
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top"
+                                                        title="Click to View">
                                                         View <i class="far fa-eye"></i>
                                                     </a>
 
-                                                    <div class="modal fade" id="trainedit{{res.No_}}" data-bs-backdrop="static"
-                                                         data-bs-keyboard="false" tabindex="0" aria-labelledby="staticBackdropLabel"
-                                                         aria-hidden="true">
-                                                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                                    <div class="modal fade" id="trainedit{{res.No_}}"
+                                                        data-bs-backdrop="static" data-bs-keyboard="false" tabindex="0"
+                                                        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                        <div
+                                                            class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title" id="staticBackdropLabel">
                                                                         Edit Imprest
                                                                         <span class="editSpan">{{res.No_}}</span>
                                                                     </h5>
-                                                                    <button type="button" class="btn-close btn-close-white"
-                                                                            data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                    <button type="button"
+                                                                        class="btn-close btn-close-white"
+                                                                        data-bs-dismiss="modal"
+                                                                        aria-label="Close"></button>
                                                                 </div>
                                                                 <div class="modal-body">
-                                                                    <form class="myForm" action="{% url 'imprestReq' %}" method="post" novalidate>
+                                                                    <form class="myForm" action="{% url 'imprestReq' %}"
+                                                                        method="post" novalidate>
                                                                         {% csrf_token %}
                                                                         <div class="mb-2 myForm">
-                                                                            
+
                                                                             <div class="row">
                                                                                 <div class="col-md-12">
-                                                                                    <label class="form-label" hidden>Imprest</label>
-                                                                                    <select class="form-select" name="isImprest" disabled required hidden>
-                                                                                        <option selected value="True">Yes</option>
+                                                                                    <label class="form-label"
+                                                                                        hidden>Imprest</label>
+                                                                                    <select class="form-select"
+                                                                                        name="isImprest" disabled
+                                                                                        required hidden>
+                                                                                        <option selected value="True">
+                                                                                            Yes</option>
                                                                                     </select>
 
                                                                                 </div>
@@ -197,9 +234,13 @@
                                                                             <div class="row">
                                                                                 <div class="col-md-12">
                                                                                     <label class="form-label">Travel
-                                                                                        Type <span class="text-danger">*</span></label>
-                                                                                    <select class="form-select" name="travelType" required>
-                                                                                        <option selected disabled value="">Select Option </option>
+                                                                                        Type <span
+                                                                                            class="text-danger">*</span></label>
+                                                                                    <select class="form-select"
+                                                                                        name="travelType" required>
+                                                                                        <option selected disabled
+                                                                                            value="">Select Option
+                                                                                        </option>
                                                                                         <option value="0">Local</option>
                                                                                         <option value="1">Foreign
                                                                                         </option>
@@ -209,41 +250,56 @@
 
                                                                             <div class="row">
                                                                                 <div class="col-md-12">
-                                                                                    <input type="hidden" name="myAction" value="modify">
+                                                                                    <input type="hidden" name="myAction"
+                                                                                        value="modify">
                                                                                 </div>
                                                                             </div>
 
                                                                             <div class="row">
                                                                                 <div class="col-md-12">
-                                                                                    <input type="hidden" name="imprestNo" value="{{res.No_}}">
+                                                                                    <input type="hidden"
+                                                                                        name="imprestNo"
+                                                                                        value="{{res.No_}}">
                                                                                 </div>
                                                                             </div>
 
                                                                             <div class="row">
                                                                                 <div class="col-md-6">
-                                                                                    <label for="startDate" class="form-label">Start Date</label>
-                                                                                    <input class="form-control" type="date" name="startDate" required >
+                                                                                    <label for="startDate"
+                                                                                        class="form-label">Start
+                                                                                        Date</label>
+                                                                                    <input class="form-control"
+                                                                                        type="date" name="startDate"
+                                                                                        required>
                                                                                 </div>
                                                                                 <div class="col-md-6">
-                                                                                    <label for="completionDate" class="form-label">Completion Date</label>
-                                                                                    <input class="form-control" type="date" name="completionDate">
+                                                                                    <label for="completionDate"
+                                                                                        class="form-label">Completion
+                                                                                        Date</label>
+                                                                                    <input class="form-control"
+                                                                                        type="date"
+                                                                                        name="completionDate">
                                                                                 </div>
                                                                             </div>
 
                                                                             <div class="row">
                                                                                 <div class="col-md-12">
-                                                                                    <label for="purpose" class="form-label">Purpose</label>
-                                                                                    <textarea class="form-control" name="purpose" rows="3" required></textarea>
+                                                                                    <label for="purpose"
+                                                                                        class="form-label">Purpose</label>
+                                                                                    <textarea class="form-control"
+                                                                                        name="purpose" rows="3"
+                                                                                        required></textarea>
                                                                                 </div>
                                                                             </div>
-                                                                            <button type="submit" class="btn btn-success my-3 w-100">Submit</button>
+                                                                            <button type="submit"
+                                                                                class="btn btn-success my-3 w-100">Submit</button>
                                                                     </form>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
 
-                                                    
+
                                                 </td>
                                             </tr>
                                             {% endif %}
@@ -253,11 +309,10 @@
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="pending">
-                                <h4 class="mt-2">Pending Approval Imprest Requisitions</h4>
                                 <div class="card-body">
                                     <table id="example"
-                                           class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                                           style="width:100%">
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
                                         <thead>
                                             <tr id="tops">
                                                 <th id="long">Imprest No</th>
@@ -268,7 +323,6 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {% if userID %}
                                             {% for res in pending %}
                                             <tr>
                                                 <td>{{res.No_}}</td>
@@ -277,13 +331,13 @@
                                                 <td>{{res.Travel_Type}}</td>
                                                 <td>
                                                     <a href="{% url 'IMPDetails' res.No_%}"
-                                                       class="btn btn-success btn-icon-text" type="button"
-                                                       data-toggle="tooltip" data-placement="top" title="Click to View"> View
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top"
+                                                        title="Click to View"> View
                                                         <i class="far fa-eye"></i></a>
                                                 </td>
                                             </tr>
                                             {% endfor %}
-                                            {% endif %}
                                         </tbody>
                                     </table>
                                 </div>
@@ -292,8 +346,8 @@
                                 <h4 class="mt-2">Approved Imprest Requisitions</h4>
                                 <div class="card-body">
                                     <table id="example"
-                                           class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                                           style="width:100%">
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
                                         <thead>
                                             <tr id="tops">
                                                 <th id="long">Imprest No</th>
@@ -312,8 +366,9 @@
                                                 <td>{{res.Travel_Type}}</td>
                                                 <td>
                                                     <a href="{% url 'IMPDetails' res.No_%}"
-                                                       class="btn btn-success btn-icon-text" type="button"
-                                                       data-toggle="tooltip" data-placement="top" title="Click to View"> View
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top"
+                                                        title="Click to View"> View
                                                         <i class="far fa-eye"></i></a>
                                                 </td>
                                             </tr>
@@ -330,14 +385,14 @@
     </div>
     <!-- Modal -->
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-         aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="staticBackdropLabel">New Imprest Requisition
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form class="myForm needs-validation" action="{% url 'imprestReq' %}" method="post" novalidate>
@@ -345,9 +400,10 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <input type="hidden" name="imprestNo" value="">
+                                <input type="hidden" name="myAction" value="insert">
                             </div>
                         </div>
-                        
+
                         <div class="row">
                             <div class="col-md-12">
                                 <label class="form-label">Travel Type <span class="text-danger">*</span></label>
@@ -358,29 +414,30 @@
                                 </select>
                             </div>
                         </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label class="form-label">Start Date<span
-                                    class="text-danger">*</span></label>
-                                <input class="form-control"  type="date" name="startDate" required >
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Completion Date<span
-                                    class="text-danger">*</span></label>
-                                <input class="form-control" type="date" name="completionDate" required>
-                            </div>
-                        </div>
-
                         <div class="row">
                             <div class="col-md-12">
-                                <input type="hidden" name="myAction" value="insert">
+                                <label class="form-label">Imprest Type <span class="text-danger">*</span></label>
+                                <select class="form-select" name="imprestType" required>
+                                    <option selected disabled value="0">--Select--</option>
+                                    <option value="1">Normal</option>
+                                    <option value="2">Special</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="form-label">Start Date<span class="text-danger">*</span></label>
+                                <input class="form-control" type="date" name="startDate" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Completion Date<span class="text-danger">*</span></label>
+                                <input class="form-control" type="date" name="completionDate" required>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12">
                                 <label for="purpose" class="form-label">Purpose <span
-                                          class="text-danger">*</span></label>
+                                        class="text-danger">*</span></label>
                                 <textarea class="form-control" name="purpose" rows="3" required></textarea>
 
                             </div>

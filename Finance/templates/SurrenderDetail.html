@@ -149,26 +149,13 @@
                         <label class="form-label">Surrender Date</label>
                         <input type="text" class="form-control" placeholder="{{res.Surrender_Date}}" readonly>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <label class="form-label">Account No</label>
                         <input type="text" class="form-control" placeholder="{{res.Account_No_}}" readonly>
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Payee</label>
-                        <input type="text" class="form-control" placeholder="{{res.Payee}}" readonly>
-                    </div>
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <label class="form-label">User</label>
                         <input type="text" class="form-control" placeholder="{{res.User_Id}}" readonly>
-                    </div>
-                    <div class="col-md-12">
-                        <label class="form-label">Due Date</label>
-                        <input type="text" class="form-control" placeholder="{{res.Due_Date}}" readonly>
-                    </div>
-                    <div class="col-md-12">
-                        <label for="inputAddress" class="form-label">Purpose</label>
-                        <textarea class="form-control" placeholder="{{res.Payment_Narration}}" rows="3"
-                            readonly></textarea>
                     </div>
             </div>
             </form>
@@ -187,7 +174,7 @@
                                     <th>Description</th>
                                     <th>Actual Spent</th>
                                     <th>Remaining Amount</th>
-                                    <th>Amount</th>
+                                    <th>Imprest Amount</th>
                                     {% if res.Status == "Open" %}
                                     <th>Action</th>
                                     {% endif %}
@@ -205,15 +192,16 @@
                                     <td>
 
                                         <a href="" class="btn btn-primary" data-toggle="tooltip" data-placement="top"
-                                            title="Add Amount" data-bs-toggle="modal" data-bs-target="#trainedit"><i
+                                            title="Add Amount" data-bs-toggle="modal"
+                                            data-bs-target="#trainedit{{line.AuxiliaryIndex2}}"><i
                                                 class="fas fa-plus"></i>
                                             Add Edit Amount
                                         </a>
 
                                         <!-- Modal -->
-                                        <div class="modal fade" id="trainedit" data-bs-backdrop="static"
-                                            data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
-                                            aria-hidden="true">
+                                        <div class="modal fade" id="trainedit{{line.AuxiliaryIndex2}}"
+                                            data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                            aria-labelledby="staticBackdropLabel" aria-hidden="true">
                                             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                                                 <div class="modal-content">
                                                     <div class="modal-header">

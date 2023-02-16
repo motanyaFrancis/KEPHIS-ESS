@@ -101,7 +101,6 @@ class Leave_Request(UserObjectMixins, View):
             if response !='0':
                 add_reliever = self.make_soap_request(soap_headers,"FnLeaveReliver",
                                                       response,staffNo,myAction)
-                print("reliever response:",add_reliever)
                 if add_reliever == True:
                     messages.success(request, "Request Successful")
                     return redirect('LeaveDetail', pk=response)
@@ -327,12 +326,9 @@ class Training_Request(UserObjectMixins, View):
 
                 response = self.make_soap_request(soap_headers,"FnTrainingRequest",
                     requestNo, employeeNo, usersId, isAdhoc, sponsorType , trainingNeed, myAction)
-                if response == True:
+                if response != '0':
                     messages.success(request, "success")
-                    return redirect('training_request')
-                elif response == False:
-                    messages.error(request, "failed")
-                    return redirect('training_request')
+                    return redirect('TrainingDetail',pk=response)
                 else:
                     messages.error(request, f'{response}')
                     return redirect('training_request')
@@ -415,32 +411,27 @@ class TrainingDetail(UserObjectMixin, View):
                 trainingArea = request.POST.get('trainingArea')
                 trainingObjectives = request.POST.get('trainingObjectives')
                 venue = request.POST.get('venue')
-                sponsor = request.POST.get('sponsor')
                 destination = request.POST.get('destination')
                 OtherDestinationName = request.POST.get('OtherDestinationName')
                 provider = request.POST.get('provider')
 
-            except ValueError as e:
-                messages.error(request, "Invalid Input, Try Again!!")
-                return redirect('TrainingDetail', pk=pk)
-            if not sponsor:
-                sponsor = 0
-            sponsor = int(sponsor)
+                if not destination:
+                    destination = 'none'
 
-            if not destination:
-                destination = 'none'
+                if not venue:
+                    venue = "Online"
 
-            if not venue:
-                venue = "Online"
+                if OtherDestinationName:
+                    destination = OtherDestinationName
 
-            if OtherDestinationName:
-                destination = OtherDestinationName
-            try:
                 response = config.CLIENT.service.FnAdhocTrainingNeedRequest(requestNo,
-                                                                            no, employeeNo, trainingName, trainingArea, trainingObjectives, venue, provider, myAction, sponsor, startDate, endDate, destination)
-                messages.success(request, "Successfully Added!!")
-                print(response)
-                return redirect('TrainingDetail', pk=pk)
+                                                                            no, employeeNo, trainingName, 
+                                                                            trainingArea, trainingObjectives,
+                                                                            venue, provider, myAction, startDate,
+                                                                           endDate, destination)
+                if response == True:
+                    messages.success(request, "Successfully Added!!")
+                    return redirect('TrainingDetail', pk=pk)
             except Exception as e:
                 messages.error(request, f'{e}')
                 print(e)
@@ -546,25 +537,21 @@ class FnTrainingEvaluation(UserObjectMixins,View):
             trainingRequestNo = pk
             employeeNo = request.session['Employee_No_']
             myAction = request.POST.get('myAction')
-            
-            print(evaluationNo)
-            print(trainingRequestNo)
-            print(employeeNo)
-            print(myAction)
+
             
             response = self.make_soap_request(soap_headers,'FnTrainingEvaluation',
                                 evaluationNo,trainingRequestNo,employeeNo,myAction)
             print(response)
             if response !='0':
                 messages.success(request,f"Started evaluation for Training: {trainingRequestNo}")
-                return redirect('evaluation',pk=response)
+                return redirect('TrainingDetail',pk=pk)
             else:
                 messages.error(request,"Evaluation request failed")
                 print(response)
                 return redirect('training_request')
         except Exception as e:
             logging.exception(e)
-            messages.error(request,"Request failed")
+            messages.error(request,f"{e}")
             return redirect('training_request')
 
         
@@ -623,7 +610,7 @@ class PNineRequest(UserObjectMixin, View):
             TO_role = request.session['TO_role']
             full_name = request.session['full_name']
 
-            Access_Point = config.O_DATA.format("/QyPayrollPeriods")
+            Access_Point = config.O_DATA.format("/QyPayrollPeriods?$filter=Status%20eq%20%27Approved%27%20and%20Closed%20eq%20true")
             response = self.get_object(Access_Point)
             res = response['value']
 
