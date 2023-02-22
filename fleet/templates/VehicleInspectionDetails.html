@@ -122,7 +122,11 @@
                         <div class="row align-items-center mb-2 d-flex">
                             <div class="col-md-12">
                                 <h2 class="d-flex align-items-center mb-0">
-                                    {{res.Booked_For_Inspection}}
+                                    {% if res.Booked_For_Inspection == True %}
+                                    Yes
+                                    {% elif res.Booked_For_Inspection == False %}
+                                    No
+                                    {% endif %}
                                 </h2>
                             </div>
                         </div>
@@ -139,7 +143,11 @@
                         <div class="row align-items-center mb-2 d-flex">
                             <div class="col-md-12">
                                 <h2 class="d-flex align-items-center mb-0">
-                                    {{res.Inspected}}
+                                    {% if res.Inspected == True %}
+                                    Yes
+                                    {% elif res.Inspected == False %}
+                                    No
+                                    {% endif %}
                                 </h2>
                             </div>
                         </div>
@@ -152,33 +160,22 @@
         <div class="row">
             <div class="col-md-12">
                 <form class="row g-3">
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <label class="form-label">Vehicle Number</label>
                         <input type="text" class="form-control" placeholder="{{res.Vehicle}}" readonly>
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Booked For Inspection</label>
-                        <input type="text" class="form-control" placeholder="{{res.Booked_For_Inspection}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Inspected</label>
-                        <input type="text" class="form-control" placeholder="{{res.Inspected}}" readonly>
-                    </div>
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <label class="form-label">Drivers Name</label>
                         <input type="text" class="form-control" placeholder="{{res.DriversName}}" readonly>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <label class="form-label">Drivers PNO</label>
                         <input type="text" class="form-control" placeholder="{{res.DriverPNO}}" readonly>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <label class="form-label">Status</label>
                         <input type="text" class="form-control" placeholder="{{res.Status}}" readonly>
                     </div>
-
-
-
                     <div class="col-12">
                         <label for="inputAddress" class="form-label">Inspector Recommendation</label>
                         <textarea class="form-control" placeholder="{{res.ServiceInstruction}}" rows="3"

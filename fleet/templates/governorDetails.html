@@ -1,0 +1,231 @@
+{% extends 'offcanvas.html' %}
+{% load bootstrap5 %}
+{% load static %}
+{% block main %}
+<section class="dash2">
+    <div class="content-wrapper">
+        <div class="d-xl-flex justify-content-between align-items-start">
+            <h2 class="text-dark font-weight-bold mb-2"> Speed Governor Report
+                {% if res.DocumentStage == 'Not-Submitted' %}
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Attachment">
+                    <i class="las la-plus"></i> Upload Attachment
+                </button>
+                {% endif %}
+            </h2>
+
+            <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
+                <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
+
+                </div>
+            </div>
+        </div>
+
+        <!--alert -->
+        {% include 'alerts.html' %}
+
+        <div class="row my-3">
+            <div class="col-md-3">
+                <div class="card l-bg-blue-dark statCard h-100">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-car-crash"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Request Number</h5>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{ res.SpeedGovernorNo }}
+                                </h2>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card l-bg-green-dark statCard h-100">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-file"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Report Stage</h5>
+                        </div>
+                        {% if res.DocumentStage == 'Not-Submitted' %}
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{res.DocumentStage}}
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="progress mt-1 " data-height="8" style="height: 8px;">
+                            <div class="progress-bar l-bg-red" role="progressbar" data-width="50%" aria-valuenow="25"
+                                aria-valuemin="0" aria-valuemax="100"
+                                style="width: 50%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
+                            </div>
+                        </div>
+                        {% elif res.DocumentStage == 'Submitted' %}
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{res.DocumentStage}}
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="progress mt-1 " data-height="8" style="height: 8px;">
+                            <div class="progress-bar l-bg-yellow" role="progressbar" data-width="25%" aria-valuenow="25"
+                                aria-valuemin="0" aria-valuemax="100"
+                                style="width: 100%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card l-bg-orange-dark statCard h-100">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-car"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Vehicle</h5>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{res.Vehicle}} {{res.VehicleMake}}
+                                </h2>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card l-bg-cherry statCard h-100">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-wrench"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Vendor</h5>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{ res.VendorName }}
+                                </h2>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <form class="row g-3">
+
+                    <div class="col-md-4">
+                        <label class="form-label">TrackID</label>
+                        <input type="text" class="form-control" placeholder="{{res.TrackID}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Speed Governor Expiry Date</label>
+                        <input type="text" class="form-control" placeholder="{{res.SpeedGovernorExpiryDate}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Date Of Installation/Inspection</label>
+                        <input type="text" class="form-control" placeholder="{{res.DateOfInstalationInspection}}"
+                            readonly>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="row my-2 py-3">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">
+                            My Attachments
+                        </h4>
+                        <div class="row">
+                            {% for data in allFiles %}
+                            <div class="col-lg-4 col-xl-3">
+                                <div class="file-man-box">
+                                    {% if res.DocumentStage == 'Not-Submitted' %}
+                                    <form action="{% url 'DeleteAccidentAttachment' data.No_  %}" method="POST">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="docID" value="{{data.AuxiliaryIndex2}}">
+                                        <input type="hidden" name="tableID" value="{{data.Table_ID}}">
+                                        <button class="file-close" id="file-close"><i
+                                                class="fa fa-times-circle"></i></button>
+                                    </form>
+                                    {% endif %}
+                                    <div class="file-img-box"><img src="../../static/img/logo/f1.png" alt="icon"></div>
+                                    <form action="{% url 'getDocs' data.No_ data.Table_ID %}" method="POST">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="attachmentID" value="{{data.AuxiliaryIndex2}}">
+                                        <input type="hidden" name="File_Name" value="{{data.File_Name}}">
+                                        <input type="hidden" name="File_Extension" value="{{data.File_Extension}}">
+                                        <button class="file-download mx-1"><i
+                                                class="fa fa-download text-success"></i></button>
+                                    </form>
+                                    <div class="file-man-title">
+                                        <h5 class="mb-0 text-overflow">
+                                            {{data.File_Name}}.{{data.File_Extension}}</h5>
+                                    </div>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <p class="text-danger">
+                                You have not uploaded any attachments <i class="las la-file-download"></i>
+                            </p>
+                            {% endfor %}
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if res.DocumentStage == 'Not-Submitted' %}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="myForm my-3">
+                    <form action="" method="POST" style="display: inline-block;">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <input type="hidden" hidden name="accidentNo" value="{{res.No}}">
+                        </div>
+                        <button class="btn btn-primary" type="submit">Submit Report</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        {% endif %}
+    </div>
+
+</section>
+<div class="modal fade" id="Attachment" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Upload Attachment</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="" method="post" class="myForm" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class=" mb-3">
+                        <label class="form-label">Attachments </label>
+                        <input class="form-control" name="attachment" type="file" multiple>
+                    </div>
+                    <button type="submit" class="btn btn-success my-3 w-100">Submit</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

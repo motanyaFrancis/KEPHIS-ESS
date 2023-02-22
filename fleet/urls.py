@@ -60,7 +60,10 @@ urlpatterns = [
     path('FnServiceRequestLine/<str:pk>', views.FnServiceRequestLine, name='FnServiceRequestLine'),
     path('FnCancelServiceRequest/<str:pk>', views.FnCancelServiceRequest, name='FnCancelServiceRequest'),
     
-    path('fuel/consumption', views.FuelConsumption.as_view(), name='fuel')
+    path('fuel/consumption', views.FuelConsumption.as_view(), name='fuel'),
+    path('speed/governor', views.SpeedGovernor.as_view(), name='SpeedGovernor'),
+    path('GovernorDetails/<str:pk>', views.GovernorDetails.as_view(), name='GovernorDetails'),
+    path('gvcu', views.GVCU.as_view(), name='gvcu')
     
     
 

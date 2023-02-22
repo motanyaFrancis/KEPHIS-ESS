@@ -8,20 +8,9 @@
             <h2 class="text-dark font-weight-bold mb-2"> Transport Request
                 {% if res.Status == "Open" %}
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Attachment"> <i
-                       class="las la-plus"></i> Upload Attachment</button>
+                        class="las la-plus"></i> Upload Attachment</button>
                 {% endif %}
             </h2>
-
-            <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
-                <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
-                    {% if res.Status == "Open" %}
-                    <button class="btn btn-successs p-3 d-flex align-items-center" data-bs-toggle="modal"
-                            data-bs-target="#staticBackdrop" type="button"> <i class="las la-plus text-white"
-                           style="font-size:15px;"></i> Add Traveling Employee
-                    </button>                   
-                    {% endif %}
-                </div>
-            </div>
         </div>
 
         <!--alert -->
@@ -62,8 +51,8 @@
                         </div>
                         <div class="progress mt-1 " data-height="8" style="height: 8px;">
                             <div class="progress-bar l-bg-red" role="progressbar" data-width="50%" aria-valuenow="25"
-                                 aria-valuemin="0" aria-valuemax="100"
-                                 style="width: 50%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
+                                aria-valuemin="0" aria-valuemax="100"
+                                style="width: 50%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
                             </div>
                         </div>
                         {% elif res.Status == "Pending Approval" %}
@@ -76,8 +65,8 @@
                         </div>
                         <div class="progress mt-1 " data-height="8" style="height: 8px;">
                             <div class="progress-bar l-bg-yellow" role="progressbar" data-width="25%" aria-valuenow="25"
-                                 aria-valuemin="0" aria-valuemax="100"
-                                 style="width: 75%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
+                                aria-valuemin="0" aria-valuemax="100"
+                                style="width: 75%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
                             </div>
                         </div>
                         {% elif res.Status == "Released" %}
@@ -90,8 +79,8 @@
                         </div>
                         <div class="progress mt-1 " data-height="8" style="height: 8px;">
                             <div class="progress-bar l-bg-green" role="progressbar" data-width="75%" aria-valuenow="75"
-                                 aria-valuemin="0" aria-valuemax="100"
-                                 style="width: 100%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
+                                aria-valuemin="0" aria-valuemax="100"
+                                style="width: 100%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
                             </div>
                         </div>
                         {% endif %}
@@ -132,7 +121,7 @@
                     </div>
                 </div>
             </div>
-           
+
 
         </div>
         <div class="row">
@@ -171,12 +160,12 @@
                         <input type="text" class="form-control" placeholder="{{res.ReturnTime}}" readonly>
                     </div>
 
-                  
+
                     <div class="col-md-4">
                         <label class="form-label">Transport Status.</label>
                         <input type="text" class="form-control" placeholder="{{res.TransportStatus}}" readonly>
                     </div>
-                   
+
                 </form>
             </div>
         </div>
@@ -187,8 +176,8 @@
                     <h4 class="mt-2 mx-2 text-dark">Traveling Employees</h4>
                     <div class="card-body">
                         <table id="example"
-                               class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                               style="width:100%">
+                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                            style="width:100%">
                             <thead>
                                 <tr id="tops">
                                     <th>Employee No.</th>
@@ -210,12 +199,11 @@
                                     {% if res.Status == "Open" %}
                                     <td>
 
-                                        <form action=""
-                                              method="post" style="display: inline-block;">
+                                        <form action="" method="post" style="display: inline-block;">
                                             {% csrf_token %}
                                             <input type="hidden" name="lineNo" value="{{line.LineNo}}">
                                             <button type="submit" class="btn btn-danger" data-toggle="tooltip"
-                                                    data-placement="top" title="Delete"><i class="fas fa-trash-alt"></i>
+                                                data-placement="top" title="Delete"><i class="fas fa-trash-alt"></i>
                                             </button>
                                         </form>
                                     </td>
@@ -247,7 +235,7 @@
                                         <input type="hidden" name="docID" value="{{data.AuxiliaryIndex2}}">
                                         <input type="hidden" name="tableID" value="{{data.Table_ID}}">
                                         <button class="file-close" id="file-close"><i
-                                               class="fa fa-times-circle"></i></button>
+                                                class="fa fa-times-circle"></i></button>
                                     </form>
                                     {% endif %}
                                     <div class="file-img-box"><img src="../../static/img/logo/f1.png" alt="icon"></div>
@@ -257,7 +245,7 @@
                                         <input type="hidden" name="File_Name" value="{{data.File_Name}}">
                                         <input type="hidden" name="File_Extension" value="{{data.File_Extension}}">
                                         <button class="file-download mx-1"><i
-                                               class="fa fa-download text-success"></i></button>
+                                                class="fa fa-download text-success"></i></button>
                                     </form>
                                     <div class="file-man-title">
                                         <h5 class="mb-0 text-overflow">
@@ -309,7 +297,8 @@
             <div class="col-md-12">
                 {% if res.Status == "Open" %}
                 <div class="myForm my-3">
-                    <form action="{% url 'FnSubmitTravelRequest' res.RequestNo %}" method="POST" style="display: inline-block;">
+                    <form action="{% url 'FnSubmitTravelRequest' res.RequestNo %}" method="POST"
+                        style="display: inline-block;">
                         {% csrf_token %}
                         <div class="mb-3">
                             <input type="hidden" hidden name="tReqNo" value="{{res.RequestNo}}">
@@ -337,8 +326,8 @@
                     <h4 class="mt-2 mx-2 text-dark">Document Approvers</h4>
                     <div class="card-body">
                         <table id="example"
-                               class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                               style="width:100%">
+                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                            style="width:100%">
                             <thead>
                                 <tr id="tops">
                                     <th id="long">Entry No</th>
@@ -365,56 +354,6 @@
         {% endif %}
 
     </div>
-
-
-    <!-- Traveling Employees line Form -->
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-         aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Traveling Employees
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form class="myForm needs-validation" id="frm_" action="{% url 'FnTravelEmployeeLine' res.RequestNo %}"
-                          method="post" novalidate>
-                        {% csrf_token %}  
-                        <div class="row">
-                            <div class="col-md-12">
-                                <input type="hidden" name="reqNo" value="{{res.RequestNo}}">
-                            </div>
-                        </div>    
-                        <div class="row">
-                            <div class="col-md-12">
-                                <label class="form-label">Employee <span class="text-danger">*</span></label>
-                                <select class="form-select" name="employeeNo" required>
-                                    <option selected disabled value="">Select Option</option>
-                                    {% for Employee in Employees %}
-                                    <option value="{{ Employee.No_ }}">
-                                        {{Employee.First_Name}} {{Employee.Middle_Name}} {{Employee.Last_Name}}
-                                    </option>
-                                    {% endfor %}                                                
-                                </select>
-                            </div>
-                        </div>                  
-                        
-                        <div class="row">
-                            <div class="col-md-12">
-                                <input type="hidden" name="lineNo" value="">
-                                <input type="hidden" name="myAction" value="insert">
-                            </div>
-                        </div>
-                        
-                        
-                        <button type="submit" class="btn btn-success my-3 w-100">Submit</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
 </section>
 
 <!-- Attachment Modal Form -->
@@ -424,11 +363,11 @@
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Upload Attachment</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form action="{% url 'UploadTransportRequestAttachment' res.RequestNo %}" method="post" class="myForm"
-                      enctype="multipart/form-data">
+                    enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class=" mb-3">
                         <label class="form-label">Attachments </label>

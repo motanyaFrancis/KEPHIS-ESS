@@ -1277,10 +1277,14 @@ class TransportRequest(UserObjectMixin, View):
                 startTime = datetime.strptime(request.POST.get('startTime'), '%H:%M').time()
                 tripeEndDate = datetime.strptime(request.POST.get('tripeEndDate'), '%Y-%m-%d').date()
                 myAction = request.POST.get('myAction')
+                TravelingEmployees = request.POST.get('TravelingEmployees')
+                
+                if not TravelingEmployees:
+                    TravelingEmployees = 0
 
                 response = config.CLIENT.service.FnTransportRequest(
                     tReqNo, myUserId, reasonForTravel,typeOfTransport,destination,
-                    tripeStartDate, startTime, tripeEndDate,myAction )
+                    tripeStartDate, startTime, tripeEndDate,myAction,int(TravelingEmployees))
                 if response == True:
                     messages.success(request, "Request Successful")
                     return redirect('TransportRequest')
@@ -1773,3 +1777,150 @@ class FuelConsumption(UserObjectMixins,View):
             logging.exception(e)
             return redirect('fuel')
         return render(request,"fuel.html",ctx)
+    
+class SpeedGovernor(UserObjectMixins,View):
+    async def get(self,request):
+        try:
+            userID = await sync_to_async(request.session.__getitem__)('User_ID')
+            driver_role = await sync_to_async(request.session.__getitem__)('driver_role')
+            TO_role = await sync_to_async(request.session.__getitem__)('TO_role')
+            full_name = await sync_to_async(request.session.__getitem__)('full_name')
+            openRequest = []
+            submitted = []
+
+            full_name = request.session['full_name']
+            
+            async with aiohttp.ClientSession() as session:
+                task_get_reservations = asyncio.ensure_future(self.simple_one_filtered_data(
+                    session,"/QySpeedGovernorReplacement","Created_By","eq",userID))
+                
+                task_get_vendor = asyncio.ensure_future(self.simple_one_filtered_data(session,'/VendorDetails',
+                                                                                    'Vendor_Type',"eq",
+                                                                                    'Speed Governor'))
+                task_get_vehicle = asyncio.ensure_future(self.simple_one_filtered_data(session,'/QyFixedAssets',
+                                                                                    'Fixed_Asset_Type',"eq",
+                                                                                    'Fleet'))
+                
+                
+
+                response = await asyncio.gather(task_get_reservations,task_get_vendor,task_get_vehicle) 
+                
+                openRequest = [x for x in response[0] if x['DocumentStage'] == 'Not-Submitted' ] # type: ignore
+                submitted = [x for x in response[0] if x['DocumentStage'] == 'Submitted'] #type:ignore
+                
+                vendors = [x for x in response[1]] # type: ignore
+                vehicle = [x for x in response[2]] # type: ignore 
+                
+                print(openRequest)  
+                     
+            ctx = {
+               "full": full_name,
+                "driver_role":driver_role,
+                "TO_role":TO_role, 
+                'vendors':vendors,
+                'vehicles':vehicle,
+                'openRequest':openRequest,
+                'submitted':submitted,
+            }
+        except Exception as e:
+            logging.exception(e)
+            return redirect('fuel')
+        return render(request,"speedGovernor.html",ctx)
+    async def post(self,request):
+        try:
+            soap_headers = await sync_to_async(request.session.__getitem__)('soap_headers')
+            speedGNo = request.POST.get('speedGNo')
+            vehicle = request.POST.get('vehicle')
+            fittedVendor = request.POST.get('fittedVendor')
+            speed_governor_make = request.POST.get('speed_governor_make')
+            serial_number = request.POST.get('serial_number')
+            speed_governor_expiry_date = datetime.strptime(request.POST.get('speed_governor_expiry_date'),'%Y-%m-%d').date()
+            remarks = request.POST.get('remarks')
+            certified_by = request.POST.get('certified_by')
+            date_of_installation_inspection = datetime.strptime(request.POST.get('date_of_installation_inspection'),'%Y-%m-%d').date()
+            trackID = request.POST.get('trackID')
+            myAction = request.POST.get('myAction')
+            userID = await sync_to_async(request.session.__getitem__)('User_ID')          
+            
+            response =self.make_soap_request(soap_headers,
+                                             'FnSpeedGovernor',
+                                                speedGNo,vehicle,fittedVendor,
+                                                    speed_governor_make,serial_number,speed_governor_expiry_date,
+                                                        remarks,certified_by,date_of_installation_inspection,
+                                                            trackID,myAction,userID)
+            if response !='0':
+                messages.success(request,'success')
+                return redirect('GovernorDetails',pk=response)
+            elif response == 0:
+                messages.error(request, f'{response}')
+                return redirect('GovernorDetails',pk=response)
+        except Exception as e:
+            logging.exception(e)
+            messages.error(request,f'{e}')
+            return redirect('SpeedGovernor')
+        
+class GovernorDetails(UserObjectMixins,View):
+    async def get(self,request,pk):
+        try:
+            userID = await sync_to_async(request.session.__getitem__)('User_ID')
+            driver_role = await sync_to_async(request.session.__getitem__)('driver_role')
+            TO_role = await sync_to_async(request.session.__getitem__)('TO_role')
+            full_name = await sync_to_async(request.session.__getitem__)('full_name')
+            res = {}
+            ctx = {}
+
+            async with aiohttp.ClientSession() as session:
+                get_speed_governor = asyncio.ensure_future(self.simple_double_filtered_data(session,
+                                            '/QySpeedGovernorReplacement','SpeedGovernorNo',
+                                            'eq',pk,'and','Created_By','eq',userID))
+                get_files = asyncio.ensure_future(self.simple_one_filtered_data(session,
+                                    '/QyDocumentAttachments','No_','eq',pk))
+                response = await asyncio.gather(get_speed_governor,get_files)
+                for data in response[0]:
+                    res = data
+                allFiles = [x for x in response[1]]  # type: ignore 
+                
+                ctx = {
+                   "res":res,
+                    "allFiles":allFiles,
+                    "driver_role":driver_role,
+                    'TO_role':TO_role,
+                    'full':full_name,
+                }
+
+        except Exception as e:
+            print(e)
+            messages.info(request, f'{e}')
+            return redirect('SpeedGovernor')
+        return render(request,'governorDetails.html',ctx)
+            
+class GVCU(UserObjectMixins,View):
+    async def get(self,request):
+        try:
+            userID = await sync_to_async(request.session.__getitem__)('User_ID')
+            driver_role = await sync_to_async(request.session.__getitem__)('driver_role')
+            TO_role = await sync_to_async(request.session.__getitem__)('TO_role')
+            full_name = await sync_to_async(request.session.__getitem__)('full_name')
+
+            full_name = request.session['full_name']
+            
+            async with aiohttp.ClientSession() as session:
+                task_get_reservations = asyncio.ensure_future(self.fetch_one_filtered_data(
+                    session,"/QyFuelRegister","Created_By","eq",userID))
+
+                reservation_response = await asyncio.gather(task_get_reservations) 
+                
+                if reservation_response[0]['status_code'] == 200: # type: ignore
+                    openRequest = [x for x in reservation_response[0]['data'] if x['Booking_Status'] == 'Open' ] # type: ignore
+                    Pending = [x for x in reservation_response[0]['data'] if x['Booking_Status'] == 'Pending Approval'] #type:ignore
+                    Approved = [x for x in reservation_response[0]['data'] if x['Booking_Status'] == 'Approved'] #type:ignore
+            
+            ctx = {
+               "full": full_name,
+                "driver_role":driver_role,
+                "TO_role":TO_role, 
+            }
+        except Exception as e:
+            logging.exception(e)
+            return redirect('fuel')
+        return render(request,"gvcu.html",ctx)

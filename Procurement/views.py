@@ -87,18 +87,14 @@ class PurchaseRequisition(UserObjectMixin, View):
                 employeeNo = request.session['Employee_No_']
                 orderDate = datetime.strptime(
                     request.POST.get('orderDate'), '%Y-%m-%d').date()
+                expectedReceiptDate = datetime.strptime(
+                    request.POST.get('expectedReceiptDate'), '%Y-%m-%d').date()
+                reason = request.POST.get('reason')
                 myAction = request.POST.get('myAction')
-            except ValueError:
-                messages.error(request, "Missing Input")
-                return redirect('purchase')
-            except KeyError:
-                messages.info(request, "Session Expired. Please Login")
-                return redirect('auth')
-            if not requisitionNo:
-                requisitionNo = " "
-            try:
+
                 response = config.CLIENT.service.FnPurchaseRequisitionHeader(
-                    requisitionNo, orderDate, employeeNo, myUserId, myAction)
+                    requisitionNo, orderDate, employeeNo, myUserId, myAction,
+                    expectedReceiptDate,reason)
                 messages.success(request, "Request Successful")
                 print(response)
             except Exception as e:

@@ -232,71 +232,94 @@
             </div>
         </div>
         {% endif %}
-        {% if res.Status == 'Released' %}
+        {% if res.Status == "Released" and res.Has_Evaluation == True %}
         <div class="row">
-            <div class="col-md-6">
-                <div class="card text-white bg-secondary mb-3">
-                    <div class="card-header">Questionnaire</div>
+            <div class="col-md-12">
+                <div class="card text-dark bg-white mb-3">
+                    <div class="card-header bg-primary text-white">Training Evaluation</div>
                     <div class="card-body">
                         <form>
-                            <div class="form-group">
-                                <label for="question1">Useful of the Course?</label>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="question1" id="question1"
-                                        value="yes">
-                                    <label class="form-check-label" for="question1">
-                                        Yes
-                                    </label>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="question3">Usefulness of the Course?</label>
+                                        <textarea class="form-control" id="question3" rows="3"></textarea>
+                                    </div>
                                 </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="question1" id="question1"
-                                        value="no">
-                                    <label class="form-check-label" for="question1">
-                                        No
-                                    </label>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="question3">Application of lesson learnt on the job?</label>
+                                        <textarea class="form-control" id="question3" rows="3"></textarea>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label for="question2">How often do you wear white boots?</label>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="question2" id="question2"
-                                        value="daily">
-                                    <label class="form-check-label" for="question2">
-                                        Daily
-                                    </label>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="question3">List support you might need to apply what you
+                                            learnt?</label>
+                                        <textarea class="form-control" id="question3" rows="3"></textarea>
+                                    </div>
                                 </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="question2" id="question2"
-                                        value="weekly">
-                                    <label class="form-check-label" for="question2">
-                                        Weekly
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="question2" id="question2"
-                                        value="monthly">
-                                    <label class="form-check-label" for="question2">
-                                        Monthly
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="question2" id="question2"
-                                        value="rarely">
-                                    <label class="form-check-label" for="question2">
-                                        Rarely
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="question2" id="question2"
-                                        value="never">
-                                    <label class="form-check-label" for="question2">
-                                        Never
-                                    </label>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="question3">Improvement in job job performance after
+                                            training?</label>
+                                        <textarea class="form-control" id="question3" rows="3"></textarea>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label for="question3">Why do you like/dislike white boots?</label>
-                                <textarea class="form-control" id="question3" rows="3"></textarea>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="question3">List area in job job performance that need
+                                            improvement?</label>
+                                        <textarea class="form-control" id="question3" rows="3"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="question1">Ability to teach acquired skills to other people?</label>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="question1" id="question1"
+                                                value="yes">
+                                            <label class="form-check-label" for="question1">
+                                                Yes
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="question1" id="question1"
+                                                value="no">
+                                            <label class="form-check-label" for="question1">
+                                                No
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="question1">Adequacy of training provided?</label>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="question1" id="question1"
+                                                value="yes">
+                                            <label class="form-check-label" for="question1">
+                                                Yes
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="question1" id="question1"
+                                                value="no">
+                                            <label class="form-check-label" for="question1">
+                                                No
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <button type="submit" class="btn btn-primary">Submit</button>
                         </form>
@@ -373,24 +396,26 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for res in line %}
+                                {% for line in line %}
                                 <tr>
-                                    <td>{{res.Training_Name}}</td>
-                                    <td>{{res.Training_area}}</td>
-                                    <td>{{res.Training_Objectives}}</td>
-                                    <td>{{res.Location}}</td>
-                                    <td>{{res.Venue}}</td>
-                                    <td>{{res.Provider}}</td>
+                                    <td>{{line.Training_Name}}</td>
+                                    <td>{{line.Training_area}}</td>
+                                    <td>{{line.Training_Objectives}}</td>
+                                    <td>{{line.Location}}</td>
+                                    <td>{{line.Venue}}</td>
+                                    <td>{{line.Provider}}</td>
+                                    {% if res.Status == "Open" %}
                                     <td>
-                                        <form action="{% url 'FnAdhocLineDelete' res.Source_Document_No %}"
+                                        <form action="{% url 'FnAdhocLineDelete' line.Source_Document_No %}"
                                             method="post" style="display: inline-block;">
                                             {% csrf_token %}
-                                            <input type="hidden" name="needNo" value="{{res.No}}">
+                                            <input type="hidden" name="needNo" value="{{line.No}}">
                                             <button type="submit" class="btn btn-danger" data-toggle="tooltip"
                                                 data-placement="top" title="Delete"><i class="fas fa-trash-alt"></i>
                                             </button>
                                         </form>
                                     </td>
+                                    {% endif %}
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -574,11 +599,11 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <label for="" class="form-label">Start Date:</label>
-                                <input type="date" class="form-control" name="startDate" required>
+                                <input type="date" class="form-control" name="startDate" id="adhoc_start_date" required>
                             </div>
                             <div class="col-md-6">
                                 <label for="" class="form-label">End Date:</label>
-                                <input type="date" class="form-control" name="endDate" required>
+                                <input type="date" class="form-control" name="endDate" id="adhoc_end_date" required>
                             </div>
                         </div>
                         <div class="row">
@@ -629,6 +654,20 @@
 </section>
 <script>
     $(document).ready(function () {
+        // Get the start date input element
+        const startDateInput = document.getElementById('adhoc_start_date');
+
+        // Set the min attribute to today's date
+        startDateInput.min = new Date().toISOString().split('T')[0];
+
+        // Add an event listener to the start date input to update the end date input
+        startDateInput.addEventListener('input', () => {
+            const startDate = new Date(startDateInput.value);
+            const endDateInput = document.getElementById('adhoc_end_date');
+
+            // Set the min attribute of the end date input to the start date
+            endDateInput.min = startDate.toISOString().split('T')[0];
+        });
         $('#travelType').on('change', function () {
             if (this.value == "1") {
                 $("#LocaldestinationsRow").show(1000);

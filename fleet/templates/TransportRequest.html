@@ -44,7 +44,6 @@
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane fade show active" id="home">
-                                <h4 class="mt-2 text-dark">Open Transport Request</h4>
                                 <div class="card-body">
                                     <table id="example"
                                         class="display table table-striped table-bordered dt-responsive table-responsive-lg"
@@ -68,10 +67,10 @@
                                                 <td>{{res.TripPlannedStartDate}}</td>
                                                 <td>{{res.TripPlannedEndDate}}</td>
                                                 <td>
-                                                    <button class="btn btn-primary" data-bs-toggle="modal"
+                                                    <!-- <button class="btn btn-primary" data-bs-toggle="modal"
                                                         data-bs-target="#" data-toggle="tooltip" data-placement="top"
                                                         title="edit">Edit <i class="fas fa-edit"></i>
-                                                    </button>
+                                                    </button> -->
                                                     <div class="modal fade" id="" data-bs-backdrop="static"
                                                         data-bs-keyboard="false" tabindex="-1"
                                                         aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -159,11 +158,11 @@
                                                 <td>{{res.TripPlannedStartDate}}</td>
                                                 <td>{{res.TripPlannedEndDate}}</td>
                                                 <td>
-                                                    <button class="btn btn-primary" data-bs-toggle="modal"
+                                                    <!-- <button class="btn btn-primary" data-bs-toggle="modal"
                                                         data-bs-target="#repair" data-toggle="tooltip"
                                                         data-placement="top" title="edit">Edit <i
                                                             class="fas fa-edit"></i>
-                                                    </button>
+                                                    </button> -->
                                                     <div class="modal fade" id="repair" data-bs-backdrop="static"
                                                         data-bs-keyboard="false" tabindex="-1"
                                                         aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -310,7 +309,6 @@
 
                             </div>
                             <div class="tab-pane fade" id="pending">
-                                <h4 class="mt-2 text-dark">Pending Repair Request</h4>
                                 <div class="card-body">
                                     <table id="example"
                                         class="display table table-striped table-bordered dt-responsive table-responsive-lg"
@@ -353,7 +351,6 @@
 
                             </div>
                             <div class="tab-pane fade" id="approved">
-                                <h4 class="mt-2 text-dark">Approved Transport Request</h4>
                                 <div class="card-body">
                                     <table id="example"
                                         class="display table table-striped table-bordered dt-responsive table-responsive-lg"
@@ -403,7 +400,7 @@
         <!-- Modal -->
         <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
             aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">New Transport request
                         </h5>
@@ -420,14 +417,12 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-6">
                                     <label for="" class="form-label">Reason for Travel<span
                                             class="text-danger">*</span></label>
                                     <input type="text" name="reasonForTravel" class="form-control" required>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-6">
                                     <label class="form-label">Type of Transport <span
                                             class="text-danger">*</span></label>
                                     <select class="form-select" name="typeOfTransport" required>
@@ -439,15 +434,19 @@
                                         <option value="5">Sea</option>
                                         <option value="6">Taxi</option>
                                         <option value="7">Self Drive</option>
-                                        <option value="8">Employee Own Vehicle</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-6">
                                     <label for="" class="form-label">Destination<span
                                             class="text-danger">*</span></label>
                                     <input type="text" class="form-control" name="destination" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="" class="form-label">No. Traveling Employees<span
+                                            class="text-danger">*</span></label>
+                                    <input type="number" class="form-control" name="TravelingEmployees" required>
                                 </div>
                             </div>
 
@@ -487,6 +486,6 @@
 
     </div>
 
-    </secton>
+</section>
 
-    {% endblock %}
+{% endblock %}

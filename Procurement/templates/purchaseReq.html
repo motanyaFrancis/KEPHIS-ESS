@@ -297,21 +297,24 @@
                     <form class="myForm needs-validation" action="{% url 'purchase' %}" method="post" novalidate>
                         {% csrf_token %}
                         <div class="mb-2">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <input type="hidden" name="requisitionNo" value="">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <input type="hidden" name="myAction" value="insert">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
+                            <input type="hidden" name="requisitionNo" value="">
+                            <input type="hidden" name="myAction" value="insert">
+                            <div class="row gx-1">
+                                <div class="col-md-6">
                                     <label for="" class="form-label">Order Date <span
                                             class="text-danger">*</span></label>
                                     <input type="date" name="orderDate" class="form-control" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="" class="form-label">Expected Receipt Date <span
+                                            class="text-danger">*</span></label>
+                                    <input type="date" name="expectedReceiptDate" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label for="" class="form-label">Reason <span class="text-danger">*</span></label>
+                                    <textarea class="form-control" name="reason" rows="3" required></textarea>
                                 </div>
                             </div>
                         </div>
