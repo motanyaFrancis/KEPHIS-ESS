@@ -177,41 +177,11 @@
                         <input type="text" class="form-control" placeholder="{{res.Status}}" readonly>
                     </div>
                     <div class="col-12">
-                        <label for="inputAddress" class="form-label">Inspector Recommendation</label>
+                        <label for="inputAddress" class="form-label">Remarks</label>
                         <textarea class="form-control" placeholder="{{res.ServiceInstruction}}" rows="3"
                             readonly></textarea>
                     </div>
                 </form>
-            </div>
-        </div>
-        <div class="row mt-4">
-            <div class="col-md-12">
-                <div class="card" id="d-card">
-                    <h4 class="mt-2 mx-2 text-dark">Vehicle Defects</h4>
-                    <div class="card-body">
-                        <table id="example"
-                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                            style="width:100%">
-                            <thead>
-                                <tr id="tops">
-                                    <th id="long">Defects Type</th>
-                                    <th>Severity</th>
-                                    <th>Comments</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for line in openLines %}
-                                <tr>
-                                    <td>{{line.DefectsType}}</td>
-                                    <td>{{line.Severity}}</td>
-                                    <td>{{line.Comments}}</td>
-                                </tr>
-
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
             </div>
         </div>
         <div class="row my-2 py-3">

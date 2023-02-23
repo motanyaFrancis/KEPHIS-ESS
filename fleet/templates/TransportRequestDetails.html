@@ -140,10 +140,6 @@
                         <input type="text" class="form-control" placeholder="{{res.Destination}}" readonly>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Approximate Distance (KM)</label>
-                        <input type="text" class="form-control" placeholder="{{res.ApproximateDistance}}" readonly>
-                    </div>
-                    <div class="col-md-4">
                         <label class="form-label">Trip Planned Start Date</label>
                         <input type="text" class="form-control" placeholder="{{res.TripPlannedStartDate}}" readonly>
                     </div>
@@ -155,13 +151,8 @@
                         <label class="form-label">Trip Planned Start Time</label>
                         <input type="text" class="form-control" placeholder="{{res.StartTime}}" readonly>
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Trip Planned End Time</label>
-                        <input type="text" class="form-control" placeholder="{{res.ReturnTime}}" readonly>
-                    </div>
 
-
-                    <div class="col-md-4">
+                    <div class="col-md-12">
                         <label class="form-label">Transport Status.</label>
                         <input type="text" class="form-control" placeholder="{{res.TransportStatus}}" readonly>
                     </div>
@@ -169,55 +160,6 @@
                 </form>
             </div>
         </div>
-
-        <div class="row mt-4">
-            <div class="col-md-12">
-                <div class="card" id="d-card">
-                    <h4 class="mt-2 mx-2 text-dark">Traveling Employees</h4>
-                    <div class="card-body">
-                        <table id="example"
-                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                            style="width:100%">
-                            <thead>
-                                <tr id="tops">
-                                    <th>Employee No.</th>
-                                    <th>Employee Name</th>
-                                    <th>Department Code</th>
-                                    <th>Department</th>
-                                    {% if res.Status == "Open" %}
-                                    <th>Action</th>
-                                    {% endif %}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for line in line %}
-                                <tr>
-                                    <td>{{line.Employee_No_}}</td>
-                                    <td>{{line.Employee_Name}}</td>
-                                    <td>{{line.Department_Code}}</td>
-                                    <td>{{line.Department_Name}}</td>
-                                    {% if res.Status == "Open" %}
-                                    <td>
-
-                                        <form action="" method="post" style="display: inline-block;">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="lineNo" value="{{line.LineNo}}">
-                                            <button type="submit" class="btn btn-danger" data-toggle="tooltip"
-                                                data-placement="top" title="Delete"><i class="fas fa-trash-alt"></i>
-                                            </button>
-                                        </form>
-                                    </td>
-                                    {% endif %}
-                                </tr>
-
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <div class="row my-2 py-3">
             <div class="col-md-12">
                 <div class="card">

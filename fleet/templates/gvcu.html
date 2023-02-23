@@ -22,20 +22,18 @@
 
         <!-- Alerts  -->
         {% include 'alerts.html' %}
-
-
         <div class="row my-2">
             <div class="col-md-12">
                 <div class="card" id="d-card">
                     <div class="m-4">
                         <ul class="nav nav-tabs d-flex" id="myTab">
                             <li class="nav-item flex-fill">
-                                <a href="#open" class="nav-link active" data-bs-toggle="tab">Accident Reports
-                                    ({{count}})</a>
+                                <a href="#open" class="nav-link active" data-bs-toggle="tab">Open Reports
+                                    ({{openRequest|length}})</a>
                             </li>
                             <li class="nav-item flex-fill">
-                                <a href="#submitted" class="nav-link" data-bs-toggle="tab">Submited Reports
-                                    ({{submit_count}})</a>
+                                <a href="#submitted" class="nav-link" data-bs-toggle="tab">Submitted Reports
+                                    ({{submitted|length}})</a>
                             </li>
                         </ul>
                         <div class="tab-content">
@@ -56,7 +54,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {% for res in report %}
+                                            {% for res in openRequest %}
                                             <tr>
                                                 <td>{{res.No}}</td>
                                                 <td>{{res.TimeOfAccident}}</td>
@@ -413,7 +411,6 @@
                 </div>
             </div>
         </div>
-
         <!-- Modal -->
         <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
             aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -427,18 +424,19 @@
                     <div class="modal-body">
                         <form class="myForm needs-validation" action="" method="post" novalidate>
                             {% csrf_token %}
-                            <input type="hidden" name="accidentNo" value="">
+                            <input type="hidden" name="gcuNo" value="">
                             <div class="row gx-2">
                                 <div class="col-md-4">
-                                    <label class="form-label">Reinstatement Fee </label>
-                                    <input type="text" name="ReinstatementFee" class="form-control" placeholder="0.00">
+                                    <label for="" class="form-label">Date of GVCU<span
+                                            class="text-danger">*</span></label>
+                                    <input type="date" name="date" class="form-control" required>
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label">Vehicle <span class="text-danger">*</span></label>
                                     <select class="form-select" name="vehicle" required>
-                                        <option selected disabled value="">Select Option</option>
-                                        {% for list in Vehicle_No %}
-                                        <option value="{{list.No_}}">{{list.Registration_No}}</option>
+                                        <option selected disabled value="0">--Select--</option>
+                                        {% for vehicle in vehicles %}
+                                        <option value="{{vehicle.No_}}">{{vehicle.Registration_No}}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
@@ -446,89 +444,28 @@
                                 <div class="col-md-4">
                                     <label class="form-label">Driver <span class="text-danger">*</span></label>
                                     <select class="form-select" name="driver" required>
-                                        <option selected disabled value="">Select Option</option>
-                                        {% for list in drivers %}
-                                        <option value="{{list.No_}}">{{list.First_Name}} {{list.Middle_Name}}
-                                            {{list.Last_Name}}</option>
+                                        <option selected disabled value="0">--Select--</option>
+                                        {% for driver in drivers %}
+                                        <option value="{{driver.No_}}">{{driver.First_Name}} {{driver.Middle_Name}}
+                                            {{driver.Last_Name}}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
                             </div>
                             <div class="row gx-2">
                                 <div class="col-md-4">
-                                    <label for="" class="form-label">Date of Accident<span
+                                    <label for="" class="form-label">Nature Of Irregularity<span
                                             class="text-danger">*</span></label>
-                                    <input type="date" name="dateOfAccident" class="form-control" required>
+                                    <input type="text" name="natureOfIrregularity" class="form-control" required>
                                 </div>
                                 <div class="col-md-4">
-                                    <label for="" class="form-label">Time of Accident<span
+                                    <label class="form-label">Surcharge</label>
+                                    <input type="text" name="surcharge" class="form-control" placeholder="0.00">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="" class="form-label">Vehicle Location<span
                                             class="text-danger">*</span></label>
-                                    <input type="time" name="timeOfAccident" class="form-control" required>
-                                </div>
-                                <div class="col-md-4">
-                                    <label for="" class="form-label">Location of Accident<span
-                                            class="text-danger">*</span></label>
-                                    <input type="text" name="location" class="form-control" required>
-                                </div>
-                            </div>
-
-                            <div class="row gx-2">
-                                <div class="col-md-4">
-                                    <label for="" class="form-label">Police station<span
-                                            class="text-danger">*</span></label>
-                                    <input type="text" name="policeStation" class="form-control" required>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label for="" class="form-label">OB Number<span class="text-danger">*</span></label>
-                                    <input type="text" name="oBNo" class="form-control" required>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Vehicle status <span class="text-danger">*</span></label>
-                                    <select class="form-select" name="insuranceStatus" required>
-                                        <option selected disabled value="">Select Option</option>
-                                        <option value="1">Repairable</option>
-                                        <option value="2">Written off</option>
-
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <label class="form-label">Cost of Repair</label>
-                                    <input type="text" name="damage_repair_cost" class="form-control"
-                                        placeholder="0.00">
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Towing Cost</label>
-                                    <input type="text" name="Towing_cost" class="form-control" placeholder="0.00">
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Excess Cost</label>
-                                    <input type="text" name="Excess_cost" class="form-control" placeholder="0.00">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <label for="" class="form-label">Damage/Repair<span
-                                            class="text-danger">*</span></label>
-                                    <textarea name="damage_repair" class="form-control" required></textarea>
-
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <label for="" class="form-label">Description of Accident<span
-                                            class="text-danger">*</span></label>
-                                    <textarea name="descriptionOfAccident" class="form-control" required></textarea>
-
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <label for="" class="form-label">Remarks<span class="text-danger">*</span></label>
-                                    <textarea name="Remarks" class="form-control" required></textarea>
-
+                                    <input type="text" name="locationOfTheVehicle" class="form-control" required>
                                 </div>
                             </div>
                             <div class="row">
@@ -543,7 +480,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 
 </section>
