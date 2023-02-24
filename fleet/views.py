@@ -1895,6 +1895,25 @@ class FuelDetails(UserObjectMixins, View):
             messages.info(request, f'{e}')
             return redirect('fuel')
         return render(request,'fuelDetails.html',ctx)
+
+class FnSubmitFuelConsumption(UserObjectMixins, View):
+    def post(self,request,pk):
+        try:
+            soap_headers = request.session['soap_headers']
+            userID = request.session['User_ID']
+            response = self.make_soap_request(soap_headers,'FnSubmitFuelConsumption',
+                                              pk,userID)
+            print(response)
+            if response == True:
+                messages.success(request,'Success')
+                return redirect('FuelDetails', pk=pk)
+            else:
+                messages.error(request, f'{response}')
+                return redirect('FuelDetails',pk=pk)
+        except Exception as e:
+            messages.error(request, f'{e}')
+            logging.exception(e)
+            return redirect('FuelDetails', pk=pk)
 class SpeedGovernor(UserObjectMixins,View):
     async def get(self,request):
         try:
