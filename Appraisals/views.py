@@ -92,7 +92,8 @@ class AppraisalDetails(UserObjectMixins, View):
             res = {}
             targets = []  
             attributes = []
-            allFiles = []          
+            allFiles = []   
+            trainings = []       
             async with aiohttp.ClientSession() as session:
                 get_appraisal = asyncio.ensure_future(self.simple_double_filtered_data(session,
                                             '/QyEmployeeAppraisal','AppraisalNo','eq',pk,
@@ -106,10 +107,14 @@ class AppraisalDetails(UserObjectMixins, View):
                 get_attachments = asyncio.ensure_future(self.simple_one_filtered_data(session,
                                                         '/QyDocumentAttachments',
                                                             'No_','eq',pk))
+                get_trainings = asyncio.ensure_future(self.simple_one_filtered_data(session,
+                                                        '/QyTrainingAndDevelopment',
+                                                            'AppraisalNo','eq',pk))
                 response = await asyncio.gather(get_appraisal,
                                                     get_targets,
                                                         get_attributes,
-                                                            get_attachments)
+                                                            get_attachments,
+                                                                get_trainings)
             
             
                 for appraisal in response[0]: # type: ignore
@@ -117,6 +122,7 @@ class AppraisalDetails(UserObjectMixins, View):
                 targets = [x for x in response[1]] # type: ignore
                 attributes = [x for x in response[2]] # type: ignore
                 allFiles = [x for x in response[3]] # type: ignore
+                trainings = [x for x in response[4]]  # type: ignore
                 
         except Exception as e:
             logging.exception(e)
@@ -131,7 +137,8 @@ class AppraisalDetails(UserObjectMixins, View):
             'TO_role':TO_role,
             'targets':targets,
             'attributes':attributes,
-            "file": allFiles
+            "file": allFiles,
+            'trainings':trainings
         }
             
         return render(request, 'appraisalDetails.html', ctx)
@@ -275,6 +282,48 @@ class FnAppraisalGoals(UserObjectMixins,View):
                                                     unitOfMeasureORPerformanceIndicator,
                                                         int(selfRating),int(supervisorRating),User_ID,
                                                         myAction)
+            if response == True:
+                messages.success(request,'success')
+                return redirect('AppraisalDetails', pk=pk)
+            messages.error(request,f'{response}')
+            return redirect('AppraisalDetails', pk=pk)
+        except Exception as e:
+            logging.exception(e)
+            messages.error(request,f'{e}')
+            return redirect('AppraisalDetails', pk=pk)
+        
+class FnAppraisalTrainingAndDevelopment (UserObjectMixins,View):
+    def post(self,request,pk):
+        try:
+            soap_headers = request.session['soap_headers']
+            appraisalLine = request.POST.get('appraisalLine')
+            description = request.POST.get('description')
+            duration = request.POST.get('duration')
+            commentsBySupervisor = request.POST.get('commentsBySupervisor')
+            User_ID = request.session['User_ID']
+            myAction = request.POST.get('myAction')
+            if not commentsBySupervisor:
+                commentsBySupervisor = ''
+
+            response = self.make_soap_request(soap_headers,'FnAppraisalTrainingAndDevelopment',
+                                              pk,appraisalLine,description,duration,
+                                                commentsBySupervisor,User_ID,myAction)
+            if response == True:
+                messages.success(request,'success')
+                return redirect('AppraisalDetails', pk=pk)
+            messages.error(request,f'{response}')
+            return redirect('AppraisalDetails', pk=pk)
+        except Exception as e:
+            logging.exception(e)
+            messages.error(request,f'{e}')
+            return redirect('AppraisalDetails', pk=pk)
+                
+class FnGetAppraisalAttributes(UserObjectMixins,View):
+    def post(self,request,pk):
+        try:
+            soap_headers = request.session['soap_headers']
+            response = self.make_soap_request(soap_headers,
+                                              'FnGetAppraisalAttributes',pk)
             if response == True:
                 messages.success(request,'success')
                 return redirect('AppraisalDetails', pk=pk)

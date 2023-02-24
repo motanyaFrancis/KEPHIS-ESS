@@ -68,11 +68,6 @@ urlpatterns = [
     path('speed/governor', views.SpeedGovernor.as_view(), name='SpeedGovernor'),
     path('GovernorDetails/<str:pk>', views.GovernorDetails.as_view(), name='GovernorDetails'),
     path('FnSubmitSpeedGovernor/<str:pk>', views.FnSubmitSpeedGovernor.as_view(), name='FnSubmitSpeedGovernor'),
-<<<<<<< HEAD
-    path('gvcu', views.GVCU.as_view(), name='gvcu'),
-    path('GVCU/Details/<str:pk>', views.GVCU_Details.as_view(), name='GVCU_Details'),
-=======
->>>>>>> 372056f3fe16f7a98665b9755a508d6c013eee4d
     
     # Gvcu 
     path('gvcu', views.GVCU.as_view(), name='gvcu'),

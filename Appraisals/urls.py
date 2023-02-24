@@ -9,4 +9,6 @@ urlpatterns = [
     path('AppraisalAttachments/<str:pk>', views.AppraisalAttachments.as_view(), name='AppraisalAttachments'),
     path('SupervisorAttachments/<str:pk>', views.SupervisorAttachments.as_view(), name='SupervisorAttachments'),
     path('FnAppraisalGoals/<str:pk>',views.FnAppraisalGoals.as_view(),name='FnAppraisalGoals'),
+    path('FnAppraisalTrainingAndDevelopment/<str:pk>',views.FnAppraisalTrainingAndDevelopment.as_view(),name='FnAppraisalTrainingAndDevelopment'),
+    path('FnGetAppraisalAttributes/<str:pk>',views.FnGetAppraisalAttributes.as_view(),name='FnGetAppraisalAttributes'),
 ]

@@ -261,10 +261,11 @@ class DisabilityDetails(UserObjectMixins,View):
                 exaplainDisability = request.POST.get('exaplainDisability')
                 soap_headers = await sync_to_async(request.session.__getitem__)('soap_headers')
                 Employee_No_ = await sync_to_async(request.session.__getitem__)('Employee_No_')
+                purpose = request.POST.get('purpose')
         
                 response =  self.make_soap_request(soap_headers,'FnInternalBookingCard', bookingNo,
                                                    myAction,typeOfService,True,exaplainDisability,
-                                                   userID,Employee_No_)
+                                                   userID,Employee_No_,purpose)
                 if response !='0':
                     messages.success(request,"Added successfully")
                     return redirect('InternalRoomDetails', pk=response)

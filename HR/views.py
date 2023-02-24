@@ -98,6 +98,7 @@ class Leave_Request(UserObjectMixins, View):
             response =  self.make_soap_request(soap_headers,'FnLeaveApplication',
                                                    applicationNo,Employee_No_,usersId,leaveType,
                                                    plannerStartDate,daysApplied,isReturnSameDay,myAction)
+            
             if response !='0':
                 add_reliever = self.make_soap_request(soap_headers,"FnLeaveReliver",
                                                       response,staffNo,myAction)
