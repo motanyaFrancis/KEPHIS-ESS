@@ -1,1 +1,166 @@
-<h1>Hello World</h1>
+{% extends 'offcanvas.html' %}
+{% load bootstrap5 %}
+{% load static %}
+{% block main %}
+<section class="dash2">
+    <div class="content-wrapper">
+        <div class="d-xl-flex justify-content-between align-items-start">
+            <h2 class="text-dark font-weight-bold mb-2">GovernMent Check Unit Report
+        </div>
+
+        <!--alert -->
+        {% include 'alerts.html' %}
+
+        <div class="row my-3">
+            <div class="col-md-3">
+                <div class="card l-bg-blue-dark statCard h-100">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-car-crash"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Report Number</h5>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{ res.GCU_No }}
+                                </h2>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card l-bg-green-dark statCard h-100">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-file"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Report Stage</h5>
+                        </div>
+                        {% if res.Submitted == False %}
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    Not Submitted
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="progress mt-1 " data-height="8" style="height: 8px;">
+                            <div class="progress-bar l-bg-red" role="progressbar" data-width="50%" aria-valuenow="25"
+                                aria-valuemin="0" aria-valuemax="100"
+                                style="width: 50%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
+                            </div>
+                        </div>
+                        {% elif res.Submitted == True %}
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    Submitted
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="progress mt-1 " data-height="8" style="height: 8px;">
+                            <div class="progress-bar l-bg-yellow" role="progressbar" data-width="25%" aria-valuenow="25"
+                                aria-valuemin="0" aria-valuemax="100"
+                                style="width: 100%; background: linear-gradient(to right, #a86008, #c18b39) !important;">
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card l-bg-orange-dark statCard h-100">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-car"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Vehicle</h5>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{res.Vehicle}} {{res.VehicleMake}}
+                                </h2>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card l-bg-cherry statCard h-100">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-calendar"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Date</h5>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{ res.Date }}
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <form class="row g-3">
+
+                    <div class="col-md-4">
+                        <label class="form-label">Created By</label>
+                        <input type="text" class="form-control" placeholder="{{res.Created_By}}" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Date</label>
+                        <input type="text" class="form-control" placeholder="{{res.Date}}" readonly>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Location of Vehicle</label>
+                        <input type="text" class="form-control" placeholder="{{res.Location_Of_The_Vehicle}}"
+                            readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Vehicle_Registration_No</label>
+                        <input type="text" class="form-control" placeholder="{{res.Vehicle_Registration_No}}"
+                            readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Vehicle Make</label>
+                        <input type="text" class="form-control" placeholder="{{res.Make}}"
+                        readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Driver</label>
+                        <input type="text" class="form-control" placeholder="{{res.Driver_Name}}"
+                            readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Surcharge</label>
+                        <input type="text" class="form-control" placeholder="{{res.Surcharge}}"
+                            readonly>
+                    </div> 
+                    
+
+                </form>
+            </div>
+        </div>
+        {% if res.Submitted == False %}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="myForm my-3">
+                    <form action="{% url 'FnSubmitGovermmentCheckUnit' res.GCU_No %}" method="POST"
+                        style="display: inline-block;">
+                        {% csrf_token %}
+                        <button class="btn btn-primary" type="submit">Submit Report</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
