@@ -1895,6 +1895,25 @@ class FuelDetails(UserObjectMixins, View):
             messages.info(request, f'{e}')
             return redirect('fuel')
         return render(request,'fuelDetails.html',ctx)
+
+class FnSubmitFuelConsumption(UserObjectMixins, View):
+    def post(self,request,pk):
+        try:
+            soap_headers = request.session['soap_headers']
+            userID = request.session['User_ID']
+            response = self.make_soap_request(soap_headers,'FnSubmitFuelConsumption',
+                                              pk,userID)
+            print(response)
+            if response == True:
+                messages.success(request,'Success')
+                return redirect('FuelDetails', pk=pk)
+            else:
+                messages.error(request, f'{response}')
+                return redirect('FuelDetails',pk=pk)
+        except Exception as e:
+            messages.error(request, f'{e}')
+            logging.exception(e)
+            return redirect('FuelDetails', pk=pk)
 class SpeedGovernor(UserObjectMixins,View):
     async def get(self,request):
         try:
@@ -2032,47 +2051,48 @@ class FnSubmitSpeedGovernor(UserObjectMixins,View):
             
 class GVCU(UserObjectMixins,View):
     async def get(self,request):
-        ctx ={}
-        # try:
-        #     userID = await sync_to_async(request.session.__getitem__)('User_ID')
-        #     driver_role = await sync_to_async(request.session.__getitem__)('driver_role')
-        #     TO_role = await sync_to_async(request.session.__getitem__)('TO_role')
-        #     full_name = await sync_to_async(request.session.__getitem__)('full_name')
+        try:
+            userID = await sync_to_async(request.session.__getitem__)('User_ID')
+            driver_role = await sync_to_async(request.session.__getitem__)('driver_role')
+            TO_role = await sync_to_async(request.session.__getitem__)('TO_role')
+            full_name = await sync_to_async(request.session.__getitem__)('full_name')
 
-        #     full_name = await sync_to_async(request.session.__getitem__)('full_name')
-        #     drivers = []
+            full_name = request.session['full_name']
+            drivers = []
             
-        #     async with aiohttp.ClientSession() as session:
-        #         task_get_reservations = asyncio.ensure_future(self.simple_one_filtered_data(
-        #             session,"/QyGovermentCheckUnit","Created_By","eq",userID))
+            async with aiohttp.ClientSession() as session:
+                task_get_reservations = asyncio.ensure_future(self.simple_one_filtered_data(
+                    session,"/QyGovermentCheckUnit","Created_By","eq",userID))
                 
-        #         task_get_vehicle = asyncio.ensure_future(self.simple_one_filtered_data(session,'/QyFixedAssets',
-        #                                                                             'Fixed_Asset_Type',"eq",
-        #                                                                             'Fleet'))
-        #         task_get_driver = asyncio.ensure_future(self.simple_fetch_data(session,'/QyDrivers'))
+                task_get_vehicle = asyncio.ensure_future(self.simple_one_filtered_data(session,'/QyFixedAssets',
+                                                                                    'Fixed_Asset_Type',"eq",
+                                                                                    'Fleet'))
+                task_get_driver = asyncio.ensure_future(self.simple_fetch_data(session,'/QyDrivers'))
 
-        #         response = await asyncio.gather(task_get_reservations,task_get_vehicle,
-        #                                         task_get_driver) 
+                response = await asyncio.gather(task_get_reservations,task_get_vehicle,
+                                                task_get_driver) 
                                
-        #         openRequest = [x for x in response[0] if x['Submitted'] == False ] # type: ignore
-        #         submitted = [x for x in response[0] if x['Submitted'] == True] #type:ignore
-        #         vehicle = [x for x in response[2]] # type: ignore 
-        #         drivers = [x for x in response[3]] # type: ignore 
+                openRequest = [x for x in response[0] if x['Submitted'] == False ] # type: ignore
+                submitted = [x for x in response[0] if x['Submitted'] == True] #type:ignore
+                vehicle = [x for x in response[1]] # type: ignore 
+                drivers = [x for x in response[2]] # type: ignore 
                    
-        #     ctx = {
-        #        "full": full_name,
-        #         "driver_role":driver_role,
-        #         "TO_role":TO_role, 
-        #         'openRequest':openRequest,
-        #         'submitted':submitted,
-        #         'vehicles':vehicle,
-        #         'drivers':drivers,
+            ctx = {
+               "full": full_name,
+                "driver_role":driver_role,
+                "TO_role":TO_role, 
+                'openRequest':openRequest,
+                'submitted':submitted,
+                'vehicles':vehicle,
+                'drivers':drivers,
                 
-        #     }
-        # except Exception as e:
-        #     logging.exception(e)
-        #     return redirect('fuel')
+            }
+        except Exception as e:
+            logging.exception(e)
+            print(e)
+            return redirect('gvcu')
         return render(request,"gvcu.html",ctx)
+    
     async def post(self, request):
         try:
             soap_headers = await sync_to_async(request.session.__getitem__)('soap_headers')
@@ -2091,7 +2111,7 @@ class GVCU(UserObjectMixins,View):
                                                         user_id)
             if response != '0':
                 messages.success(request,'success')
-                return redirect('GVCU_Details',pk=response)
+                return redirect('gvcuDetails',pk=response)
             else:
                 messages.error(request,f'{response}')
                 return redirect('gvcu')
@@ -2111,7 +2131,7 @@ class GVCU_Details(UserObjectMixins,View):
 
             async with aiohttp.ClientSession() as session:
                 get_speed_governor = asyncio.ensure_future(self.simple_double_filtered_data(session,
-                                            '/QySpeedGovernorReplacement','SpeedGovernorNo',
+                                            '/QyGovermentCheckUnit','GCU_No',
                                             'eq',pk,'and','Created_By','eq',userID))
                 get_files = asyncio.ensure_future(self.simple_one_filtered_data(session,
                                     '/QyDocumentAttachments','No_','eq',pk))
@@ -2121,7 +2141,7 @@ class GVCU_Details(UserObjectMixins,View):
                 allFiles = [x for x in response[1]]  # type: ignore 
                 
                 ctx = {
-                   "res":res,
+                    "res":res,
                     "allFiles":allFiles,
                     "driver_role":driver_role,
                     'TO_role':TO_role,
@@ -2131,5 +2151,25 @@ class GVCU_Details(UserObjectMixins,View):
         except Exception as e:
             print(e)
             messages.info(request, f'{e}')
-            return redirect('gvcu')
-        return render(request,'governorDetails.html',ctx)
+            return redirect('gvcuDetails')
+        return render(request,'gvcuDetails.html',ctx)
+    
+class FnSubmitGovermmentCheckUnit(UserObjectMixins, View):
+    def post(self,request,pk):
+        try:
+            soap_headers = request.session['soap_headers']
+            userID = request.session['User_ID']
+            response = self.make_soap_request(soap_headers,'FnSubmitGovermmentCheckUnit',
+                                              pk,userID)
+            print(response)
+            if response == True:
+                messages.success(request,'Success')
+                return redirect('gvcuDetails', pk=pk)
+            else:
+                messages.error(request, f'{response}')
+                return redirect('gvcuDetails',pk=pk)
+        except Exception as e:
+            messages.error(request, f'{e}')
+            logging.exception(e)
+            return redirect('gvcuDetails', pk=pk)
+   
