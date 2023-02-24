@@ -1923,45 +1923,46 @@ class FnSubmitSpeedGovernor(UserObjectMixins,View):
             
 class GVCU(UserObjectMixins,View):
     async def get(self,request):
-        try:
-            userID = await sync_to_async(request.session.__getitem__)('User_ID')
-            driver_role = await sync_to_async(request.session.__getitem__)('driver_role')
-            TO_role = await sync_to_async(request.session.__getitem__)('TO_role')
-            full_name = await sync_to_async(request.session.__getitem__)('full_name')
+        ctx ={}
+        # try:
+        #     userID = await sync_to_async(request.session.__getitem__)('User_ID')
+        #     driver_role = await sync_to_async(request.session.__getitem__)('driver_role')
+        #     TO_role = await sync_to_async(request.session.__getitem__)('TO_role')
+        #     full_name = await sync_to_async(request.session.__getitem__)('full_name')
 
-            full_name = request.session['full_name']
-            drivers = []
+        #     full_name = await sync_to_async(request.session.__getitem__)('full_name')
+        #     drivers = []
             
-            async with aiohttp.ClientSession() as session:
-                task_get_reservations = asyncio.ensure_future(self.simple_one_filtered_data(
-                    session,"/QyGovermentCheckUnit","Created_By","eq",userID))
+        #     async with aiohttp.ClientSession() as session:
+        #         task_get_reservations = asyncio.ensure_future(self.simple_one_filtered_data(
+        #             session,"/QyGovermentCheckUnit","Created_By","eq",userID))
                 
-                task_get_vehicle = asyncio.ensure_future(self.simple_one_filtered_data(session,'/QyFixedAssets',
-                                                                                    'Fixed_Asset_Type',"eq",
-                                                                                    'Fleet'))
-                task_get_driver = asyncio.ensure_future(self.simple_fetch_data(session,'/QyDrivers'))
+        #         task_get_vehicle = asyncio.ensure_future(self.simple_one_filtered_data(session,'/QyFixedAssets',
+        #                                                                             'Fixed_Asset_Type',"eq",
+        #                                                                             'Fleet'))
+        #         task_get_driver = asyncio.ensure_future(self.simple_fetch_data(session,'/QyDrivers'))
 
-                # response = await asyncio.gather(task_get_reservations,task_get_vehicle,
-                #                                 task_get_driver) 
+        #         response = await asyncio.gather(task_get_reservations,task_get_vehicle,
+        #                                         task_get_driver) 
                                
-                openRequest = [x for x in response[0] if x['Submitted'] == False ] # type: ignore
-                submitted = [x for x in response[0] if x['Submitted'] == True] #type:ignore
-                vehicle = [x for x in response[2]] # type: ignore 
-                # drivers = [x for x in response[3]] # type: ignore 
+        #         openRequest = [x for x in response[0] if x['Submitted'] == False ] # type: ignore
+        #         submitted = [x for x in response[0] if x['Submitted'] == True] #type:ignore
+        #         vehicle = [x for x in response[2]] # type: ignore 
+        #         drivers = [x for x in response[3]] # type: ignore 
                    
-            ctx = {
-               "full": full_name,
-                "driver_role":driver_role,
-                "TO_role":TO_role, 
-                'openRequest':openRequest,
-                'submitted':submitted,
-                'vehicles':vehicle,
-                'drivers':drivers,
+        #     ctx = {
+        #        "full": full_name,
+        #         "driver_role":driver_role,
+        #         "TO_role":TO_role, 
+        #         'openRequest':openRequest,
+        #         'submitted':submitted,
+        #         'vehicles':vehicle,
+        #         'drivers':drivers,
                 
-            }
-        except Exception as e:
-            logging.exception(e)
-            return redirect('dashboard')
+        #     }
+        # except Exception as e:
+        #     logging.exception(e)
+        #     return redirect('fuel')
         return render(request,"gvcu.html",ctx)
     async def post(self, request):
         try:

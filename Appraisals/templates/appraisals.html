@@ -31,7 +31,7 @@
                         <ul class="nav nav-tabs d-flex" id="myTab">
                             <li class="nav-item flex-fill">
                                 <a href="#open" class="nav-link active" data-bs-toggle="tab">Open
-                                    ({{count}})</a>
+                                    ({{res|length}})</a>
                             </li>
                             <li class="nav-item flex-fill">
                                 <a href="#pending" class="nav-link" data-bs-toggle="tab">Pending Approval
@@ -81,176 +81,6 @@
                                                 <td>{{res.AppraiserNo}}</td>
                                                 <td>{{res.AppraisalStatus}}</td>
                                                 <td>
-                                                    <button class="btn btn-primary" data-bs-toggle="modal"
-                                                        data-bs-target="#" data-toggle="tooltip" data-placement="top"
-                                                        title="edit">Edit <i class="fas fa-edit"></i>
-                                                    </button>
-                                                    <div class="modal fade" id="" data-bs-backdrop="static"
-                                                        data-bs-keyboard="false" tabindex="-1"
-                                                        aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                                                        <div
-                                                            class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                    <h5 class="modal-title" id="staticBackdropLabel">
-                                                                        <i class="las la-edit"></i> Edit Imprest
-                                                                        <span class="editSpan">{{res.No_}}</span>
-                                                                    </h5>
-                                                                    <button type="button"
-                                                                        class="btn-close btn-close-white"
-                                                                        data-bs-dismiss="modal"
-                                                                        aria-label="Close"></button>
-                                                                </div>
-                                                                <div class="modal-body">
-                                                                    <form class="myForm" action="" method="post"
-                                                                        novalidate>
-                                                                        {% csrf_token %}
-                                                                        <div class="mb-2 myForm">
-                                                                            <div class="row">
-                                                                                <div class="col-md-12">
-                                                                                    <label
-                                                                                        class="form-label">Imprest</label>
-                                                                                    <select class="form-select"
-                                                                                        name="isImprest" required>
-                                                                                        <option selected disabled
-                                                                                            value="">
-                                                                                            Select Option</option>
-                                                                                        <option value="True">yes
-                                                                                        </option>
-                                                                                        <option value="False">No
-                                                                                        </option>
-                                                                                    </select>
-                                                                                    <div class="invalid-feedback">
-                                                                                        Please
-                                                                                        select a valid option.</div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="row">
-                                                                                <div class="col-md-12">
-                                                                                    <label class="form-label">Travel
-                                                                                        Type <span
-                                                                                            class="text-danger">*</span></label>
-                                                                                    <select class="form-select"
-                                                                                        name="travelType" required>
-                                                                                        <option selected disabled
-                                                                                            value="">
-                                                                                            Select Option</option>
-                                                                                        <option value="0">Local</option>
-                                                                                        <option value="1">Foreign
-                                                                                        </option>
-                                                                                    </select>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="row">
-                                                                                <div class="col-md-12">
-                                                                                    <input type="hidden" name="myAction"
-                                                                                        value="modify">
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="row">
-                                                                                <div class="col-md-12">
-                                                                                    <input type="hidden"
-                                                                                        name="imprestNo"
-                                                                                        value="{{res.No_}}">
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="row">
-                                                                                <div class="col-md-12">
-                                                                                    <label for="purpose"
-                                                                                        class="form-label">Purpose</label>
-                                                                                    <textarea class="form-control"
-                                                                                        name="purpose" rows="3"
-                                                                                        required></textarea>
-                                                                                </div>
-                                                                            </div>
-                                                                            <button type="submit" id="sasa"
-                                                                                class="btn btn-success my-3 w-100">Submit</button>
-                                                                    </form>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <button class="btn btn-primary" data-bs-toggle="modal"
-                                                        data-bs-target="#ticket{{res.AppraisalNo}}"
-                                                        data-toggle="tooltip" data-placement="top" title="edit">Edit <i
-                                                            class="fas fa-edit"></i>
-                                                    </button>
-                                                    <div class="modal fade" id="ticket{{res.AppraisalNo}}"
-                                                        data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-                                                        aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                                                        <div
-                                                            class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                    <h5 class="modal-title" id="staticBackdropLabel">
-                                                                        <i class="las la-edit"></i> Edit Appraisal
-                                                                        <span
-                                                                            class="editSpan">{{res.AppraisalNo}}</span>
-                                                                    </h5>
-                                                                    <button type="button"
-                                                                        class="btn-close btn-close-white"
-                                                                        data-bs-dismiss="modal"
-                                                                        aria-label="Close"></button>
-                                                                </div>
-                                                                <div class="modal-body">
-                                                                    <form class="myForm needs-validation"
-                                                                        action="{% url 'Appraisals' %}" method="post"
-                                                                        novalidate>
-                                                                        {% csrf_token %}
-                                                                        <div class="row">
-                                                                            <div class="col-md-12">
-                                                                                <input type="hidden" name="apprsailNo"
-                                                                                    value="">
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <div class="row">
-                                                                            <div class="col-md-12">
-                                                                                <label for=""
-                                                                                    class="form-label">Appraisal
-                                                                                    Period<span
-                                                                                        class="text-danger">*</span></label>
-                                                                                <input type="text"
-                                                                                    name="apprasailPeriod"
-                                                                                    id="apprasailPeriod"
-                                                                                    class="form-control" required
-                                                                                    placeholder="e.g 2022">
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="row">
-                                                                            <div class="col-md-12">
-                                                                                <label for=""
-                                                                                    class="form-label">Appraiser
-                                                                                    Number<span
-                                                                                        class="text-danger">*</span></label>
-                                                                                <input type="text" name="appraiserNo"
-                                                                                    class="form-control" required>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="row">
-                                                                            <div class="col-md-12">
-                                                                                <label for=""
-                                                                                    class="form-label">Remarks<span
-                                                                                        class="text-danger">*</span></label>
-                                                                                <textarea name="remarks" id=""
-                                                                                    class="form-control"></textarea>
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <div class="row">
-                                                                            <div class="col-md-12">
-                                                                                <input type="hidden" name="myAction"
-                                                                                    value="modify">
-                                                                            </div>
-                                                                        </div>
-                                                                        <button type="submit" id="sasa"
-                                                                            class="btn btn-success my-3 w-100">Submit</button>
-                                                                    </form>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
                                                     <a href="{% url 'AppraisalDetails' res.AppraisalNo %}"
                                                         class="btn btn-success btn-icon-text" type="button"
                                                         data-toggle="tooltip" data-placement="top"
@@ -268,94 +98,12 @@
                                                 <td>{{res.AppraiserNo}}</td>
                                                 <td>{{res.AppraisalStatus}}</td>
                                                 <td>
-                                                    <button class="btn btn-primary" data-bs-toggle="modal"
-                                                        data-bs-target="#ticket{{res.AppraisalNo}}"
-                                                        data-toggle="tooltip" data-placement="top" title="edit">Edit <i
-                                                            class="fas fa-edit"></i>
-                                                    </button>
-                                                    <a href="{% url 'AppraisalDetails' res.AppraisalNo %}"
+                                                    <a href="{% url 'SupervisorAppraisal' res.AppraisalNo %}"
                                                         class="btn btn-success btn-icon-text" type="button"
                                                         data-toggle="tooltip" data-placement="top"
                                                         title="Click to View">
                                                         View <i class="far fa-eye"></i>
                                                     </a>
-                                                    <div class="modal fade" id="ticket{{res.AppraisalNo}}"
-                                                        data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-                                                        aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                                                        <div
-                                                            class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                    <h5 class="modal-title" id="staticBackdropLabel">
-                                                                        <i class="las la-edit"></i> Edit Appraisal
-                                                                        <span
-                                                                            class="editSpan">{{res.AppraisalNo}}</span>
-                                                                    </h5>
-                                                                    <button type="button"
-                                                                        class="btn-close btn-close-white"
-                                                                        data-bs-dismiss="modal"
-                                                                        aria-label="Close"></button>
-                                                                </div>
-                                                                <div class="modal-body">
-                                                                    <form class="myForm needs-validation"
-                                                                        action="{% url 'Appraisals' %}" method="post"
-                                                                        novalidate>
-                                                                        {% csrf_token %}
-                                                                        <div class="row">
-                                                                            <div class="col-md-12">
-                                                                                <input type="hidden" name="apprsailNo"
-                                                                                    value="">
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <div class="row">
-                                                                            <div class="col-md-12">
-                                                                                <label for=""
-                                                                                    class="form-label">Appraisal
-                                                                                    Period<span
-                                                                                        class="text-danger">*</span></label>
-                                                                                <input type="text"
-                                                                                    name="apprasailPeriod"
-                                                                                    id="apprasailPeriod"
-                                                                                    class="form-control" required
-                                                                                    placeholder="e.g 2022">
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="row">
-                                                                            <div class="col-md-12">
-                                                                                <label for=""
-                                                                                    class="form-label">Appraiser
-                                                                                    Number<span
-                                                                                        class="text-danger">*</span></label>
-                                                                                <input type="text" name="appraiserNo"
-                                                                                    class="form-control" required>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="row">
-                                                                            <div class="col-md-12">
-                                                                                <label for=""
-                                                                                    class="form-label">Remarks<span
-                                                                                        class="text-danger">*</span></label>
-                                                                                <textarea name="remarks" id=""
-                                                                                    class="form-control"></textarea>
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <div class="row">
-                                                                            <div class="col-md-12">
-                                                                                <input type="hidden" name="myAction"
-                                                                                    value="modify">
-                                                                            </div>
-                                                                        </div>
-                                                                        <button type="submit" id="sasa"
-                                                                            class="btn btn-success my-3 w-100">Submit</button>
-                                                                    </form>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-
                                                 </td>
                                             </tr>
                                             {% endif %}
@@ -476,37 +224,17 @@
                     <div class="modal-body">
                         <form class="myForm needs-validation" action="{% url 'Appraisals' %}" method="post" novalidate>
                             {% csrf_token %}
+                            <input type="hidden" name="appraisalNo" value=" ">
+                            <input type="hidden" name="myAction" value="insert">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <input type="hidden" name="apprsailNo" value="">
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <label for="" class="form-label">Appraisal Period<span
-                                            class="text-danger">*</span></label>
-                                    <input type="text" name="apprasailPeriod" id="apprasailPeriod" class="form-control"
-                                        required placeholder="e.g 2022">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <label for="" class="form-label">Appraiser Number<span
-                                            class="text-danger">*</span></label>
-                                    <input type="text" name="appraiserNo" class="form-control" required>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <label for="" class="form-label">Remarks<span class="text-danger">*</span></label>
-                                    <textarea name="remarks" id="" class="form-control"></textarea>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <input type="hidden" name="myAction" value="insert">
+                                    <label class="form-label">Appraisal Period<span class="text-danger">*</span></label>
+                                    <select class="form-select" name="appraisalPeriod" required>
+                                        <option selected disabled value="0">--Select--</option>
+                                        {% for period in periods %}
+                                        <option value="{{period.Period}}">{{period.Period}}</option>
+                                        {% endfor %}
+                                    </select>
                                 </div>
                             </div>
                             <button type="submit" id="sasa" class="btn btn-success my-3 w-100">Submit</button>
