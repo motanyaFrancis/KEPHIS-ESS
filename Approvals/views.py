@@ -92,8 +92,6 @@ class Approve(UserObjectMixin,View):
             countRepair = len(openRepair)
             countStore = len(openStore)
             countOther = len(openOther)
-            countInspection = len(openInspection)
-            countTickets = len(openTickets)
 
         except requests.exceptions.RequestException as e:
             print(e)
@@ -113,8 +111,6 @@ class Approve(UserObjectMixin,View):
             "approvePurchase":approvePurchase,
             "rejectPurchase":rejectPurchase, "countRepair":countRepair,"appRepair":appRepair,"rejRepair":rejRepair,
             "countStore":countStore,"openStore":openStore,"appStore":appStore,"rejStore":rejStore,
-            "countInspection":countInspection,"openInspection": openInspection, "appInspection": appInspection, "rejInspection": rejInspection,
-            "openTickets":openTickets,"appTickets":appTickets,"rejTickets":rejTickets,"countTickets":countTickets,
             "openOther":openOther,"appOther":appOther,"rejOther":rejOther,"countOther":countOther,
             "full": full_name,
             "driver_role":driver_role,
