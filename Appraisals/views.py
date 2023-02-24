@@ -1,7 +1,6 @@
 import base64
 import logging
 from django.shortcuts import render, redirect
-import requests
 from requests import Session
 from django.conf import settings as config
 import datetime as dt
@@ -250,3 +249,38 @@ class SupervisorAttachments(UserObjectMixins,View):
             messages.error(request, "Upload failed: {}".format(e))
             logging.exception(e)
             return redirect('SupervisorAppraisal', pk=pk)
+        
+class FnAppraisalGoals(UserObjectMixins,View):
+    def post(self,request, pk):
+        try:
+            soap_headers = request.session['soap_headers']
+            appraisalLine = int(request.POST.get('appraisalLine'))
+            targetsSetForTheYear = request.POST.get('targetsSetForTheYear')
+            weight = float(request.POST.get('weight'))
+            unitOfMeasureORPerformanceIndicator = request.POST.get('unitOfMeasureORPerformanceIndicator')
+            selfRating = request.POST.get('selfRating')
+            supervisorRating = request.POST.get('supervisorRating')
+            User_ID = request.session['User_ID']
+            myAction = request.POST.get('myAction')
+            
+            if not selfRating:
+                selfRating=0
+                
+            if not supervisorRating:
+                supervisorRating=0
+
+            
+            response = self.make_soap_request(soap_headers,'FnAppraisalGoals',pk,
+                                                appraisalLine,targetsSetForTheYear,weight,
+                                                    unitOfMeasureORPerformanceIndicator,
+                                                        int(selfRating),int(supervisorRating),User_ID,
+                                                        myAction)
+            if response == True:
+                messages.success(request,'success')
+                return redirect('AppraisalDetails', pk=pk)
+            messages.error(request,f'{response}')
+            return redirect('AppraisalDetails', pk=pk)
+        except Exception as e:
+            logging.exception(e)
+            messages.error(request,f'{e}')
+            return redirect('AppraisalDetails', pk=pk)

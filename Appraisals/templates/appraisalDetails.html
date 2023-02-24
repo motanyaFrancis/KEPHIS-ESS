@@ -150,30 +150,29 @@
                             style="width:100%">
                             <thead>
                                 <tr id="tops">
-
-                                    <th>Target Set for the Year</th>
+                                    <th id="long"> No.</th>
+                                    <th>Target</th>
+                                    <th>Unit of Measure</th>
                                     <th>Weight</th>
+                                    {% if res.AppraisalStatus != "Setting" %}
                                     <th>Self Rating</th>
-                                    {% if res.Status != "Open"%}
                                     <th>Supervisor Rating</th>
-                                    {% endif %}
-                                    {% if res.Status == "Open"%}
                                     <th>Score</th>
                                     {% endif %}
-                                    <th id="long"> No.</th>
+
                                 </tr>
                             </thead>
 
                             <tbody>
                                 {% for target in targets %}
                                 <tr>
-                                    <td>{{target.AppraisalPeriod}}</td>
+                                    <td>{{target.AppraisalLine}}</td>
+                                    <td>{{target.KeyResponsibility}}</td>
+                                    <td>{{target.FYTarget}}</td>
                                     <td>{{target.Weight}}</td>
+                                    {% if res.AppraisalStatus != "Setting" %}
                                     <td>{{target.SelfRating}}</td>
-                                    {% if res.Status != "Open"%}
                                     <td>{{target.SupervisorRating}}</td>
-                                    {% endif %}
-                                    {% if res.Status == "Open"%}
                                     <td>
                                         <button class="btn btn-successs p-3 d-flex align-items-center" type="button"
                                             data-bs-toggle="modal" data-bs-target="#score00002"> <i
@@ -181,7 +180,6 @@
                                         </button>
                                     </td>
                                     {% endif %}
-                                    <td>{{target.LineNo}}</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -418,22 +416,20 @@
                         aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="myForm" id="AppraisalForm" action="" method="post" novalidate>
+                    <form class="myForm" id="AppraisalForm" action="{% url 'FnAppraisalGoals' res.AppraisalNo %}"
+                        method="post" novalidate>
                         {% csrf_token %}
                         <div class="row">
                             <div class="col-md-12">
-                                <input type="hidden" name="lineNo" value="">
+                                <input type="hidden" name="appraisalLine" value="0">
                                 <input type="hidden" name="myAction" value="insert">
-                                <input type="hidden" name="apprsailNo" value="{{res.AppraisalNo}}">
-                                <input type="hidden" name="No" value="1000">
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-12">
-                                <label class="form-label">Targets Set for the Year<span
-                                        class="text-danger">*</span></label>
-                                <input class="form-control" type="text" name="targetsSetForTheYear" id="">
+                                <label class="form-label">Target<span class="text-danger">*</span></label>
+                                <input class="form-control" type="text" name="targetsSetForTheYear">
                             </div>
                             <div class="col-md-12">
                                 <label class="form-label">Weight</label>
@@ -444,10 +440,16 @@
                                 <input class="form-control" type="text" name="unitOfMeasureORPerformanceIndicator"
                                     id="">
                             </div>
+                            {% if res.AppraisalStatus == 'Appraisal' %}
                             <div class="col-md-12">
                                 <label class="form-label">Self Rating</label>
-                                <input class="form-control" type="text" name="self_rating" id="">
+                                <input class="form-control" type="text" name="self_rating" value="0">
                             </div>
+                            <div class="col-md-12">
+                                <label class="form-label">Supervisor Rating</label>
+                                <input class="form-control" type="text" name="supervisorRating" value="0">
+                            </div>
+                            {% endif %}
                         </div>
                         <button type="submit" class="btn btn-success my-3 w-100">Submit</button>
                     </form>
