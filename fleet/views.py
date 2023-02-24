@@ -1765,28 +1765,136 @@ class FuelConsumption(UserObjectMixins,View):
             full_name = await sync_to_async(request.session.__getitem__)('full_name')
 
             full_name = request.session['full_name']
-            
+            openRequest = []
+            submitted = []
+
+
             async with aiohttp.ClientSession() as session:
                 task_get_reservations = asyncio.ensure_future(self.fetch_one_filtered_data(
                     session,"/QyFuelRegister","Created_By","eq",userID))
 
-                reservation_response = await asyncio.gather(task_get_reservations) 
+                task_get_vendor = asyncio.ensure_future(self.simple_one_filtered_data(session,'/VendorDetails',
+                                                                                    'Vendor_Type',"eq",
+                                                                                    'Fuel Station'))
+                task_get_vehicle = asyncio.ensure_future(self.simple_one_filtered_data(session,'/QyFixedAssets',
+                                                                                    'Fixed_Asset_Type',"eq",
+                                                                                    'Fleet'))
+                task_get_generator = asyncio.ensure_future(self.simple_one_filtered_data(session,'/QyFixedAssets',
+                                                                                    'Fixed_Asset_Type',"eq",
+                                                                                    'Machinery'))
                 
-                if reservation_response[0]['status_code'] == 200: # type: ignore
-                    openRequest = [x for x in reservation_response[0]['data'] if x['Booking_Status'] == 'Open' ] # type: ignore
-                    Pending = [x for x in reservation_response[0]['data'] if x['Booking_Status'] == 'Pending Approval'] #type:ignore
-                    Approved = [x for x in reservation_response[0]['data'] if x['Booking_Status'] == 'Approved'] #type:ignore
+                task_get_drivers = asyncio.ensure_future(self.simple_fetch_data(session,'/QyDrivers'))
+
+                response = await asyncio.gather(task_get_reservations,task_get_vendor,task_get_vehicle, task_get_drivers, task_get_generator)
+
+                fuel_response = await asyncio.gather(task_get_reservations) 
+
+                vendors = [x for x in response[1]] # type: ignore
+                vehicle = [x for x in response[2]] # type: ignore 
+                drivers = [x for x in response[3]] # type: ignore 
+                generators = [x for x in response[4]] # type: ignore 
+
+                if fuel_response[0]['status_code'] == 200: # type: ignore
+                    openRequest = [x for x in fuel_response[0]['data'] if  x['Submitted'] == False ] # type: ignore
+                    submitted = [x for x in fuel_response[0]['data'] if  x['Submitted'] == True ] # type: ignore
+                
+                
             
             ctx = {
                "full": full_name,
                 "driver_role":driver_role,
                 "TO_role":TO_role, 
+                'openRequest':openRequest,
+                'submitted': submitted,
+                'vendors':vendors,
+                'vehicles':vehicle,
+                "drivers": drivers,
+                'generators': generators,
+                
             }
         except Exception as e:
             logging.exception(e)
             return redirect('fuel')
         return render(request,"fuel.html",ctx)
     
+    async def post(self,request):
+        try:
+            soap_headers = await sync_to_async(request.session.__getitem__)('soap_headers')
+            fuelNo = request.POST.get('fuelNo')
+            myAction = request.POST.get('myAction')
+            vehicle = request.POST.get('vehicle')
+            assetType = int(request.POST.get('assetType'))
+            generator = request.POST.get('generator')
+            receiptNo = request.POST.get('receiptNo')
+            quantityInLtrs = float(request.POST.get('quantityInLtrs'))
+            costPerLtr = float(request.POST.get('costPerLtr'))
+            fuelStation = request.POST.get('fuelStation')
+            fuelType = int(request.POST.get('fuelType'))
+            kMCovered = request.POST.get('kMCovered')
+            currenthoursReadings = request.POST.get('currenthoursReadings')
+            fuelCardType = int(request.POST.get('fuelCardType'))
+            driver = request.POST.get('driver')
+            remarks = request.POST.get('remarks')
+            userID = await sync_to_async(request.session.__getitem__)('User_ID')
+
+            if assetType == 1:
+                response =self.make_soap_request(soap_headers,
+                                            'FnFuelConsumptionGenerator',
+                                            fuelNo, myAction, assetType, fuelCardType, receiptNo,
+                                            generator, driver, currenthoursReadings, fuelType,
+                                            fuelStation,costPerLtr, quantityInLtrs, remarks)
+            else:
+                response =self.make_soap_request(soap_headers,
+                                            'FnFuelConsumptionVehicle',
+                                            fuelNo, myAction,assetType, fuelCardType, receiptNo,
+                                            vehicle, driver,fuelStation, costPerLtr,
+                                            quantityInLtrs, remarks,fuelType, kMCovered )
+            
+            if response !='0':
+                messages.success(request,'success')
+                return redirect('FuelDetails', pk=response)
+            elif response == 0:
+                messages.error(request, f'{response}')
+                return redirect('FuelDetails', pk=response)
+        except Exception as e:
+            logging.exception(e)
+            messages.error(request,f'{e}')
+            return redirect('fuel')
+
+class FuelDetails(UserObjectMixins, View):
+    async def get(self, request, pk):
+        try:
+            userID = await sync_to_async(request.session.__getitem__)('User_ID')
+            driver_role = await sync_to_async(request.session.__getitem__)('driver_role')
+            TO_role = await sync_to_async(request.session.__getitem__)('TO_role')
+            full_name = await sync_to_async(request.session.__getitem__)('full_name')
+            res = {}
+            ctx = {}
+
+            async with aiohttp.ClientSession() as session:
+                get_consumption = asyncio.ensure_future(self.simple_double_filtered_data(
+                    session,"/QyFuelRegister","Code", 
+                    "eq",pk,'and','Created_By','eq',userID))
+
+                get_files = asyncio.ensure_future(self.simple_one_filtered_data(session,
+                                    '/QyDocumentAttachments','No_','eq',pk))
+                response = await asyncio.gather(get_consumption,get_files)
+                for data in response[0]:
+                    res = data
+                allFiles = [x for x in response[1]]  # type: ignore 
+
+                ctx = {
+                    "res":res,
+                    "allFiles":allFiles,
+                    "driver_role":driver_role,
+                    'TO_role':TO_role,
+                    'full':full_name,
+                }
+        except Exception as e:
+            print(e)
+            messages.info(request, f'{e}')
+            return redirect('fuel')
+        return render(request,'fuelDetails.html',ctx)
 class SpeedGovernor(UserObjectMixins,View):
     async def get(self,request):
         try:
@@ -1833,6 +1941,7 @@ class SpeedGovernor(UserObjectMixins,View):
             logging.exception(e)
             return redirect('fuel')
         return render(request,"speedGovernor.html",ctx)
+    
     async def post(self,request):
         try:
             soap_headers = await sync_to_async(request.session.__getitem__)('soap_headers')

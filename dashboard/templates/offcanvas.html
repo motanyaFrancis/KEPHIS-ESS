@@ -193,28 +193,40 @@
                                 <a class="nav-link" href="{% url 'workTicket' %}">
                                     <i class="las la-arrow-right mr-2"></i> Work Ticket
                                 </a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="{% url 'vehicleRepairRequest' %}">
                                     <i class="las la-arrow-right mr-2"></i> Vehicle Repair
                                 </a>
-                                {% endif %}
-                                {% if driver_role == False and TO_role == True %}
+                            </li>
+                            {% endif %}
+                            {% if driver_role == False and TO_role == True %}
+                            <li class="nav-item">
                                 <a class="nav-link" href="{% url 'vehicleInspection' %}">
                                     <i class="las la-arrow-right mr-2"></i> Vehicle Inspection
                                 </a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="{% url 'Accidents' %}">
                                     <i class="las la-arrow-right mr-2"></i> Accidents
                                 </a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="{% url 'fuel' %}">
                                     <i class="las la-arrow-right mr-2"></i> Fuel Consumption
                                 </a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="{% url 'SpeedGovernor' %}">
                                     <i class="las la-arrow-right mr-2"></i> Speed Governor
                                 </a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="{% url 'gvcu' %}">
                                     <i class="las la-arrow-right mr-2"></i> GVCU
                                 </a>
-                                {% endif %}
                             </li>
+                                {% endif %}
                             {% endif %}
 
                         </ul>
