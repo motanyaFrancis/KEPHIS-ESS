@@ -6,6 +6,10 @@
     <div class="content-wrapper" style="padding-bottom: 5rem;">
         <div class="d-xl-flex justify-content-between align-items-start">
             <h2 class="text-dark font-weight-bold mb-2"> Staff Claim
+                {% if res.Status == "Open" %}
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Attachment"> <i
+                        class="las la-plus"></i> Upload Attachment</button>
+                {% endif %}
             </h2>
 
             <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
@@ -342,6 +346,30 @@
         {% endif %}
     </div>
     </div>
+    <!-- Modal -->
+    <div class="modal fade" id="Attachment" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Upload Attachment</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'ClaimAttachment' res.No_ %}" method="post" class="myForm"
+                        enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class=" mb-3">
+                            <label class="form-label">Attachments </label>
+                            <input class="form-control" name="attachment" type="file" multiple>
+                        </div>
+                        <button type="submit" class="btn btn-success my-3 w-100">Submit</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable modal-lg">
@@ -383,13 +411,6 @@
                                         class="text-danger">*</span></label>
                                 <input type="date" class="form-control" id="Expenditure" min="1980-01-01" max=""
                                     name="expenditureDate" required>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <label for="" class="form-label">Add Attachment <span
-                                        class="text-danger">*</span></label>
-                                <input class="form-control" name="attachment" type="file" multiple required>
                             </div>
                         </div>
                         <div class="row">

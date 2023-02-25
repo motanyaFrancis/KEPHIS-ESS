@@ -77,7 +77,7 @@
                         <div class="row align-items-center mb-2 d-flex">
                             <div class="col-md-12">
                                 <h2 class="d-flex align-items-center mb-0">
-
+                                    Approved
                                 </h2>
                             </div>
                         </div>
@@ -119,7 +119,7 @@
                         <div class="row align-items-center mb-2 d-flex">
                             <div class="col-md-12">
                                 <h2 class="d-flex align-items-center mb-0">
-                                    {{res.AppraisalStatus}}
+                                    {{res.DocumentStage}}
                                 </h2>
                             </div>
 
@@ -135,11 +135,11 @@
                         <div class="col-md-4">
                             <h4 class="mt-2 mx-2 text-dark">Part A: Personal Target Setting</h4>
                         </div>
-                        {% if res.Status == "Open" and res.AppraisalStatus == 'Setting' %}
+                        {% if res.Status == "Open" and res.DocumentStage == 'Setting' %}
                         <div class="col-md-2">
-                            <button class="btn  btn-successs p-2 m-2 d-flex align-items-center" data-bs-toggle="modal"
-                                data-bs-target="#goals" type="button"> <i class="las la-plus text-white"
-                                    style="font-size:15px;"></i> Add
+                            <button class="btn btn-successs p-2 m-2 d-flex align-items-center" data-bs-toggle="modal"
+                                data-bs-target="#goals" type="button">
+                                <i class="las la-plus text-white" style="font-size:15px;"></i> Add
                             </button>
                         </div>
                         {% endif %}
@@ -154,9 +154,13 @@
                                     <th>Target</th>
                                     <th>Unit of Measure</th>
                                     <th>Weight</th>
-                                    {% if res.AppraisalStatus != "Setting" %}
+                                    {% if res.Status == "Released" and res.DocumentStage == 'Appraisal' or res.DocumentStage == 'Supervisor' %}
                                     <th>Self Rating</th>
+                                    {% endif %}
+                                    {% if res.DocumentStage != 'Appraisal' and res.DocumentStage != 'Setting' or res.DocumentStage == 'Supervisor' %}
                                     <th>Supervisor Rating</th>
+                                    {% endif %}
+                                    {% if res.Status == "Released" and res.DocumentStage == 'Appraisal' or res.DocumentStage == 'Supervisor' and Supervisor == True %}
                                     <th>Score</th>
                                     {% endif %}
 
@@ -170,16 +174,76 @@
                                     <td>{{target.KeyResponsibility}}</td>
                                     <td>{{target.FYTarget}}</td>
                                     <td>{{target.Weight}}</td>
-                                    {% if res.AppraisalStatus != "Setting" %}
+                                    {% if res.Status == "Released" and res.DocumentStage == 'Appraisal' or res.DocumentStage == 'Supervisor' %}
                                     <td>{{target.SelfRating}}</td>
+                                    {% endif %}
+                                    {% if res.DocumentStage != 'Appraisal' and res.DocumentStage != 'Setting' or res.DocumentStage == 'Supervisor' %}
                                     <td>{{target.SupervisorRating}}</td>
+                                    {% endif %}
+                                    {% if res.Status == "Released" and res.DocumentStage == 'Appraisal' or res.DocumentStage == 'Supervisor' and Supervisor == True %}
                                     <td>
                                         <button class="btn btn-successs p-3 d-flex align-items-center" type="button"
-                                            data-bs-toggle="modal" data-bs-target="#score00002"> <i
+                                            data-bs-toggle="modal" data-bs-target="#score{{target.AppraisalLine}}"> <i
                                                 class="las la-plus"></i> Add
                                         </button>
                                     </td>
                                     {% endif %}
+                                    <div class="modal fade" id="score{{target.AppraisalLine}}" data-bs-backdrop="static"
+                                        data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                        aria-hidden="true">
+                                        <div
+                                            class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-md">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="staticBackdropLabel">
+                                                        {{target.AppraisalLine}} Appraisal Score
+                                                    </h5>
+                                                    <button type="button" class="btn-close btn-close-white"
+                                                        data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form action="{% url 'FnAppraisalGoals' res.AppraisalNo %}"
+                                                        method="post" novalidate>
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="appraisalLine"
+                                                            value="{{target.AppraisalLine}}">
+                                                        <input type="hidden" name="myAction" value="modify">
+                                                        <input type="hidden" name="targetsSetForTheYear"
+                                                            value="{{target.KeyResponsibility}}">
+                                                        <input type="hidden" name="weight" value="{{target.Weight}}">
+                                                        <input type="hidden" name="unitOfMeasureORPerformanceIndicator"
+                                                            value="{{target.FYTarget}}">
+                                                        <input type="hidden" name="unitOfMeasureORPerformanceIndicator"
+                                                            value="{{target.FYTarget}}">
+                                                        {% if res.Status == "Released" and res.DocumentStage == 'Appraisal' %}
+                                                        <input type="hidden" name="supervisorRating"
+                                                            value="{{target.SupervisorRating}}">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <label class="form-label">Self Appraisal Score</label>
+                                                                <input type="number" class="form-control"
+                                                                    name="selfRating" id="">
+                                                            </div>
+                                                        </div>
+                                                        {% elif res.Status == "Released" and res.DocumentStage == 'Supervisor' and Supervisor == True %}
+                                                        <input type="hidden" name="selfRating"
+                                                            value="{{target.SelfRating}}">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <label class="form-label">Supervisor Appraisal
+                                                                    Score</label>
+                                                                <input type="number" class="form-control"
+                                                                    name="SupervisorRating" id="">
+                                                            </div>
+                                                        </div>
+                                                        {% endif %}
+                                                        <button type="submit"
+                                                            class="btn btn-success my-3 w-100">Submit</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -196,7 +260,7 @@
                         <div class="col-md-4">
                             <h4 class="mt-2 mx-2 text-dark">Part B: Personal Attributes</h4>
                         </div>
-                        {% if res.Status == "Open" and res.AppraisalStatus == 'Setting' %}
+                        {% if res.Status == "Open" and res.DocumentStage == 'Setting' %}
                         <div class="col-md-2">
                             <form action="{% url 'FnGetAppraisalAttributes' res.AppraisalNo %}" method="post"
                                 style="display: inline-block;">
@@ -216,6 +280,12 @@
                                 <tr id="tops">
                                     <th>Line No.</th>
                                     <th>Attribute Description</th>
+                                    {% if res.DocumentStage != 'Appraisal' and res.DocumentStage != 'Setting' %}
+                                    <th>Supervisor Rating</th>
+                                    {% endif %}
+                                    {% if res.Status == "Released" and res.DocumentStage == 'Supervisor' and Supervisor == True %}
+                                    <th>Score</th>
+                                    {% endif %}
                                 </tr>
                             </thead>
                             <tbody>
@@ -223,6 +293,50 @@
                                 <tr>
                                     <td>{{attribute.LineNo}}</td>
                                     <td>{{attribute.AttributeDescription}}</td>
+                                    {% if res.DocumentStage != 'Appraisal' and res.DocumentStage != 'Setting' %}
+                                    <td>{{attribute.SupervisorAppraisalScore}}</td>
+                                    {% endif %}
+                                    {% if res.Status == "Released" and res.DocumentStage == 'Supervisor' and Supervisor == True %}
+                                    <td>
+                                        <button class="btn btn-successs p-3 d-flex align-items-center" type="button"
+                                            data-bs-toggle="modal" data-bs-target="#attribute{{attribute.LineNo}}"> <i
+                                                class="las la-plus"></i> Add
+                                        </button>
+                                    </td>
+                                    {% endif %}
+                                    <div class="modal fade" id="attribute{{attribute.LineNo}}" data-bs-backdrop="static"
+                                        data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                        aria-hidden="true">
+                                        <div
+                                            class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-md">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="staticBackdropLabel">
+                                                        {{attribute.LineNo}} Attribute Score
+                                                    </h5>
+                                                    <button type="button" class="btn-close btn-close-white"
+                                                        data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form action="" method="post" novalidate>
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="appraisalLine"
+                                                            value="{{target.AppraisalLine}}">
+                                                        <input type="hidden" name="myAction" value="modify">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <label class="form-label">Supervisor Score</label>
+                                                                <input type="number" class="form-control"
+                                                                    name="SupervisorRating" id="">
+                                                            </div>
+                                                        </div>
+                                                        <button type="submit"
+                                                            class="btn btn-success my-3 w-100">Submit</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -238,7 +352,7 @@
                         <div class="col-md-4">
                             <h4 class="mt-2 mx-2 text-dark">Part C: Training and Development Needs</h4>
                         </div>
-                        {% if res.Status == "Open" and res.AppraisalStatus == 'Setting' %}
+                        {% if res.Status == "Open" and res.DocumentStage == 'Setting' %}
                         <div class="col-md-2">
                             <button class="btn  btn-successs p-2 m-2 d-flex align-items-center" data-bs-toggle="modal"
                                 data-bs-target="#training" type="button"> <i class="las la-plus text-white"
@@ -256,6 +370,12 @@
                                     <th>Line No.</th>
                                     <th>Training Course</th>
                                     <th>Duration</th>
+                                    {% if res.DocumentStage != 'Appraisal' and res.DocumentStage != 'Setting' %}
+                                    <th>Supervisor Comments</th>
+                                    {% endif %}
+                                    {% if res.Status == "Released" and res.DocumentStage == 'Supervisor' %}
+                                    <th>Supervisor Comments</th>
+                                    {% endif %}
                                 </tr>
                             </thead>
                             <tbody>
@@ -264,6 +384,50 @@
                                     <td>{{training.AppraisalLine}}</td>
                                     <td>{{training.Description}}</td>
                                     <td>{{training.Duration}}</td>
+                                    {% if res.DocumentStage != 'Appraisal' and res.DocumentStage != 'Setting' %}
+                                    <td>{{training.CommentsbySecondSuprvisor}}</td>
+                                    {% endif %}
+                                    {% if res.Status == "Released" and res.DocumentStage == 'Supervisor' %}
+                                    <td>
+                                        <button class="btn btn-successs p-3 d-flex align-items-center" type="button"
+                                            data-bs-toggle="modal" data-bs-target="#training{{training.AppraisalLine}}">
+                                            <i class="las la-plus"></i> Add
+                                        </button>
+                                    </td>
+                                    {% endif %}
+                                    <div class="modal fade" id="training{{training.AppraisalLine}}"
+                                        data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                        <div
+                                            class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-md">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="staticBackdropLabel">
+                                                        {{training.AppraisalLine}} Supervisor Comments
+                                                    </h5>
+                                                    <button type="button" class="btn-close btn-close-white"
+                                                        data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form action="" method="post" novalidate>
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="appraisalLine"
+                                                            value="{{target.AppraisalLine}}">
+                                                        <input type="hidden" name="myAction" value="modify">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <label class="form-label">Supervisor Score</label>
+                                                                <input type="number" class="form-control"
+                                                                    name="SupervisorRating" id="">
+                                                            </div>
+                                                        </div>
+                                                        <button type="submit"
+                                                            class="btn btn-success my-3 w-100">Submit</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -318,43 +482,14 @@
                 </div>
             </div>
         </div>
-        {% if res.Rejected_By_Approver == True and res.Status == 'Open' %}
-        <div class="row my-2 py-3">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="card-title mb-4">
-                            Rejection Comments
-                        </h4>
-                        <div class="row">
-                            <div class="chat-history">
-                                <ul class="m-b-0">
-                                    {% for comment in Comments %}
-                                    <li class="clearfix">
-                                        <div class="message-data">
-                                            <span class="message-data-time">{{comment.User_ID}}</span>
-                                        </div>
-                                        <div class="message my-message">{{comment.Comment}}</div>
-                                    </li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                        </div>
 
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endif %}
         <div class="row">
             <div class="col-md-12">
-                {% if res.Status == "Open" %}
+                {% if res.Status == "Open" and res.AppraisalStatus == 'Setting' %}
                 <div class="myForm my-3">
-                    <form action="" method="POST" style="display: inline-block;">
+                    <form action="{% url 'FnSubmitEmployeeAppraisal' res.AppraisalNo %}" method="POST"
+                        style="display: inline-block;">
                         {% csrf_token %}
-                        <div class="mb-3">
-                            <input type="hidden" name="requistionNo" value="">
-                        </div>
                         <button class="btn btn-info" type="submit">Submit For Review</button>
                     </form>
                 </div>
@@ -368,77 +503,19 @@
                         <button class="btn btn-info" type="submit">Cancel Request For Approval</button>
                     </form>
                 </div>
+                {% elif res.Status == "Released" and res.DocumentStage == 'Appraisal' %}
+                <div class="myForm my-3">
+                    <form action="{% url 'FnSubmitAppraisalToSupervisor' res.AppraisalNo %}" method="POST"
+                        style="display: inline-block;">
+                        {% csrf_token %}
+                        <button class="btn btn-info" type="submit">Submit For Review</button>
+                    </form>
+                </div>
                 {% endif %}
             </div>
         </div>
-        {% if res.Status == "Pending Approval" %}
-        <div class="row mt-4">
-            <div class="col-md-12">
-                <div class="card" id="d-card">
-                    <h4 class="mt-2 mx-2 text-dark">Document Approvers</h4>
-                    <div class="card-body">
-                        <table id="example"
-                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                            style="width:100%">
-                            <thead>
-                                <tr id="tops">
-                                    <th id="long">Entry No</th>
-                                    <th>Name</th>
-                                    <th>Sequence</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for res in Approvers %}
-                                <tr>
-                                    <td>{{res.Entry_No_}}</td>
-                                    <td>{{res.Approver_ID}}</td>
-                                    <td>{{res.Sequence_No_}}</td>
-                                    <td>{{res.Status}}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endif %}
     </div>
 
-    <!-- Modal Accomodation Room Lines -->
-    <div class="modal fade" id="score00002" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-md">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Self Appraisal Score
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form class="myForm" id="PurchaseForm" action="" method="post" novalidate>
-                        {% csrf_token %}
-                        <div class="row">
-                            <div class="col-md-12">
-                                <input type="hidden" name="lineNo" value=" ">
-                                <input type="hidden" name="myAction" value="insert">
-                                <input type="hidden" name="bookingNo" value="{{res.No_}}">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <label class="form-label">Self Appraisal Score</label>
-                                <input type="number" class="form-control" name="self_score" id="">
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-success my-3 w-100">Submit</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Modal Appraisal goals -->
     <div class="modal fade" id="goals" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"

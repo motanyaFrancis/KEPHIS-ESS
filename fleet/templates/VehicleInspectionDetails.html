@@ -18,7 +18,7 @@
 
             <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
                 <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
-                    {% if  res.Booked_For_Inspection == False and res.Status == "Open" %}
+                    {% if  res.Booked_For_Inspection == False and res.Status == "Approved" %}
                     <button class="btn btn-successs" data-bs-toggle="modal" data-bs-target="#vehicle_defects"> <i
                             class="las la-plus"></i> Vehicle Defects</button>
                     {% endif %}
@@ -382,12 +382,6 @@
                             <label class="form-label">Defect Type <span class="text-danger">*</span></label>
                             <input type="text" name="defectsType" class="form-control">
 
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <label for="" class="form-label">Severity <span class="text-danger">*</span></label>
-                            <input type="text" name="severity" class="form-control">
                         </div>
                     </div>
                     <div class="row">

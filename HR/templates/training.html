@@ -48,8 +48,7 @@
                                         <thead>
                                             <tr id="tops">
                                                 <th id="long">Request No.</th>
-                                                <th>Request Date</th>
-                                                <th>Adhoc</th>
+                                                <th>Personal Development</th>
                                                 <th>Start Date</th>
                                                 <th>End Date</th>
                                                 <th>No. Of Days</th>
@@ -61,7 +60,6 @@
                                             {% if res.Rejected_By_Approver == True and res.Status == 'Open' %}
                                             <tr style="background: #fee36e !important;">
                                                 <td>{{res.Request_No_}}</td>
-                                                <td id="rejected_request_date{{res.Request_No_}}">{{res.Request_Date}}
                                                 </td>
                                                 <td>
                                                     {% if res.Adhoc == True %}
@@ -155,8 +153,8 @@
                                                                         <div class="mb-2">
                                                                             <div class="row mt-3">
                                                                                 <div class="col-md-12">
-                                                                                    <label
-                                                                                        class="form-label">Adhoc</label>
+                                                                                    <label class="form-label">Personal
+                                                                                        Development</label>
                                                                                     <select
                                                                                         class="form-select EditAdhoc"
                                                                                         name="isAdhoc" required>
@@ -220,7 +218,6 @@
                                             {% else %}
                                             <tr>
                                                 <td>{{res.Request_No_}}</td>
-                                                <td id="open_request_date{{res.Request_No_}}">{{res.Request_Date}}</td>
                                                 <td>
                                                     {% if res.Adhoc == True %}
                                                     <img src="../../static/icons/check-mark.png" height="10" width="10"
@@ -312,8 +309,8 @@
                                                                         <div class="mb-2">
                                                                             <div class="row mt-3">
                                                                                 <div class="col-md-12">
-                                                                                    <label
-                                                                                        class="form-label">Adhoc</label>
+                                                                                    <label class="form-label">Personal
+                                                                                        Development</label>
                                                                                     <select
                                                                                         class="form-select EditAdhoc"
                                                                                         name="isAdhoc" required>
@@ -388,8 +385,7 @@
                                         <thead>
                                             <tr id="tops">
                                                 <th id="long">Request No.</th>
-                                                <th>Request Date</th>
-                                                <th>Adhoc</th>
+                                                <th>Personal Development</th>
                                                 <th>Start Date</th>
                                                 <th>End Date</th>
                                                 <th>Action</th>
@@ -399,7 +395,7 @@
                                             {% for res in response %}
                                             <tr>
                                                 <td>{{res.Request_No_}}</td>
-                                                <td id="approved_request_date{{res.Request_No_}}">{{res.Request_Date}}
+
                                                 </td>
                                                 <td>
                                                     {% if res.Adhoc == True %}
@@ -479,8 +475,7 @@
                                         <thead>
                                             <tr id="tops">
                                                 <th id="long">Request No.</th>
-                                                <th>Request Date</th>
-                                                <th>Adhoc</th>
+                                                <th>Personal Development</th>
                                                 <th>Start Date</th>
                                                 <th>End Date</th>
                                                 <th>No. Of Days</th>
@@ -491,7 +486,6 @@
                                             {% for res in pending %}
                                             <tr>
                                                 <td>{{res.Request_No_}}</td>
-                                                <td id="pending_request_date">{{res.Request_Date}}</td>
                                                 <td>
                                                     {% if res.Adhoc == True %}
                                                     <img src="../../static/icons/check-mark.png" class="img-fluid"
@@ -583,7 +577,7 @@
                             <input type="hidden" name="requestNo" value="">
                             <div class="row mt-3">
                                 <div class="col-md-12">
-                                    <label for="isAdhoc" class="form-label">Adhoc</label>
+                                    <label for="isAdhoc" class="form-label">Personal Development</label>
                                     <select class="form-select" id="isAdhocT" name="isAdhoc" required>
                                         <option selected disabled value="0">--Select--</option>
                                         <option value="True">Yes</option>
@@ -595,9 +589,9 @@
                                 <div class="col-md-12">
                                     <label for="sponsorType" class="form-label">Sponsor Type</label>
                                     <select class="form-select" id="sponsorType" name="sponsorType" required>
-                                        <option selected disabled value="">--Select--</option>
+                                        <option selected disabled value="0">--Select--</option>
                                         <option value="1">Self Sponsored</option>
-                                        <option value="2">Organiation Sponsored</option>
+                                        <option value="2">Organization Sponsored</option>
                                     </select>
                                 </div>
                             </div>

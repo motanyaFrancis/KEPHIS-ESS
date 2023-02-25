@@ -741,7 +741,11 @@ class VehicleInspection(UserObjectMixin, View):
                     driver, 
                     mechanicalInspectionRecommedation, 
                     )
-                messages.success(request, 'Request successful')
+                if response != '0':
+                    messages.success(request, "Request Successful")
+                    return redirect('VehicleInspectionDetails', pk=response)
+                messages.error(request, f"{response}")
+                return redirect('vehicleInspection')
             except Exception as e:
                 messages.error(request, f'{e}')
                 return redirect('vehicleInspection')
@@ -799,7 +803,6 @@ def InspectionDefects(request, pk):
     if request.method == 'POST':
         try:
             defectsType = request.POST.get('defectsType')
-            severity = request.POST.get('severity')
             specification = request.POST.get('specification')
             lineNo = int(request.POST.get('lineNo'))
             myUserId = request.session['User_ID']
@@ -807,7 +810,7 @@ def InspectionDefects(request, pk):
 
             response = config.CLIENT.service.FnVehicleInspectionLines(
                 pk,
-                myAction,lineNo,myUserId,defectsType,severity,
+                myAction,lineNo,myUserId,defectsType,
                 specification
                 )
             if response == True:
@@ -1294,9 +1297,11 @@ class TransportRequest(UserObjectMixin, View):
                 response = config.CLIENT.service.FnTransportRequest(
                     tReqNo, myUserId, reasonForTravel,typeOfTransport,destination,
                     tripeStartDate, startTime, tripeEndDate,myAction,int(TravelingEmployees))
-                if response == True:
+                if response != '0':
                     messages.success(request, "Request Successful")
-                    return redirect('TransportRequest')
+                    return redirect('TransportRequestDetails', pk=response)
+                messages.error(request, f"{response}")
+                return redirect('TransportRequest')
             except Exception as e:
                 messages.error(request, f'{e}')
                 print(e)
@@ -1402,7 +1407,7 @@ def UploadTransportRequestAttachment(request, pk):
     if request.method == "POST":
         try:
             attach = request.FILES.getlist('attachment')
-            tableID = 52177430
+            tableID = 52177518
         except Exception as e:
             return redirect('TransportRequestDetails', pk=pk)
         for files in attach:

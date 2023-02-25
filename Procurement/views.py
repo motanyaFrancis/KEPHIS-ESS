@@ -95,11 +95,14 @@ class PurchaseRequisition(UserObjectMixin, View):
                 response = config.CLIENT.service.FnPurchaseRequisitionHeader(
                     requisitionNo, orderDate, employeeNo, myUserId, myAction,
                     expectedReceiptDate,reason)
-                messages.success(request, "Request Successful")
                 print(response)
+                if response !='0':
+                    messages.success(request, "Request Successful")
+                    return redirect('PurchaseDetail', pk=response)
+                messages.error(request, f"{response}")
+                return redirect('PurchaseDetail', pk=response)
             except Exception as e:
-                messages.info(request, f'{e}')
-                print(e)
+                messages.error(request, f'{e}')
                 return redirect('purchase')
         return redirect('purchase')
 
@@ -717,9 +720,10 @@ class StoreRequest(UserObjectMixins, View):
 
                 response = self.make_soap_request(soap_headers,'FnStoreRequisitionHeader',
                     requisitionNo, Employee_No_, reason, userID, myAction,issuingStore,requiredDate)
-                if response == True:
+                print(response)
+                if response != '0':
                     messages.success(request, "Request Successful")
-                    return redirect('store')
+                    return redirect('StoreDetail',pk=response)
                 else:
                     messages.error(request, f'{response}')
                     return redirect('store')

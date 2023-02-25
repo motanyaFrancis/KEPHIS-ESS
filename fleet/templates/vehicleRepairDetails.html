@@ -267,7 +267,7 @@
                         style="display: inline-block;">
                         {% csrf_token %}
                         <div class="mb-3">
-                            <input type="hidden" hidden name="insNo" value="{{ res.No_ }}">
+                            <input type="hidden" hidden name="insNo" value="{{res.No_ }}">
                         </div>
                         <button class="btn btn-info" type="submit"> Request For Approval </button>
                     </form>

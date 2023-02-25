@@ -47,6 +47,7 @@ class Login(UserObjectMixins,View):
                             await sync_to_async(request.session.__setitem__)('full_name', data['First_Name'] + " " + data['Last_Name'] )
                             await sync_to_async(request.session.__setitem__)('driver_role', data['Driver'])
                             await sync_to_async(request.session.__setitem__)('TO_role', data['TO_MI'])
+                            await sync_to_async(request.session.__setitem__)('SupervisorNo', data['Supervisor'])
                             await sync_to_async(request.session.save)()
                             messages.success(request,f"Success. Logged in as {request.session['full_name']}")
                             return redirect('dashboard')

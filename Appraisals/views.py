@@ -30,17 +30,34 @@ class Appraisals(UserObjectMixins,View):
             driver_role =await sync_to_async(request.session.__getitem__)('driver_role')
             TO_role =await sync_to_async(request.session.__getitem__)('TO_role')
             full_name =await sync_to_async(request.session.__getitem__)('full_name')
+            SupervisorNo = await sync_to_async(request.session.__getitem__)('SupervisorNo')
+            supervisor_appraisal = []
+            await sync_to_async(request.session.__setitem__)('Supervisor', False)
+            await sync_to_async(request.session.save)()
+
             async with aiohttp.ClientSession() as session:
                 get_appraisals = asyncio.ensure_future(self.simple_one_filtered_data(session,
                                             '/QyEmployeeAppraisal','AppraiseeID','eq',User_ID))
                 
                 get_periods = asyncio.ensure_future(self.simple_fetch_data(session,
                                             '/QyAppraisalPeriod'))
-                response = await asyncio.gather(get_appraisals,get_periods)
+                supervisor = asyncio.ensure_future(self.simple_double_filtered_data(session,
+                                        '/QyEmployeeAppraisal','DocumentStage','eq','Supervisor',
+                                            'and','SupervisorNo','eq',SupervisorNo))
+                response = await asyncio.gather(get_appraisals,
+                                                    get_periods,
+                                                        supervisor)
                 
 
                 open= [x for x in response[0] if x['Status'] == 'Open'] # type: ignore
+                pending= [x for x in response[0] if x['Status'] == 'Pending Approval'] # type: ignore
+                approved= [x for x in response[0] if x['Status'] == 'Released'] # type: ignore
                 periods = [x for x in response[1]] # type: ignore
+                supervisor_appraisal = [x for x in response[2]] # type: ignore
+                if len(supervisor_appraisal) > 0:
+                    await sync_to_async(request.session.__setitem__)('Supervisor', True)
+                    await sync_to_async(request.session.save)()
+                Supervisor = await sync_to_async(request.session.__getitem__)('Supervisor')
         except KeyError as e:
             print(e)
             messages.info(request, "Session Expired. Please Login")
@@ -56,6 +73,10 @@ class Appraisals(UserObjectMixins,View):
             'periods':periods,
             'driver_role':driver_role,
             'TO_role':TO_role,
+            'pending':pending,
+            'approved':approved,
+            'supervisor_appraisal':supervisor_appraisal,
+            'Supervisor':Supervisor
         }
                 
         return render(request, 'appraisals.html', ctx)
@@ -89,6 +110,7 @@ class AppraisalDetails(UserObjectMixins, View):
             driver_role =await sync_to_async(request.session.__getitem__)('driver_role')
             TO_role =await sync_to_async(request.session.__getitem__)('TO_role')
             full_name =await sync_to_async(request.session.__getitem__)('full_name')
+            Supervisor = await sync_to_async(request.session.__getitem__)('Supervisor')
             res = {}
             targets = []  
             attributes = []
@@ -138,7 +160,8 @@ class AppraisalDetails(UserObjectMixins, View):
             'targets':targets,
             'attributes':attributes,
             "file": allFiles,
-            'trainings':trainings
+            'trainings':trainings,
+            'Supervisor':Supervisor,
         }
             
         return render(request, 'appraisalDetails.html', ctx)
@@ -333,3 +356,50 @@ class FnGetAppraisalAttributes(UserObjectMixins,View):
             logging.exception(e)
             messages.error(request,f'{e}')
             return redirect('AppraisalDetails', pk=pk)
+class FnSubmitEmployeeAppraisal(UserObjectMixins,View):
+    def post(self,request,pk):
+        try:
+            soap_headers = request.session['soap_headers']
+            User_ID = request.session['User_ID']
+            response = self.make_soap_request(soap_headers,
+                                              'FnSubmitEmployeeAppraisal',pk,User_ID)
+            if response == True:
+                messages.success(request,'successfully sent')
+                return redirect('Appraisals')
+            messages.error(request,f'{response}')
+            return redirect('AppraisalDetails', pk=pk)
+        except Exception as e:
+            logging.exception(e)
+            messages.error(request,f'{e}')
+            return redirect('AppraisalDetails', pk=pk)
+
+class FnInitiateAppraisal(UserObjectMixins,View):
+    def post(self,request,pk):
+        try:
+            soap_headers = request.session['soap_headers']
+            response = self.make_soap_request(soap_headers,
+                                              'FnInitiateAppraisal',pk)
+            if response == True:
+                messages.success(request,'successfully sent')
+                return redirect('AppraisalDetails', pk=pk)
+            messages.error(request,f'{response}')
+            return redirect('Appraisals')
+        except Exception as e:
+            logging.exception(e)
+            messages.error(request,f'{e}')
+            return redirect('Appraisals')
+class FnSubmitAppraisalToSupervisor(UserObjectMixins,View):
+    def post(self,request,pk):
+        try:
+            soap_headers = request.session['soap_headers']
+            response = self.make_soap_request(soap_headers,
+                                              'FnSubmitAppraisalToSupervisor',pk)
+            if response == True:
+                messages.success(request,'successfully sent')
+                return redirect('Appraisals')
+            messages.error(request,f'{response}')
+            return redirect('Appraisals')
+        except Exception as e:
+            logging.exception(e)
+            messages.error(request,f'{e}')
+            return redirect('Appraisals')

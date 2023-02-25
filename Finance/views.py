@@ -93,9 +93,11 @@ class ImprestRequisition(UserObjectMixin, View):
                     imprestNo, accountNo, travelType, purpose,
                     usersId, personalNo,  myAction, startDate, completionDate,imprestType,
                     User_Responsibility_Center)
-                if response == True:
+                if response !='0':
                     messages.success(request, "Request Successful")
-                    return redirect('imprestReq')
+                    return redirect('IMPDetails', pk=response)
+                messages.error(request, f"{response}")
+                return redirect('imprestReq')
             except ValueError:
                 messages.error(request, "Missing Input")
                 return redirect('imprestReq')
@@ -625,7 +627,7 @@ class StaffClaim(UserObjectMixin, View):
             Approved = [x for x in response['value']
                         if x['Status'] == 'Released']
 
-            Claim = config.O_DATA.format("/QyImprestSurrenders")
+            Claim = config.O_DATA.format(f"/QyImprestSurrenders?$filter=User_Id%20eq%20%27{userID}%27")
             res_claim = self.get_object(Claim)
             My_Claim = [x for x in res_claim['value']
                         if x['Actual_Amount_Spent'] > x['Imprest_Amount']]
@@ -668,8 +670,10 @@ class StaffClaim(UserObjectMixin, View):
             try:
                 response = config.CLIENT.service.FnStaffClaimHeader(
                     claimNo, claimType, accountNo, purpose, usersId, staffNo, imprestSurrDocNo, myAction)
-                messages.success(request, "Request Successful")
-                print(response)
+                if response != '0':
+                    messages.success(request, "Request Successful")
+                    return redirect('ClaimDetail', pk=response)
+                messages.error(request, f"{response}")
                 return redirect('claim')
             except Exception as e:
                 messages.error(request, f'{e}')
@@ -746,34 +750,40 @@ def CreateClaimLines(request, pk):
             expenditureDate = datetime.strptime(
                 request.POST.get('expenditureDate'), '%Y-%m-%d').date()
             expenditureDescription = request.POST.get('expenditureDescription')
-            attach = request.FILES.getlist('attachment')
             myAction = request.POST.get('myAction')
-            tableID = 52177431
             response = config.CLIENT.service.FnStaffClaimLine(
                 lineNo, claimNo, claimType, accountNo, amount, expenditureDate, expenditureDescription, myAction)
             print(amount)
             if response != 0:
-                for files in attach:
-                    fileName = request.FILES['attachment'].name
-                    attachment = base64.b64encode(files.read())
-                    try:
-                        responses = config.CLIENT.service.FnUploadAttachedDocument(
-                            pk + '#'+str(response), fileName, attachment, tableID, request.session['User_ID'])
-                        if responses == True:
-                            messages.success(request, "Request Successful")
-                            return redirect('ClaimDetail', pk=pk)
-                        else:
-                            messages.error(request, "Failed, Try Again")
-                            return redirect('ClaimDetail', pk=pk)
-                    except Exception as e:
-                        messages.error(request, f'{e}')
-                        print(e)
+                messages.success(request,'success')
+                return redirect('ClaimDetail', pk=pk)
+                   
 
         except Exception as e:
             messages.error(request, f'{e}')
             print(e)
     return redirect('ClaimDetail', pk=pk)
 
+class ClaimAttachment(UserObjectMixin,View):
+    def post(self,request,pk):
+        try:
+            tableID = 52177430
+            attach = request.FILES.getlist('attachment')
+            for files in attach:
+                fileName = request.FILES['attachment'].name
+                attachment = base64.b64encode(files.read())
+                response = config.CLIENT.service.FnUploadAttachedDocument(
+                        pk, fileName, attachment, tableID, request.session['User_ID'])
+
+                if response == True:
+                    messages.success(request, "File(s) Upload Successful")
+                    return redirect('ClaimDetail', pk=pk)
+                else:
+                    messages.error(request, "Failed, Try Again")
+                    return redirect('ClaimDetail', pk=pk)
+        except Exception as e:
+            messages.error(request, f'{e}')
+            return redirect('ClaimDetail', pk=pk)
 
 def ClaimApproval(request, pk):
     Username = request.session['User_ID']

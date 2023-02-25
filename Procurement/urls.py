@@ -34,8 +34,7 @@ urlpatterns = [
 
 
     path('StoreRequest', views.StoreRequest.as_view(), name='store'),
-    path('StoreDetail/<str:pk>',
-         views.StoreRequestDetails.as_view(), name='StoreDetail'),
+    path('StoreDetail/<str:pk>',views.StoreRequestDetails.as_view(), name='StoreDetail'),
     path('StoreApprove/<str:pk>',
          views.StoreApproval, name='StoreApprove'),
     path('StoreCancel/<str:pk>',

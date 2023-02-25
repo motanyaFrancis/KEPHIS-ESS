@@ -40,9 +40,9 @@ urlpatterns = [
     path('ClaimCancel/<str:pk>', views.FnCancelClaimApproval, name='ClaimCancel'),
     path('FnDeleteStaffClaimLine/<str:pk>', views.FnDeleteStaffClaimLine,
          name='FnDeleteStaffClaimLine'),
-    path('FnGenerateStaffClaimReport/<str:pk>', views.FnGenerateStaffClaimReport,
+    path('FnGenerateStaffClaimReport/<str:pk>', views.FnGenerateStaffClaimReport, 
          name='FnGenerateStaffClaimReport'),
-    path('DeleteClaimAttachment/<str:pk>',
-         views.DeleteClaimAttachment, name='DeleteClaimAttachment'),
+    path('DeleteClaimAttachment/<str:pk>',views.DeleteClaimAttachment, name='DeleteClaimAttachment'),
+    path('ClaimAttachment/<str:pk>',views.ClaimAttachment.as_view(), name='ClaimAttachment'),
 
 ]
