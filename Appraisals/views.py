@@ -52,6 +52,7 @@ class Appraisals(UserObjectMixins,View):
                 open= [x for x in response[0] if x['Status'] == 'Open'] # type: ignore
                 pending= [x for x in response[0] if x['Status'] == 'Pending Approval'] # type: ignore
                 approved= [x for x in response[0] if x['Status'] == 'Released'] # type: ignore
+                completed= [x for x in response[0] if x['Status'] == 'Completed'] # type: ignore
                 periods = [x for x in response[1]] # type: ignore
                 supervisor_appraisal = [x for x in response[2]] # type: ignore
                 if len(supervisor_appraisal) > 0:
@@ -76,7 +77,8 @@ class Appraisals(UserObjectMixins,View):
             'pending':pending,
             'approved':approved,
             'supervisor_appraisal':supervisor_appraisal,
-            'Supervisor':Supervisor
+            'Supervisor':Supervisor,
+            'completed':completed
         }
                 
         return render(request, 'appraisals.html', ctx)
@@ -394,6 +396,22 @@ class FnSubmitAppraisalToSupervisor(UserObjectMixins,View):
             soap_headers = request.session['soap_headers']
             response = self.make_soap_request(soap_headers,
                                               'FnSubmitAppraisalToSupervisor',pk)
+            if response == True:
+                messages.success(request,'successfully sent')
+                return redirect('Appraisals')
+            messages.error(request,f'{response}')
+            return redirect('Appraisals')
+        except Exception as e:
+            logging.exception(e)
+            messages.error(request,f'{e}')
+            return redirect('Appraisals')
+        
+class FnSubmitAppraisalToManagerial(UserObjectMixins,View):
+    def post(self,request,pk):
+        try:
+            soap_headers = request.session['soap_headers']
+            response = self.make_soap_request(soap_headers,
+                                              'FnSubmitAppraisalToManegerial',pk)
             if response == True:
                 messages.success(request,'successfully sent')
                 return redirect('Appraisals')

@@ -14,5 +14,5 @@ urlpatterns = [
     path('FnSubmitEmployeeAppraisal/<str:pk>',views.FnSubmitEmployeeAppraisal.as_view(),name='FnSubmitEmployeeAppraisal'),
     path('FnInitiateAppraisal/<str:pk>',views.FnInitiateAppraisal.as_view(),name='FnInitiateAppraisal'),
     path('FnSubmitAppraisalToSupervisor/<str:pk>',views.FnSubmitAppraisalToSupervisor.as_view(),name='FnSubmitAppraisalToSupervisor'),
-    
+    path('FnSubmitAppraisalToManagerial/<str:pk>',views.FnSubmitAppraisalToManagerial.as_view(),name='FnSubmitAppraisalToManagerial'),
 ]

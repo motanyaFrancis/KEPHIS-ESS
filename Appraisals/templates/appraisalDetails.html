@@ -373,7 +373,7 @@
                                     {% if res.DocumentStage != 'Appraisal' and res.DocumentStage != 'Setting' %}
                                     <th>Supervisor Comments</th>
                                     {% endif %}
-                                    {% if res.Status == "Released" and res.DocumentStage == 'Supervisor' %}
+                                    {% if res.Status == "Released" and res.DocumentStage == 'Supervisor' and Supervisor == True %}
                                     <th>Supervisor Comments</th>
                                     {% endif %}
                                 </tr>
@@ -387,7 +387,7 @@
                                     {% if res.DocumentStage != 'Appraisal' and res.DocumentStage != 'Setting' %}
                                     <td>{{training.CommentsbySecondSuprvisor}}</td>
                                     {% endif %}
-                                    {% if res.Status == "Released" and res.DocumentStage == 'Supervisor' %}
+                                    {% if res.Status == "Released" and res.DocumentStage == 'Supervisor' and Supervisor == True %}
                                     <td>
                                         <button class="btn btn-successs p-3 d-flex align-items-center" type="button"
                                             data-bs-toggle="modal" data-bs-target="#training{{training.AppraisalLine}}">
@@ -409,16 +409,24 @@
                                                         data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <form action="" method="post" novalidate>
+                                                    <form class="" id="AppraisalForm"
+                                                        action="{% url 'FnAppraisalTrainingAndDevelopment' res.AppraisalNo %}"
+                                                        method="post" novalidate>
                                                         {% csrf_token %}
                                                         <input type="hidden" name="appraisalLine"
-                                                            value="{{target.AppraisalLine}}">
+                                                            value="{{training.AppraisalLine}}">
                                                         <input type="hidden" name="myAction" value="modify">
+                                                        <input type="hidden" name="description"
+                                                            value="{{training.Description}}">
+                                                        <input type="hidden" name="duration"
+                                                            value="{{training.Duration}}">
                                                         <div class="row">
                                                             <div class="col-md-12">
-                                                                <label class="form-label">Supervisor Score</label>
-                                                                <input type="number" class="form-control"
-                                                                    name="SupervisorRating" id="">
+                                                                <label for="" class="form-label">Supervisor Comments
+                                                                    <span class="text-danger">*</span></label>
+                                                                <textarea class="form-control"
+                                                                    name="commentsBySupervisor" rows="3"
+                                                                    required></textarea>
                                                             </div>
                                                         </div>
                                                         <button type="submit"
@@ -506,6 +514,14 @@
                 {% elif res.Status == "Released" and res.DocumentStage == 'Appraisal' %}
                 <div class="myForm my-3">
                     <form action="{% url 'FnSubmitAppraisalToSupervisor' res.AppraisalNo %}" method="POST"
+                        style="display: inline-block;">
+                        {% csrf_token %}
+                        <button class="btn btn-info" type="submit">Submit For Review</button>
+                    </form>
+                </div>
+                {% elif res.Status == "Released" and res.DocumentStage == 'Supervisor' and Supervisor == True %}
+                <div class="myForm my-3">
+                    <form action="{% url 'FnSubmitAppraisalToManagerial' res.AppraisalNo %}" method="POST"
                         style="display: inline-block;">
                         {% csrf_token %}
                         <button class="btn btn-info" type="submit">Submit For Review</button>
@@ -601,12 +617,6 @@
                                 <label class="form-label">Duration</label>
                                 <input class="form-control" type="text" name="duration" id="">
                             </div>
-                            {% if res.AppraisalStatus == 'Appraisal' %}
-                            <div class="col-md-12">
-                                <label class="form-label">Comments By Supervisor</label>
-                                <input class="form-control" type="text" name="commentsBySupervisor" value="0">
-                            </div>
-                            {% endif %}
                         </div>
                         <button type="submit" class="btn btn-success my-3 w-100">Submit</button>
                     </form>
