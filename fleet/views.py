@@ -580,7 +580,7 @@ class FnRaiseRepairRequest(UserObjectMixins, View):
                 insNo = request.POST.get('insNo')
                 soap_headers = await sync_to_async(request.session.__getitem__)('soap_headers')
         
-                response =  self.make_soap_request(soap_headers,'FnRaiseRepairRequest', insNo,userID)
+                response =  self.make_soap_request(soap_headers,'FnSubmitRepaireRequest', insNo,userID)
                 
                 print(response)
 
@@ -1822,49 +1822,78 @@ class FuelConsumption(UserObjectMixins,View):
             return redirect('fuel')
         return render(request,"fuel.html",ctx)
     
-    async def post(self,request):
+class FnFuelConsumptionVehicle(UserObjectMixins,View):
+    def post(self,request):
         try:
-            soap_headers = await sync_to_async(request.session.__getitem__)('soap_headers')
+            soap_headers = request.session['soap_headers']
             fuelNo = request.POST.get('fuelNo')
             myAction = request.POST.get('myAction')
-            vehicle = request.POST.get('vehicle')
             assetType = int(request.POST.get('assetType'))
-            generator = request.POST.get('generator')
+            fuelCardType = int(request.POST.get('fuelCardType'))
             receiptNo = request.POST.get('receiptNo')
-            quantityInLtrs = float(request.POST.get('quantityInLtrs'))
-            costPerLtr = float(request.POST.get('costPerLtr'))
+            vehicle = request.POST.get('vehicle')
+            driver = request.POST.get('driver')
             fuelStation = request.POST.get('fuelStation')
             fuelType = int(request.POST.get('fuelType'))
-            kMCovered = request.POST.get('kMCovered')
-            currenthoursReadings = request.POST.get('currenthoursReadings')
-            fuelCardType = int(request.POST.get('fuelCardType'))
-            driver = request.POST.get('driver')
+            costPerLtr = float(request.POST.get('costPerLtr'))
+            quantityInLtrs = float(request.POST.get('quantityInLtrs'))
             remarks = request.POST.get('remarks')
-            userID = await sync_to_async(request.session.__getitem__)('User_ID')
-
-            if assetType == 1:
-                response =self.make_soap_request(soap_headers,
-                                            'FnFuelConsumptionGenerator',
-                                            fuelNo, myAction, assetType, fuelCardType, receiptNo,
-                                            generator, driver, currenthoursReadings, fuelType,
-                                            fuelStation,costPerLtr, quantityInLtrs, remarks)
-            else:
-                response =self.make_soap_request(soap_headers,
-                                            'FnFuelConsumptionVehicle',
-                                            fuelNo, myAction,assetType, fuelCardType, receiptNo,
-                                            vehicle, driver,fuelStation, costPerLtr,
-                                            quantityInLtrs, remarks,fuelType, kMCovered )
+            kMCovered = request.POST.get('kMCovered')
             
+            response = self.make_soap_request(soap_headers,
+                                            'FnFuelConsumptionVehicle',
+                                                fuelNo, myAction,assetType,
+                                                    fuelCardType,receiptNo,vehicle,
+                                                        driver,fuelStation,costPerLtr,
+                                                        quantityInLtrs,remarks,fuelType,
+                                                            kMCovered)
             if response !='0':
                 messages.success(request,'success')
                 return redirect('FuelDetails', pk=response)
-            elif response == 0:
-                messages.error(request, f'{response}')
-                return redirect('FuelDetails', pk=response)
+
+            messages.error(request, f'{response}')
+            return redirect('fuel')
         except Exception as e:
             logging.exception(e)
             messages.error(request,f'{e}')
             return redirect('fuel')
+        
+class FnFuelConsumptionGenerator(UserObjectMixins,View):
+    def post(self,request):
+        try:
+            soap_headers = request.session['soap_headers']
+            fuelNo = request.POST.get('fuelNo')
+            myAction = request.POST.get('myAction')
+            assetType = int(request.POST.get('assetType'))
+            fuelCardType = int(request.POST.get('fuelCardType'))
+            receiptNo = request.POST.get('receiptNo')
+            generator = request.POST.get('generator')
+            driver = request.POST.get('driver')
+            currenthoursReadings = request.POST.get('currenthoursReadings')
+            fuelType = int(request.POST.get('fuelType'))
+            fuelStation = request.POST.get('fuelStation')
+            costPerLtr = float(request.POST.get('costPerLtr'))
+            quantityInLtrs = float(request.POST.get('quantityInLtrs'))
+            remarks = request.POST.get('remarks')
+            
+            response = self.make_soap_request(soap_headers,
+                                            'FnFuelConsumptionGenerator',
+                                                fuelNo, myAction,assetType,
+                                                    fuelCardType,receiptNo,generator,
+                                                        driver,currenthoursReadings,fuelType,
+                                                            fuelStation,costPerLtr,quantityInLtrs,remarks)
+            if response !='0':
+                messages.success(request,'success')
+                return redirect('FuelDetails', pk=response)
+
+            messages.error(request, f'{response}')
+            return redirect('fuel')
+        except Exception as e:
+            logging.exception(e)
+            messages.error(request,f'{e}')
+            return redirect('fuel')
+            
+            
 
 class FuelDetails(UserObjectMixins, View):
     async def get(self, request, pk):

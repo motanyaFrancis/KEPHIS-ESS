@@ -307,6 +307,9 @@
                             {% csrf_token %}
                             <input type="hidden" name="appraisalNo" value=" ">
                             <input type="hidden" name="myAction" value="insert">
+                            <input type="hidden" name="appraisee_remarks" value="None">
+                            <input type="hidden" name="appraiser_remarks" value="None">
+                            <input type="hidden" name="manager_remarks" value="None">
                             <div class="row">
                                 <div class="col-md-12">
                                     <label class="form-label">Appraisal Period<span class="text-danger">*</span></label>
@@ -314,6 +317,8 @@
                                         <option selected disabled value="0">--Select--</option>
                                         {% for period in periods %}
                                         <option value="{{period.Period}}">{{period.Period}}</option>
+                                        {% empty %}
+                                        <option disabled value="0">No active appraisal periods</option>
                                         {% endfor %}
                                     </select>
                                 </div>

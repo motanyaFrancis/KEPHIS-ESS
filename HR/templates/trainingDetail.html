@@ -20,6 +20,11 @@
                     <button class="btn btn-successs" data-bs-toggle="modal" data-bs-target="#Attachment"> <i
                             class="fas fa-upload mr-1"></i> Upload Attachment</button>
                     {% elif res.Status == "Released" %}
+                    {% if res.Has_Evaluation == True %}
+                    <button class="btn btn-danger align-items-center p-3 ms-3" style="outline: none;border: none;"
+                        type="button" data-bs-toggle="modal" data-bs-target="#evaluationModal">Start
+                        Evaluation</button>
+                    {% endif %}
                     <form action="{% url 'FnGenerateTrainingReport' res.Request_No_ %}" method="post"
                         style="display:inline-block">
                         {% csrf_token %}
@@ -30,6 +35,7 @@
                 </div>
             </div>
         </div>
+
         <!--alert -->
         {% include 'alerts.html' %}
         {% if res.Adhoc == True %}
@@ -238,91 +244,7 @@
                 <div class="card text-dark bg-white mb-3">
                     <div class="card-header bg-primary text-white">Training Evaluation</div>
                     <div class="card-body">
-                        <form>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="question3">Usefulness of the Course?</label>
-                                        <textarea class="form-control" id="question3" rows="3"></textarea>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="question3">Application of lesson learnt on the job?</label>
-                                        <textarea class="form-control" id="question3" rows="3"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="question3">List support you might need to apply what you
-                                            learnt?</label>
-                                        <textarea class="form-control" id="question3" rows="3"></textarea>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="question3">Improvement in job job performance after
-                                            training?</label>
-                                        <textarea class="form-control" id="question3" rows="3"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <label for="question3">List area in job job performance that need
-                                            improvement?</label>
-                                        <textarea class="form-control" id="question3" rows="3"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <label for="question1">Ability to teach acquired skills to other people?</label>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="question1" id="question1"
-                                                value="yes">
-                                            <label class="form-check-label" for="question1">
-                                                Yes
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="question1" id="question1"
-                                                value="no">
-                                            <label class="form-check-label" for="question1">
-                                                No
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <label for="question1">Adequacy of training provided?</label>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="question1" id="question1"
-                                                value="yes">
-                                            <label class="form-check-label" for="question1">
-                                                Yes
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="question1" id="question1"
-                                                value="no">
-                                            <label class="form-check-label" for="question1">
-                                                No
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Submit</button>
-                        </form>
                     </div>
                 </div>
 
@@ -514,7 +436,7 @@
         </div>
         {% endif %}
     </div>
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    <div class="modal fade" id="staticBackdrop" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
             <div class="modal-content">
@@ -616,6 +538,76 @@
                             <div class="col-md-12">
                                 <label for="" class="form-label">Training Objectives</label>
                                 <textarea class="form-control" name="trainingObjectives" rows="3" required></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success my-3 w-100">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="evaluationModal" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">New Training Line
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="myForm needs-validation" action="{% url 'FnTrainingEvaluation' res.Request_No_ %}"
+                        method="post" novalidate>
+                        {% csrf_token %}
+                        <input type="hidden" name="evaluationNo" value=" ">
+                        <input type="hidden" name="myAction" value="insert">
+                        <input type="hidden" name="supervisorsComments" value=" ">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="form-label">Usefulness of The Course?</label>
+                                <input type="text" class="form-control" name="usefulness_ofTheCourse" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="" class="form-label">Application of Lesson Learnt on the Job?</label>
+                                <input type="text" class="form-control" name="application_of_lesson_learnt" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="" class="form-label">List support you might need to apply what you
+                                    learnt?</label>
+                                <textarea class="form-control" name="support_needed" rows="3" required></textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="" class="form-label">Improvement in job job performance after
+                                    training?</label>
+                                <textarea class="form-control" name="expected_improvement" rows="3" required></textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="" class="form-label">List area in job job performance that need
+                                    improvement?</label>
+                                <textarea class="form-control" name="job_improvement" rows="3" required></textarea>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="" class="form-label">Ability to teach acquired skills to other
+                                    people?</label>
+                                <textarea class="form-control" name="ability_to_teach" rows="3" required></textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="" class="form-label">Adequacy Of Training Provided?</label>
+                                <textarea class="form-control" name="adequacyOfTrainingProvided" rows="3"
+                                    required></textarea>
                             </div>
                         </div>
                         <button type="submit" class="btn btn-success my-3 w-100">Submit</button>

@@ -148,9 +148,7 @@
                                     <th>Defect Type</th>
                                     <th>Severity</th>
                                     <th>Recommended Action</th>
-                                    {% if res.Status == "Open" %}
-                                    <th>Action</th>
-                                    {% endif %}
+
                                 </tr>
                             </thead>
                             <tbody>
@@ -160,19 +158,6 @@
                                     <td>{{line.Defect_Type}}</td>
                                     <td>{{line.Severity}}</td>
                                     <td>{{line.Recommendations}}</td>
-                                    {% if res.Status == "Open" %}
-                                    <td>
-
-                                        <form action="{% url 'DeleteRepairAttachment' line.AuxiliaryIndex1 %}"
-                                            method="post" style="display: inline-block;">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="lineNo" value="{{line.LineNo}}">
-                                            <button type="submit" class="btn btn-danger" data-toggle="tooltip"
-                                                data-placement="top" title="Delete"><i class="fas fa-trash-alt"></i>
-                                            </button>
-                                        </form>
-                                    </td>
-                                    {% endif %}
                                 </tr>
 
                                 {% endfor %}

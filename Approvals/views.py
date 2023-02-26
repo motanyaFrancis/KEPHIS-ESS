@@ -115,7 +115,9 @@ class Approve(UserObjectMixin,View):
             "full": full_name,
             "driver_role":driver_role,
             "TO_role":TO_role,
-            "openFleet":openFleet
+            "openFleet":openFleet,
+            'approvedFinance':approvedFinance,
+            'rejectedFinance':rejectedFinance,
             }
               
         return render(request, 'Approve.html', ctx)

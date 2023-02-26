@@ -27,4 +27,5 @@ urlpatterns = [
     path('disciplinary',views.Disciplinary,name="disciplinary"),
     path('DisciplineDetails/<str:pk>', views.DisciplineDetail,name='DisciplineDetail'),
     path('DisciplineResponse/<str:pk>', views.DisciplinaryResponse, name='DisciplineResponse'),
+    path('FnTrainingEvaluation/<str:pk>', views.FnTrainingEvaluation.as_view(), name='FnTrainingEvaluation'),
 ]

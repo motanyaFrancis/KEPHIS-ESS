@@ -526,36 +526,7 @@ def FnAdhocLineDelete(request, pk):
             messages.error(request, f'{e}')
             print(e)
     return redirect('TrainingDetail', pk=pk)
-
-
-class FnTrainingEvaluation(UserObjectMixins,View):
-    def get(self, request,pk):
-        return render(request,"evaluation.html")
-    def post(self,request, pk):
-        try:
-            soap_headers = request.session['soap_headers']
-            evaluationNo = request.POST.get('evaluationNo')
-            trainingRequestNo = pk
-            employeeNo = request.session['Employee_No_']
-            myAction = request.POST.get('myAction')
-
-            
-            response = self.make_soap_request(soap_headers,'FnTrainingEvaluation',
-                                evaluationNo,trainingRequestNo,employeeNo,myAction)
-            print(response)
-            if response !='0':
-                messages.success(request,f"Started evaluation for Training: {trainingRequestNo}")
-                return redirect('TrainingDetail',pk=pk)
-            else:
-                messages.error(request,"Evaluation request failed")
-                print(response)
-                return redirect('training_request')
-        except Exception as e:
-            logging.exception(e)
-            messages.error(request,f"{e}")
-            return redirect('training_request')
-
-        
+   
 
 class TrainingApproval(UserObjectMixins, View):
     async def post(self,request,pk):
@@ -879,3 +850,45 @@ def DisciplinaryResponse(request, pk):
     return redirect('DisciplineDetail', pk=pk)
 
 
+class FnTrainingEvaluation(UserObjectMixins,View):
+    def post(self,request,pk):
+        try:
+            soap_headers = request.session['soap_headers']
+            evaluationNo = request.POST.get('evaluationNo')
+            Employee_No_ = request.session['Employee_No_']
+            myAction = request.POST.get('myAction')
+            usefulness_ofTheCourse = request.POST.get('usefulness_ofTheCourse')
+            application_of_lesson_learnt = request.POST.get('application_of_lesson_learnt')
+            support_needed = request.POST.get('support_needed')
+            expected_improvement = request.POST.get('expected_improvement')
+            job_improvement = request.POST.get('job_improvement')
+            ability_to_teach = request.POST.get('ability_to_teach')
+            adequacyOfTrainingProvided = request.POST.get('adequacyOfTrainingProvided')
+            supervisorsComments = request.POST.get('supervisorsComments')
+            
+            response = self.make_soap_request(soap_headers,
+                                            'FnTrainingEvaluation',
+                                                evaluationNo,
+                                                    pk,
+                                                        Employee_No_,
+                                                            myAction,
+                                                                usefulness_ofTheCourse,
+                                                                    application_of_lesson_learnt,
+                                                                        support_needed,
+                                                                            expected_improvement,
+                                                                                job_improvement,
+                                                                                    ability_to_teach,
+                                                                                        adequacyOfTrainingProvided,
+                                                                                            supervisorsComments)
+            if response !='0':
+                messages.success(request,"Submission Successful. Add Lines")
+                return redirect('TrainingDetail', pk=pk)
+            messages.error(request,f"{response}")
+            return redirect('TrainingDetail', pk=pk)
+        except Exception as e:
+            messages.error(request, f'{e}')
+            logging.exception(e)
+            return redirect('TrainingDetail', pk=pk)
+
+
+#QyTrainingEvaluationnLines

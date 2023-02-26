@@ -64,6 +64,8 @@ urlpatterns = [
     path('fuel/consumption', views.FuelConsumption.as_view(), name='fuel'),
     path('fuel/consumption/<str:pk>',views.FuelDetails.as_view(), name='FuelDetails' ),
     path('FnSubmitFuelConsumption/<str:pk>', views.FnSubmitFuelConsumption.as_view(), name='FnSubmitFuelConsumption'),
+    path('FnFuelConsumptionGenerator', views.FnFuelConsumptionGenerator.as_view(), name='FnFuelConsumptionGenerator'),
+    path('FnFuelConsumptionVehicle', views.FnFuelConsumptionVehicle.as_view(), name='FnFuelConsumptionVehicle'),
     
     path('speed/governor', views.SpeedGovernor.as_view(), name='SpeedGovernor'),
     path('GovernorDetails/<str:pk>', views.GovernorDetails.as_view(), name='GovernorDetails'),

@@ -9,7 +9,7 @@
             <h2 class="text-dark font-weight-bold mb-2"> APPRAISAL
             </h2>
 
-            <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
+            <div class="d-sm-flex justify-content-end align-items-center mb-2">
                 <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
                     {% if res.Status == "Open" %}
                     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Attachment"> <i
@@ -128,6 +128,7 @@
                 </div>
             </div>
         </div>
+
         <div class="row mt-4">
             <div class="col-md-12">
                 <div class="card" id="d-card">
@@ -216,7 +217,7 @@
                                                         <input type="hidden" name="unitOfMeasureORPerformanceIndicator"
                                                             value="{{target.FYTarget}}">
                                                         {% if res.Status == "Released" and res.DocumentStage == 'Appraisal' %}
-                                                        <input type="hidden" name="supervisorRating"
+                                                        <input type="hidden" name="supervisor_score"
                                                             value="{{target.SupervisorRating}}">
                                                         <div class="row">
                                                             <div class="col-md-12">
@@ -225,7 +226,8 @@
                                                                     name="selfRating" id="">
                                                             </div>
                                                         </div>
-                                                        {% elif res.Status == "Released" and res.DocumentStage == 'Supervisor' and Supervisor == True %}
+                                                        {% endif %}
+                                                        {% if res.Status == "Released" and res.DocumentStage == 'Supervisor' and Supervisor == True %}
                                                         <input type="hidden" name="selfRating"
                                                             value="{{target.SelfRating}}">
                                                         <div class="row">
@@ -233,7 +235,7 @@
                                                                 <label class="form-label">Supervisor Appraisal
                                                                     Score</label>
                                                                 <input type="number" class="form-control"
-                                                                    name="SupervisorRating" id="">
+                                                                    name="supervisor_score" id="">
                                                             </div>
                                                         </div>
                                                         {% endif %}
@@ -265,6 +267,9 @@
                             <form action="{% url 'FnGetAppraisalAttributes' res.AppraisalNo %}" method="post"
                                 style="display: inline-block;">
                                 {% csrf_token %}
+                                <input type="hidden" name="supervisorAppraisalScore" value="0">
+                                <input type="hidden" name="LineNo" value="0">
+                                <input type="hidden" name="myAction" value="insert">
                                 <button class="btn  btn-success my-2" type="submit"> <i class="las la-plus text-white"
                                         style="font-size:15px;"></i> Get Attributes
                                 </button>
@@ -318,16 +323,16 @@
                                                         data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <form action="" method="post" novalidate>
+                                                    <form action="{% url 'FnGetAppraisalAttributes' res.AppraisalNo %}"
+                                                        method="post" novalidate>
                                                         {% csrf_token %}
-                                                        <input type="hidden" name="appraisalLine"
-                                                            value="{{target.AppraisalLine}}">
+                                                        <input type="hidden" name="LineNo" value="{{attribute.LineNo}}">
                                                         <input type="hidden" name="myAction" value="modify">
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <label class="form-label">Supervisor Score</label>
                                                                 <input type="number" class="form-control"
-                                                                    name="SupervisorRating" id="">
+                                                                    name="supervisorAppraisalScore">
                                                             </div>
                                                         </div>
                                                         <button type="submit"
@@ -385,7 +390,7 @@
                                     <td>{{training.Description}}</td>
                                     <td>{{training.Duration}}</td>
                                     {% if res.DocumentStage != 'Appraisal' and res.DocumentStage != 'Setting' %}
-                                    <td>{{training.CommentsbySecondSuprvisor}}</td>
+                                    <td>{{training.CommentsonPerformance}}</td>
                                     {% endif %}
                                     {% if res.Status == "Released" and res.DocumentStage == 'Supervisor' and Supervisor == True %}
                                     <td>
@@ -444,6 +449,43 @@
                 </div>
             </div>
         </div>
+        {% if res.DocumentStage != 'Setting' %}
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card" id="d-card">
+                    <div class="row justify-content-between">
+                        <div class="col-md-4">
+                            <h4 class="mt-2 mx-2 text-dark">Part D: Appraisal Comments</h4>
+                        </div>
+                        {% if res.Status == "Released" and res.DocumentStage == 'Appraisal' or res.DocumentStage == 'Supervisor' and Supervisor == True %}
+                        <div class="col-md-2">
+                            <button class="btn  btn-successs p-2 m-2 d-flex align-items-center" data-bs-toggle="modal"
+                                data-bs-target="#appraisal_comments" type="button"> <i class="las la-plus text-white"
+                                    style="font-size:15px;"></i> Remarks
+                            </button>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="card-body">
+                        <form class="row g-3">
+                            <div class="col-12">
+                                <label for="inputAddress" class="form-label">Appraisee's Comments</label>
+                                <textarea class="form-control" placeholder="{{res.Employees_Remarks}}" rows="3"
+                                    readonly></textarea>
+                            </div>
+                            {% if res.DocumentStage != 'Appraisal' and res.DocumentStage != 'Setting' %}
+                            <div class="col-12">
+                                <label for="inputAddress" class="form-label">Appraiser's Comments</label>
+                                <textarea class="form-control" placeholder="{{res.Evaluator_s_Remarks}}" rows="3"
+                                    readonly></textarea>
+                            </div>
+                            {% endif %}
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
         <div class="row my-2 py-3">
             <div class="col-md-12">
                 <div class="card">
@@ -499,16 +541,6 @@
                         style="display: inline-block;">
                         {% csrf_token %}
                         <button class="btn btn-info" type="submit">Submit For Review</button>
-                    </form>
-                </div>
-                {% elif res.Status == "Pending Approval" %}
-                <div class="d-grid gap-2 my-3">
-                    <form action="" method="POST" class="myForm" id="approvalForm">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <input type="hidden" hidden name="requistionNo" value="">
-                        </div>
-                        <button class="btn btn-info" type="submit">Cancel Request For Approval</button>
                     </form>
                 </div>
                 {% elif res.Status == "Released" and res.DocumentStage == 'Appraisal' %}
@@ -649,5 +681,45 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="appraisal_comments" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Appraisal Comments</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="myForm needs-validation" action="{% url 'Appraisals' %}" method="post" novalidate>
+                    {% csrf_token %}
+                    <input type="hidden" name="appraisalNo" value="{{res.AppraisalNo}}">
+                    <input type="hidden" name="myAction" value="modify">
+                    <input type="hidden" name="appraisalPeriod" value="{{res.AppraisalPeriod}}">
+                    <input type="hidden" name="manager_remarks" value="{{res.Comments_by_Managing_Director}}">
+                    {% if res.Status == "Released" and res.DocumentStage == 'Appraisal' %}
+                    <input type="hidden" name="appraiser_remarks" value="None">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label for="" class="form-label">Appraisee Remarks <span
+                                    class="text-danger">*</span></label>
+                            <textarea class="form-control" name="appraisee_remarks" rows="3" required></textarea>
+                        </div>
+                    </div>
+                    {% elif res.Status == "Released" and res.DocumentStage == 'Supervisor' and Supervisor == True %}
+                    <input type="hidden" name="appraisee_remarks" value="{{res.Employees_Remarks}}">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label for="" class="form-label">Appraiser Remarks <span
+                                    class="text-danger">*</span></label>
+                            <textarea class="form-control" name="appraiser_remarks" rows="3" required></textarea>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <button type="submit" id="sasa" class="btn btn-success my-3 w-100">Submit</button>
+                </form>
 
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

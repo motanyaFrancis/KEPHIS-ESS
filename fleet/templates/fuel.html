@@ -9,13 +9,16 @@
     <div class="content-wrapper general-bg">
         <div class="row" id="proBanner">
             <div class="col-12">
-                <span class="d-flex align-items-center purchase-popup">
+                <span class="d-flex align-items-center bg-white p-3" style="border-radius: 8px;">
                     <img src="../../../static/img/logo/fav.png" width="70px" class="img-fluid" alt="" srcset="">
-                    <h2 class="text-dark font-weight-bold ml-3">Fuel Consumption</h2>
-                    <button class="btn btn-successs align-items-center p-3" data-bs-toggle="modal"
-                        data-bs-target="#staticBackdrop"
-                        style="margin-left: auto;margin-right:0;outline: none;border: none;"><i
-                            class="las la-plus text-white" style="font-size:15px;"></i> New Report</button>
+                    <h2 class="text-dark font-weight-bold ms-3 me-auto">Fuel Consumption</h2>
+                    <div class="btn-group" role="group" style="float:right">
+                        <button type="button" class="btn btn-warning" data-bs-toggle="modal"
+                            data-bs-target="#staticBackdrop"><i class="las la-plus text-white"
+                                style="font-size:15px;"></i> Generator</button>
+                        <button type="button" class="btn btn-success ms-auto" data-bs-toggle="modal"
+                            data-bs-target="#staticVehicle">Vehicle Report</button>
+                    </div>
                 </span>
             </div>
         </div>
@@ -54,7 +57,7 @@
                                                 <th>Transaction Date</th>
                                                 <th>Fuel Type</th>
                                                 <th>Quantity(Ltrs)</th>
-                                               
+
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -65,140 +68,10 @@
                                                 <td>{{res.AssetType}}</td>
                                                 <td>{{res.TransactionDate}}</td>
                                                 <td>{{res.FuelType}}</td>
-                                                
+
                                                 <td>
-                                                    <button class="btn btn-primary" data-bs-toggle="modal"
-                                                        data-bs-target="#AccidentEdit" data-toggle="tooltip"
-                                                        data-placement="top" title="edit">Edit <i
-                                                            class="fas fa-edit"></i>
-                                                    </button>
-                                                    <div class="modal fade" id="AccidentEdit" data-bs-backdrop="static"
-                                                        data-bs-keyboard="false" tabindex="-1"
-                                                        aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                                                        <div
-                                                            class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                    <h5 class="modal-title" id="staticBackdropLabel">
-                                                                        <i class="las la-edit"></i> Edit Accident Report
-                                                                        <span class="editSpan">{{res.No}}</span>
-                                                                    </h5>
-                                                                    <button type="button"
-                                                                        class="btn-close btn-close-white"
-                                                                        data-bs-dismiss="modal"
-                                                                        aria-label="Close"></button>
-                                                                </div>
-                                                                <div class="modal-body">
-                                                                    <form class="myForm needs-validation" action="" method="post" novalidate>
-                                                                        {% csrf_token %}
-                                                                        <input type="hidden" name="fuelNo" value="">
-                                                                        <input type="hidden" name="myAction" value="modify">
-                                                                        <div class="row gx-2">
-                                                                            <div class="col-lg-4 col-md-6">
-                                                                                <label class="form-label">Asset Type<span class="text-danger">*</span></label>
-                                                                                <select class="form-select" name="assetType" id="assetType" required>
-                                                                                    <option selected disabled value="0">Select Option</option>
-                                                                                    <option value="1">Generator</option>
-                                                                                    <option value="2">Vehicle</option>
-                                                                                    <option value="3">Motor-cycle</option>
-                                                                                    <option value="4">Tractor</option>
-                                                                                </select>
-                                                                            </div>
-                                                                            <div class="col-lg-4 col-md-6" id="fuelCardType" hidden>
-                                                                                <label class="form-label">Fuel Card Type<span class="text-danger">*</span></label>
-                                                                                <select class="form-select" name="fuelCardType" required>
-                                                                                    <option selected disabled value="0">Select Option</option>
-                                                                                    <option value="1">Specific(Field Fueling)</option>
-                                                                                    <option value="2">General(Local Fueling)</option>
-                                                                                </select>
-                                                                            </div>
-                                                                            <div class="col-lg-4 col-md-6" id="receiptNo" hidden>
-                                                                                <label class="form-label">Receipt No.</label>
-                                                                                <input type="text" name="receiptNo" class="form-control" placeholder="">
-                                                                            </div>
-                                            
-                                                                            <div class="col-lg-4 col-md-6" id="fuel-vehicle" hidden>
-                                                                                <label class="form-label">Vehicle <span class="text-danger">*</span></label>
-                                                                                <select class="form-select" name="vehicle" required>
-                                                                                    <option selected disabled value="">Select Option</option>
-                                                                                    {% for list in vehicles %}
-                                                                                    <option value="{{list.No_}}">{{list.Description}}</option>
-                                                                                    {% endfor %}
-                                                                                </select>
-                                                                            </div>
-                                                                            <div class="col-lg-4 col-md-6" id="fuel-generator" hidden>
-                                                                                <label class="form-label">Generator <span class="text-danger">*</span></label>
-                                                                                <select class="form-select" name="generator" required>
-                                                                                    <option selected disabled value="">Select Option</option>
-                                                                                    {% for list in generators %}
-                                                                                    <option value="{{list.No_}}"> {{list.Description}}</option>
-                                                                                    {% endfor %}
-                                                                                </select>
-                                                                            </div>
-                                                                            <div class="col-lg-4 col-md-6" id="fuel-Driver" hidden>
-                                                                                <label class="form-label">Driver <span class="text-danger">*</span></label>
-                                                                                <select class="form-select" name="driver" required>
-                                                                                    <option selected disabled value="">Select Option</option>
-                                                                                    {% for list in drivers %}
-                                                                                    <option value="{{list.No_}}">{{list.First_Name}} {{list.Middle_Name}} {{list.Last_Name}}</option>
-                                                                                    {% endfor %}
-                                                                                </select>
-                                                                            </div>
-                                                                            <div class="col-lg-4 col-md-6" id="fuel-currenthours" hidden>
-                                                                                <label class="form-label">Current Hours Reading <span
-                                                                                        class="text-danger">*</span></label>
-                                                                                <input type="text" name="currenthoursReadings" class="form-control"
-                                                                                    placeholder="0.00 hrs">
-                                            
-                                                                            </div>
-                                                                            <div class="col-lg-4 col-md-6" id="fuel-distanceKM" hidden>
-                                                                                <label class="form-label">Kilometers Covered<span
-                                                                                        class="text-danger">*</span></label>
-                                                                                <input type="text" name="kMCovered" class="form-control" placeholder="0">
-                                            
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="row gx-2">
-                                                                            <div class="col-lg-3 col-md-6" id="fuelType" hidden>
-                                                                                <label class="form-label">Fuel Type <span class="text-danger">*</span></label>
-                                                                                <select class="form-select" name="fuelType" required>
-                                                                                    <option selected disabled value="">Select Option</option>
-                                                                                    <option value="1">Petrol</option>
-                                                                                    <option value="2">Diesel</option>
-                                                                                </select>
-                                                                            </div>
-                                                                            <div class="col-lg-3 col-md-6" id="fuelStation" hidden>
-                                                                                <label class="form-label">Fuel Station<span class="text-danger">*</span></label>
-                                                                                <select class="form-select" name="fuelStation" required>
-                                                                                    <option selected disabled value="">Select Option</option>
-                                                                                    {% for list in vendors %}
-                                                                                    <option value="{{list.No}}">{{list.Name}}</option>
-                                                                                    {% endfor %}
-                                                                                </select>
-                                                                            </div>
-                                                                            <div class="col-lg-3 col-md-6" id="costPerLtr" hidden>
-                                                                                <label class="form-label">Cost Per Litre <span class="text-danger">*</span></label>
-                                                                                <input type="number" name="costPerLtr" class="form-control" placeholder="0.00">
-                                                                            </div>
-                                                                            <div class="col-lg-3 col-md-6" id="quantityInLtrs" hidden>
-                                                                                <label class="form-label">Quantity in Litres <span
-                                                                                        class="text-danger">*</span></label>
-                                                                                <input type="number" name="quantityInLtrs" class="form-control" placeholder="0">
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="row gx-2">
-                                                                            <div class="col-lg-12" id="remarks" hidden>
-                                                                                <label class="form-label">Remarks <span class="text-danger">*</span></label>
-                                                                                <textarea name="remarks" id="remarks" class="form-control"></textarea>
-                                                                            </div>
-                                                                        </div>
-                                                                        <button type="submit" id="sasa" class="btn btn-success my-3">Add Report</button>
-                                                                    </form>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <a href="{% url 'FuelDetails' res.Code %}" class="btn btn-success btn-icon-text" type="button"
+                                                    <a href="{% url 'FuelDetails' res.Code %}"
+                                                        class="btn btn-success btn-icon-text" type="button"
                                                         data-toggle="tooltip" data-placement="top"
                                                         title="Click to View">
                                                         View
@@ -225,7 +98,7 @@
                                                 <th>Transaction Date</th>
                                                 <th>Fuel Type</th>
                                                 <th>Quantity(Ltrs)</th>
-                                                
+
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -236,13 +109,8 @@
                                                 <td>{{res.AssetType}}</td>
                                                 <td>{{res.TransactionDate}}</td>
                                                 <td>{{res.FuelType}}</td>
-                                                
+
                                                 <td>
-                                                    <button class="btn btn-primary" data-bs-toggle="modal"
-                                                        data-bs-target="#modifyConsumption" data-toggle="tooltip"
-                                                        data-placement="top" title="edit">Edit <i
-                                                            class="fas fa-edit"></i>
-                                                    </button>
                                                     <a href="" class="btn btn-success btn-icon-text" type="button"
                                                         data-toggle="tooltip" data-placement="top"
                                                         title="Click to View">
@@ -251,126 +119,6 @@
                                                     </a>
                                                 </td>
                                             </tr>
-                                            <!-- Modify Consumption -->
-                                            <div class="modal fade" id="modifyConsumption" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-                                                aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                                                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">Fuel Consumption card
-                                                            </h5>
-                                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                                                                aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <form class="myForm needs-validation" action="" method="post" novalidate>
-                                                                {% csrf_token %}
-                                                                <input type="hidden" name="fuelNo" value="">
-                                                                <input type="hidden" name="myAction" value="modify">
-                                                                <div class="row gx-2">
-                                                                    <div class="col-lg-4 col-md-6">
-                                                                        <label class="form-label">Asset Type<span class="text-danger">*</span></label>
-                                                                        <select class="form-select" name="assetType" id="assetType" required>
-                                                                            <option selected disabled value="0">Select Option</option>
-                                                                            <option value="1">Generator</option>
-                                                                            <option value="2">Vehicle</option>
-                                                                            <option value="3">Motor-cycle</option>
-                                                                            <option value="4">Tractor</option>
-                                                                        </select>
-                                                                    </div>
-                                                                    <div class="col-lg-4 col-md-6" id="fuelCardType" hidden>
-                                                                        <label class="form-label">Fuel Card Type<span class="text-danger">*</span></label>
-                                                                        <select class="form-select" name="fuelCardType" required>
-                                                                            <option selected disabled value="0">Select Option</option>
-                                                                            <option value="1">Specific(Field Fueling)</option>
-                                                                            <option value="2">General(Local Fueling)</option>
-                                                                        </select>
-                                                                    </div>
-                                                                    <div class="col-lg-4 col-md-6" id="receiptNo" hidden>
-                                                                        <label class="form-label">Receipt No.</label>
-                                                                        <input type="text" name="receiptNo" class="form-control" placeholder="">
-                                                                    </div>
-
-                                                                    <div class="col-lg-4 col-md-6" id="fuel-vehicle" hidden>
-                                                                        <label class="form-label">Vehicle <span class="text-danger">*</span></label>
-                                                                        <select class="form-select" name="vehicle" required>
-                                                                            <option selected disabled value="">Select Option</option>
-                                                                            {% for list in vehicles %}
-                                                                            <option value="{{list.No_}}">{{list.Description}}</option>
-                                                                            {% endfor %}
-                                                                        </select>
-                                                                    </div>
-                                                                    <div class="col-lg-4 col-md-6" id="fuel-generator" hidden>
-                                                                        <label class="form-label">Generator <span class="text-danger">*</span></label>
-                                                                        <select class="form-select" name="generator" required>
-                                                                            <option selected disabled value="">Select Option</option>
-                                                                            {% for list in generators %}
-                                                                            <option value="{{list.No_}}"> {{list.Description}}</option>
-                                                                            {% endfor %}
-                                                                        </select>
-                                                                    </div>
-                                                                    <div class="col-lg-4 col-md-6" id="fuel-Driver" hidden>
-                                                                        <label class="form-label">Driver <span class="text-danger">*</span></label>
-                                                                        <select class="form-select" name="driver" required>
-                                                                            <option selected disabled value="">Select Option</option>
-                                                                            {% for list in drivers %}
-                                                                            <option value="{{list.No_}}">{{list.First_Name}} {{list.Middle_Name}} {{list.Last_Name}}</option>
-                                                                            {% endfor %}
-                                                                        </select>
-                                                                    </div>
-                                                                    <div class="col-lg-4 col-md-6" id="fuel-currenthours" hidden>
-                                                                        <label class="form-label">Current Hours Reading <span
-                                                                                class="text-danger">*</span></label>
-                                                                        <input type="text" name="currenthoursReadings" class="form-control"
-                                                                            placeholder="0.00 hrs">
-
-                                                                    </div>
-                                                                    <div class="col-lg-4 col-md-6" id="fuel-distanceKM" hidden>
-                                                                        <label class="form-label">Kilometers Covered<span
-                                                                                class="text-danger">*</span></label>
-                                                                        <input type="text" name="kMCovered" class="form-control" placeholder="0">
-
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row gx-2">
-                                                                    <div class="col-lg-3 col-md-6" id="fuelType" hidden>
-                                                                        <label class="form-label">Fuel Type <span class="text-danger">*</span></label>
-                                                                        <select class="form-select" name="fuelType" required>
-                                                                            <option selected disabled value="">Select Option</option>
-                                                                            <option value="1">Petrol</option>
-                                                                            <option value="2">Diesel</option>
-                                                                        </select>
-                                                                    </div>
-                                                                    <div class="col-lg-3 col-md-6" id="fuelStation" hidden>
-                                                                        <label class="form-label">Fuel Station<span class="text-danger">*</span></label>
-                                                                        <select class="form-select" name="fuelStation" required>
-                                                                            <option selected disabled value="">Select Option</option>
-                                                                            {% for list in vendors %}
-                                                                            <option value="{{list.No}}">{{list.Name}}</option>
-                                                                            {% endfor %}
-                                                                        </select>
-                                                                    </div>
-                                                                    <div class="col-lg-3 col-md-6" id="costPerLtr" hidden>
-                                                                        <label class="form-label">Cost Per Litre <span class="text-danger">*</span></label>
-                                                                        <input type="number" name="costPerLtr" class="form-control" placeholder="0.00">
-                                                                    </div>
-                                                                    <div class="col-lg-3 col-md-6" id="quantityInLtrs" hidden>
-                                                                        <label class="form-label">Quantity in Litres <span
-                                                                                class="text-danger">*</span></label>
-                                                                        <input type="number" name="quantityInLtrs" class="form-control" placeholder="0">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row gx-2">
-                                                                    <div class="col-lg-12" id="remarks" hidden>
-                                                                        <label class="form-label">Remarks <span class="text-danger">*</span></label>
-                                                                        <textarea name="remarks" id="remarks" class="form-control"></textarea>
-                                                                    </div>
-                                                                </div>
-                                                                <button type="submit" id="sasa" class="btn btn-success my-3">Add Report</button>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
                                             {% endfor %}
                                         </tbody>
                                     </table>
@@ -383,32 +131,23 @@
         </div>
 
         <!-- Modal -->
-        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        <div class="modal fade" id="staticBackdrop" data-bs-keyboard="false" tabindex="-1"
             aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
                 <div class="modal-content">
-                    <div class="modal-header">Fuel Consumption card
+                    <div class="modal-header">Generator Fuel Consumption card
                         </h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                             aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form class="myForm needs-validation" action="" method="post" novalidate>
+                        <form class="myForm" action="{% url 'FnFuelConsumptionGenerator' %}" method="post" novalidate>
                             {% csrf_token %}
                             <input type="hidden" name="fuelNo" value="">
                             <input type="hidden" name="myAction" value="insert">
+                            <input type="hidden" name="assetType" value="1">
                             <div class="row gx-2">
                                 <div class="col-lg-4 col-md-6">
-                                    <label class="form-label">Asset Type<span class="text-danger">*</span></label>
-                                    <select class="form-select" name="assetType" id="assetType" required>
-                                        <option selected disabled value="0">Select Option</option>
-                                        <option value="1">Generator</option>
-                                        <option value="2">Vehicle</option>
-                                        <option value="3">Motor-cycle</option>
-                                        <option value="4">Tractor</option>
-                                    </select>
-                                </div>
-                                <div class="col-lg-4 col-md-6" id="fuelCardType" hidden>
                                     <label class="form-label">Fuel Card Type<span class="text-danger">*</span></label>
                                     <select class="form-select" name="fuelCardType" required>
                                         <option selected disabled value="0">Select Option</option>
@@ -416,21 +155,11 @@
                                         <option value="2">General(Local Fueling)</option>
                                     </select>
                                 </div>
-                                <div class="col-lg-4 col-md-6" id="receiptNo" hidden>
+                                <div class="col-lg-4 col-md-6">
                                     <label class="form-label">Receipt No.</label>
                                     <input type="text" name="receiptNo" class="form-control" placeholder="">
                                 </div>
-
-                                <div class="col-lg-4 col-md-6" id="fuel-vehicle" hidden>
-                                    <label class="form-label">Vehicle <span class="text-danger">*</span></label>
-                                    <select class="form-select" name="vehicle" required>
-                                        <option selected disabled value="">Select Option</option>
-                                        {% for list in vehicles %}
-                                        <option value="{{list.No_}}">{{list.Description}}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <div class="col-lg-4 col-md-6" id="fuel-generator" hidden>
+                                <div class="col-lg-4 col-md-6">
                                     <label class="form-label">Generator <span class="text-danger">*</span></label>
                                     <select class="form-select" name="generator" required>
                                         <option selected disabled value="">Select Option</option>
@@ -439,39 +168,24 @@
                                         {% endfor %}
                                     </select>
                                 </div>
-                                <div class="col-lg-4 col-md-6" id="fuel-Driver" hidden>
-                                    <label class="form-label">Driver <span class="text-danger">*</span></label>
-                                    <select class="form-select" name="driver" required>
-                                        <option selected disabled value="">Select Option</option>
-                                        {% for list in drivers %}
-                                        <option value="{{list.No_}}">{{list.First_Name}} {{list.Middle_Name}} {{list.Last_Name}}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <div class="col-lg-4 col-md-6" id="fuel-currenthours" hidden>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4 col-md-6">
                                     <label class="form-label">Current Hours Reading <span
                                             class="text-danger">*</span></label>
                                     <input type="text" name="currenthoursReadings" class="form-control"
                                         placeholder="0.00 hrs">
 
                                 </div>
-                                <div class="col-lg-4 col-md-6" id="fuel-distanceKM" hidden>
-                                    <label class="form-label">Kilometers Covered<span
-                                            class="text-danger">*</span></label>
-                                    <input type="text" name="kMCovered" class="form-control" placeholder="0">
-
-                                </div>
-                            </div>
-                            <div class="row gx-2">
-                                <div class="col-lg-3 col-md-6" id="fuelType" hidden>
+                                <div class="col-lg-4 col-md-6">
                                     <label class="form-label">Fuel Type <span class="text-danger">*</span></label>
                                     <select class="form-select" name="fuelType" required>
-                                        <option selected disabled value="">Select Option</option>
+                                        <option selected disabled value="0">Select Option</option>
                                         <option value="1">Petrol</option>
                                         <option value="2">Diesel</option>
                                     </select>
                                 </div>
-                                <div class="col-lg-3 col-md-6" id="fuelStation" hidden>
+                                <div class="col-lg-4 col-md-6">
                                     <label class="form-label">Fuel Station<span class="text-danger">*</span></label>
                                     <select class="form-select" name="fuelStation" required>
                                         <option selected disabled value="">Select Option</option>
@@ -480,55 +194,66 @@
                                         {% endfor %}
                                     </select>
                                 </div>
-                                <div class="col-lg-3 col-md-6" id="costPerLtr" hidden>
+                            </div>
+                            <div class="row gx-2">
+                                <div class="col-lg-4 col-md-6">
                                     <label class="form-label">Cost Per Litre <span class="text-danger">*</span></label>
                                     <input type="number" name="costPerLtr" class="form-control" placeholder="0.00">
                                 </div>
-                                <div class="col-lg-3 col-md-6" id="quantityInLtrs" hidden>
+                                <div class="col-lg-4 col-md-6">
                                     <label class="form-label">Quantity in Litres <span
                                             class="text-danger">*</span></label>
                                     <input type="number" name="quantityInLtrs" class="form-control" placeholder="0">
                                 </div>
-                            </div>
-                            <div class="row gx-2">
-                                <div class="col-lg-12" id="remarks" hidden>
-                                    <label class="form-label">Remarks <span class="text-danger">*</span></label>
-                                    <textarea name="remarks" id="remarks" class="form-control"></textarea>
+                                <div class="col-lg-4 col-md-6">
+                                    <label class="form-label">Driver <span class="text-danger">*</span></label>
+                                    <select class="form-select" name="driver" required>
+                                        <option selected disabled value="">Select Option</option>
+                                        {% for list in drivers %}
+                                        <option value="{{list.No_}}">{{list.First_Name}} {{list.Middle_Name}}
+                                            {{list.Last_Name}}</option>
+                                        {% endfor %}
+                                    </select>
                                 </div>
                             </div>
-                            <button type="submit" id="sasa" class="btn btn-success my-3">Add Report</button>
+                            <div class="row gx-2">
+                                <div class="col-lg-12">
+                                    <label class="form-label">Remarks <span class="text-danger">*</span></label>
+                                    <textarea name="remarks" class="form-control"></textarea>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success my-3">Submit</button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Modify Consumption -->
-        <div class="modal fade" id="modifyConsumption" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        <div class="modal fade" id="staticVehicle" data-bs-keyboard="false" tabindex="-1"
             aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
                 <div class="modal-content">
-                    <div class="modal-header">Fuel Consumption card
+                    <div class="modal-header">Vehicle Fuel Consumption card
                         </h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                             aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form class="myForm needs-validation" action="" method="post" novalidate>
+                        <form class="myForm" action="{% url 'FnFuelConsumptionVehicle' %}" method="post" novalidate>
                             {% csrf_token %}
                             <input type="hidden" name="fuelNo" value="">
-                            <input type="hidden" name="myAction" value="modify">
+                            <input type="hidden" name="myAction" value="insert">
+                            <input type="hidden" name="assetType" value="1">
                             <div class="row gx-2">
-                                <div class="col-lg-4 col-md-6">
+                                <div class="col-md-4">
                                     <label class="form-label">Asset Type<span class="text-danger">*</span></label>
-                                    <select class="form-select" name="assetType" id="assetType" required>
+                                    <select class="form-select" name="assetType" required>
                                         <option selected disabled value="0">Select Option</option>
-                                        <option value="1">Generator</option>
                                         <option value="2">Vehicle</option>
                                         <option value="3">Motor-cycle</option>
                                         <option value="4">Tractor</option>
                                     </select>
                                 </div>
-                                <div class="col-lg-4 col-md-6" id="fuelCardType" hidden>
+                                <div class="col-lg-4 col-md-6">
                                     <label class="form-label">Fuel Card Type<span class="text-danger">*</span></label>
                                     <select class="form-select" name="fuelCardType" required>
                                         <option selected disabled value="0">Select Option</option>
@@ -536,12 +261,13 @@
                                         <option value="2">General(Local Fueling)</option>
                                     </select>
                                 </div>
-                                <div class="col-lg-4 col-md-6" id="receiptNo" hidden>
+                                <div class="col-lg-4 col-md-6">
                                     <label class="form-label">Receipt No.</label>
                                     <input type="text" name="receiptNo" class="form-control" placeholder="">
                                 </div>
-
-                                <div class="col-lg-4 col-md-6" id="fuel-vehicle" hidden>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4 col-md-6">
                                     <label class="form-label">Vehicle <span class="text-danger">*</span></label>
                                     <select class="form-select" name="vehicle" required>
                                         <option selected disabled value="">Select Option</option>
@@ -550,48 +276,17 @@
                                         {% endfor %}
                                     </select>
                                 </div>
-                                <div class="col-lg-4 col-md-6" id="fuel-generator" hidden>
-                                    <label class="form-label">Generator <span class="text-danger">*</span></label>
-                                    <select class="form-select" name="generator" required>
-                                        <option selected disabled value="">Select Option</option>
-                                        {% for list in generators %}
-                                        <option value="{{list.No_}}"> {{list.Description}}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <div class="col-lg-4 col-md-6" id="fuel-Driver" hidden>
+                                <div class="col-lg-4 col-md-6">
                                     <label class="form-label">Driver <span class="text-danger">*</span></label>
                                     <select class="form-select" name="driver" required>
                                         <option selected disabled value="">Select Option</option>
                                         {% for list in drivers %}
-                                        <option value="{{list.No_}}">{{list.First_Name}} {{list.Middle_Name}} {{list.Last_Name}}</option>
+                                        <option value="{{list.No_}}">{{list.First_Name}} {{list.Middle_Name}}
+                                            {{list.Last_Name}}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
-                                <div class="col-lg-4 col-md-6" id="fuel-currenthours" hidden>
-                                    <label class="form-label">Current Hours Reading <span
-                                            class="text-danger">*</span></label>
-                                    <input type="text" name="currenthoursReadings" class="form-control"
-                                        placeholder="0.00 hrs">
-
-                                </div>
-                                <div class="col-lg-4 col-md-6" id="fuel-distanceKM" hidden>
-                                    <label class="form-label">Kilometers Covered<span
-                                            class="text-danger">*</span></label>
-                                    <input type="text" name="kMCovered" class="form-control" placeholder="0">
-
-                                </div>
-                            </div>
-                            <div class="row gx-2">
-                                <div class="col-lg-3 col-md-6" id="fuelType" hidden>
-                                    <label class="form-label">Fuel Type <span class="text-danger">*</span></label>
-                                    <select class="form-select" name="fuelType" required>
-                                        <option selected disabled value="">Select Option</option>
-                                        <option value="1">Petrol</option>
-                                        <option value="2">Diesel</option>
-                                    </select>
-                                </div>
-                                <div class="col-lg-3 col-md-6" id="fuelStation" hidden>
+                                <div class="col-lg-4 col-md-6">
                                     <label class="form-label">Fuel Station<span class="text-danger">*</span></label>
                                     <select class="form-select" name="fuelStation" required>
                                         <option selected disabled value="">Select Option</option>
@@ -600,68 +295,48 @@
                                         {% endfor %}
                                     </select>
                                 </div>
-                                <div class="col-lg-3 col-md-6" id="costPerLtr" hidden>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4 col-md-6">
                                     <label class="form-label">Cost Per Litre <span class="text-danger">*</span></label>
                                     <input type="number" name="costPerLtr" class="form-control" placeholder="0.00">
                                 </div>
-                                <div class="col-lg-3 col-md-6" id="quantityInLtrs" hidden>
+                                <div class="col-lg-4 col-md-6">
                                     <label class="form-label">Quantity in Litres <span
                                             class="text-danger">*</span></label>
                                     <input type="number" name="quantityInLtrs" class="form-control" placeholder="0">
                                 </div>
+                                <div class="col-lg-4 col-md-6">
+                                    <label class="form-label">Fuel Type <span class="text-danger">*</span></label>
+                                    <select class="form-select" name="fuelType" required>
+                                        <option selected disabled value="0">Select Option</option>
+                                        <option value="1">Petrol</option>
+                                        <option value="2">Diesel</option>
+                                    </select>
+                                </div>
+
                             </div>
                             <div class="row gx-2">
-                                <div class="col-lg-12" id="remarks" hidden>
-                                    <label class="form-label">Remarks <span class="text-danger">*</span></label>
-                                    <textarea name="remarks" id="remarks" class="form-control"></textarea>
+                                <div class="col-lg-12 col-md-12">
+                                    <label class="form-label">Kilometers Covered<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" name="kMCovered" class="form-control" placeholder="0">
+
                                 </div>
                             </div>
-                            <button type="submit" id="sasa" class="btn btn-success my-3">Add Report</button>
+                            <div class="row gx-2">
+                                <div class="col-lg-12">
+                                    <label class="form-label">Remarks <span class="text-danger">*</span></label>
+                                    <textarea name="remarks" class="form-control"></textarea>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success my-3">Submit</button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 
 </section>
-<script>
-    $(document).ready(function () {
-        $('#assetType').on('change', function () {
-            if (this.value == '1') {
-                $('#fuel-vehicle').prop('hidden', true);
-                $('#fuel-distanceKM').prop('hidden', true);
-                $('#fuelCardType').prop('hidden', false);
-                $('#receiptNo').prop('hidden', false);
-                $('#fuel-generator').prop('hidden', false);
-                $('#fuel-Driver').prop('hidden', false);
-                $('#fuel-currenthours').prop('hidden', false);
-                $('#fuelType').prop('hidden', false);
-                $('#fuelStation').prop('hidden', false);
-                $('#costPerLtr').prop('hidden', false);
-                $('#quantityInLtrs').prop('hidden', false);
-                $('#remarks').prop('hidden', false);
-
-            }
-            else if (this.value == '2' || this.value == '3' || this.value == '4') {
-                $('#fuel-generator').prop('hidden', true);
-                $('#fuel-currenthours').prop('hidden', true);
-                $('#fuel-Driver').prop('hidden', false);
-                $('#fuelCardType').prop('hidden', false);
-                $('#receiptNo').prop('hidden', false);
-                $('#fuel-vehicle').prop('hidden', false);
-                $('#fuel-Driver').prop('hidden', false);
-                $('#fuel-distanceKM').prop('hidden', false);
-                $('#fuelType').prop('hidden', false);
-                $('#fuelStation').prop('hidden', false);
-                $('#costPerLtr').prop('hidden', false);
-                $('#quantityInLtrs').prop('hidden', false);
-                $('#remarks').prop('hidden', false);
-            }
-
-        })
-    });
-</script>
-
 {% endblock %}

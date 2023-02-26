@@ -3,9 +3,9 @@
 {% load static %}
 {% block main %}
 <section class="dash2">
-    <div class="content-wrapper">
+    <div class="content-wrapper pb-5">
         <div class="d-xl-flex justify-content-between align-items-start">
-            <h2 class="text-dark font-weight-bold mb-2"> Speed Governor Report
+            <h2 class="text-dark font-weight-bold mb-2"> Fuel Consumption Report
         </div>
 
         <!--alert -->
@@ -153,23 +153,19 @@
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Quantity(Ltrs)</label>
-                        <input type="text" class="form-control" placeholder="{{res.Quantityltrs}}Ltr/s"
-                        readonly>
+                        <input type="text" class="form-control" placeholder="{{res.Quantityltrs}}Ltr/s" readonly>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Amount/Ltr</label>
-                        <input type="text" class="form-control" placeholder="KES{{res.Priceperltr}}"
-                        readonly>
+                        <input type="text" class="form-control" placeholder="KES{{res.Priceperltr}}" readonly>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Total Paid:</label>
-                        <input type="text" class="form-control" placeholder="KES{{res.TotalPayable}}"
-                            readonly>
+                        <input type="text" class="form-control" placeholder="KES{{res.TotalPayable}}" readonly>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Remarks:</label>
-                        <input type="text" class="form-control" placeholder="{{res.Remarks}}"
-                            readonly>
+                        <input type="text" class="form-control" placeholder="{{res.Remarks}}" readonly>
                     </div>
                 </form>
             </div>

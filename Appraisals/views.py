@@ -32,18 +32,19 @@ class Appraisals(UserObjectMixins,View):
             full_name =await sync_to_async(request.session.__getitem__)('full_name')
             SupervisorNo = await sync_to_async(request.session.__getitem__)('SupervisorNo')
             supervisor_appraisal = []
+            approved = []
             await sync_to_async(request.session.__setitem__)('Supervisor', False)
             await sync_to_async(request.session.save)()
 
             async with aiohttp.ClientSession() as session:
-                get_appraisals = asyncio.ensure_future(self.simple_one_filtered_data(session,
-                                            '/QyEmployeeAppraisal','AppraiseeID','eq',User_ID))
+                get_appraisals = asyncio.ensure_future(self.simple_fetch_data(session,
+                                            f'/QyEmployeeAppraisal?$filter=AppraiserID%20eq%20%27{User_ID}%27'))
                 
                 get_periods = asyncio.ensure_future(self.simple_fetch_data(session,
-                                            '/QyAppraisalPeriod'))
+                                            '/QyAppraisalPeriod?$filter=Active%20eq%20true'))
                 supervisor = asyncio.ensure_future(self.simple_double_filtered_data(session,
                                         '/QyEmployeeAppraisal','DocumentStage','eq','Supervisor',
-                                            'and','SupervisorNo','eq',SupervisorNo))
+                                            'and','AppraiserNo','eq',SupervisorNo))
                 response = await asyncio.gather(get_appraisals,
                                                     get_periods,
                                                         supervisor)
@@ -51,10 +52,11 @@ class Appraisals(UserObjectMixins,View):
 
                 open= [x for x in response[0] if x['Status'] == 'Open'] # type: ignore
                 pending= [x for x in response[0] if x['Status'] == 'Pending Approval'] # type: ignore
-                approved= [x for x in response[0] if x['Status'] == 'Released'] # type: ignore
+                approved = [x for x in response[0] if x['Status'] == 'Released'] # type: ignore
                 completed= [x for x in response[0] if x['Status'] == 'Completed'] # type: ignore
                 periods = [x for x in response[1]] # type: ignore
                 supervisor_appraisal = [x for x in response[2]] # type: ignore
+   
                 if len(supervisor_appraisal) > 0:
                     await sync_to_async(request.session.__setitem__)('Supervisor', True)
                     await sync_to_async(request.session.save)()
@@ -89,13 +91,20 @@ class Appraisals(UserObjectMixins,View):
             appraisalNo = request.POST.get('appraisalNo')
             appraisalPeriod = request.POST.get('appraisalPeriod')
             Employee_No_ = await sync_to_async(request.session.__getitem__)('Employee_No_')
-            # to be removed
-            remarks = 'None'
             myAction = request.POST.get('myAction')
+            appraisee_remarks = request.POST.get('appraisee_remarks')
+            appraiser_remarks = request.POST.get('appraiser_remarks')
+            manager_remarks = request.POST.get('manager_remarks')
             
-            response = self.make_soap_request(soap_headers,'FnAppraisalForm',
-                                        appraisalNo, appraisalPeriod,
-                                            Employee_No_, remarks, myAction )
+            response = self.make_soap_request(soap_headers,
+                                                'FnAppraisalForm',
+                                                    appraisalNo,
+                                                        appraisalPeriod,
+                                                            Employee_No_,
+                                                                myAction,
+                                                                    appraisee_remarks,
+                                                                        appraiser_remarks,
+                                                                            manager_remarks)
             if response !=True and response !='0':
                 messages.success(request, 'success')
                 return redirect('AppraisalDetails', pk=response)
@@ -117,11 +126,11 @@ class AppraisalDetails(UserObjectMixins, View):
             targets = []  
             attributes = []
             allFiles = []   
-            trainings = []       
+            trainings = []  
+            print(pk)     
             async with aiohttp.ClientSession() as session:
-                get_appraisal = asyncio.ensure_future(self.simple_double_filtered_data(session,
-                                            '/QyEmployeeAppraisal','AppraisalNo','eq',pk,
-                                                'and','AppraiseeID','eq',User_ID))
+                get_appraisal = asyncio.ensure_future(self.simple_fetch_data(session,
+                                            f'/QyEmployeeAppraisal?$filter=AppraisalNo%20eq%20%27{pk}%27'))
                 get_targets = asyncio.ensure_future(self.simple_one_filtered_data(session,
                                                         '/QyPersonalTarget',
                                                             'AppraisalNo','eq',pk))
@@ -167,59 +176,7 @@ class AppraisalDetails(UserObjectMixins, View):
         }
             
         return render(request, 'appraisalDetails.html', ctx)
-    
-class SupervisorAppraisal(UserObjectMixins,View):
-    async def get(self,request, pk):
-        try:
-            User_ID = await sync_to_async(request.session.__getitem__)('User_ID')
-            driver_role =await sync_to_async(request.session.__getitem__)('driver_role')
-            TO_role =await sync_to_async(request.session.__getitem__)('TO_role')
-            full_name =await sync_to_async(request.session.__getitem__)('full_name')
-            res = {}
-            targets = []  
-            attributes = []
-            allFiles = []
-            ctx = {}
-            async with aiohttp.ClientSession() as session:
-                get_appraisal = asyncio.ensure_future(self.simple_double_filtered_data(session,
-                                            '/QyEmployeeAppraisal','AppraisalNo','eq',pk,
-                                                'and','AppraiseeID','eq',User_ID))
-                get_targets = asyncio.ensure_future(self.simple_one_filtered_data(session,
-                                                        '/QyPersonalTarget',
-                                                            'AppraisalNo','eq',pk))
-                get_attributes = asyncio.ensure_future(self.simple_one_filtered_data(session,
-                                                        '/QyAttributes',
-                                                            'AppraisalNo','eq',pk))
-                get_attachments = asyncio.ensure_future(self.simple_one_filtered_data(session,
-                                                        '/QyDocumentAttachments',
-                                                            'No_','eq',pk))
-                response = await asyncio.gather(get_appraisal,
-                                                    get_targets,
-                                                        get_attributes,
-                                                            get_attachments)
             
-            
-                for appraisal in response[0]: # type: ignore
-                    res = appraisal
-                targets = [x for x in response[1]] # type: ignore
-                attributes = [x for x in response[2]] # type: ignore
-                allFiles = [x for x in response[3]] # type: ignore
-                ctx = {
-                    "res": res,
-                    "today": self.todays_date,
-                    'full': full_name,
-                    'driver_role':driver_role,
-                    'TO_role':TO_role,
-                    'targets':targets,
-                    'attributes':attributes,
-                    "file": allFiles
-                }
-        except Exception as e:
-            logging.exception(e)
-            messages.error(request, f'{e}')
-            return redirect('Appraisals')
-        return render(request,'supervisor.html',ctx)
-        
 class AppraisalAttachments(UserObjectMixins,View):
     def post(self, request, pk):
         try:
@@ -291,9 +248,10 @@ class FnAppraisalGoals(UserObjectMixins,View):
             weight = float(request.POST.get('weight'))
             unitOfMeasureORPerformanceIndicator = request.POST.get('unitOfMeasureORPerformanceIndicator')
             selfRating = request.POST.get('selfRating')
-            supervisorRating = request.POST.get('supervisorRating')
+            supervisorRating = request.POST.get('supervisor_score')
             User_ID = request.session['User_ID']
             myAction = request.POST.get('myAction')
+            print(supervisorRating)
             
             if not selfRating:
                 selfRating=0
@@ -327,6 +285,7 @@ class FnAppraisalTrainingAndDevelopment (UserObjectMixins,View):
             commentsBySupervisor = request.POST.get('commentsBySupervisor')
             User_ID = request.session['User_ID']
             myAction = request.POST.get('myAction')
+            print(commentsBySupervisor)
             if not commentsBySupervisor:
                 commentsBySupervisor = ''
 
@@ -347,8 +306,13 @@ class FnGetAppraisalAttributes(UserObjectMixins,View):
     def post(self,request,pk):
         try:
             soap_headers = request.session['soap_headers']
+            supervisorAppraisalScore = float(request.POST.get('supervisorAppraisalScore'))
+            LineNo = int(request.POST.get('LineNo'))
+            myAction = request.POST.get('myAction')
             response = self.make_soap_request(soap_headers,
-                                              'FnGetAppraisalAttributes',pk)
+                                              'FnGetAppraisalAttributes',pk,
+                                                supervisorAppraisalScore,
+                                                    LineNo,myAction)
             if response == True:
                 messages.success(request,'success')
                 return redirect('AppraisalDetails', pk=pk)
