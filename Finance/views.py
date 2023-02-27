@@ -15,6 +15,7 @@ from zeep import Client
 from zeep.transports import Transport
 from requests.auth import HTTPBasicAuth
 from django.views import View
+from myRequest.views import UserObjectMixins
 
 # Create your views here.
 
@@ -276,19 +277,13 @@ def DeleteImprestAttachment(request, pk):
     return redirect('IMPDetails', pk=pk)
 
 
-def FnRequestPaymentApproval(request, pk):
-    Username = request.session['User_ID']
-    Password = request.session['soap_headers']
-    AUTHS = Session()
-    AUTHS.auth = HTTPBasicAuth(Username, Password['password'])
-    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
-    if request.method == 'POST':
+class FnRequestPaymentApproval(UserObjectMixins,View):
+    def post(self,request,pk):
         try:
+            soap_headers = request.session['soap_headers']
             requisitionNo = request.POST.get('requisitionNo')
-        except ValueError as e:
-            return redirect('IMPDetails', pk=pk)
-        try:
-            response = CLIENT.service.FnRequestPaymentApproval(
+
+            response = self.make_soap_request(soap_headers,'FnRequestPaymentApproval',
                 request.session['Employee_No_'], requisitionNo)
             messages.success(request, "Approval Request Sent Successfully")
             print(response)
@@ -296,8 +291,8 @@ def FnRequestPaymentApproval(request, pk):
         except Exception as e:
             messages.error(request, f'{e}')
             print(e)
-            return redirect('auth')
-    return redirect('IMPDetails', pk=pk)
+            return redirect('IMPDetails', pk=pk)
+
 
 
 def FnCancelPaymentApproval(request, pk):
@@ -568,19 +563,13 @@ def FnGenerateImprestSurrenderReport(request, pk):
     return redirect('IMPSurrender', pk=pk)
 
 
-def SurrenderApproval(request, pk):
-    Username = request.session['User_ID']
-    Password = request.session['soap_headers']
-    AUTHS = Session()
-    AUTHS.auth = HTTPBasicAuth(Username, Password['password'])
-    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
-    if request.method == 'POST':
+class  SurrenderApproval(UserObjectMixins, View):
+    def post(self, request,pk):
         try:
+            soap_headers = request.session['soap_headers']
             requisitionNo = request.POST.get('requisitionNo')
-        except ValueError as e:
-            return redirect('IMPSurrender', pk=pk)
-        try:
-            response = CLIENT.service.FnRequestPaymentApproval(
+
+            response = self.make_soap_request(soap_headers,'FnRequestPaymentApproval',
                 request.session['Employee_No_'], requisitionNo)
             messages.success(request, "Approval Request Sent Successfully")
             print(response)
@@ -588,7 +577,7 @@ def SurrenderApproval(request, pk):
         except Exception as e:
             messages.error(request, f'{e}')
             print(e)
-    return redirect('IMPSurrender', pk=pk)
+            return redirect('IMPSurrender', pk=pk)
 
 
 def FnCancelSurrenderApproval(request, pk):
@@ -785,19 +774,13 @@ class ClaimAttachment(UserObjectMixin,View):
             messages.error(request, f'{e}')
             return redirect('ClaimDetail', pk=pk)
 
-def ClaimApproval(request, pk):
-    Username = request.session['User_ID']
-    Password = request.session['soap_headers']
-    AUTHS = Session()
-    AUTHS.auth = HTTPBasicAuth(Username, Password['password'])
-    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
-    if request.method == 'POST':
+class ClaimApproval(UserObjectMixins, View):
+    def post(self,request,pk):
         try:
+            soap_headers = request.session['soap_headers']
             requisitionNo = request.POST.get('requisitionNo')
-        except ValueError as e:
-            return redirect('ClaimDetail', pk=pk)
-        try:
-            response = CLIENT.service.FnRequestPaymentApproval(
+
+            response = self.make_soap_request(soap_headers,'FnRequestPaymentApproval',
                 request.session['Employee_No_'], requisitionNo)
             messages.success(request, "Approval Request Sent Successfully")
             print(response)
@@ -805,7 +788,7 @@ def ClaimApproval(request, pk):
         except Exception as e:
             messages.error(request, f'{e}')
             print(e)
-    return redirect('ClaimDetail', pk=pk)
+            return redirect('ClaimDetail', pk=pk)
 
 
 def DeleteClaimAttachment(request, pk):

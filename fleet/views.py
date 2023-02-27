@@ -863,42 +863,34 @@ def DeleteInspectionAttachment(request, pk):
     return redirect('VehicleInspectionDetails', pk=pk)
 
 
-def FnSubmitVehicleInspection(request, pk):
-    Username = request.session['User_ID']
-    Password = request.session['soap_headers']
-    AUTHS = Session()
-    AUTHS.auth = HTTPBasicAuth(Username, Password['password'])
-    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
-
-    if request.method == 'POST':
+class  FnSubmitVehicleInspection(UserObjectMixins, View):
+    def post(self,request,pk):
         try:
+            soap_headers = request.session['soap_headers']
             insNo = request.POST.get('insNo')
             myUserId = request.session['User_ID']
-        except ValueError as e:
+
+            response = self.make_soap_request(soap_headers,'FnSubmitVehicleInspection',
+                                              insNo, myUserId)
+            if response == True:
+                messages.success(request, "Request Successful")
+                return redirect('VehicleInspectionDetails', pk=pk)
+            messages.error(request, "Request Successful")
             return redirect('VehicleInspectionDetails', pk=pk)
 
-        try:
-            response = CLIENT.service.FnSubmitVehicleInspection(insNo, myUserId)
-            messages.success(request, "Request Successfull")
-
         except Exception as e:
             messages.error(request, f'{e}')
             print(e)
-            return redirect('auth')
-    return redirect('VehicleInspectionDetails', pk=pk)
+            return redirect('VehicleInspectionDetails', pk=pk)
 
-def Submit2_TO(request, pk):
-    Username = request.session['User_ID']
-    Password = request.session['soap_headers']
-    AUTHS = Session()
-    AUTHS.auth = HTTPBasicAuth(Username, Password['password'])
-    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
-
-    if request.method == 'POST':
+class Submit2_TO(UserObjectMixins, View):
+    def post(self,request,pk):
         try:
+            soap_headers = request.session['soap_headers']
             myUserId = request.session['User_ID']
 
-            response = CLIENT.service.FnSubmitVehicleInspection(pk, myUserId)
+            response = self.make_soap_request(soap_headers,'FnSubmitVehicleInspection',
+                                              pk, myUserId)
             if response == True:
                 messages.success(request, "Submitted")
                 return redirect('VehicleInspectionDetails', pk=pk)
@@ -908,21 +900,16 @@ def Submit2_TO(request, pk):
         except Exception as e:
             messages.error(request, f'{e}')
             print(e)
-            return redirect('auth')
-    return redirect('VehicleInspectionDetails', pk=pk)
+            return redirect('VehicleInspectionDetails', pk=pk)
 
-def FnMarkInspected(request, pk):
-    Username = request.session['User_ID']
-    Password = request.session['soap_headers']
-    AUTHS = Session()
-    AUTHS.auth = HTTPBasicAuth(Username, Password['password'])
-    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
-
-    if request.method == 'POST':
+class FnMarkInspected(UserObjectMixins, View):
+    def post(self,request,pk):
         try:
+            soap_headers = request.session['soap_headers']
             myUserId = request.session['User_ID']
 
-            response = CLIENT.service.FnMarkInspected(pk, myUserId)
+            response = self.make_soap_request(soap_headers,'FnMarkInspected',
+                                              pk, myUserId)
             if response == True:
                 messages.success(request, "Submitted")
                 return redirect('vehicleInspection')
@@ -932,20 +919,16 @@ def FnMarkInspected(request, pk):
         except Exception as e:
             messages.error(request, f'{e}')
             print(e)
-            return redirect('dashboard')
-    return redirect('vehicleInspection')
+            return redirect('vehicleInspection')
 
-def FnBookForInspection(request, pk):
-    Username = request.session['User_ID']
-    Password = request.session['soap_headers']
-    AUTHS = Session()
-    AUTHS.auth = HTTPBasicAuth(Username, Password['password'])
-    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
-    if request.method == 'POST':
+class FnBookForInspection(UserObjectMixins, View):
+    def post(self,request,pk):
         try:
+            soap_headers = request.session['soap_headers']
             myUserId = request.session['User_ID']
             
-            response = CLIENT.service.FnBookForInspection(pk, myUserId)
+            response = self.make_soap_request(soap_headers,'FnBookForInspection',
+                                              pk, myUserId)
             if response == True:
                 messages.success(request, "Booking Successful")
                 return redirect('vehicleInspection')
@@ -955,8 +938,7 @@ def FnBookForInspection(request, pk):
         except Exception as e:
             messages.error(request, f'{e}')
             print(e)
-            return redirect('auth')
-    return redirect('vehicleInspection')
+            return redirect('vehicleInspection')
 
 def FnCancelBooking(request, pk):
     if request.method == 'POST':
@@ -1446,33 +1428,22 @@ def DeleteTransportRequestAttachment(request, pk):
     return redirect('TransportRequestDetails', pk=pk)
 
 
-def FnSubmitTravelRequest(request, pk):
-    Username = request.session['User_ID']
-    Password = request.session['soap_headers']
-    AUTHS = Session()
-    AUTHS.auth = HTTPBasicAuth(Username, Password['password'])
-    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
-
-    tReqNo = ""
-
-    if request.method == 'POST':
+class FnSubmitTravelRequest(UserObjectMixins, View):
+    def post(self,request,pk):
         try:
+            soap_headers = request.session['soap_headers']
             myUserId = request.session['User_ID']
             tReqNo = request.POST.get('tReqNo')
-        except KeyError:
-            messages.info(request, "Session Expired. Please Login")
-            return redirect('auth')
 
-        try:
-            response = config.CLIENT.service.FnSubmitTravelRequests(tReqNo, myUserId)
-            print(response)
-            messages.success(request, 'Request Submitted successfully')
-            return redirect('TransportRequestDetails', pk=pk)
+            response = self.make_soap_request(soap_headers,'FnSubmitTravelRequests',
+                                              tReqNo, myUserId)
+            if response == True:
+                messages.success(request, 'Request Submitted successfully')
+                return redirect('TransportRequestDetails', pk=pk)
         except Exception as e:
             messages.error(request, f'{e}')
             print(e)
             return redirect('TransportRequestDetails', pk=pk)
-    return redirect('TransportRequestDetails', pk=pk)
 
 
         

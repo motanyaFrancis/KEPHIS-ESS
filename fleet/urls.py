@@ -18,12 +18,12 @@ urlpatterns = [
     path('VehicleInspectionDetails/<str:pk>', views.VehicleInspectionDetails.as_view(), name='VehicleInspectionDetails'),
     path('UploadInspectionAttachment/<str:pk>', views.UploadInspectionAttachment, name='UploadInspectionAttachment'),
     path('DeleteInspectionAttachment/<str:pk>', views.DeleteInspectionAttachment, name='DeleteInspectionAttachment'),
-    path('FnSubmitVehicleInspection/<str:pk>', views.FnSubmitVehicleInspection, name='FnSubmitVehicleInspection' ),
-    path('FnBookForInspection/<str:pk>', views.FnBookForInspection, name='FnBookForInspection'),
+    path('FnSubmitVehicleInspection/<str:pk>', views.FnSubmitVehicleInspection.as_view(), name='FnSubmitVehicleInspection' ),
+    path('FnBookForInspection/<str:pk>', views.FnBookForInspection.as_view(), name='FnBookForInspection'),
     path('FnCancelBooking/<str:pk>', views.FnCancelBooking, name='FnCancelBooking'),
     path('InspectionDefects/<str:pk>', views.InspectionDefects, name='InspectionDefects'),
-    path('Submit2_TO/<str:pk>', views.Submit2_TO, name='Submit2_TO'),
-    path('FnMarkInspected/<str:pk>', views.FnMarkInspected, name='FnMarkInspected'),
+    path('Submit2_TO/<str:pk>', views.Submit2_TO.as_view(), name='Submit2_TO'),
+    path('FnMarkInspected/<str:pk>', views.FnMarkInspected.as_view(), name='FnMarkInspected'),
     
     # repair request
     path('vehicleRepairRequest', views.VehicleRepairRequest.as_view(), name='vehicleRepairRequest'),
@@ -42,7 +42,7 @@ urlpatterns = [
     path('FnTravelEmployeeLine/<str:pk>', views.FnTravelEmployeeLine, name='FnTravelEmployeeLine'),
     path('UploadTransportRequestAttachment/<str:pk>', views.UploadTransportRequestAttachment, name='UploadTransportRequestAttachment'),
     path('DeleteTransportRequestAttachment<str:pk>', views.DeleteTransportRequestAttachment, name='DeleteTransportRequestAttachment'),
-    path('FnSubmitTravelRequest/<str:pk>', views.FnSubmitTravelRequest, name='FnSubmitTravelRequest'),
+    path('FnSubmitTravelRequest/<str:pk>', views.FnSubmitTravelRequest.as_view(), name='FnSubmitTravelRequest'),
     
     # Accidents
     path('Accidents', views.Accidents.as_view(), name='Accidents'),

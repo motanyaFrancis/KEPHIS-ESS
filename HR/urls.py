@@ -5,7 +5,7 @@ from . import views
 urlpatterns = [
     path('leave', views.Leave_Request.as_view(), name="leave"),
     path('leave/detail/<str:pk>', views.LeaveDetail.as_view(), name='LeaveDetail'),
-    path('LeaveApprove/<str:pk>', views.LeaveApproval, name='LeaveApprove'),
+    path('LeaveApprove/<str:pk>', views.LeaveApproval.as_view(), name='LeaveApprove'),
     path('LeaveCancel/<str:pk>', views.LeaveCancelApproval, name='LeaveCancel'),
     path('FnGenerateLeave/<str:pk>', views.FnGenerateLeaveReport,name='FnGenerateLeaveReport'),
     path("DeleteLeaveAttachment/<str:pk>",views.DeleteLeaveAttachment,name ="DeleteLeaveAttachment"),

@@ -216,30 +216,22 @@ def DeleteLeaveAttachment(request, pk):
     return redirect('LeaveDetail', pk=pk)
 
 
-def LeaveApproval(request, pk):
-    employeeNo = request.session['Employee_No_']
-    applicationNo = ""
-    Username = request.session['User_ID']
-    Password = request.session['password']
-    AUTHS = Session()
-    AUTHS.auth = HTTPBasicAuth(Username, Password)
-    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
-    if request.method == 'POST':
+class  LeaveApproval(UserObjectMixins,View):
+    def post(self, request, pk):
         try:
+            soap_headers = request.session['soap_headers']
+            employeeNo = request.session['Employee_No_']
             applicationNo = request.POST.get('applicationNo')
-        except ValueError as e:
-            messages.error(request, "Not sent. Invalid Input, Try Again!!")
-            return redirect('LeaveDetail', pk=pk)
-    try:
-        response = CLIENT.service.FnRequestLeaveApproval(
+
+            response = self.make_soap_request(soap_headers,'FnRequestLeaveApproval',
             employeeNo, applicationNo)
-        messages.success(request, "Approval Request Successfully Sent!!")
-        print(response)
-        return redirect('LeaveDetail', pk=pk)
-    except Exception as e:
-        messages.error(request, f'{e}')
-        print(e)
-    return redirect('LeaveDetail', pk=pk)
+            if response == True:
+                messages.success(request, "Approval Request Successfully Sent!!")
+                return redirect('LeaveDetail', pk=pk)
+        except Exception as e:
+            messages.error(request, f'{e}')
+            print(e)
+            return redirect('LeaveDetail', pk=pk)
 
 
 def LeaveCancelApproval(request, pk):
