@@ -31,7 +31,7 @@ class Dashboard(UserObjectMixins, View):
             full_name = await sync_to_async(request.session.__getitem__)('full_name')
             driver_role = await sync_to_async(request.session.__getitem__)('driver_role')
             TO_role =await sync_to_async(request.session.__getitem__)('TO_role')
-            
+            print('Supervisor:',await sync_to_async(request.session.__getitem__)('SupervisorNo'))
             empAppraisal = ''
             pending_approval_count = 0
             total_leave =0

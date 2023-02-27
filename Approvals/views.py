@@ -14,6 +14,7 @@ from zeep import Client
 from zeep.transports import Transport
 from requests.auth import HTTPBasicAuth
 from django.views import View
+from myRequest.views import UserObjectMixins
 
 
 # Create your views here.
@@ -278,67 +279,48 @@ class ApproveDetails(UserObjectMixin, View):
         return render(request, 'approveDetails.html', ctx)
 
 
-def All_Approved(request, pk):
-    Username = request.session['User_ID']
-    Password = request.session['password']
-    entryNo = ''
-    approvalComments = ""
-    AUTHS = Session()
-    AUTHS.auth = HTTPBasicAuth(Username, Password)
-    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
-    if request.method == 'POST':
+class All_Approved(UserObjectMixins, View):
+    def post(self,request,pk):
         try:
+            soap_headers = request.session['soap_headers']
             entryNo = int(request.POST.get('entryNo'))
             myUserID = request.session['User_ID']
             myAction = 'approve'
             documentNo = pk
-        except KeyError:
-            messages.info(request, "Session Expired. Please Login")
-            return redirect('auth')
-        try:
-            response = CLIENT.service.FnDocumentApproval(
-                entryNo, documentNo, myUserID, approvalComments, myAction)
-            messages.success(request, "Document Approval successful")
-            print(response)
+
+            response = self.make_soap_request(soap_headers,'FnDocumentApproval',
+                entryNo, documentNo, myUserID, '', myAction)
+            if response == True:
+                messages.success(request, "Document Approval successful")
+                return redirect('approve')
+            messages.error(request, f"{response}")
             return redirect('approve')
         except Exception as e:
             print(e)
             messages.info(request, f'{e}')
             return redirect('ApproveData', pk=pk)
-    return redirect('ApproveData', pk=pk)
 
 
-def Rejected(request, pk):
-    Username = request.session['User_ID']
-    Password = request.session['password']
-    entryNo = ''
-    approvalComments = ""
-    AUTHS = Session()
-    AUTHS.auth = HTTPBasicAuth(Username, Password)
-    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
-    if request.method == 'POST':
+class Rejected(UserObjectMixins, View):
+    def post(self,request,pk):
         try:
+            soap_headers = request.session['soap_headers']
             entryNo = int(request.POST.get('entryNo'))
             approvalComments = request.POST.get('approvalComments')
             myAction = 'reject'
             documentNo = pk
             userID = request.session['User_ID']
-        except ValueError:
-            messages.error(request, "Missing Input")
-            return redirect('ApproveData', pk=pk)
-        except KeyError:
-            messages.info(request, "Session Expired. Please Login")
-            return redirect('auth')
-        try:
-            response = CLIENT.service.FnDocumentApproval(
+            
+            response = self.make_soap_request(soap_headers,'FnDocumentApproval',
                 entryNo, documentNo, userID, approvalComments, myAction)
-            messages.success(request, "Reject Document Approval successful")
-            print(response)
+            if response == True:
+                messages.success(request, "Reject Document Approval successful")
+                return redirect('approve')
+            messages.success(request, f"{response}")
             return redirect('approve')
         except Exception as e:
             messages.info(request, f'{e}')
             return redirect('ApproveData', pk=pk)
-    return redirect('ApproveData', pk=pk)
 
 def viewDocs(request,pk,id):
     if request.method == 'POST':

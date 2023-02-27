@@ -267,9 +267,6 @@
                             <form action="{% url 'FnGetAppraisalAttributes' res.AppraisalNo %}" method="post"
                                 style="display: inline-block;">
                                 {% csrf_token %}
-                                <input type="hidden" name="supervisorAppraisalScore" value="0">
-                                <input type="hidden" name="LineNo" value="0">
-                                <input type="hidden" name="myAction" value="insert">
                                 <button class="btn  btn-success my-2" type="submit"> <i class="las la-plus text-white"
                                         style="font-size:15px;"></i> Get Attributes
                                 </button>
@@ -323,7 +320,8 @@
                                                         data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <form action="{% url 'FnGetAppraisalAttributes' res.AppraisalNo %}"
+                                                    <form
+                                                        action="{% url 'FnsupervisorAppraisalScore' res.AppraisalNo %}"
                                                         method="post" novalidate>
                                                         {% csrf_token %}
                                                         <input type="hidden" name="LineNo" value="{{attribute.LineNo}}">
@@ -331,8 +329,21 @@
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <label class="form-label">Supervisor Score</label>
-                                                                <input type="number" class="form-control"
-                                                                    name="supervisorAppraisalScore">
+                                                                <select class="form-select"
+                                                                    name="supervisorAppraisalScore" required>
+                                                                    <option selected disabled value="">--Select--
+                                                                    </option>
+                                                                    <option value="1">Rarely
+                                                                    </option>
+                                                                    <option value="2">Sometimes
+                                                                    </option>
+                                                                    <option value="3">Often
+                                                                    </option>
+                                                                    <option value="4">Most Times
+                                                                    </option>
+                                                                    <option value="5">Always
+                                                                    </option>
+                                                                </select>
                                                             </div>
                                                         </div>
                                                         <button type="submit"

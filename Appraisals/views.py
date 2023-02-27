@@ -38,7 +38,7 @@ class Appraisals(UserObjectMixins,View):
 
             async with aiohttp.ClientSession() as session:
                 get_appraisals = asyncio.ensure_future(self.simple_fetch_data(session,
-                                            f'/QyEmployeeAppraisal?$filter=AppraiserID%20eq%20%27{User_ID}%27'))
+                                            f'/QyEmployeeAppraisal?$filter=AppraiseeID%20eq%20%27{User_ID}%27'))
                 
                 get_periods = asyncio.ensure_future(self.simple_fetch_data(session,
                                             '/QyAppraisalPeriod?$filter=Active%20eq%20true'))
@@ -306,13 +306,8 @@ class FnGetAppraisalAttributes(UserObjectMixins,View):
     def post(self,request,pk):
         try:
             soap_headers = request.session['soap_headers']
-            supervisorAppraisalScore = float(request.POST.get('supervisorAppraisalScore'))
-            LineNo = int(request.POST.get('LineNo'))
-            myAction = request.POST.get('myAction')
             response = self.make_soap_request(soap_headers,
-                                              'FnGetAppraisalAttributes',pk,
-                                                supervisorAppraisalScore,
-                                                    LineNo,myAction)
+                                              'FnGetAppraisalAttributes',pk)
             if response == True:
                 messages.success(request,'success')
                 return redirect('AppraisalDetails', pk=pk)
@@ -385,3 +380,25 @@ class FnSubmitAppraisalToManagerial(UserObjectMixins,View):
             logging.exception(e)
             messages.error(request,f'{e}')
             return redirect('Appraisals')
+        
+class FnsupervisorAppraisalScore(UserObjectMixins,View):
+    def post(self,request,pk):
+        try:
+            soap_headers = request.session['soap_headers']
+            supervisorAppraisalScore = float(request.POST.get('supervisorAppraisalScore'))
+            LineNo = int(request.POST.get('LineNo'))
+            myAction = request.POST.get('myAction')
+            response = self.make_soap_request(soap_headers,
+                                              'FnsupervisorAppraisalScore',
+                                              pk,
+                                              supervisorAppraisalScore,
+                                                LineNo,myAction)
+            if response == True:
+                messages.success(request,'successfully sent')
+                return redirect('AppraisalDetails', pk=pk)
+            messages.error(request,f'{response}')
+            return redirect('AppraisalDetails', pk=pk)
+        except Exception as e:
+            logging.exception(e)
+            messages.error(request,f'{e}')
+            return redirect('AppraisalDetails', pk=pk)
