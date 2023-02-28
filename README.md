@@ -12,7 +12,7 @@ KEPHIS website UX design
 
 ### Live link
 
-Visit the application on https://kmpdc.herokuapp.com/
+Visit the application on http://20.231.15.166:98
 
 ### Setup & Run Instructions
 
@@ -52,3 +52,41 @@ Should you be unable to access the website, have any recommendations and/or ques
 # Passwords to show and hide amount in 2 envelopes
 
 # Tender Stage
+
+
+## Project Installation
+To setup a local development environment:
+
+Create a virtual environment in which to install Python pip packages. With [virtualenv](https://pypi.python.org/pypi/virtualenv),
+```bash
+virtualenv venv            # create a virtualenv for linux/Unix Users
+source venv/bin/activate   # activate the Python virtualenv 
+```
+
+or with [virtualenvwrapper](http://virtualenvwrapper.readthedocs.org/en/latest/),
+```bash
+mkvirtualenv -p python3 {{project_name}}   # create and activate environment
+workon {{project_name}}   # reactivate existing environment
+```
+Install development dependencies,
+```bash
+pip install -r requirements.txt
+```
+make Database Migrations,
+```bash
+python manage.py makemigrations
+```
+Migrate Database,
+```bash
+python manage.py migrate
+```
+
+Run the web application locally,
+```bash
+python manage.py runserver 8000 # 127.0.0.1:8000
+```
+
+Create Superuser,
+```bash
+python manage.py createsuperuser
+```
