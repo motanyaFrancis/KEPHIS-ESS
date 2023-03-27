@@ -15,4 +15,5 @@ urlpatterns = [
     path('FnSubmitAppraisalToSupervisor/<str:pk>',views.FnSubmitAppraisalToSupervisor.as_view(),name='FnSubmitAppraisalToSupervisor'),
     path('FnSubmitAppraisalToManagerial/<str:pk>',views.FnSubmitAppraisalToManagerial.as_view(),name='FnSubmitAppraisalToManagerial'),
     path('FnsupervisorAppraisalScore/<str:pk>',views.FnsupervisorAppraisalScore.as_view(),name='FnsupervisorAppraisalScore'),
+    path('DeleteAppraisalAttachment<str:pk>',views.DeleteAppraisalAttachment.as_view(),name='DeleteAppraisalAttachment'),
 ]
