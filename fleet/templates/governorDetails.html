@@ -17,7 +17,7 @@
                 </div>
             </div>
         </div>
-        
+
 
         <!--alert -->
         {% include 'alerts.html' %}
@@ -147,13 +147,13 @@
                             {% for data in allFiles %}
                             <div class="col-lg-4 col-xl-3">
                                 <div class="file-man-box">
-                                    {% if res.Status == 'Open' %}
-                                    <form action="{% url 'DeleteImprestAttachment' data.No_  %}" method="POST">
+                                    {% if res.DocumentStage == 'Not-Submitted' %}
+                                    <form action="{% url 'DeleteSpeedGovernor' data.No_  %}" method="POST">
                                         {% csrf_token %}
                                         <input type="hidden" name="docID" value="{{data.AuxiliaryIndex2}}">
                                         <input type="hidden" name="tableID" value="{{data.Table_ID}}">
-                                        <button class="file-close" id="file-close"><i
-                                                class="fa fa-times-circle"></i></button>
+                                        <button class="file-close" data-toggle="tooltip" data-placement="top"
+                                            title="Delete File" id="file-close"><i class="fas fa-trash"></i></button>
                                     </form>
                                     {% endif %}
                                     <div class="file-img-box"><img src="../../static/img/logo/f1.png" alt="icon"></div>
@@ -208,8 +208,8 @@
                         aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{% url 'UploadSpeedGovonortAttachment' res.SpeedGovernorNo %}" method="post" class="myForm"
-                        enctype="multipart/form-data">
+                    <form action="{% url 'UploadSpeedGovernorAttachment' res.SpeedGovernorNo %}" method="post"
+                        class="myForm" enctype="multipart/form-data">
                         {% csrf_token %}
                         <div class=" mb-3">
                             <label class="form-label">Attachments</label>

@@ -412,10 +412,12 @@ class VehicleRepairRequest(UserObjectMixin, View):
                 repairInstractionSheet = request.POST.get(
                     'repairInstractionSheet')
                 myAction = request.POST.get('myAction')
+                towingCost= float(request.POST.get('towingCost'))
+                invoiceNo= request.POST.get('invoiceNo')
 
                 response = config.CLIENT.service.FnRepairRequestHeader(
                     reqNo, myUserId, vehicle,  odometerReading, driver,
-                    repairInstractionSheet, myAction,typeOfRepair, costOfRepair)
+                    myAction, typeOfRepair, costOfRepair, invoiceNo, towingCost)
                 if response == True:
                     messages.success(request, "Request Successful")
                     return redirect('vehicleRepairRequest')
@@ -2083,37 +2085,53 @@ class FnSubmitSpeedGovernor(UserObjectMixins,View):
             return redirect('GovernorDetails',pk=pk)
 
 
-def UploadSpeedGovonortAttachment(request, pk):
-    response = ''
-    if request.method == "POST":
-        try:
-            attach = request.FILES.getlist('attachment')
-            tableID = 50024 #52177430
+class UploadSpeedGovernorAttachment(UserObjectMixin, View):
+    def post(self, request, pk):
+        response = ''
+        if request.method == "POST":
+            try:
+                attach = request.FILES.getlist('attachment')
+                tableID = 50024 #52177430
 
-            for files in attach:
+                for files in attach:
 
-                fileName = request.FILES['attachment'].name
-                attachment = base64.b64encode(files.read())
-                
-                response = config.CLIENT.service.FnUploadAttachedDocument(
-                    pk, fileName, attachment, tableID,
-                    request.session['User_ID'])
-                
+                    fileName = request.FILES['attachment'].name
+                    attachment = base64.b64encode(files.read())
+                    
+                    response = config.CLIENT.service.FnUploadAttachedDocument(
+                        pk, fileName, attachment, tableID,
+                        request.session['User_ID'])
+                    
+                    if response == True:
+                        messages.success(request, "File(s) Upload Successful")
+                        return redirect('GovernorDetails', pk=pk)
+                    
+                    else:
+                        messages.error(request, "Failed, Try Again")
+                        return redirect('GovernorDetails', pk=pk)
+                    
+            except Exception as e:
+                messages.error(request, "Oooops!!! something went Wrong!!!")
+                print(e)
+
+        return redirect('GovernorDetails', pk=pk)
+
+class DeleteSpeedGovernor(UserObjectMixin, View):
+    def post(self, request, pk):
+        if request.method == "POST":
+            docID = int(request.POST.get('docID'))
+            tableID = int(request.POST.get('tableID'))
+            try:
+                response = config.CLIENT.service.FnDeleteDocumentAttachment(
+                    pk, docID, tableID)
+                print(response)
                 if response == True:
-                    messages.success(request, "File(s) Upload Successful")
+                    messages.success(request, "Deleted Successfully ")
                     return redirect('GovernorDetails', pk=pk)
-                
-                else:
-                    messages.error(request, "Failed, Try Again")
-                    return redirect('GovernorDetails', pk=pk)
-                
-        except Exception as e:
-            messages.error(request, "Oooops!!! something went Wrong!!!")
-            print(e)
-
-    return redirect('GovernorDetails', pk=pk)
-
-
+            except Exception as e:
+                messages.error(request, f'{e}')
+                print(e)
+        return redirect('GovernorDetails', pk=pk)
 
 #################################################
     #       GVCU
@@ -2244,33 +2262,51 @@ class FnSubmitGovermmentCheckUnit(UserObjectMixins, View):
             return redirect('gvcuDetails', pk=pk)
 
 
+class UploadGVCUAttachment(UserObjectMixin, View):
+    def post(self, request, pk):
+        response = ''
+        if request.method == "POST":
+            try:
+                attach = request.FILES.getlist('attachment')
+                tableID = 50033 #52177430
 
-def UploadGVCUAttachment(request, pk):
-    response = ''
-    if request.method == "POST":
-        try:
-            attach = request.FILES.getlist('attachment')
-            tableID = 50033 #52177430
+                for files in attach:
 
-            for files in attach:
+                    fileName = request.FILES['attachment'].name
+                    attachment = base64.b64encode(files.read())
+                    
+                    response = config.CLIENT.service.FnUploadAttachedDocument(
+                        pk, fileName, attachment, tableID,
+                        request.session['User_ID'])
+                    
+                    if response == True:
+                        messages.success(request, "File(s) Upload Successful")
+                        return redirect('gvcuDetails', pk=pk)
+                    
+                    else:
+                        messages.error(request, "Failed, Try Again")
+                        return redirect('gvcuDetails', pk=pk)
+                    
+            except Exception as e:
+                messages.error(request, "Oooops!!! something went Wrong!!!")
+                print(e)
 
-                fileName = request.FILES['attachment'].name
-                attachment = base64.b64encode(files.read())
-                
-                response = config.CLIENT.service.FnUploadAttachedDocument(
-                    pk, fileName, attachment, tableID,
-                    request.session['User_ID'])
-                
+        return redirect('gvcuDetails', pk=pk)
+
+
+class DeleteGVCUAttachment(UserObjectMixin, View):
+    def post(self, request, pk):
+        if request.method == "POST":
+            docID = int(request.POST.get('docID'))
+            tableID = int(request.POST.get('tableID'))
+            try:
+                response = config.CLIENT.service.FnDeleteDocumentAttachment(
+                    pk, docID, tableID)
+                print(response)
                 if response == True:
-                    messages.success(request, "File(s) Upload Successful")
+                    messages.success(request, "Deleted Successfully ")
                     return redirect('gvcuDetails', pk=pk)
-                
-                else:
-                    messages.error(request, "Failed, Try Again")
-                    return redirect('gvcuDetails', pk=pk)
-                
-        except Exception as e:
-            messages.error(request, "Oooops!!! something went Wrong!!!")
-            print(e)
-
-    return redirect('gvcuDetails', pk=pk)
+            except Exception as e:
+                messages.error(request, f'{e}')
+                print(e)
+        return redirect('gvcuDetails', pk=pk)

@@ -411,7 +411,7 @@
         <!-- Modal -->
         <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
             aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
                 <div class="modal-content">
                     <div class="modal-header">Vehicle Repair/Service request
                         </h5>
@@ -425,9 +425,8 @@
                                 <div class="col-md-12">
                                     <input type="hidden" name="reqNo" value="">
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
+                            
+                                <div class="col-md-4">
                                     <label for="" class="form-label">Type of Request</label>
                                     <select name="typeOfRepair" id="" class="form-select" required>
                                         <option value="0">--Select--</option>
@@ -435,9 +434,8 @@
                                         <option value="2">Service</option>
                                     </select>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
+                           
+                                <div class="col-md-4">
                                     <label class="form-label">Vehicle <span class="text-danger">*</span></label>
                                     <select class="form-select" name="vehicle" required>
                                         <option selected disabled value="">Select Option</option>
@@ -446,10 +444,8 @@
                                         {% endfor %}
                                     </select>
                                 </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-12">
+                            
+                                <div class="col-md-4">
                                     <label for="" class="form-label">Driver</label>
                                     <select class="form-select" name="driver" required>
                                         <option selected disabled value="">Select Option</option>
@@ -459,31 +455,35 @@
                                         {% endfor %}
                                     </select>
                                 </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-12">
+                           
+                                <div class="col-md-3">
                                     <label for="" class="form-label">Current Odometer Reading<span
                                             class="text-danger">*</span></label>
                                     <input type="text" name="odometerReading" class="form-control" required>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
+                            
+                                <div class="col-md-3">
                                     <label for="" class="form-label">Cost of Repair<span
                                             class="text-danger">*</span></label>
                                     <input type="number" name="costOfRepair" class="form-control" required>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
+
+                                <div class="col-md-3">
+                                    <label for="" class="form-label">Towing Cost </label>
+                                    <input type="number" name="towingCost" class="form-control" value="0">
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label for="" class="form-label">Invoice Number</label>
+                                    <input type="text" name="invoiceNo" class="form-control" value="">
+                                </div>
+                           
+                                <!-- <div class="col-md-12">
                                     <label for="" class="form-label">Repair Instruction Sheet<span
                                             class="text-danger">*</span></label>
                                     <textarea name="repairInstractionSheet" class="form-control" required></textarea>
-                                </div>
-                            </div>
-
-                            <div class="row">
+                                </div> -->
+                            
                                 <div class="col-md-12">
                                     <input type="hidden" name="myAction" value="insert">
                                 </div>

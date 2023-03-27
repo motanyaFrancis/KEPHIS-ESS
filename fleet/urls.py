@@ -71,11 +71,13 @@ urlpatterns = [
     path('speed/governor', views.SpeedGovernor.as_view(), name='SpeedGovernor'),
     path('GovernorDetails/<str:pk>', views.GovernorDetails.as_view(), name='GovernorDetails'),
     path('FnSubmitSpeedGovernor/<str:pk>', views.FnSubmitSpeedGovernor.as_view(), name='FnSubmitSpeedGovernor'),
-    path('UploadSpeedGovonortAttachment/<str:pk>', views.UploadSpeedGovonortAttachment, name='UploadSpeedGovonortAttachment'),
+    path('UploadSpeedGovernorAttachment/<str:pk>', views.UploadSpeedGovernorAttachment.as_view(), name='UploadSpeedGovernorAttachment'),
+    path('DeleteSpeedGovernor/<str:pk>', views.DeleteSpeedGovernor.as_view(), name='DeleteSpeedGovernor'),
 
     # Gvcu
     path('gvcu', views.GVCU.as_view(), name='gvcu'),
     path('gvcu/<str:pk>', views.GVCU_Details.as_view(), name='gvcuDetails'),
     path('FnSubmitGovermmentCheckUnit/<str:pk>', views.FnSubmitGovermmentCheckUnit.as_view(), name='FnSubmitGovermmentCheckUnit'),
-    path('UploadGVCUAttachment/<str:pk>', views.UploadGVCUAttachment, name='UploadGVCUAttachment'),
+    path('UploadGVCUAttachment/<str:pk>', views.UploadGVCUAttachment.as_view(), name='UploadGVCUAttachment'),
+    path('DeleteGVCUAttachment/<str:pk>', views.DeleteGVCUAttachment.as_view(), name='DeleteGVCUAttachment'),
 ]
