@@ -35,6 +35,10 @@ class UserObjectMixin(object):
     def get_object(self, endpoint):
         response = self.session.get(endpoint, timeout=10).json()
         return response
+
+#################################################
+            #Work Tickets 
+#################################################
 class get_prev_tickets(UserObjectMixin,View):
     def get(self,request):
         value_to_filter = request.GET.get('vehicle')
@@ -335,7 +339,9 @@ class FnGenerateWorkTicketReport(UserObjectMixins, View):
                 print(e)
                 return redirect('WorkTicketDetails', pk=pk)
 
-# vehicle repair
+#################################################
+            #Vehicle Repair 
+#################################################
 class VehicleRepairRequest(UserObjectMixin, View):
 
     def get(self, request):
@@ -402,18 +408,20 @@ class VehicleRepairRequest(UserObjectMixin, View):
                 vehicle = request.POST.get('vehicle')
                 driver = request.POST.get('driver')
                 odometerReading = request.POST.get('odometerReading')
+                costOfRepair = request.POST.get('costOfRepair')
                 repairInstractionSheet = request.POST.get(
                     'repairInstractionSheet')
                 myAction = request.POST.get('myAction')
 
                 response = config.CLIENT.service.FnRepairRequestHeader(
                     reqNo, myUserId, vehicle,  odometerReading, driver,
-                    repairInstractionSheet, myAction,typeOfRepair)
+                    repairInstractionSheet, myAction,typeOfRepair, costOfRepair)
                 if response == True:
                     messages.success(request, "Request Successful")
                     return redirect('vehicleRepairRequest')
             except Exception as e:
-                messages.error(request, "OOps!! Something went wrong")
+                print(f'{e}')
+                messages.error(request, "Oops!! Something Went Wrong")
                 return redirect('vehicleRepairRequest')
         return redirect('vehicleRepairRequest')
 
@@ -623,7 +631,9 @@ def FnCancelRepairRequest(request, pk):
             return redirect('auth')
     return redirect('vehicleRepairDetails', pk=pk)
 
-
+#################################################
+    #        Inspection
+#################################################
 class VehicleInspection(UserObjectMixin, View):
 
     def get(self, request):
@@ -959,7 +969,9 @@ def FnCancelBooking(request, pk):
             return redirect('auth')
     return redirect('VehicleInspectionDetails', pk=pk)
 
-
+#################################################
+    #       Accidents
+#################################################
 class Accidents(UserObjectMixin, View):
 
     def get(self, request):
@@ -1123,7 +1135,7 @@ def UploadAccidentAttachment(request, pk):
     if request.method == "POST":
         try:
             attach = request.FILES.getlist('attachment')
-            tableID = 52177430
+            tableID = 50002 #52177430
         except Exception as e:
             return redirect('AccidentDetails', pk=pk)
         for files in attach:
@@ -1189,6 +1201,10 @@ class  FnSubmitAccidents(UserObjectMixins, View):
             return redirect('AccidentDetails', pk=pk)
         return redirect('AccidentDetails', pk=pk)
 
+
+#################################################
+    #    Transport Request
+#################################################
 
 class TransportRequest(UserObjectMixin, View):
 
@@ -1289,7 +1305,6 @@ class TransportRequest(UserObjectMixin, View):
                 print(e)
                 return redirect('TransportRequest')
         return redirect('TransportRequest')
-
 
 
 class TransportRequestDetails(UserObjectMixin, View):
@@ -1445,6 +1460,10 @@ class FnSubmitTravelRequest(UserObjectMixins, View):
             print(e)
             return redirect('TransportRequestDetails', pk=pk)
 
+
+#################################################
+    #       Service Request
+#################################################
 
         
 class ServiceRequest(UserObjectMixins, View):
@@ -1732,6 +1751,11 @@ def FnCancelServiceRequest(request, pk):
     return redirect('ServiceRequestDetails', pk=pk)
 
 
+
+#################################################
+    #       Fuel Consumption
+#################################################
+
 class FuelConsumption(UserObjectMixins,View):
     async def get(self,request):
         try:
@@ -1810,6 +1834,7 @@ class FnFuelConsumptionVehicle(UserObjectMixins,View):
             quantityInLtrs = float(request.POST.get('quantityInLtrs'))
             remarks = request.POST.get('remarks')
             kMCovered = request.POST.get('kMCovered')
+            userID = request.session['User_ID']
             
             response = self.make_soap_request(soap_headers,
                                             'FnFuelConsumptionVehicle',
@@ -1817,7 +1842,7 @@ class FnFuelConsumptionVehicle(UserObjectMixins,View):
                                                     fuelCardType,receiptNo,vehicle,
                                                         driver,fuelStation,costPerLtr,
                                                         quantityInLtrs,remarks,fuelType,
-                                                            kMCovered)
+                                                            kMCovered,userID)
             if response !='0':
                 messages.success(request,'success')
                 return redirect('FuelDetails', pk=response)
@@ -1828,7 +1853,7 @@ class FnFuelConsumptionVehicle(UserObjectMixins,View):
             logging.exception(e)
             messages.error(request,f'{e}')
             return redirect('fuel')
-        
+     
 class FnFuelConsumptionGenerator(UserObjectMixins,View):
     def post(self,request):
         try:
@@ -1863,9 +1888,7 @@ class FnFuelConsumptionGenerator(UserObjectMixins,View):
             logging.exception(e)
             messages.error(request,f'{e}')
             return redirect('fuel')
-            
-            
-
+        
 class FuelDetails(UserObjectMixins, View):
     async def get(self, request, pk):
         try:
@@ -1919,6 +1942,11 @@ class FnSubmitFuelConsumption(UserObjectMixins, View):
             messages.error(request, f'{e}')
             logging.exception(e)
             return redirect('FuelDetails', pk=pk)
+
+#################################################
+    #       Speed Governor
+#################################################        
+
 class SpeedGovernor(UserObjectMixins,View):
     async def get(self,request):
         try:
@@ -2019,7 +2047,8 @@ class GovernorDetails(UserObjectMixins,View):
                 for data in response[0]:
                     res = data
                 allFiles = [x for x in response[1]]  # type: ignore 
-                
+                print(allFiles)
+
                 ctx = {
                    "res":res,
                     "allFiles":allFiles,
@@ -2052,7 +2081,43 @@ class FnSubmitSpeedGovernor(UserObjectMixins,View):
             messages.error(request, f'{e}')
             logging.exception(e)
             return redirect('GovernorDetails',pk=pk)
-            
+
+
+def UploadSpeedGovonortAttachment(request, pk):
+    response = ''
+    if request.method == "POST":
+        try:
+            attach = request.FILES.getlist('attachment')
+            tableID = 50024 #52177430
+
+            for files in attach:
+
+                fileName = request.FILES['attachment'].name
+                attachment = base64.b64encode(files.read())
+                
+                response = config.CLIENT.service.FnUploadAttachedDocument(
+                    pk, fileName, attachment, tableID,
+                    request.session['User_ID'])
+                
+                if response == True:
+                    messages.success(request, "File(s) Upload Successful")
+                    return redirect('GovernorDetails', pk=pk)
+                
+                else:
+                    messages.error(request, "Failed, Try Again")
+                    return redirect('GovernorDetails', pk=pk)
+                
+        except Exception as e:
+            messages.error(request, "Oooops!!! something went Wrong!!!")
+            print(e)
+
+    return redirect('GovernorDetails', pk=pk)
+
+
+
+#################################################
+    #       GVCU
+#################################################
             
 class GVCU(UserObjectMixins,View):
     async def get(self,request):
@@ -2177,4 +2242,35 @@ class FnSubmitGovermmentCheckUnit(UserObjectMixins, View):
             messages.error(request, f'{e}')
             logging.exception(e)
             return redirect('gvcuDetails', pk=pk)
-   
+
+
+
+def UploadGVCUAttachment(request, pk):
+    response = ''
+    if request.method == "POST":
+        try:
+            attach = request.FILES.getlist('attachment')
+            tableID = 50033 #52177430
+
+            for files in attach:
+
+                fileName = request.FILES['attachment'].name
+                attachment = base64.b64encode(files.read())
+                
+                response = config.CLIENT.service.FnUploadAttachedDocument(
+                    pk, fileName, attachment, tableID,
+                    request.session['User_ID'])
+                
+                if response == True:
+                    messages.success(request, "File(s) Upload Successful")
+                    return redirect('gvcuDetails', pk=pk)
+                
+                else:
+                    messages.error(request, "Failed, Try Again")
+                    return redirect('gvcuDetails', pk=pk)
+                
+        except Exception as e:
+            messages.error(request, "Oooops!!! something went Wrong!!!")
+            print(e)
+
+    return redirect('gvcuDetails', pk=pk)

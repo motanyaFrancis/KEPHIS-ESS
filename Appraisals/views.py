@@ -252,7 +252,7 @@ class FnAppraisalGoals(UserObjectMixins,View):
             User_ID = request.session['User_ID']
             myAction = request.POST.get('myAction')
             
-            #print(supervisorRating)
+            # print(supervisorRating)
 
             
             if not selfRating:
