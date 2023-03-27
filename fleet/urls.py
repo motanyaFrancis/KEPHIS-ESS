@@ -67,12 +67,15 @@ urlpatterns = [
     path('FnFuelConsumptionGenerator', views.FnFuelConsumptionGenerator.as_view(), name='FnFuelConsumptionGenerator'),
     path('FnFuelConsumptionVehicle', views.FnFuelConsumptionVehicle.as_view(), name='FnFuelConsumptionVehicle'),
     
+    #Speed Govonor
     path('speed/governor', views.SpeedGovernor.as_view(), name='SpeedGovernor'),
     path('GovernorDetails/<str:pk>', views.GovernorDetails.as_view(), name='GovernorDetails'),
     path('FnSubmitSpeedGovernor/<str:pk>', views.FnSubmitSpeedGovernor.as_view(), name='FnSubmitSpeedGovernor'),
-    
-    # Gvcu 
+    path('UploadSpeedGovonortAttachment/<str:pk>', views.UploadSpeedGovonortAttachment, name='UploadSpeedGovonortAttachment'),
+
+    # Gvcu
     path('gvcu', views.GVCU.as_view(), name='gvcu'),
     path('gvcu/<str:pk>', views.GVCU_Details.as_view(), name='gvcuDetails'),
     path('FnSubmitGovermmentCheckUnit/<str:pk>', views.FnSubmitGovermmentCheckUnit.as_view(), name='FnSubmitGovermmentCheckUnit'),
+    path('UploadGVCUAttachment/<str:pk>', views.UploadGVCUAttachment, name='UploadGVCUAttachment'),
 ]

@@ -231,7 +231,7 @@
                         aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{% url 'UploadGVCUAttachment' %}" method="post" class="myForm"
+                    <form action="{% url 'UploadGVCUAttachment' res.GCU_No %}" method="post" class="myForm"
                         enctype="multipart/form-data">
                         {% csrf_token %}
                         <div class=" mb-3">

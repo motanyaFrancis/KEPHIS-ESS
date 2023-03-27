@@ -208,7 +208,7 @@
                         aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{% url 'UploadGVCUAttachment' res.SpeedGovernorNo %}" method="post" class="myForm"
+                    <form action="{% url 'UploadSpeedGovonortAttachment' res.SpeedGovernorNo %}" method="post" class="myForm"
                         enctype="multipart/form-data">
                         {% csrf_token %}
                         <div class=" mb-3">
