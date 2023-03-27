@@ -309,6 +309,29 @@
         </div>
         {% endif %}
 
+        <div class="row">
+            <div class="col-md-12">
+                {% if res.Status == "Approved" and res.Booked_For_Inspection == False %}
+                <div class="myForm my-3">
+                    <form action="{% url 'FnBookForInspection' res.No %}" method="POST"
+                        style="display: inline-block;">
+                        {% csrf_token %}
+                        <button class="btn btn-info" type="submit">Book for Inspection</button>
+                    </form>
+                </div>
+                {% elif res.Status == "Approved" and res.Booked_For_Inspection == True %}
+                <div class="myForm my-3">
+                    <form action="{% url 'FnCancelBooking' res.No %}" method="POST"
+                        style="display: inline-block;">
+                        {% csrf_token %}
+                        
+                        <button class="btn btn-info" type="submit">Cancel Booking</button>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
     </div>
 
 </section>

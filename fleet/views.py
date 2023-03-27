@@ -955,7 +955,7 @@ class FnBookForInspection(UserObjectMixins, View):
 def FnCancelBooking(request, pk):
     if request.method == 'POST':
         try:
-            bookingNo = request.POST.get('bookingNo')
+            bookingNo = pk
             userCode = request.session['User_ID']
         except ValueError as e:
             return redirect('VehicleInspectionDetails', pk=pk)
