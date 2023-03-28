@@ -673,7 +673,7 @@ class FNServiceInstructionsSheet(UserObjectMixins,View):
                     messages.success(request, 'Request Submitted successfully')
                     return redirect('vehicleRepairDetails', pk=pk)
                 if response == False:
-                    messages.success(request, 'Request Failed')
+                    messages.info(request, 'Request Failed')
                     return redirect('vehicleRepairDetails', pk=pk)
             except (aiohttp.ClientError, aiohttp.ServerDisconnectedError, aiohttp.ClientResponseError) as e:
                 print(e)

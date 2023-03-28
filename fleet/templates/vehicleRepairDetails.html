@@ -15,14 +15,7 @@
             <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
                 <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
 
-                    {% if res.Status == "Open" %}
-                    <button class="btn btn-successs p-3 d-flex align-items-center" data-bs-toggle="modal"
-                        data-bs-target="#staticBackdrop" type="button"> <i class="las la-plus text-white"
-                            style="font-size:15px;"></i> Add Lines
-                    </button>
-                    {% elif res.Status == "Released" %}
 
-                    {% endif %}
                 </div>
             </div>
         </div>
@@ -137,7 +130,15 @@
         <div class="row mt-4">
             <div class="col-md-12">
                 <div class="card" id="d-card">
-                    <h4 class="mt-2 mx-2 text-dark">Repair Request Subform</h4>
+                    <div class="d-flex justify-content-between p-2 m-2">
+                        <h4 class="mt-2 mx-2 text-dark">Repair Request Subform</h4>
+                        {% if res.Status == "Open" %}
+                        <button class="btn btn-successs p-2 d-flex align-items-center" data-bs-toggle="modal"
+                            data-bs-target="#staticBackdrop" type="button"> <i class="las la-plus text-white"
+                                style="font-size:15px;"></i> Add Lines
+                        </button>
+                        {% endif %}
+                    </div>
                     <div class="card-body">
                         <table id="example"
                             class="display table table-striped table-bordered dt-responsive table-responsive-lg"
@@ -169,13 +170,13 @@
         <div class="row mt-4">
             <div class="col-md-12">
                 <div class="card" id="d-card">
-                    <div class="d-flex justify-content-between">
+                    <div class="d-flex justify-content-between p-2 m-2">
 
-                        <h4 class="mt-2 mx-2 text-dark">Instruction Sheet</h4>
+                        <h4 class="mt-2 text-dark">Service Instructions Sheet</h4>
 
                         <button class="btn btn-successs p-2 m-2 d-flex align-items-center" data-bs-toggle="modal"
                             data-bs-target="#instruction" type="button">
-                            <i class="las la-plus text-white" style="font-size:15px;"></i> Add
+                            <i class="las la-plus text-white" style="font-size:15px;"></i> Add Lines
                         </button>
 
                     </div>
@@ -211,7 +212,7 @@
                                             <input type="hidden" name="myAction" value="delete">
 
                                             <button class="btn btn-danger" data-toggle="tooltip" data-placement="top"
-                                            title="Delete Line" type="submit">
+                                                title="Delete Line" type="submit">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
@@ -423,8 +424,8 @@
                         aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="myForm needs-validation" id="frm_" action="{% url 'FNServiceInstructionsSheet' res.No_ %}"
-                        method="post" novalidate>
+                    <form class="myForm needs-validation" id="frm_"
+                        action="{% url 'FNServiceInstructionsSheet' res.No_ %}" method="post" novalidate>
                         {% csrf_token %}
                         <div class="row">
                             <div class="col-md-12">
@@ -446,8 +447,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <label for="" class="form-label">Quotation<span
-                                        class="text-danger">*</span></label>
+                                <label for="" class="form-label">Quotation<span class="text-danger">*</span></label>
                                 <input type="number" name="quote" class="form-control">
                             </div>
                         </div>
@@ -459,8 +459,8 @@
         </div>
     </div>
 
-    
-    
+
+
 </section>
 
 
