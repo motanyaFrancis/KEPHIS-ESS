@@ -1822,6 +1822,9 @@ class FuelConsumption(UserObjectMixins,View):
             driver_role = await sync_to_async(request.session.__getitem__)('driver_role')
             TO_role = await sync_to_async(request.session.__getitem__)('TO_role')
             full_name = await sync_to_async(request.session.__getitem__)('full_name')
+            employeeNo =  await sync_to_async(request.session.__getitem__)('Employee_No_')
+            
+            print(employeeNo)
 
             full_name = request.session['full_name']
             openRequest = []
@@ -1869,7 +1872,8 @@ class FuelConsumption(UserObjectMixins,View):
                 'vehicles':vehicle,
                 "drivers": drivers,
                 'generators': generators,
-                
+                'userID':userID,
+                'employeeNo': employeeNo,
             }
         except Exception as e:
             logging.exception(e)
@@ -1892,7 +1896,7 @@ class FnFuelConsumptionVehicle(UserObjectMixins,View):
             costPerLtr = float(request.POST.get('costPerLtr'))
             quantityInLtrs = float(request.POST.get('quantityInLtrs'))
             remarks = request.POST.get('remarks')
-            kMCovered = request.POST.get('kMCovered')
+            currentOdometerReading = request.POST.get('currentOdometerReading')
             userID = request.session['User_ID']
             
             response = self.make_soap_request(soap_headers,
@@ -1901,7 +1905,7 @@ class FnFuelConsumptionVehicle(UserObjectMixins,View):
                                                     fuelCardType,receiptNo,vehicle,
                                                         driver,fuelStation,costPerLtr,
                                                         quantityInLtrs,remarks,fuelType,
-                                                            kMCovered,userID)
+                                                            currentOdometerReading,userID)
             if response !='0':
                 messages.success(request,'success')
                 return redirect('FuelDetails', pk=response)
@@ -1976,6 +1980,7 @@ class FuelDetails(UserObjectMixins, View):
                     "driver_role":driver_role,
                     'TO_role':TO_role,
                     'full':full_name,
+                    
                 }
         except Exception as e:
             print(e)
@@ -2280,12 +2285,18 @@ class GVCU_Details(UserObjectMixins,View):
                                             'eq',pk,'and','Created_By','eq',userID))
                 get_files = asyncio.ensure_future(self.simple_one_filtered_data(session,
                                     '/QyDocumentAttachments','No_','eq',pk))
+                
                 get_employees = asyncio.ensure_future(self.simple_fetch_data(session, '/QYEmployees'))
-                response = await asyncio.gather(get_speed_governor,get_files, get_employees)
+
+                get_travel_employees = asyncio.ensure_future(self.simple_one_filtered_data(session, '/QyTravelEmployee', 'RequestNo', 'eq', pk))
+
+                response = await asyncio.gather(get_speed_governor,get_files, get_employees, get_travel_employees)
                 for data in response[0]:
                     res = data
+                    
                 allFiles = [x for x in response[1]]  # type: ignore 
                 employees = [x for x in response[2]]
+                travelEmployees = [x for x in response[3]]
                 
                 ctx = {
                     "res":res,
@@ -2294,6 +2305,7 @@ class GVCU_Details(UserObjectMixins,View):
                     'TO_role':TO_role,
                     'full':full_name,
                     'employees': employees,
+                    'travelEmployees': travelEmployees,
                 }
 
         except Exception as e:
