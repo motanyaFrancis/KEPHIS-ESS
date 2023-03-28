@@ -34,7 +34,7 @@ urlpatterns = [
     path('FnRaiseRepairRequest/<str:pk>', views.FnRaiseRepairRequest.as_view(), name='FnRaiseRepairRequest'),
     path('FnCancelRepairRequest/<str:pk>', views.FnCancelRepairRequest, name='FnCancelRepairRequest'),
     path('FnConfirmRepaireRequest/<str:pk>', views.FnConfirmRepaireRequest.as_view(), name=' FnConfirmRepaireRequest'),
-
+    path('FNServiceInstructionsSheet/<str:pk>', views.FNServiceInstructionsSheet.as_view(), name='FNServiceInstructionsSheet'),
     
     # Transport Request
     path('TransportRequest', views.TransportRequest.as_view(), name='TransportRequest'),
@@ -80,4 +80,5 @@ urlpatterns = [
     path('FnSubmitGovermmentCheckUnit/<str:pk>', views.FnSubmitGovermmentCheckUnit.as_view(), name='FnSubmitGovermmentCheckUnit'),
     path('UploadGVCUAttachment/<str:pk>', views.UploadGVCUAttachment.as_view(), name='UploadGVCUAttachment'),
     path('DeleteGVCUAttachment/<str:pk>', views.DeleteGVCUAttachment.as_view(), name='DeleteGVCUAttachment'),
+    path('FnGVCUPassangers/<str:pk>', views.FnGVCUPassangers.as_view(), name='FnGVCUPassangers'),
 ]

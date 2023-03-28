@@ -168,6 +168,67 @@
             </div>
         </div>
 
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card" id="d-card">
+                    <div class="d-flex justify-content-between">
+
+                        <h4 class="mt-2 mx-2 text-dark">Instruction Sheet</h4>
+
+                        <button class="btn btn-successs p-2 m-2 d-flex align-items-center" data-bs-toggle="modal"
+                            data-bs-target="#instruction" type="button">
+                            <i class="las la-plus text-white" style="font-size:15px;"></i> Add
+                        </button>
+
+                    </div>
+                    <div class="card-body">
+                        <table id="example"
+                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                            style="width:100%">
+                            <thead>
+                                <tr id="tops">
+                                    <th id="long">Line No</th>
+                                    <th>Garage</th>
+                                    <th>Service/Repair</th>
+                                    <th>Quotation</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {% for list in ServeInstructions %}
+                                <tr>
+                                    <td>{{list.LineNo}}</td>
+                                    <td>{{list.Garage}}</td>
+                                    <td>{{list.ServiceRepair}}</td>
+                                    <td>{{list.Quotes}}</td>
+                                    <td>
+                                        <form method="POST" action="{% url 'FNServiceInstructionsSheet' list.No %}">
+                                            {% csrf_token %}
+
+                                            <input type="hidden" name="lineNo" value="{{list.LineNo}}">
+                                            <input type="hidden" name="serviceOrRepair" value="0">
+                                            <input type="hidden" name="garage" value="0">
+                                            <input type="hidden" name="quote" value="0">
+                                            <input type="hidden" name="myAction" value="delete">
+
+                                            <button class="btn btn-danger" data-toggle="tooltip" data-placement="top"
+                                            title="Delete Line" type="submit">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+
+
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="row my-2 py-3">
             <div class="col-md-12">
                 <div class="card">
@@ -306,6 +367,8 @@
         {% endif %}
 
     </div>
+
+    <!-- Defects Modal -->
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -348,6 +411,58 @@
             </div>
         </div>
     </div>
+
+
+    <!-- Instruction sheet -->
+    <div class="modal fade" id="instruction" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="instructionLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="instructionLabel">New {{res.Document_Type}} Instruction Sheet
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="myForm needs-validation" id="frm_" action="{% url 'FNServiceInstructionsSheet' res.No_ %}"
+                        method="post" novalidate>
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <input type="number" name="lineNo" value="1000" hidden>
+                                <input type="text" name="serviceOrRepair" value="{{res.Document_Type}}" hidden>
+                                <input type="hidden" name="myAction" value="insert">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="" class="form-label">Garage<span class="text-danger">*</span></label>
+                                <select class="form-select" name="garage" required>
+                                    <option selected disabled value="">Select Option</option>
+                                    {% for list in Vendors %}
+                                    <option value="{{list.No}}">{{list.Name}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="" class="form-label">Quotation<span
+                                        class="text-danger">*</span></label>
+                                <input type="number" name="quote" class="form-control">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-success my-3 w-100">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    
 </section>
 
 

@@ -417,6 +417,10 @@
                                     {% if res.Status == "Released" and res.DocumentStage == 'Supervisor' and Supervisor == True %}
                                     <th>Supervisor Comments</th>
                                     {% endif %}
+                                    {% if res.Status == "Open" and res.DocumentStage == 'Setting' %}
+                                    <th>Action</th>
+                                    {% endif %}
+
                                 </tr>
                             </thead>
                             <tbody>
@@ -434,6 +438,25 @@
                                             data-bs-toggle="modal" data-bs-target="#training{{training.AppraisalLine}}">
                                             <i class="las la-plus"></i> Add
                                         </button>
+                                    </td>
+                                    {% endif %}
+                                    {% if res.Status == "Open" and res.DocumentStage == 'Setting' %}
+                                    <td>
+                                        <form method="POST" action="{% url 'FnAppraisalTrainingAndDevelopment' res.AppraisalNo %}">
+                                            {% csrf_token %}
+
+                                            <input type="hidden" name="appraisalLine" value="{{training.AppraisalLine}}">
+                                            <input type="hidden" name="description" value="0">
+                                            <input type="hidden" name="duration" value="0">
+                                            <input type="hidden" name="commentsBySupervisour" value="0">
+                                            <input type="hidden" name="myAction" value="delete">
+
+                                            <button class="btn btn-danger" data-toggle="tooltip" data-placement="top"
+                                            title="Delete Line" type="submit">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                        
                                     </td>
                                     {% endif %}
                                     <div class="modal fade" id="training{{training.AppraisalLine}}"

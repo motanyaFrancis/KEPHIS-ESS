@@ -441,7 +441,7 @@
                                                     {% endif %}
                                                 </td>
                                                 <td>
-                                                    {% if res.Booked_For_Inspection == False and res.Inspected == True %}
+                                                    {% if res.Booked_For_Inspection == False and res.Inspected == False %}
                                                     <form action="{% url 'FnBookForInspection' res.No %}" method="post"
                                                         style="display: inline-block;">
                                                         {% csrf_token %}

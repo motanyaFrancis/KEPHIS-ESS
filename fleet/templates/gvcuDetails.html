@@ -161,6 +161,57 @@
                 </form>
             </div>
         </div>
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card" id="d-card">
+                    <div class="row justify-content-between">
+                        <div class="col-md-4">
+                            <h4 class="mt-2 mx-2 text-dark">Passengers</h4>
+                        </div>
+                        
+                        <div class="col-md-2">
+                            <button class="btn btn-successs p-2 m-2 d-flex align-items-center" data-bs-toggle="modal"
+                                data-bs-target="#passengers" type="button">
+                                <i class="las la-plus text-white" style="font-size:15px;"></i> Add
+                            </button>
+                        </div>
+                        
+                    </div>
+                    <div class="card-body">
+                        <!-- <table id="example"
+                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                            style="width:100%">
+                            <thead>
+                                <tr id="tops">
+                                    <th id="long"> No.</th>
+                                    <th>Target</th>
+                                    <th>Unit of Measure</th>
+                                    <th>Weight</th>
+                                    <th>Self Rating</th>
+                                    <th>Supervisor Rating</th>
+                                    <th>Score</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {% for target in targets %}
+                                <tr>
+                                    <td>{{target.AppraisalLine}}</td>
+                                    <td>{{target.KeyResponsibility}}</td>
+                                    <td>{{target.FYTarget}}</td>
+                                    <td>{{target.Weight}}</td>
+                                    <td>{{target.SelfRating}}</td>
+                                    <td>{{target.SupervisorRating}}</td>
+                                   
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table> -->
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="row my-2 py-3">
             <div class="col-md-12">
                 <div class="card">
@@ -241,6 +292,47 @@
                         <button type="submit" class="btn btn-success my-3 w-100">Submit</button>
                     </form>
 
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="passengers" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="passengersLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="passengersLabel">Passengers
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="myForm needs-validation" id="frm_" action="{% url 'FnGVCUPassangers' res.GCU_No %}"
+                        method="post" novalidate>
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <input type="number" name="lineNo" value="1000" hidden>
+                                <input type="hidden" name="myAction" value="insert">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="" class="form-label">Employee<span class="text-danger">*</span></label>
+                                <select class="form-select" name="employeeNo" required>
+                                    <option selected disabled value="">Select Option</option>
+                                    {% for list in employees %}
+                                    <option value="{{list.No_}}">{{list.First_Name}} {{list.Middle_Name}}
+                                        {{list.Last_Name}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-success my-3 w-100">Submit</button>
+                    </form>
                 </div>
             </div>
         </div>

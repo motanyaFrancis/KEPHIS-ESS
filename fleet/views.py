@@ -492,6 +492,20 @@ class VehicleRepairRequestDetails(UserObjectMixin, View):
             res_file = self.get_object(Access_File)
             allFiles = [x for x in res_file['value']]
 
+            Employee = config.O_DATA.format(f"/QYEmployees")
+            EmployeeRes = self.get_object(Employee)
+            Employees = [x for x in EmployeeRes['value']]
+
+            Vendor = config.O_DATA.format(f"/VendorDetails?$filter=Vendor_Type%20eq%20%27Garage%27")
+            VendorRes = self.get_object(Vendor)
+            Vendors = [x for x in VendorRes['value']]
+            
+
+            ServeInstruction = config.O_DATA.format(f"/QyServiceIntrustionsSheet?$filter=No%20eq%20%27{pk}%27")
+            ServeInstructionRes = self.get_object(ServeInstruction)
+            ServeInstructions = [x for x in ServeInstructionRes['value']]
+            print(ServeInstructions)
+
         except Exception as e:
             messages.info(request, f'{e}')
             return redirect('vehicleRepairRequest')
@@ -505,6 +519,9 @@ class VehicleRepairRequestDetails(UserObjectMixin, View):
             "full": full_name,
             "driver_role":driver_role,
             "TO_role":TO_role,
+            'Employees': Employees,
+            'Vendors': Vendors,
+            'ServeInstructions': ServeInstructions,
         }
 
         return render(request, 'vehicleRepairDetails.html', context)
@@ -632,6 +649,46 @@ def FnCancelRepairRequest(request, pk):
             print(e)
             return redirect('auth')
     return redirect('vehicleRepairDetails', pk=pk)
+
+
+
+class FNServiceInstructionsSheet(UserObjectMixins,View):
+    async def post(self, request, pk):
+        if request.method == 'POST':
+            try:
+                userID = await sync_to_async(request.session.__getitem__)('User_ID')
+                vrNo= pk
+                lineNo= request.POST.get('lineNo')
+                serviceOrRepair= request.POST.get('serviceOrRepair')
+                garage= request.POST.get('garage')
+                myAction= request.POST.get('myAction')
+                quote= request.POST.get('quote')
+                soap_headers = await sync_to_async(request.session.__getitem__)('soap_headers')
+        
+                response =  self.make_soap_request(soap_headers,'FNServiceInstructionsSheet', vrNo, myAction, lineNo, userID, serviceOrRepair,garage, quote)
+                
+                print(response)
+
+                if response == True:
+                    messages.success(request, 'Request Submitted successfully')
+                    return redirect('vehicleRepairDetails', pk=pk)
+                if response == False:
+                    messages.success(request, 'Request Failed')
+                    return redirect('vehicleRepairDetails', pk=pk)
+            except (aiohttp.ClientError, aiohttp.ServerDisconnectedError, aiohttp.ClientResponseError) as e:
+                print(e)
+                messages.error(request,"connect timed out")
+                return redirect('vehicleRepairDetails', pk=pk)
+            except KeyError:
+                messages.info(request, "Session Expired. Please Login")
+                return redirect('auth')
+            except Exception as e:
+                messages.error(request, "OOps!! Something went wrong")
+                print(e)
+                return redirect('vehicleRepairDetails', pk=pk)
+        return redirect('vehicleRepairDetails', pk=pk)
+
+
 
 #################################################
     #        Inspection
@@ -2223,10 +2280,12 @@ class GVCU_Details(UserObjectMixins,View):
                                             'eq',pk,'and','Created_By','eq',userID))
                 get_files = asyncio.ensure_future(self.simple_one_filtered_data(session,
                                     '/QyDocumentAttachments','No_','eq',pk))
-                response = await asyncio.gather(get_speed_governor,get_files)
+                get_employees = asyncio.ensure_future(self.simple_fetch_data(session, '/QYEmployees'))
+                response = await asyncio.gather(get_speed_governor,get_files, get_employees)
                 for data in response[0]:
                     res = data
                 allFiles = [x for x in response[1]]  # type: ignore 
+                employees = [x for x in response[2]]
                 
                 ctx = {
                     "res":res,
@@ -2234,6 +2293,7 @@ class GVCU_Details(UserObjectMixins,View):
                     "driver_role":driver_role,
                     'TO_role':TO_role,
                     'full':full_name,
+                    'employees': employees,
                 }
 
         except Exception as e:
@@ -2309,4 +2369,39 @@ class DeleteGVCUAttachment(UserObjectMixin, View):
             except Exception as e:
                 messages.error(request, f'{e}')
                 print(e)
+        return redirect('gvcuDetails', pk=pk)
+
+
+class FnGVCUPassangers(UserObjectMixins,View):
+    async def post(self, request, pk):
+        if request.method == 'POST':
+            try:
+                userID = await sync_to_async(request.session.__getitem__)('User_ID')
+                reqNo= pk
+                employeeNo= request.POST.get('employeeNo')
+                lineNo= request.POST.get('lineNo')
+                myAction= request.POST.get('myAction')
+                soap_headers = await sync_to_async(request.session.__getitem__)('soap_headers')
+        
+                response =  self.make_soap_request(soap_headers,'FnGVCUPassangers', reqNo ,userID, employeeNo,lineNo,myAction)
+                
+                print(response)
+
+                if response == True:
+                    messages.success(request, 'Request Submitted successfully')
+                    return redirect('gvcuDetails', pk=pk)
+                if response == False:
+                    messages.success(request, 'Request Failed')
+                    return redirect('gvcuDetails', pk=pk)
+            except (aiohttp.ClientError, aiohttp.ServerDisconnectedError, aiohttp.ClientResponseError) as e:
+                print(e)
+                messages.error(request,"connect timed out")
+                return redirect('gvcuDetails', pk=pk)
+            except KeyError:
+                messages.info(request, "Session Expired. Please Login")
+                return redirect('auth')
+            except Exception as e:
+                messages.error(request, "OOps!! Something went wrong")
+                print(e)
+                return redirect('gvcuDetails', pk=pk)
         return redirect('gvcuDetails', pk=pk)
