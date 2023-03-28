@@ -137,7 +137,7 @@
         <div class="row mt-4">
             <div class="col-md-12">
                 <div class="card" id="d-card">
-                    <h4 class="mt-2 mx-2 text-dark">Repair Request Lines</h4>
+                    <h4 class="mt-2 mx-2 text-dark">Repair Request Subform</h4>
                     <div class="card-body">
                         <table id="example"
                             class="display table table-striped table-bordered dt-responsive table-responsive-lg"
@@ -146,8 +146,7 @@
                                 <tr id="tops">
                                     <th id="long">Line No.</th>
                                     <th>Defect Type</th>
-                                    <th>Severity</th>
-                                    <th>Recommended Action</th>
+                                    <th>Description of Repair/Service</th>
 
                                 </tr>
                             </thead>
@@ -156,7 +155,6 @@
                                 <tr>
                                     <td>{{line.Line_No_}}</td>
                                     <td>{{line.Defect_Type}}</td>
-                                    <td>{{line.Severity}}</td>
                                     <td>{{line.Recommendations}}</td>
                                 </tr>
 
