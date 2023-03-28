@@ -1265,8 +1265,7 @@ class  FnSubmitAccidents(UserObjectMixins, View):
     #    Transport Request
 #################################################
 
-class TransportRequest(UserObjectMixin, View):
-
+class TransportRequest(UserObjectMixins, View):
     def get(self, request):
         try:
             userID = request.session['User_ID']
@@ -1511,6 +1510,23 @@ class FnSubmitTravelRequest(UserObjectMixins, View):
 
             response = self.make_soap_request(soap_headers,'FnSubmitTravelRequests',
                                               tReqNo, myUserId)
+            if response == True:
+                messages.success(request, 'Request Submitted successfully')
+                return redirect('TransportRequestDetails', pk=pk)
+        except Exception as e:
+            messages.error(request, f'{e}')
+            print(e)
+            return redirect('TransportRequestDetails', pk=pk)
+
+
+class FnNotifyBothRequesterAndDrivers(UserObjectMixins, View):
+    def post(self,request,pk):
+        try:
+            soap_headers = request.session['soap_headers']
+            docNo = pk
+
+            response = self.make_soap_request(soap_headers,'FnNotifyBothRequesterAndDrivers',
+                                              docNo)
             if response == True:
                 messages.success(request, 'Request Submitted successfully')
                 return redirect('TransportRequestDetails', pk=pk)

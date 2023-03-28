@@ -43,6 +43,7 @@ urlpatterns = [
     path('UploadTransportRequestAttachment/<str:pk>', views.UploadTransportRequestAttachment, name='UploadTransportRequestAttachment'),
     path('DeleteTransportRequestAttachment<str:pk>', views.DeleteTransportRequestAttachment, name='DeleteTransportRequestAttachment'),
     path('FnSubmitTravelRequest/<str:pk>', views.FnSubmitTravelRequest.as_view(), name='FnSubmitTravelRequest'),
+    path('FnNotifyBothRequesterAndDrivers/<str:pk>', views.FnNotifyBothRequesterAndDrivers.as_view(), name='FnNotifyBothRequesterAndDrivers'),
     
     # Accidents
     path('Accidents', views.Accidents.as_view(), name='Accidents'),

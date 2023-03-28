@@ -378,6 +378,17 @@
                                                 <td>{{res.TripPlannedStartDate}}</td>
                                                 <td>{{res.TripPlannedEndDate}}</td>
                                                 <td>
+                                                    {% if res.Status == 'Approved'  %}
+                                                    <form action="{% url 'FnNotifyBothRequesterAndDrivers' res.RequestNo %}" method="post"
+                                                        style="display: inline-block;">
+                                                        {% csrf_token %}
+                                                        <button class="btn btn-dark" type="submit" data-toggle="tooltip"
+                                                            data-placement="top" title="confirm Notification">
+                                                            <i class="las la-tools"></i>Notify Driver & Requester<i
+                                                                class="las la-check-double"></i>
+                                                        </button>
+                                                    </form>
+                                                    {% endif %}
                                                     <a href="{% url 'TransportRequestDetails' res.RequestNo %}"
                                                         class="btn btn-success btn-icon-text" type="button"
                                                         data-toggle="tooltip" data-placement="top"
