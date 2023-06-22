@@ -1,0 +1,45 @@
+{% extends 'offcanvas.html' %}
+{% load bootstrap5 %}
+{% load static %}
+{% block main %}
+  <h1>Create Asset</h1>
+  <form id="asset-form" method="POST" action="{% url 'create_asset' %}">
+    {% csrf_token %}
+
+    <label for="tag-number-input">Tag Number:</label>
+    <input type="text" id="tag-number-input" name="tagNo">
+
+    <button type="submit">Create Asset</button>
+  </form>
+
+<!--  <script>-->
+<!--  $(document).ready(function() {-->
+<!--    $('#asset-form').on('submit', function(event) {-->
+<!--      event.preventDefault();  // Prevent the default form submission behavior-->
+
+<!--      var tagNumber = $('#tag-number-input').val();-->
+
+<!--      $.ajax({-->
+<!--        type: 'POST',-->
+<!--        url: '{% url 'create_asset' %}',-->
+<!--        data: {-->
+<!--          'tag_number': tagNumber,-->
+<!--          'csrfmiddlewaretoken': '{{ csrf_token }}'-->
+<!--        },-->
+<!--        success: function(response) {-->
+<!--          if (response.success) {-->
+<!--            alert('Asset created successfully!');-->
+<!--          } else {-->
+<!--            alert('Failed to create asset. Please try again.');-->
+<!--          }-->
+<!--        },-->
+<!--        error: function(xhr, status, error) {-->
+<!--          alert('An error occurred while creating the asset. Please try again later.');-->
+<!--          console.error(error);-->
+<!--        }-->
+<!--      });-->
+<!--    });-->
+<!--  });-->
+<!--  </script>-->
+
+{% endblock main %}

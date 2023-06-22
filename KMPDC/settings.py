@@ -10,23 +10,40 @@ from requests.auth import HTTPBasicAuth
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SECRET_KEY = config('SECRET_KEY')
+#SECRET_KEY = config('SECRET_KEY')
 ALLOWED_HOSTS = ['.localhost','.127.0.0.1','.20.127.107.47','.essportal.kobby.co.ke']
 
-DEBUG = True
+#DEBUG = True
+
+# DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#             'NAME': config('DB_NAME'),
+#             'USER': config('DB_USER'),
+#             'PASSWORD': config('DB_PASSWORD'),
+#             'HOST': config('DB_HOST'),
+#             'PORT': '',
+#         }
+#
+#     }
+
+#MODE = config("MODE", default="dev")
+
+SECRET_KEY = config("SECRET_KEY")
+
+DEBUG = config("DEBUG", default=False, cast=bool)
 
 DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': config('DB_NAME'),
-            'USER': config('DB_USER'),
-            'PASSWORD': config('DB_PASSWORD'),
-            'HOST': config('DB_HOST'),
-            'PORT': '',
-        }
+
+    "default": {
+
+        "ENGINE": "django.db.backends.sqlite3",
+
+        "NAME": "db_name",
 
     }
 
+}
 # Application definition
 
 INSTALLED_APPS = [
@@ -49,6 +66,7 @@ INSTALLED_APPS = [
     'roombooking',
     'Appraisals',
     'myRequest',
+    'AssetManagment',
 
 ]
 
