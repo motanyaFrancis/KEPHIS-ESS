@@ -94,7 +94,7 @@
             <div class="col-md-3">
                 <div class="card l-bg-orange-dark statCard h-100">
                     <div class="card-statistic-3 p-4">
-                        <div class="card-icon card-icon-large"><i class="fas fa-calendar-alt"></i></div>
+                        <div class="card-icon card-icon-large"><i class="fas fa-user-alt"></i></div>
                         <div class="mb-4">
                             <h5 class="card-title mb-0">Appraisee</h5>
                         </div>
@@ -112,7 +112,7 @@
             <div class="col-md-3">
                 <div class="card l-bg-green-dark statCard h-100">
                     <div class="card-statistic-3 p-4">
-                        <div class="card-icon card-icon-large"><i class="fas fa-dollar-sign"></i></div>
+                        <div class="card-icon card-icon-large"><i class="fas fa-exchange"></i></div>
                         <div class="mb-4">
                             <h5 class="card-title mb-0">Document Stage</h5>
                         </div>
@@ -164,6 +164,9 @@
                                     {% if res.Status == "Released" and res.DocumentStage == 'Appraisal' or res.DocumentStage == 'Supervisor' and Supervisor == True %}
                                     <th>Score</th>
                                     {% endif %}
+                                    {% if res.Status == "Open" and res.DocumentStage == 'Setting' %}
+                                    <th>Action</th>
+                                    {% endif %}
 
                                 </tr>
                             </thead>
@@ -187,6 +190,28 @@
                                             data-bs-toggle="modal" data-bs-target="#score{{target.AppraisalLine}}"> <i
                                                 class="las la-plus"></i> Add
                                         </button>
+                                    </td>
+                                    {% endif %}
+                                    {% if res.Status == "Open" and res.DocumentStage == 'Setting' %}
+                                    <td>
+                                        <form method="POST" action="{% url 'FnAppraisalGoals' res.AppraisalNo %}">
+                                            {% csrf_token %}
+
+                                            <input type="hidden" name="appraisalLine" value="{{target.AppraisalLine}}">
+                                            <input type="hidden" name="targetsSetForTheYear" value="0">
+                                            <input type="hidden" name="weight" value="0">
+                                            <input type="hidden" name="unitOfMeasureORPerformanceIndicator" value="0">
+                                            <input type="hidden" name="selfRating" value="0">
+                                            <input type="hidden" name="supervisorRating" value="0">
+
+                                            <input type="hidden" name="myAction" value="delete">
+
+                                            <button class="btn btn-danger" data-toggle="tooltip" data-placement="top"
+                                            title="Delete Line" type="submit">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                        
                                     </td>
                                     {% endif %}
                                     <div class="modal fade" id="score{{target.AppraisalLine}}" data-bs-backdrop="static"
@@ -392,6 +417,10 @@
                                     {% if res.Status == "Released" and res.DocumentStage == 'Supervisor' and Supervisor == True %}
                                     <th>Supervisor Comments</th>
                                     {% endif %}
+                                    {% if res.Status == "Open" and res.DocumentStage == 'Setting' %}
+                                    <th>Action</th>
+                                    {% endif %}
+
                                 </tr>
                             </thead>
                             <tbody>
@@ -409,6 +438,25 @@
                                             data-bs-toggle="modal" data-bs-target="#training{{training.AppraisalLine}}">
                                             <i class="las la-plus"></i> Add
                                         </button>
+                                    </td>
+                                    {% endif %}
+                                    {% if res.Status == "Open" and res.DocumentStage == 'Setting' %}
+                                    <td>
+                                        <form method="POST" action="{% url 'FnAppraisalTrainingAndDevelopment' res.AppraisalNo %}">
+                                            {% csrf_token %}
+
+                                            <input type="hidden" name="appraisalLine" value="{{training.AppraisalLine}}">
+                                            <input type="hidden" name="description" value="0">
+                                            <input type="hidden" name="duration" value="0">
+                                            <input type="hidden" name="commentsBySupervisour" value="0">
+                                            <input type="hidden" name="myAction" value="delete">
+
+                                            <button class="btn btn-danger" data-toggle="tooltip" data-placement="top"
+                                            title="Delete Line" type="submit">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                        
                                     </td>
                                     {% endif %}
                                     <div class="modal fade" id="training{{training.AppraisalLine}}"
@@ -509,12 +557,12 @@
                             <div class="col-lg-4 col-xl-3">
                                 <div class="file-man-box">
                                     {% if res.Status == 'Open' %}
-                                    <form action="{% url 'DeleteGeneralAttachment' data.No_  %}" method="POST">
+                                    <form action="{% url 'DeleteAppraisalAttachment' data.No_  %}" method="POST">
                                         {% csrf_token %}
                                         <input type="hidden" name="docID" value="{{data.AuxiliaryIndex2}}">
                                         <input type="hidden" name="tableID" value="{{data.Table_ID}}">
                                         <button class="file-close" id="file-close"><i
-                                                class="fa fa-times-circle"></i></button>
+                                                class="fa fa-trash-alt"></i></button>
                                     </form>
                                     {% endif %}
                                     <div class="file-img-box"><img src="../../static/img/logo/f1.png" alt="icon"></div>
@@ -629,7 +677,7 @@
             </div>
         </div>
     </div>
-
+<!-- Training -->
     <div class="modal fade" id="training" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
@@ -692,6 +740,7 @@
         </div>
     </div>
 </div>
+<!-- Appraisal comments -->
 <div class="modal fade" id="appraisal_comments" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">

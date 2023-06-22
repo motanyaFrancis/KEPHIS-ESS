@@ -130,7 +130,7 @@
             </div>
         </div>
 
-        <!-- Modal -->
+        <!-- Cenerator consumption Form -->
         <div class="modal fade" id="staticBackdrop" data-bs-keyboard="false" tabindex="-1"
             aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
@@ -146,6 +146,7 @@
                             <input type="hidden" name="fuelNo" value="">
                             <input type="hidden" name="myAction" value="insert">
                             <input type="hidden" name="assetType" value="1">
+                            <input type="hidden" name="driver" value="{{employeeNo}}">
                             <div class="row gx-2">
                                 <div class="col-lg-4 col-md-6">
                                     <label class="form-label">Fuel Card Type<span class="text-danger">*</span></label>
@@ -205,7 +206,7 @@
                                             class="text-danger">*</span></label>
                                     <input type="number" name="quantityInLtrs" class="form-control" placeholder="0">
                                 </div>
-                                <div class="col-lg-4 col-md-6">
+                                <!-- <div class="col-lg-4 col-md-6">
                                     <label class="form-label">Driver <span class="text-danger">*</span></label>
                                     <select class="form-select" name="driver" required>
                                         <option selected disabled value="">Select Option</option>
@@ -214,7 +215,7 @@
                                             {{list.Last_Name}}</option>
                                         {% endfor %}
                                     </select>
-                                </div>
+                                </div> -->
                             </div>
                             <div class="row gx-2">
                                 <div class="col-lg-12">
@@ -228,6 +229,7 @@
                 </div>
             </div>
         </div>
+        <!-- Vehicle Consumption Frorm -->
         <div class="modal fade" id="staticVehicle" data-bs-keyboard="false" tabindex="-1"
             aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
@@ -318,9 +320,9 @@
                             </div>
                             <div class="row gx-2">
                                 <div class="col-lg-12 col-md-12">
-                                    <label class="form-label">Kilometers Covered<span
+                                    <label class="form-label">Current Odometer Reading<span
                                             class="text-danger">*</span></label>
-                                    <input type="text" name="kMCovered" class="form-control" placeholder="0">
+                                    <input type="text" name="currentOdometerReading" class="form-control" placeholder="0">
 
                                 </div>
                             </div>

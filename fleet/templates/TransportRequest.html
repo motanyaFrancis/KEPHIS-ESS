@@ -208,16 +208,20 @@
                                                                                         class="text-danger">*</span></label>
                                                                                 <select class="form-select"
                                                                                     name="typeOfTransport" required>
-                                                                                    <option selected disabled value="">
+                                                                                    <option selected disabled value="0">
                                                                                         Select Option</option>
-                                                                                    <option value="1">Road</option>
+                                                                                    <option value="1">KEPHIS Vehicle
+                                                                                    </option>
                                                                                     <option value="2">Public Transport
                                                                                     </option>
                                                                                     <option value="3">Air</option>
                                                                                     <option value="4">Train</option>
-                                                                                    <option value="4">Sea</option>
-                                                                                    <option value="4">Taxi</option>
-
+                                                                                    <option value="5">Water</option>
+                                                                                    <option value="6">Taxi</option>
+                                                                                    <option value="7">Self Drive
+                                                                                    </option>
+                                                                                    <option value="8">Animals</option>
+                                                                                </select>
                                                                                 </select>
                                                                             </div>
                                                                         </div>
@@ -374,6 +378,17 @@
                                                 <td>{{res.TripPlannedStartDate}}</td>
                                                 <td>{{res.TripPlannedEndDate}}</td>
                                                 <td>
+                                                    {% if res.Status == 'Approved'  %}
+                                                    <form action="{% url 'FnNotifyBothRequesterAndDrivers' res.RequestNo %}" method="post"
+                                                        style="display: inline-block;">
+                                                        {% csrf_token %}
+                                                        <button class="btn btn-dark" type="submit" data-toggle="tooltip"
+                                                            data-placement="top" title="confirm Notification">
+                                                            <i class="las la-tools"></i>Notify Driver & Requester<i
+                                                                class="las la-check-double"></i>
+                                                        </button>
+                                                    </form>
+                                                    {% endif %}
                                                     <a href="{% url 'TransportRequestDetails' res.RequestNo %}"
                                                         class="btn btn-success btn-icon-text" type="button"
                                                         data-toggle="tooltip" data-placement="top"
@@ -427,13 +442,14 @@
                                             class="text-danger">*</span></label>
                                     <select class="form-select" name="typeOfTransport" required>
                                         <option selected disabled value="0">Select Option</option>
-                                        <option value="1">Road</option>
+                                        <option value="1">KEPHIS Vehicle</option>
                                         <option value="2">Public Transport</option>
                                         <option value="3">Air</option>
                                         <option value="4">Train</option>
-                                        <option value="5">Sea</option>
+                                        <option value="5">Water</option>
                                         <option value="6">Taxi</option>
                                         <option value="7">Self Drive</option>
+                                        <option value="8">Animals</option>
                                     </select>
                                 </div>
                             </div>

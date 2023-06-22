@@ -4,8 +4,21 @@
 {% block main %}
 <section class="dash2">
     <div class="content-wrapper">
-        <div class="d-xl-flex justify-content-between align-items-start">
+        <!-- <div class="d-xl-flex justify-content-between align-items-start">
             <h2 class="text-dark font-weight-bold mb-2">GovernMent Check Unit Report
+        </div> -->
+        <div class="d-xl-flex justify-content-between align-items-start">
+            <h2 class="text-dark font-weight-bold mb-2"> GovernMent Check Unit Report
+            </h2>
+
+            <div class="d-sm-flex justify-content-end align-items-center mb-2">
+                <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
+                    {% if res.Submitted == False %}
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Attachment"> <i
+                            class="las la-plus"></i> Upload Attachment</button>
+                    {% endif %}
+                </div>
+            </div>
         </div>
 
         <!--alert -->
@@ -148,6 +161,103 @@
                 </form>
             </div>
         </div>
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card" id="d-card">
+                    <div class="row justify-content-between">
+                        <div class="col-md-4">
+                            <h4 class="mt-2 mx-2 text-dark">Passengers</h4>
+                        </div>
+                        
+                        <div class="col-md-2">
+                            <button class="btn btn-successs p-2 m-2 d-flex align-items-center" data-bs-toggle="modal"
+                                data-bs-target="#passengers" type="button">
+                                <i class="las la-plus text-white" style="font-size:15px;"></i> Add
+                            </button>
+                        </div>
+                        
+                    </div>
+                    <div class="card-body">
+                        <!-- <table id="example"
+                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                            style="width:100%">
+                            <thead>
+                                <tr id="tops">
+                                    <th id="long"> No.</th>
+                                    <th>Target</th>
+                                    <th>Unit of Measure</th>
+                                    <th>Weight</th>
+                                    <th>Self Rating</th>
+                                    <th>Supervisor Rating</th>
+                                    <th>Score</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {% for target in targets %}
+                                <tr>
+                                    <td>{{target.AppraisalLine}}</td>
+                                    <td>{{target.KeyResponsibility}}</td>
+                                    <td>{{target.FYTarget}}</td>
+                                    <td>{{target.Weight}}</td>
+                                    <td>{{target.SelfRating}}</td>
+                                    <td>{{target.SupervisorRating}}</td>
+                                   
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row my-2 py-3">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">
+                            My Attachments
+                        </h4>
+                        <div class="row">
+                            {% for data in allFiles %}
+                            <div class="col-lg-4 col-xl-3">
+                                <div class="file-man-box">
+                                    {% if res.Submitted == False %}
+                                    <form action="{% url 'DeleteGVCUAttachment' data.No_  %}" method="POST">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="docID" value="{{data.AuxiliaryIndex2}}">
+                                        <input type="hidden" name="tableID" value="{{data.Table_ID}}">
+                                        <button class="file-close" data-toggle="tooltip" data-placement="top"
+                                            title="Delete File" id="file-close"><i class="fas fa-trash"></i></button>
+                                    </form>
+                                    {% endif %}
+                                    <div class="file-img-box"><img src="../../static/img/logo/f1.png" alt="icon"></div>
+                                    <form action="{% url 'getDocs' data.No_ data.Table_ID %}" method="POST">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="attachmentID" value="{{data.AuxiliaryIndex2}}">
+                                        <input type="hidden" name="File_Name" value="{{data.File_Name}}">
+                                        <input type="hidden" name="File_Extension" value="{{data.File_Extension}}">
+                                        <button class="file-download mx-1"><i
+                                                class="fa fa-download text-success"></i></button>
+                                    </form>
+                                    <div class="file-man-title">
+                                        <h5 class="mb-0 text-overflow">
+                                            {{data.File_Name}}.{{data.File_Extension}}</h5>
+                                    </div>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <p class="text-danger">
+                                You have not uploaded any attachments <i class="las la-file-download"></i>
+                            </p>
+                            {% endfor %}
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
         {% if res.Submitted == False %}
         <div class="row">
             <div class="col-md-12">
@@ -161,6 +271,71 @@
             </div>
         </div>
         {% endif %}
+    </div>
+    <!-- Modal Attachment -->
+    <div class="modal fade" id="Attachment" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Upload Attachment</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'UploadGVCUAttachment' res.GCU_No %}" method="post" class="myForm"
+                        enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class=" mb-3">
+                            <label class="form-label">Attachments</label>
+                            <input class="form-control" name="attachment" type="file" multiple>
+                        </div>
+                        <button type="submit" class="btn btn-success my-3 w-100">Submit</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="passengers" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="passengersLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="passengersLabel">Passengers
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="myForm needs-validation" id="frm_" action="{% url 'FnGVCUPassangers' res.GCU_No %}"
+                        method="post" novalidate>
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <input type="number" name="lineNo" value="1000" hidden>
+                                <input type="hidden" name="myAction" value="insert">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="" class="form-label">Employee<span class="text-danger">*</span></label>
+                                <select class="form-select" name="employeeNo" required>
+                                    <option selected disabled value="">Select Option</option>
+                                    {% for list in employees %}
+                                    <option value="{{list.No_}}">{{list.First_Name}} {{list.Middle_Name}}
+                                        {{list.Last_Name}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-success my-3 w-100">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 {% endblock %}

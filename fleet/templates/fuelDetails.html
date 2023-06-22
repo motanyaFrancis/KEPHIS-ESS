@@ -108,10 +108,17 @@
         <div class="row">
             <div class="col-md-12">
                 <form class="row g-3">
+                    {% if res.AssetType == 'Generator' %}
+                    <div class="col-md-4">
+                        <label class="form-label">Transport Officer</label>
+                        <input type="text" class="form-control" placeholder="{{res.Transport_Officer_Name}}" readonly>
+                    </div>
+                    {% else %}
                     <div class="col-md-4">
                         <label class="form-label">Driver</label>
                         <input type="text" class="form-control" placeholder="{{res.DriverName}}" readonly>
                     </div>
+                    {% endif %}
                     <div class="col-md-4">
                         <label class="form-label">Receipt No.</label>
                         <input type="text" class="form-control" placeholder="{{res.ReceiptNo}}" readonly>

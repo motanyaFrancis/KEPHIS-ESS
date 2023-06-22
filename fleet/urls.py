@@ -34,7 +34,7 @@ urlpatterns = [
     path('FnRaiseRepairRequest/<str:pk>', views.FnRaiseRepairRequest.as_view(), name='FnRaiseRepairRequest'),
     path('FnCancelRepairRequest/<str:pk>', views.FnCancelRepairRequest, name='FnCancelRepairRequest'),
     path('FnConfirmRepaireRequest/<str:pk>', views.FnConfirmRepaireRequest.as_view(), name=' FnConfirmRepaireRequest'),
-
+    path('FNServiceInstructionsSheet/<str:pk>', views.FNServiceInstructionsSheet.as_view(), name='FNServiceInstructionsSheet'),
     
     # Transport Request
     path('TransportRequest', views.TransportRequest.as_view(), name='TransportRequest'),
@@ -43,6 +43,7 @@ urlpatterns = [
     path('UploadTransportRequestAttachment/<str:pk>', views.UploadTransportRequestAttachment, name='UploadTransportRequestAttachment'),
     path('DeleteTransportRequestAttachment<str:pk>', views.DeleteTransportRequestAttachment, name='DeleteTransportRequestAttachment'),
     path('FnSubmitTravelRequest/<str:pk>', views.FnSubmitTravelRequest.as_view(), name='FnSubmitTravelRequest'),
+    path('FnNotifyBothRequesterAndDrivers/<str:pk>', views.FnNotifyBothRequesterAndDrivers.as_view(), name='FnNotifyBothRequesterAndDrivers'),
     
     # Accidents
     path('Accidents', views.Accidents.as_view(), name='Accidents'),
@@ -67,12 +68,18 @@ urlpatterns = [
     path('FnFuelConsumptionGenerator', views.FnFuelConsumptionGenerator.as_view(), name='FnFuelConsumptionGenerator'),
     path('FnFuelConsumptionVehicle', views.FnFuelConsumptionVehicle.as_view(), name='FnFuelConsumptionVehicle'),
     
+    #Speed Govonor
     path('speed/governor', views.SpeedGovernor.as_view(), name='SpeedGovernor'),
     path('GovernorDetails/<str:pk>', views.GovernorDetails.as_view(), name='GovernorDetails'),
     path('FnSubmitSpeedGovernor/<str:pk>', views.FnSubmitSpeedGovernor.as_view(), name='FnSubmitSpeedGovernor'),
-    
-    # Gvcu 
+    path('UploadSpeedGovernorAttachment/<str:pk>', views.UploadSpeedGovernorAttachment.as_view(), name='UploadSpeedGovernorAttachment'),
+    path('DeleteSpeedGovernor/<str:pk>', views.DeleteSpeedGovernor.as_view(), name='DeleteSpeedGovernor'),
+
+    # Gvcu
     path('gvcu', views.GVCU.as_view(), name='gvcu'),
     path('gvcu/<str:pk>', views.GVCU_Details.as_view(), name='gvcuDetails'),
     path('FnSubmitGovermmentCheckUnit/<str:pk>', views.FnSubmitGovermmentCheckUnit.as_view(), name='FnSubmitGovermmentCheckUnit'),
+    path('UploadGVCUAttachment/<str:pk>', views.UploadGVCUAttachment.as_view(), name='UploadGVCUAttachment'),
+    path('DeleteGVCUAttachment/<str:pk>', views.DeleteGVCUAttachment.as_view(), name='DeleteGVCUAttachment'),
+    path('FnGVCUPassangers/<str:pk>', views.FnGVCUPassangers.as_view(), name='FnGVCUPassangers'),
 ]

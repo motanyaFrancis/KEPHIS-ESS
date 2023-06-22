@@ -404,3 +404,21 @@ class FnsupervisorAppraisalScore(UserObjectMixins,View):
             logging.exception(e)
             messages.error(request,f'{e}')
             return redirect('AppraisalDetails', pk=pk)
+
+
+class DeleteAppraisalAttachment(UserObjectMixin, View):
+    def post(self, request, pk):
+        if request.method == "POST":
+            docID = int(request.POST.get('docID'))
+            tableID = int(request.POST.get('tableID'))
+            try:
+                response = config.CLIENT.service.FnDeleteDocumentAttachment(
+                    pk, docID, tableID)
+                print(response)
+                if response == True:
+                    messages.success(request, "Deleted Successfully ")
+                    return redirect('AppraisalDetails', pk=pk)
+            except Exception as e:
+                messages.error(request, f'{e}')
+                print(e)
+        return redirect('AppraisalDetails', pk=pk)
